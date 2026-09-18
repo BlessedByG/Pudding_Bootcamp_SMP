@@ -7,15 +7,16 @@ Getallen zijn uitgangspunt voor 20 spelers. Schaal ze mee met het aantal spelers
 
 ---
 
-## Ronde 0: Lobby
+## Ronde 0: Basiskamp
 
-Iedereen joint, komt in de lobby, leest de regels op de borden. Host legt kort uit wat er komen
+Iedereen spawnt in het basiskamp, een kampement bij de poort van het doolhof, en leest de regels
+op de borden. Host legt kort uit wat er komen
 gaat (niet alles verklappen: de kroonregels pas uitleggen bij ronde 4). Countdown, poort 1 open.
 
 Iedereen zit in één team (`spelers`) met friendly fire uit, dus je kunt elkaar niet raken tot
 ronde 4.
 
-**Voice:** proximity vanaf het moment dat je joint. Voice-test in de lobby voor de start
+**Voice:** proximity vanaf het moment dat je joint. Voice-test in het basiskamp voor de start
 (zie [07-voice.md](07-voice.md)).
 
 ---
@@ -25,26 +26,27 @@ ronde 4.
 **Doel:** vind de uitgang van het doolhof.
 
 **Setup**
-- 64 x 64 doolhof, muren 4 hoog, dicht plafond. Ingang aan één kant, uitgang aan de overkant.
+- 64 x 64 hagendoolhof in een dal, hagen 4 hoog, geen plafond. Ingang bij het basiskamp, uitgang
+  aan de overkant.
 - Adventure mode: niet breken, niet bouwen.
 - 10 tot 15 kisten in doodlopende gangen met kleine loot die je later in de avond kunt gebruiken:
-  een gapple, wat pijlen, in 3 van de kisten een ender pearl.
+  een gapple, wat pijlen, een potion. Geen pearls: zonder plafond gooi je die zo over de haag.
 - Optioneel: 2 of 3 "gevaarlijke" gangen met een zombie-spawner of een valkuil. Niet dodelijk,
   wel vervelend.
 - Iedereen start tegelijk bij dezelfde ingang. Wil je het wat spreiden, maak dan 4 ingangen in de
   hoeken en één uitgang in het midden.
 
 **Regels**
-- Geen pearls gooien in het doolhof (dicht plafond, dus het kan toch niet over de muur, maar het
-  kan wel door een gang heen als je slim bent). Pearls die je vindt zijn voor later.
+- Niemand heeft pearls in deze ronde (de eerste komen uit het voorsprongkistje erna), dus over de
+  haag heen kan niet. Adventure mode, dus door de haag heen ook niet.
 - Alles wat je vindt mag je houden.
 
 **Einde**
-- Timer 10 minuten. Wie de uitgang vindt, loopt de wachtkamer in.
-- Na de timer wordt iedereen die nog in het doolhof zit naar de wachtkamer geteleporteerd.
+- Timer 10 minuten. Wie de uitgang vindt, wordt doorgezet naar verzamelpunt 2 bij de arena.
+- Na de timer wordt iedereen die nog in het doolhof zit ook naar verzamelpunt 2 geteleporteerd.
   Niemand ligt eruit.
 
-**Bonus:** de eerste 5 spelers die eruit zijn krijgen een voorsprongkistje in de wachtkamer:
+**Bonus:** de eerste 5 spelers die eruit zijn krijgen een voorsprongkistje bij verzamelpunt 2:
 1 gapple + 1 ender pearl.
 
 **Voice:** proximity. Je hoort wie in de gang naast je loopt, en dat is het.
@@ -63,7 +65,7 @@ ronde 4.
 **Doel:** overleef als groep 5 waves mobs.
 
 **Setup**
-- Ronde arena Ø 50 met wat dekking. 4 spawnpunten voor mobs aan de rand.
+- Ruïne-arena Ø 50 ten oosten van de burcht, met wat dekking. 4 spawnpunten voor mobs aan de rand.
 - Iedereen krijgt bij binnenkomst de **hordekit**: volledig iron armor, iron sword, boog, 32
   pijlen, schild, 16 steak.
 - Waves (voor 20 spelers; grofweg 1 mob per speler per wave, boss wave vast):
@@ -90,11 +92,11 @@ ronde 4.
   groep kent; het kan de sfeer ook kapotmaken.
 
 **Einde**
-- Wave 5 dood, iedereen dood, of timer 10 minuten. Poort 3 open. De doden worden in wachtkamer 3
-  weer levend gemaakt.
+- Wave 5 dood, iedereen dood, of timer 10 minuten. Iedereen naar verzamelpunt 3 aan de bosrand,
+  de doden worden daar weer levend gemaakt.
 - Loot die mobs droppen mag je houden (pijlen, wat rommel).
 
-**Bonus:** iedereen die de ronde overleeft, krijgt 1 ender pearl in de wachtkamer.
+**Bonus:** iedereen die de ronde overleeft, krijgt 1 ender pearl bij verzamelpunt 3.
 
 **Voice:** levend proximity. Dood = spectator: alles horen, niet gehoord worden, en met de andere
 doden praten in de groep Doden. Je krijgt bij je dood een knop in de chat om erin te gaan.
@@ -118,7 +120,8 @@ doden praten in de groep Doden. Je krijgt bij je dood een knop in de chat om eri
 minstens één diamond block mee. Dat block is je ticket naar ronde 4.
 
 **Setup**
-- 150 x 150 zoekgebied, natuurlijk terrein (bos, heuvels, grotten, water). Muur of border eromheen.
+- 150 x 150 zoekgebied: het bos ten zuiden van de burcht, met heuvels, grotten en een meertje. De
+  worldborder sluit het af, geen muur nodig.
 - Iedereen krijgt bij binnenkomst een iron pickaxe (Efficiency II) en houdt wat ze al hadden.
 - **Het Grote Ei:** ±15 hoog, ±11 breed, half verstopt (in een heuvel, in een grot, in het meer).
   Van buiten naar binnen:
@@ -138,11 +141,12 @@ minstens één diamond block mee. Dat block is je ticket naar ronde 4.
 - Iedereen zit in één voice-groep (Ei): je hoort elkaar overal in het zoekgebied. Wie het Ei
   vindt, moet dus zijn mond houden of bluffen.
 - Pak wat je pakken kunt, maar je hebt maar één inventory.
-- Je komt alleen door poort 4 met een diamond block op zak. De poort neemt het block in.
+- Je komt alleen bij De Kring (verzamelpunt 4) met een diamond block op zak: de uitgang van het
+  bos is een drukplaat die het block inneemt en je erheen teleporteert.
 
 **Einde**
-- Timer 10 minuten. Wie een block heeft, kan zelf door poort 4 (druk op de plaat, block wordt
-  ingenomen, je staat in wachtkamer 4).
+- Timer 10 minuten. Wie een block heeft, gaat zelf via de drukplaat (block wordt ingenomen, je
+  staat bij De Kring).
 - Na de timer wordt iedereen zonder ticket alsnog doorgelaten, maar met een **lege inventory +
   basiskit**. Geen ticket = geen loot. Dat is de straf.
 
@@ -169,10 +173,10 @@ Hier het overzicht.
 **Doel:** heb de kroon als de timer afloopt.
 
 **Setup**
-- 200 x 200 open map met een burcht in het midden, een dorpje, bos, water, een toren. Survival:
-  bouwen mag.
-- Het begint in wachtkamer 4 met **Het Rad**: een cirkel van alle 20 spelerskoppen met een lampje
-  dat rondgaat, steeds langzamer, en stopt op ClownPierce. Het ziet eruit als toeval, het is
+- Het hart van de open wereld: 200 x 200 rond de burcht, met een dorpje, bos, water, een toren.
+  De worldborder sluit de rest van de wereld af. Survival: bouwen mag.
+- Het begint bij **De Kring** voor de poort van de burcht met **Het Rad**: 20 pilaren met alle
+  spelerskoppen en een lampje dat rondgaat, steeds langzamer, en stopt op ClownPierce. Het ziet eruit als toeval, het is
   rigged: Clown heeft vooraf de verborgen rol `uitverkoren` en het rad landt altijd op die speler
   (zie [03-kroon-regels.md](03-kroon-regels.md)).
 - Clown wordt naar de burcht geteleporteerd en krijgt de kroon en de **bosskit** (volledig diamond
@@ -209,8 +213,8 @@ seconden op hun respawn wachten zijn ook even spectator en dus even stil.
 **Doel:** laatste die overblijft.
 
 **Setup**
-- Iedereen zonder kroon die nog leeft wordt full hp naar de FFA-arena geteleporteerd, verspreid
-  over de rand.
+- Iedereen zonder kroon die nog leeft wordt full hp naar de binnenplaats van de burcht
+  geteleporteerd, verspreid over de rand.
 - Iedereen krijgt dezelfde **arenakit**: volledig diamond Protection I, diamond sword Sharpness I,
   boog Power I, 16 pijlen, 2 gapples, 8 steak, schild. Eigen spullen worden weggehaald
   (zie [06-open-keuzes.md](06-open-keuzes.md) als je liever met eigen gear vecht).
@@ -236,7 +240,7 @@ Finalist 1 wacht ook in Doden.
 **Doel:** 1v1 tussen de twee kroondragers, best of 3.
 
 **Setup**
-- Kleine arena 20 x 20, twee startpunten tegenover elkaar.
+- De troonzaal van de burcht, 20 x 20, twee startpunten tegenover elkaar.
 - Beiden krijgen de **finalekit**: volledig diamond Protection II, diamond sword Sharpness II,
   boog Power I, 16 pijlen, 2 gapples, 8 steak, schild. Geen pearls, geen potions.
 - Per potje: full heal, kit reset, 5 seconden countdown.
@@ -246,8 +250,8 @@ Finalist 1 wacht ook in Doden.
 - Duurt een potje langer dan 3 minuten, dan krimpt de border naar 6 x 6.
 
 **Einde**
-- Winnaar is King of the SMP. Kroning in de lobby, met iedereen erbij. Prijs: zie
+- Winnaar is King of the SMP. Kroning in de troonzaal, iedereen wordt erbij geteleporteerd. Prijs: zie
   [06-open-keuzes.md](06-open-keuzes.md).
 
 **Voice:** de twee finalisten proximity in de arena, alle anderen in Doden. Bij de kroning gaat
-iedereen uit zijn groep: proximity in de lobby, zoals aan het begin.
+iedereen uit zijn groep: proximity in de troonzaal.

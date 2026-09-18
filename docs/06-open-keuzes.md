@@ -133,3 +133,25 @@ afstand is een serverinstelling die je niet per ronde wisselt.
 horde-arena (Ø 50) hoor je elkaar dan niet meer van rand tot rand.
 
 **Aanbeveling:** 48 laten staan. Wie stil wil zijn heeft de fluister-toets.
+
+## 14. Lopen of teleporteren tussen de zones?
+
+**Nu in het concept:** teleporteren naar het verzamelpunt van de volgende zone. Iedereen staat
+tegelijk op de goede plek, de host heeft z'n praatje, niemand dwaalt.
+
+**Alternatief:** lopen over gemarkeerde paden. Meer open-world-gevoel en de wereld wordt echt
+gebruikt, maar het kost per overgang 3 tot 5 minuten en er is altijd iemand die de verkeerde kant
+op gaat. Tussenvorm: lopen na ronde 1 en 2 (korte paden), teleporteren daarna.
+
+**Aanbeveling:** teleporteren. De tijd gaat liever in de rondes dan in het wandelen.
+
+## 15. King zone: 200 x 200 rond de burcht, of de hele wereld?
+
+**Nu in het concept:** 200 x 200 rond de burcht, de rest van de wereld zit achter de border.
+
+**Alternatief:** de hele wereld als slagveld. Het doolhof als schuilplaats, de arena als fort,
+het Ei-bos als hinderlaag. Klinkt geweldig, maar 500 x 500 is met 20 man en 15 minuten te groot
+om de koning te vinden, ook met Glowing. En de koning kan in survival het doolhof slopen.
+
+**Aanbeveling:** 200 x 200 houden. Wil je toch de hele wereld, begin de border dan op 400 en laat
+hem vanaf minuut 5 al krimpen.

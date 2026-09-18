@@ -101,18 +101,19 @@ datapacks/bootcamp/
   data/bootcamp/
     function/
       setup.mcfunction                 # teams, scoreboards, bossbar, gamerules
-      poort/open_1.mcfunction .. open_4 # fill de poort weg
-      poort/dicht_1.mcfunction .. dicht_4
+      poort/open_1.mcfunction .. open_3 # fill de poort weg (doolhof, arena, bosrand)
+      poort/dicht_1.mcfunction .. dicht_3
+      border/<zone>.mcfunction         # worldborder center + set per ronde
       doolhof/start.mcfunction         # timer 600, tp iedereen naar ingang
       doolhof/tick.mcfunction
-      doolhof/einde.mcfunction         # tp achterblijvers naar wachtkamer 2
+      doolhof/einde.mcfunction         # tp achterblijvers naar verzamelpunt 2
       horde/start.mcfunction
       horde/wave_1.mcfunction .. wave_5
       horde/tick.mcfunction            # telt mobs, start volgende wave
       horde/kit.mcfunction
       ei/start.mcfunction
       ei/tick.mcfunction               # poortcheck, beacon-hint op 5 min
-      ei/pas.mcfunction                # neemt block in, tp naar wachtkamer 4
+      ei/pas.mcfunction                # neemt block in, tp naar De Kring
       ei/einde.mcfunction              # achterblijvers zonder ticket: clear + basiskit
       horde/volgende.mcfunction        # start de volgende wave
       horde/dood.mcfunction            # dood = spectator tot einde ronde
@@ -145,7 +146,7 @@ datapacks/bootcamp/
       kit/boss.mcfunction
       kit/arena.mcfunction
       kit/finale.mcfunction
-      reset.mcfunction                 # alles terug naar lobby-staat
+      reset.mcfunction                 # alles terug naar basiskamp-staat
     advancement/
       kill_king.json                   # vuurt als je de koning killt
 ```
@@ -229,8 +230,8 @@ execute if entity @a[tag=king,scores={deaths=1..}] as @r[tag=hunter,gamemode=sur
 
 ## Het Rad (rigged)
 
-**Bouw:** een cirkel van 20 spelerskoppen op de achterwand van wachtkamer 4, met onder elke kop
-een blok dat aan of uit kan: `black_concrete` (uit) en `glowstone` (aan). Geen redstone lamps,
+**Bouw:** De Kring: 20 pilaren in een cirkel voor de poort van de burcht, op elke pilaar een
+spelerskop en eronder een blok dat aan of uit kan: `black_concrete` (uit) en `glowstone` (aan). Geen redstone lamps,
 die gaan uit bij de eerste block update. Nummer de slots 0 t/m 19 met de klok mee. Koppen haal
 je met `give @s minecraft:player_head[minecraft:profile="ClownPierce"]` (op 1.20.4 en ouder:
 `give @s minecraft:player_head{SkullOwner:"ClownPierce"}`).
@@ -397,7 +398,7 @@ team leave @a[tag=ffa]
 gamemode adventure @a[tag=ffa]
 spreadplayers <ffa-x> <ffa-z> 5 18 false @a[tag=ffa]
 gamemode spectator @a[tag=king]
-tp @a[tag=king] <spectator-deck boven de ffa>
+tp @a[tag=king] <muur van de binnenplaats>
 execute as @a[tag=king] run function bootcamp:voice/doden
 function bootcamp:ffa/start
 ```
@@ -430,9 +431,10 @@ Border-shrink voor de FFA: `worldborder center <x> <z>`, `worldborder set 40`, e
 `finale/start` zet beide `king`-spelers op `gamemode adventure`, geeft ze de finalekit, stuurt ze
 de [VERLATEN]-knop (`voice/proximity`) en teleporteert ze naar de twee startpunten.
 
-## Poorten
+## Poorten en worldborder
 
-Een poort is een muur die je met `fill` weghaalt en terugzet:
+Drie zones hebben een poort (doolhof, arena, bosrand). Een poort is een muur die je met `fill`
+weghaalt en terugzet:
 
 ```
 # poort/open_2.mcfunction
@@ -443,10 +445,32 @@ fill <x1 y1 z1> <x2 y2 z2> minecraft:iron_bars
 
 Countdown ervoor met `title @a title {"text":"3"}` enzovoort via `schedule`.
 
+De worldborder bepaalt per ronde waar je mag komen, dus buiten de zone hoef je niks te bouwen.
+Elke start-functie zet hem, ná de teleport (wie buiten de border staat als hij gezet wordt,
+krijgt schade):
+
+```
+# border/ei.mcfunction (voorbeeld)
+worldborder center <x> <z>
+worldborder set 150
+worldborder warning distance 5
+```
+
+| Ronde | Center | Grootte |
+|---|---|---|
+| 1 Doolhof | midden van het doolhof | 80 |
+| 2 Horde | midden van de arena | 60 |
+| 3 Het Ei | midden van het bos | 150 |
+| 4 King | burcht | 200, in sudden death naar 60 |
+| 5 FFA | binnenplaats | 40, na 5 minuten naar 10 |
+| 6 Finale | troonzaal | 20, na 3 minuten naar 6 |
+
+Spectators vliegen door de border heen, dus staff en doden hebben er geen last van.
+
 ## De Ei-poort (ticketcheck)
 
-In `ei/tick`: iedereen die op de drukplaat voor poort 4 staat en een diamond block bij zich
-heeft, gaat door:
+In `ei/tick`: iedereen die op de drukplaat bij de uitgang van het bos staat en een diamond block
+bij zich heeft, gaat door:
 
 ```
 execute as @a[tag=speler,tag=!ticket,x=<px>,y=<py>,z=<pz>,dx=2,dy=2,dz=2] if items entity @s container.* minecraft:diamond_block run function bootcamp:ei/pas
@@ -456,7 +480,7 @@ execute as @a[tag=speler,tag=!ticket,x=<px>,y=<py>,z=<pz>,dx=2,dy=2,dz=2] if ite
 # ei/pas.mcfunction
 clear @s minecraft:diamond_block 1
 tag @s add ticket
-tp @s <wachtkamer 4>
+tp @s <De Kring>
 playsound minecraft:entity.player.levelup master @s
 ```
 
@@ -467,7 +491,7 @@ Hint op 5 minuten: zet met `setblock` een blok neer dat het beacon-pyramidetje o
 compleet maakt, en op 3 minuten `summon minecraft:firework_rocket` boven het Ei.
 
 Na de timer (`ei/einde`): `clear @a[tag=speler,tag=!ticket]`, `function bootcamp:kit/basis` voor
-die groep, en `tp` naar wachtkamer 4.
+die groep, en `tp` naar De Kring.
 
 ## De horde
 
@@ -510,7 +534,7 @@ kill @e[tag=horde]
 give @a[tag=speler,tag=!dood] minecraft:ender_pearl 1
 gamemode adventure @a[tag=speler]
 tag @a[tag=dood] remove dood
-tp @a[tag=speler] <wachtkamer 3>
+tp @a[tag=speler] <verzamelpunt 3>
 ```
 
 Dood is dus spectator tot `horde/einde`, geen respawn. De laatste regel van de tick-check zorgt
@@ -564,7 +588,7 @@ give @s minecraft:cooked_beef 8
 ## Reset
 
 `reset.mcfunction`: alle tags weg, iedereen `team join spelers`, `gamemode adventure`, `clear`,
-`effect clear`, tp naar de lobby, alle timers `schedule clear`, bossbar leeg, worldborder terug op
+`effect clear`, tp naar het basiskamp, alle timers `schedule clear`, bossbar leeg, worldborder terug op
 groot. Handig als er iets kapot gaat en voor de testrun.
 
 Maak daarnaast vóór het event een **wereldbackup**. Gaat het Ei op, dan kun je in het ergste

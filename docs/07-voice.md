@@ -8,14 +8,14 @@ ernaast, anders is proximity zinloos.
 
 | Ronde | Levend | Dood / kijkers |
 |---|---|---|
-| Lobby | Proximity, iedereen bij elkaar. | – |
+| Basiskamp | Proximity, iedereen bij elkaar rond het kampvuur. | – |
 | 1 De Doolhof | Proximity. Je hoort wie in de gang naast je loopt, niet wie aan de andere kant zit. | – (niemand gaat dood) |
 | 2 De Horde | Proximity. | Dood = spectator tot het einde van de ronde. Je hoort alles, de levenden horen jou niet. Je zit met de andere doden in de groep **Doden**, zodat je met elkaar kunt praten waar je ook rondzweeft. |
 | 3 Het Ei | Iedereen in de groep **Ei**: je hoort elkaar overal in het zoekgebied, geen proximity. | – |
 | 4 King of the SMP | Proximity, hunters én koning. | Spectator: je hoort alles, niemand hoort jou. Wie eruit ligt zit in de groep **Doden**. Hunters die 20 seconden op hun respawn wachten zijn ook even spectator: horen alles, zeggen niks, hoeven niet in de groep. |
 | 5 Arena FFA | Proximity. | Zoals ronde 4. Finalist 1 wacht ook in **Doden**. |
 | 6 De Finale | Proximity, de twee finalisten. | Iedereen anders in **Doden**. |
-| Kroning | Proximity in de lobby, iedereen uit zijn groep. | – |
+| Kroning | Proximity in de troonzaal, iedereen uit zijn groep. | – |
 
 Kort: levend is altijd proximity, behalve in ronde 3. Dood is altijd "alles horen, niet gehoord
 worden, praten met de andere doden". Ronde 5 en 6 lopen gewoon door op de stand van ronde 4.
@@ -98,7 +98,7 @@ force_voice_chat=true
 
 ## Praktisch
 
-- **Voice-test om 19:40** in de lobby: iedereen zegt wat, iedereen loopt een stuk weg en terug.
+- **Voice-test om 19:40** in het basiskamp: iedereen zegt wat, iedereen loopt een stuk weg en terug.
   Wie een kruis door het voice-icoontje heeft is niet verbonden (bijna altijd de UDP-poort of een
   verkeerde modversie).
 - **Streams:** de mod is gewoon game-audio, dus proximity komt vanzelf op de stream. Push-to-talk

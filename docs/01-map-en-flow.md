@@ -1,94 +1,121 @@
-# Map en flow: De Gang
+# Map en flow: de open wereld
 
-Het idee: één wereld, alle zones op een rij, aan elkaar geknoopt door **De Gang**. De Gang is
-een brede, rechte gang met genummerde poorten. Je komt een zone binnen door een poort, je komt
-er aan de andere kant weer uit in een **wachtkamer** in De Gang, en daar wacht je voor de
-volgende poort. Zo word je zonder nadenken van level naar level geleid en heeft de host tussen
-elke ronde een natuurlijk moment om te praten.
+Alles speelt zich af in één open wereld van grofweg 500 x 500 blokken: heuvels, bos, water. De
+events zijn in dat landschap gebouwd. Een hagendoolhof in een dal, een ruïne-arena, een bos met
+het Ei erin verstopt, en in het midden op een heuvel de burcht waar het eindigt. Geen gangen, geen
+wachtkamers, geen lobby.
 
-Hoeft niet mooi. Stone bricks, glas, een paar lanterns, klaar.
+Twee dingen houden het toch strak:
 
-## Layout
+- **Verzamelpunten.** Elke zone heeft bij de ingang een plek in de open lucht (kampvuur, banners,
+  een bordje) waar iedereen tussen de rondes staat. Daar praat de host, daar staan de
+  voorsprongkistjes, daar begint de countdown.
+- **Worldborder per ronde.** De datapack zet de worldborder elke ronde om de zone die aan de beurt
+  is. Buiten de zone kom je niet, dus je hoeft geen muren om het bos te bouwen.
+
+## Plattegrond
 
 ```
-  ┌────────────┐      ┌────────────┐      ┌────────────┐      ┌──────────────┐
-  │ 1 DOOLHOF  │      │ 2 HORDE    │      │ 3 HET EI   │      │ 4 KING ZONE  │
-  │ 64 x 64    │      │ arena Ø 50 │      │ 150 x 150  │      │ 200 x 200    │
-  └──┬──────┬──┘      └──┬──────┬──┘      └──┬──────┬──┘      └──┬───────────┘
-   in│      │uit       in│      │uit       in│      │uit       in│
- ════╧══════╧════════════╧══════╧════════════╧══════╧════════════╧═══════════
- LOBBY ·P1·    WK2     ·P2·    WK3     ·P3·    WK4     ·P4·            DE GANG
+                                  N
+                 ┌────────────────────────────┐
+                 │ 1 DE DOOLHOF               │
+                 │ hagendoolhof 64 x 64       │
+                 │ V1 = BASISKAMP bij de poort│
+                 └─────────────┬──────────────┘
+                               │ uitgang
+                               │
+ ┌──────────────────┐   ┌──────┴──────────────────┐   ┌────────────────────┐
+ │ vrij terrein     │   │ 4 KING ZONE 200 x 200   │   │ 2 DE HORDE         │
+ │ (bos, meer,      │   │                         │   │ ruïne-arena Ø 50   │
+ │  heuvels)        │   │   ┌─────────────────┐   │   │ V2 = bij de poort  │
+ │                  │   │   │ BURCHT          │   │   └────────────────────┘
+ └──────────────────┘   │   │ binnenplaats:   │   │
+                        │   │   5 FFA ARENA   │   │
+                        │   │ troonzaal:      │   │
+                        │   │   6 FINALE      │   │
+                        │   └─────────────────┘   │
+                        │ V4 = DE KRING (het rad) │
+                        └────────────┬────────────┘
+                                     │
+                 ┌───────────────────┴────────────┐
+                 │ 3 HET EI                       │
+                 │ bos + grotten 150 x 150        │
+                 │ V3 = bosrand                   │
+                 └────────────────────────────────┘
 
-  P = poort, WK = wachtkamer. Je gaat door P1 het doolhof in, komt er via "uit" weer uit in
-  wachtkamer 2, en wacht daar voor P2. Enzovoort.
-
-  Los van De Gang, alleen via teleport:
-  ┌──────────────┐   ┌──────────────┐   ┌────────────────────┐
-  │ 5 FFA ARENA  │   │ 6 1v1 ARENA  │   │ SPECTATOR-DECK     │
-  │ Ø 40         │   │ 20 x 20      │   │ (of gewoon         │
-  └──────────────┘   └──────────────┘   │  spectator mode)   │
-                                        └────────────────────┘
+  V = verzamelpunt. Paden tussen de zones zijn decor; tussen de rondes word je geteleporteerd.
 ```
 
-Zet de zones een paar honderd blokken uit elkaar of scheid ze met dikke muren, zodat je nooit
-per ongeluk van de ene zone in de andere kijkt of loopt.
+De burcht staat in het midden omdat daar alles samenkomt: de King zone eromheen, de FFA op de
+binnenplaats, de finale en de kroning in de troonzaal. De andere zones liggen op minstens 100
+blokken van de burcht, buiten de border van ronde 4.
 
-## Hoe een poort werkt
+## Hoe je van ronde naar ronde gaat
 
-1. Iedereen staat in de wachtkamer. Glazen wand richting de volgende zone, dus je ziet al waar
-   je heen gaat. Host doet z'n praatje.
-2. Admin start een countdown (`title` 5..4..3..2..1) en haalt de poort weg met één `fill`
-   command (poort is gewoon een muur van iron bars of stone bricks).
-3. Iedereen rent naar binnen. Na 10 seconden zet de admin de poort terug, zodat niemand terug kan.
-4. De zone-uitgang komt uit in de volgende wachtkamer. Wie klaar is, wacht daar (achter glas,
-   kan niet meer terug de zone in).
-5. Loopt de timer van de ronde af, dan wordt iedereen die nog in de zone zit naar de wachtkamer
-   geteleporteerd. Niemand blijft hangen.
+1. Iedereen staat bij het verzamelpunt van de zone. Host doet z'n praatje.
+2. Countdown (`title` 5..4..3..2..1). Bij het doolhof, de arena en de bosrand gaat een poort open
+   (een muur die de admin met één `fill` weghaalt). Daarna zet de datapack de worldborder om de
+   zone.
+3. Ronde klaar (timer of doel gehaald): iedereen wordt naar het volgende verzamelpunt
+   geteleporteerd. Wie eerder klaar is komt bij de uitgang van de zone uit en wordt meteen
+   doorgezet, of loopt het stukje zelf. Daar staan de voorsprongkistjes.
+4. Ronde 4 begint bij De Kring voor de poort van de burcht. Na het rad worden Clown en de hunters
+   naar hun startpunten geteleporteerd.
+5. Na ronde 4 valt de groep uit elkaar: finalist 1 op de muur van de binnenplaats, de rest naar
+   de FFA, de doden in spectator.
 
-Wachtkamers zijn ook de plek voor de **voorsprongkistjes** (bonus uit de vorige ronde, zie
-[02-rondes.md](02-rondes.md)).
+Teleporteren in plaats van lopen is een keuze: iedereen staat tegelijk op de goede plek, de host
+heeft z'n moment en niemand loopt te dwalen. Wil je meer open-world-gevoel, laat ze dan lopen
+over gemarkeerde paden; zie [06-open-keuzes.md](06-open-keuzes.md).
 
-## Wachtkamer 4: Het Rad
+## Worldborder per ronde
 
-Wachtkamer 4 is groter dan de andere (zeg 15 x 10) en heeft op de achterwand **Het Rad**: een
-cirkel van alle 20 spelerskoppen, met onder elke kop een lichtblok. Aan het begin van ronde 4
-gaat het licht rond, steeds langzamer, tot het stopt op de koning. Iedereen staat ervoor, de
-stream kijkt mee. Het rad is rigged en stopt altijd op Clown; hoe dat werkt staat in
-[03-kroon-regels.md](03-kroon-regels.md) en [04-technische-schets.md](04-technische-schets.md).
+| Ronde | Center | Grootte |
+|---|---|---|
+| 1 De Doolhof | midden van het doolhof | 80 |
+| 2 De Horde | midden van de arena | 60 |
+| 3 Het Ei | midden van het bos | 150 |
+| 4 King of the SMP | burcht | 200, in sudden death naar 60 |
+| 5 Arena FFA | binnenplaats | 40, na 5 minuten naar 10 |
+| 6 De Finale | troonzaal | 20, na 3 minuten naar 6 |
 
-## Vanaf ronde 4: teleports
-
-Na ronde 4 valt de groep uit elkaar (finalist 1, de rest naar de FFA, uitgeschakelde spelers naar
-spectator). Poorten werken dan niet meer, dus:
-
-- Einde ronde 4: kroondrager blijft staan (of gaat naar het spectator-deck om te kijken), de rest
-  wordt naar de FFA-arena geteleporteerd.
-- Einde ronde 5: de twee finalisten worden naar de 1v1-arena geteleporteerd.
-- Uitgeschakelde spelers gaan in spectator mode. Vraag ze om binnen hun zone te blijven kijken
-  (voor de stream), maar het hoeft niet hard afgedwongen.
+Spectators vliegen dwars door de border heen, dus doden en staff hebben er geen last van. Wie
+buiten de border staat op het moment dat hij gezet wordt krijgt schade, dus altijd eerst
+teleporteren, dan de border zetten.
 
 ## De zones
 
-| Zone | Formaat | Gamemode | Bouwnotities |
+| Zone | Waar | Bouwnotities | Gamemode |
 |---|---|---|---|
-| Lobby | 30 x 30 | adventure | Spawn, regels op borden, een paar targets om te warmen. |
-| 1 De Doolhof | 64 x 64, muren 4 hoog, dicht plafond | adventure | Genereer met een maze-generator (WorldEdit-script of online generator naar schematic). Plafond van barriers of bedrock zodat niemand eroverheen kan. 10 tot 15 kisten in doodlopende gangen. |
-| 2 De Horde | ronde arena Ø 50, muur 6 hoog | adventure | 4 mob-spawnpunten aan de rand, wat dekking (pilaren, muurtjes) in het midden. Spelersrespawn aan de rand. |
-| 3 Het Ei | 150 x 150 zoekgebied | survival | Natuurlijk terrein is prima: bos, heuvels, een paar grotten, een meertje. Muur of worldborder eromheen. Eén Groot Ei, 3 tot 5 nep-eitjes. |
-| 4 King zone | 200 x 200 open map | survival | Natuurlijk terrein plus een paar structures: dorpje, burcht in het midden, toren, bos, water. Hunters spawnen op 4 punten aan de rand, de koning in de burcht. Worldborder-shrink in de laatste minuten. |
-| 5 FFA-arena | Ø 40, plat met wat dekking | adventure | Simpel. Worldborder-shrink na 5 minuten. |
-| 6 1v1-arena | 20 x 20 | adventure | Simpel. Twee startpunten tegenover elkaar. |
-| Spectator-deck | glazen platform boven elke zone | spectator | Optioneel, spectator mode is genoeg. |
+| Basiskamp (V1) | Noord, bij de poort van het doolhof | Spawnpoint, kampvuur, tenten, regels op borden, wat targets om te warmen. | adventure |
+| 1 De Doolhof | Noord, in een dal | Hagendoolhof 64 x 64, hagen 4 hoog, geen plafond nodig: adventure mode en niemand heeft nog pearls. Genereer met een maze-generator (WorldEdit-script of online generator naar schematic). 10 tot 15 kisten in doodlopende gangen. | adventure |
+| 2 De Horde (V2) | Oost | Ruïne-arena Ø 50, muur 6 hoog, 4 mob-spawnpunten aan de rand, wat dekking in het midden. Verzamelpunt bij de poort. | adventure |
+| 3 Het Ei (V3) | Zuid | Bos met heuvels, grotten en een meertje, 150 x 150. Eén Groot Ei, 3 tot 5 nep-eitjes, beacon onder het Ei. Verzamelpunt met kampvuur aan de bosrand. | survival |
+| 4 King zone (V4) | Midden, 200 x 200 rond de burcht | Burcht op een heuvel, dorpje, toren, bos, water. 4 hunterspawns met hekjes aan de rand. De Kring voor de poort van de burcht. | survival |
+| 5 Arena FFA | Binnenplaats van de burcht | Ø 40, plat met wat dekking (putrand, karren, pilaren). | adventure |
+| 6 De Finale | Troonzaal van de burcht (of het dak) | 20 x 20, twee startpunten tegenover elkaar. Hier is ook de kroning. | adventure |
+
+**De Kring:** 20 pilaren in een cirkel, op elke pilaar een spelerskop en eronder een lichtblok.
+Dat is Het Rad in de open lucht. Bouw en werking staan in
+[04-technische-schets.md](04-technische-schets.md).
 
 **Waarom adventure vs survival:** in adventure mode kun je niet bouwen of breken. Dat wil je in
-het doolhof (niet door de muur), de horde (niet inbouwen) en de arena's (puur vechten). In de
-Ei-zone moet je juist minen, en in de King zone mag bouwen omdat dat SMP-achtig is (pillaren,
+het doolhof (niet door de haag), de horde (niet inbouwen) en de arena's (puur vechten). In het
+Ei-bos moet je juist minen, en in de King zone mag bouwen omdat dat SMP-achtig is (pillaren,
 trap bouwen, inbouwen op je laatste hartje).
+
+## Spectators
+
+Gewoon spectator mode. Doden en staff vliegen vrij rond, door de border heen. Vraag de doden om
+in de buurt van de actie te blijven kijken (voor hun eigen stream), meer regels zijn er niet.
 
 ## Stream-overwegingen
 
-- Het doolhof is van bovenaf een mooi shot (spectator boven het plafond, plafond van barriers is
-  dan onzichtbaar).
-- Elke wachtkamer is een vaste "camerapositie" voor de host: iedereen staat bij elkaar.
+- Het doolhof is van bovenaf een mooi shot (spectator boven de hagen).
+- De burcht is het centrale beeld: vanaf de muur zie je de hele King zone, de binnenplaats en de
+  troonzaal.
+- Elk verzamelpunt is een vaste camerapositie voor de host: iedereen staat bij elkaar rond het
+  kampvuur.
 - Bossbar bovenin het scherm voor timer en status (wave, koning, tijd), zodat elke stream
   dezelfde info in beeld heeft.
+- De wereld blijft na de bootcamp gewoon bestaan. Handig als hub of spawn voor de SMP zelf.

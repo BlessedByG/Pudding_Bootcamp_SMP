@@ -5,7 +5,8 @@ kroon heeft, is de koning en is voor iedereen zichtbaar door muren heen.
 
 ## Start van ronde 4: Het Rad
 
-1. Iedereen staat in wachtkamer 4 voor Het Rad: een cirkel van 20 spelerskoppen met één lampje.
+1. Iedereen staat in De Kring voor de poort van de burcht: 20 pilaren met spelerskoppen, één
+   lampje.
    De host legt de kroonregels uit en sluit af met: "Wie de koning wordt? Iedereen kan het zijn.
    Het lot beslist."
 2. De commander start het rad. Het lampje gaat twee of drie rondes rond, wordt langzamer, en
