@@ -15,6 +15,7 @@ hoe je het technisch bouwt en hoe de avond zelf verloopt. Niet fancy, wel comple
 | **Spelers** | 20 (19 streamers + ClownPierce). Werkt vanaf ~8 tot ~30, de getallen schalen mee. |
 | **Duur** | ± 2 uur inclusief pauzes en praatjes van de host. |
 | **Server** | Java, één wereld, alle zones naast elkaar. Vanilla + datapack is genoeg, geen plugins nodig. |
+| **Voice** | Simple Voice Chat, verplicht. Proximity, met in ronde 3 één grote groep en vanaf ronde 2 een groep voor de doden. |
 | **Eliminatie** | Niemand ligt eruit vóór ronde 4. Elke streamer heeft dus minstens een uur content. |
 | **Winnaar** | De speler die de finale (1v1 tussen de twee kroondragers) wint, is King of the SMP. |
 
@@ -42,7 +43,7 @@ Vanaf ronde 4 gaat het met teleports, omdat de groep dan uit elkaar valt.
 | # | Ronde | Wat doe je | Duur | Wat train je |
 |---|---|---|---|---|
 | 1 | **De Doolhof** | Vind de uitgang van het doolhof. Kistjes in doodlopende gangen. | 10 min | Navigeren, oriëntatie |
-| 2 | **De Horde** | Overleef 5 waves mobs als groep in een arena. | 10 min | Mobs, boog, schild, samenwerken |
+| 2 | **De Horde** | Overleef 5 waves mobs als groep in een arena. Dood = kijken tot de ronde klaar is. | 10 min | Mobs, boog, schild, samenwerken |
 | 3 | **Het Ei** | Vind het Grote Ei, hak je naar binnen, pak loot + een diamond block als ticket. | 10 min | Zoeken, minen, looten onder druk |
 | 4 | **King of the SMP** | Het Rad "kiest" de koning en landt op Clown (rigged). 19v1. Kill de koning en je krijgt de kroon. Wie hem heeft als de timer afloopt is finalist 1. | 15 min | PvP, chaos, overleven |
 | 5 | **Arena FFA** | Iedereen zonder kroon, full hp, één arena. Laatste die overblijft is finalist 2. | max 10 min | PvP |
@@ -56,6 +57,7 @@ Vanaf ronde 4 gaat het met teleports, omdat de groep dan uit elkaar valt.
 - [docs/04-technische-schets.md](docs/04-technische-schets.md): hoe je het bouwt met een datapack (tags, teams, timer, kroon-overdracht, poorten).
 - [docs/05-draaiboek.md](docs/05-draaiboek.md): tijdschema van de avond, rollen van de staff, checklists.
 - [docs/06-open-keuzes.md](docs/06-open-keuzes.md): beslissingen die nog gemaakt moeten worden, met een aanbeveling per stuk.
+- [docs/07-voice.md](docs/07-voice.md): Simple Voice Chat, de voice-regels per ronde en hoe de groepen werken.
 
 ## Nog te beslissen
 

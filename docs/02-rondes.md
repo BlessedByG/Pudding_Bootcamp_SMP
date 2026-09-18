@@ -15,6 +15,9 @@ gaat (niet alles verklappen: de kroonregels pas uitleggen bij ronde 4). Countdow
 Iedereen zit in één team (`spelers`) met friendly fire uit, dus je kunt elkaar niet raken tot
 ronde 4.
 
+**Voice:** proximity vanaf het moment dat je joint. Voice-test in de lobby voor de start
+(zie [07-voice.md](07-voice.md)).
+
 ---
 
 ## Ronde 1: De Doolhof
@@ -43,6 +46,8 @@ ronde 4.
 
 **Bonus:** de eerste 5 spelers die eruit zijn krijgen een voorsprongkistje in de wachtkamer:
 1 gapple + 1 ender pearl.
+
+**Voice:** proximity. Je hoort wie in de gang naast je loopt, en dat is het.
 
 **Wat train je:** oriëntatie, rustig blijven, dead ends herkennen.
 
@@ -76,18 +81,23 @@ ronde 4.
 - Bossbar laat zien: "Wave 3 · 12 mobs over".
 
 **Regels**
-- Doodgaan = 15 seconden spectator, daarna respawn aan de rand met een verse hordekit. Niemand
-  ligt eruit.
-- Deaths worden geteld op een scoreboard in de sidebar. Puur voor de eer en de bonus.
+- Doodgaan = spectator tot het einde van de ronde. Je kijkt mee, je hoort alles, maar de
+  levenden horen jou niet. Je zit met de andere doden in de Doden-voice. Aan het eind van de
+  ronde gaat iedereen door, dood of levend.
+- De volgorde van sneuvelen komt op het scoreboard in de sidebar. Puur voor de eer.
 - Optionele twist voor de laatste minuut: na wave 5 gaat PvP 60 seconden aan ("vrij vuur").
   Wie dan overblijft, of de meeste kills heeft, krijgt een extra bonus. Alleen doen als je de
   groep kent; het kan de sfeer ook kapotmaken.
 
 **Einde**
-- Wave 5 dood of timer 10 minuten. Poort 3 open.
+- Wave 5 dood, iedereen dood, of timer 10 minuten. Poort 3 open. De doden worden in wachtkamer 3
+  weer levend gemaakt.
 - Loot die mobs droppen mag je houden (pijlen, wat rommel).
 
-**Bonus:** iedereen die de hele ronde 0 deaths heeft, krijgt 1 ender pearl in de wachtkamer.
+**Bonus:** iedereen die de ronde overleeft, krijgt 1 ender pearl in de wachtkamer.
+
+**Voice:** levend proximity. Dood = spectator: alles horen, niet gehoord worden, en met de andere
+doden praten in de groep Doden. Je krijgt bij je dood een knop in de chat om erin te gaan.
 
 **Wat train je:** mobs, boog en schild, samen vechten, niet in de creeper rennen.
 
@@ -96,6 +106,9 @@ ronde 4.
   4 punten in plaats van alles op één plek.
 - Mobs blijven ergens hangen (achter dekking, in een gat): wave-timer van 2 minuten vangt dit op.
   Admin kan met `kill @e[tag=horde]` een wave forceren.
+- Iedereen ligt er op wave 3 al uit: dan was het te zwaar, en een arena vol spectators is saai.
+  Zonder respawns wil je de waves liever iets te makkelijk dan te moeilijk; schaal ze in de
+  testrun.
 
 ---
 
@@ -122,6 +135,8 @@ minstens één diamond block mee. Dat block is je ticket naar ronde 4.
 
 **Regels**
 - Geen PvP (iedereen zit nog in hetzelfde team).
+- Iedereen zit in één voice-groep (Ei): je hoort elkaar overal in het zoekgebied. Wie het Ei
+  vindt, moet dus zijn mond houden of bluffen.
 - Pak wat je pakken kunt, maar je hebt maar één inventory.
 - Je komt alleen door poort 4 met een diamond block op zak. De poort neemt het block in.
 
@@ -132,6 +147,8 @@ minstens één diamond block mee. Dat block is je ticket naar ronde 4.
   basiskit**. Geen ticket = geen loot. Dat is de straf.
 
 **Bonus:** je loot is je bonus. Wie snel is heeft de beste spullen voor ronde 4.
+
+**Voice:** iedereen in de groep Ei, geen proximity. Knop in de chat bij de start van de ronde.
 
 **Wat train je:** exploren, snel minen, kiezen wat je meeneemt, onder tijdsdruk werken.
 
@@ -179,6 +196,10 @@ Hier het overzicht.
 - Finalist 1 gaat kijken. Alle hunters die nog leven gaan naar ronde 5. Iedereen die dood is
   (ex-koningen, hunters gestorven in sudden death) is uitgeschakeld.
 
+**Voice:** iedereen terug naar proximity bij de start (knop na het rad). Dood = spectator: alles
+horen, niet gehoord worden. Wie eruit ligt krijgt de knop voor de groep Doden. Hunters die 20
+seconden op hun respawn wachten zijn ook even spectator en dus even stil.
+
 **Wat train je:** PvP tegen overmacht, target focus, wanneer je wel en niet moet gaan.
 
 ---
@@ -205,6 +226,9 @@ Hier het overzicht.
 - Laatste levende speler krijgt de tweede kroon: **finalist 2**.
 - Hard maximum 10 minuten; staan er dan nog meerdere, dan beslist het aantal kills.
 
+**Voice:** loopt door op de stand van ronde 4. Levend proximity, dood naar de groep Doden.
+Finalist 1 wacht ook in Doden.
+
 ---
 
 ## Ronde 6: De Finale
@@ -224,3 +248,6 @@ Hier het overzicht.
 **Einde**
 - Winnaar is King of the SMP. Kroning in de lobby, met iedereen erbij. Prijs: zie
   [06-open-keuzes.md](06-open-keuzes.md).
+
+**Voice:** de twee finalisten proximity in de arena, alle anderen in Doden. Bij de kroning gaat
+iedereen uit zijn groep: proximity in de lobby, zoals aan het begin.

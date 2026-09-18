@@ -13,6 +13,8 @@ van te bouwen, geen kant-en-klaar pakket.
   hebt er geen plugins bij nodig.
 - `view-distance=8`, `simulation-distance=6`. Whitelist aan.
 - `server.properties`: `pvp=true` (PvP regelen we via teams, niet via deze setting).
+- Simple Voice Chat als server-mod of Paper-plugin, plus UDP-poort 24454 open. Config en regels
+  staan in [07-voice.md](07-voice.md).
 - Gamerules bij de start:
 
 ```
@@ -42,6 +44,7 @@ spawnen we zelf.
 | `out` | Uitgeschakeld, spectator. |
 | `finalist` | Finalist 1 of 2. |
 | `ticket` | Ronde 3: heeft een diamond block ingeleverd. |
+| `dood` | Ronde 2: gesneuveld, spectator tot het einde van de ronde. |
 | `ffa` | Ronde 5: doet mee aan de FFA. |
 | `staff` | Admins, worden door alle selectors overgeslagen. |
 
@@ -77,7 +80,6 @@ scoreboard objectives add respawn dummy
 scoreboard objectives add timer dummy
 scoreboard objectives add reign dummy
 scoreboard objectives add kills playerKillCount
-scoreboard objectives add hordedeaths dummy
 scoreboard objectives add slot dummy
 scoreboard objectives add rad dummy
 scoreboard objectives setdisplay sidebar reign
@@ -113,7 +115,8 @@ datapacks/bootcamp/
       ei/pas.mcfunction                # neemt block in, tp naar wachtkamer 4
       ei/einde.mcfunction              # achterblijvers zonder ticket: clear + basiskit
       horde/volgende.mcfunction        # start de volgende wave
-      horde/dood.mcfunction            # 15 sec spectator, dan respawn
+      horde/dood.mcfunction            # dood = spectator tot einde ronde
+      horde/einde.mcfunction           # doden weer levend, pearls voor overlevers
       rad/start.mcfunction             # Het Rad: rekent uit waar het moet landen
       rad/stap.mcfunction              # lampje één positie verder, steeds langzamer
       rad/lamp_aan.mcfunction          # setblock per slot
@@ -134,6 +137,9 @@ datapacks/bootcamp/
       ffa/uit.mcfunction               # dood = spectator
       finale/start.mcfunction
       finale/potje.mcfunction
+      voice/doden.mcfunction           # knop: /voicechat join Doden
+      voice/ei.mcfunction              # knop: /voicechat join Ei
+      voice/proximity.mcfunction       # knop: /voicechat leave
       kit/basis.mcfunction
       kit/horde.mcfunction
       kit/boss.mcfunction
@@ -173,6 +179,7 @@ Een naam op de helm is leuk maar niet nodig; de syntax van `custom_name` verschi
 
 ```
 # oude koning eruit
+execute as @a[tag=king] run function bootcamp:voice/doden
 item replace entity @a[tag=king] armor.head with minecraft:air
 effect clear @a[tag=king] minecraft:glowing
 tag @a[tag=king] add out
@@ -311,6 +318,7 @@ tp @a[tag=hunter] <hunterspawn achter de hekjes>
 tp @a[tag=uitverkoren] <burcht>
 execute as @a[tag=uitverkoren] run function bootcamp:kit/boss
 execute as @a[tag=uitverkoren] run function bootcamp:king/give
+execute as @a[tag=speler] run function bootcamp:voice/proximity
 function bootcamp:king/start
 ```
 
@@ -364,6 +372,7 @@ tag @s add out
 tag @s remove hunter
 team join out @s
 gamemode spectator @s
+function bootcamp:voice/doden
 ```
 
 `king/start` (aangeroepen vanuit `rad/naar_burcht`) zet `#king timer` op 900, de bossbar op max
@@ -385,8 +394,11 @@ tag @a[tag=hunter,gamemode=survival] add ffa
 execute as @a[tag=ffa] run function bootcamp:kit/arena
 effect give @a[tag=ffa] minecraft:instant_health 1 3 true
 team leave @a[tag=ffa]
+gamemode adventure @a[tag=ffa]
 spreadplayers <ffa-x> <ffa-z> 5 18 false @a[tag=ffa]
+gamemode spectator @a[tag=king]
 tp @a[tag=king] <spectator-deck boven de ffa>
+execute as @a[tag=king] run function bootcamp:voice/doden
 function bootcamp:ffa/start
 ```
 
@@ -396,8 +408,8 @@ naar `finale/start`.
 ```
 # ffa/tick.mcfunction
 execute as @a[tag=ffa,scores={deaths=1..}] run function bootcamp:ffa/uit
-execute store result score #alive timer if entity @a[tag=ffa,gamemode=survival]
-execute if score #alive timer matches 1 as @a[tag=ffa,gamemode=survival] run function bootcamp:king/give
+execute store result score #alive timer if entity @a[tag=ffa,gamemode=adventure]
+execute if score #alive timer matches 1 as @a[tag=ffa,gamemode=adventure] run function bootcamp:king/give
 execute if score #alive timer matches 1 run function bootcamp:finale/start
 execute if score #alive timer matches 2.. run schedule function bootcamp:ffa/tick 1s
 ```
@@ -409,10 +421,14 @@ tag @s add out
 tag @s remove ffa
 team join out @s
 gamemode spectator @s
+function bootcamp:voice/doden
 ```
 
 Border-shrink voor de FFA: `worldborder center <x> <z>`, `worldborder set 40`, en op 5 minuten
 `worldborder set 10 120`.
+
+`finale/start` zet beide `king`-spelers op `gamemode adventure`, geeft ze de finalekit, stuurt ze
+de [VERLATEN]-knop (`voice/proximity`) en teleporteert ze naar de twee startpunten.
 
 ## Poorten
 
@@ -472,16 +488,60 @@ scoreboard players remove #wave timer 1
 execute if score #mobs timer matches 0 run function bootcamp:horde/volgende
 execute if score #wave timer matches 0 run function bootcamp:horde/volgende
 execute as @a[tag=speler,scores={deaths=1..}] run function bootcamp:horde/dood
+execute unless entity @a[tag=speler,gamemode=adventure] run function bootcamp:horde/einde
 ...
 schedule function bootcamp:horde/tick 1s
 ```
 
 `horde/volgende` zet `#wave timer` op 120 en roept de volgende wave-functie aan (bijhouden welke
-via een scoreboard `#wavenr`). `horde/dood` doet hetzelfde als `king/dood` maar met 15 seconden
-en telt `hordedeaths` op.
+via een scoreboard `#wavenr`). Na wave 5 roept hij `horde/einde` aan.
+
+```
+# horde/dood.mcfunction  (run as de dode speler)
+scoreboard players reset @s deaths
+tag @s add dood
+gamemode spectator @s
+tellraw @a [{"selector":"@s"},{"text":" is gesneuveld","color":"gray"}]
+function bootcamp:voice/doden
+
+# horde/einde.mcfunction
+schedule clear bootcamp:horde/tick
+kill @e[tag=horde]
+give @a[tag=speler,tag=!dood] minecraft:ender_pearl 1
+gamemode adventure @a[tag=speler]
+tag @a[tag=dood] remove dood
+tp @a[tag=speler] <wachtkamer 3>
+```
+
+Dood is dus spectator tot `horde/einde`, geen respawn. De laatste regel van de tick-check zorgt
+dat de ronde ook stopt als iedereen dood is.
 
 Gear op mobs (voor wave 3 en 4): `{HandItems:[{id:"minecraft:iron_sword",count:1},{}],ArmorItems:[{},{},{id:"minecraft:iron_chestplate",count:1},{}]}`
 achter de summon. Op 1.20.4 en ouder is dat `Count` met hoofdletter.
+
+## Voice-knoppen
+
+Spelers hoeven geen commands te typen voor de voice-groepen: de datapack stuurt een klikbare knop
+in de chat. Drie functies, allemaal `run as` de speler die de knop moet krijgen:
+
+```
+# voice/doden.mcfunction
+tellraw @s [{"text":"Je ligt eruit. Klik voor de voice van de doden: ","color":"gray"},{"text":"[DODEN]","color":"red","bold":true,"click_event":{"action":"run_command","command":"/voicechat join Doden"}}]
+
+# voice/ei.mcfunction
+tellraw @s [{"text":"Ronde 3: iedereen in één voice. Klik: ","color":"gray"},{"text":"[EI-VOICE]","color":"green","bold":true,"click_event":{"action":"run_command","command":"/voicechat join Ei"}}]
+
+# voice/proximity.mcfunction
+tellraw @s [{"text":"Terug naar proximity. Klik: ","color":"gray"},{"text":"[VERLATEN]","color":"aqua","bold":true,"click_event":{"action":"run_command","command":"/voicechat leave"}}]
+```
+
+Op versies vóór 1.21.5 heet het `"clickEvent":{"action":"run_command","value":"/voicechat join Doden"}`.
+Doet de knop niks, probeer dan het command zonder de schuine streep. De groepen moeten al bestaan
+(de voice-admin maakt ze, zie [07-voice.md](07-voice.md)); joinen op naam werkt alleen als de
+naam klopt, dus houd het bij `Doden` en `Ei`.
+
+Waar ze aangeroepen worden: `horde/dood`, `ei/start` (voor `@a[tag=speler]`), `rad/naar_burcht`,
+`king/transfer`, `king/uit`, `king/einde`, `ffa/uit`, `finale/start` en de kroning.
 
 ## Kits
 

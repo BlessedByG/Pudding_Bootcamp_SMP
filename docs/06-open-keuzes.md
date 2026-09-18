@@ -123,3 +123,13 @@ voor de eindbaas en hoef je niet te liegen.
 **Aanbeveling:** geheim houden tot de kroning en het dan onthullen. De chats gaan het toch
 roepen ("dat was rigged!") en dat is precies de content. Bijkomend voordeel: valt Clown op de
 dag zelf uit, dan verhuis je de rol `uitverkoren` en heb je zonder gedoe een andere eindbaas.
+
+## 13. Hoe ver draagt je stem?
+
+**Nu in het concept:** 48 blokken, de standaard van de mod. Dat geldt de hele avond, want de
+afstand is een serverinstelling die je niet per ronde wisselt.
+
+**Alternatief:** 32 blokken. Sluipen in het doolhof en de King zone wordt spannender, maar in de
+horde-arena (Ø 50) hoor je elkaar dan niet meer van rand tot rand.
+
+**Aanbeveling:** 48 laten staan. Wie stil wil zijn heeft de fluister-toets.
