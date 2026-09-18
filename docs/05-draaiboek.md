@@ -16,7 +16,7 @@ Tijdschema, rollen en checklists voor de avond zelf. Tijden zijn een voorbeeld m
 | 20:27 | Wachtkamer 3: pearls voor de 0-deaths. | Host |
 | 20:30 | **Pauze** (5 min). Toiletmoment, host houdt de stream warm. | Host |
 | 20:35 | **Ronde 3: Het Ei** (10 min) | |
-| 20:46 | Wachtkamer 4: host legt nu de kroonregels uit. Clown wordt naar de burcht geteleporteerd. | Host, Admin 1 |
+| 20:46 | Wachtkamer 4: host legt nu de kroonregels uit. "Het lot beslist wie de koning wordt." Het Rad draait en landt op Clown. Clown naar de burcht. | Host, Admin 1 |
 | 20:50 | **Ronde 4: King of the SMP** (30 sec voorsprong + 15 min) | |
 | 21:06 | Uitslag: finalist 1. Rest wordt naar de FFA geteleporteerd. | Admin 1 |
 | 21:08 | **Ronde 5: Arena FFA** (max 10 min) | |
@@ -32,7 +32,7 @@ hard, dus het loopt vooral uit door praatjes. Dat is de host z'n verantwoordelij
 
 | Rol | Aantal | Wat |
 |---|---|---|
-| **Host / caster** | 1 | Praat op de stream, legt regels uit, kondigt rondes aan, houdt de wachtkamers gezellig. Zit in spectator. |
+| **Host / caster** | 1 | Praat op de stream, legt regels uit, kondigt rondes aan, houdt de wachtkamers gezellig. Zit in spectator. Speelt Het Rad recht: "iedereen kan de koning worden". |
 | **Admin 1: commander** | 1 | Draait de functies: poorten, starts, timers, teleports. Doet verder niks anders. |
 | **Admin 2: ref** | 1 | Kijkt naar problemen: stuck spelers, disconnects, bugs met de kroon. Overrulet handmatig waar nodig. Houdt het randgevallen-lijstje uit [03-kroon-regels.md](03-kroon-regels.md) bij de hand. |
 | **Camera** | 0 tot 2 | Spectator-accounts voor een mooi hoofdbeeld op de stream (top-down doolhof, overzicht King zone). Optioneel. |
@@ -45,7 +45,8 @@ zijn.
 
 Grofweg op volgorde van werk:
 
-1. De Gang met 4 wachtkamers en 4 poorten (1 avond).
+1. De Gang met 4 wachtkamers en 4 poorten (1 avond). Wachtkamer 4 groter, met Het Rad op de
+   achterwand: 20 koppen, 20 lichtblokken (uurtje extra).
 2. Lobby (uurtje).
 3. Doolhof genereren en plaatsen, plafond dicht, kisten vullen (1 avond).
 4. Horde-arena met 4 spawnpunten en dekking (1 avond).
@@ -68,6 +69,8 @@ Doe minstens één keer de hele avond met 4 of 5 testers, van lobby tot kroning.
 - [ ] Horde: waves volgen elkaar op, respawn na 15 sec werkt, bossbar telt mobs.
 - [ ] Ei: drukplaat neemt het diamond block in en teleporteert. Zonder block gebeurt er niks.
       Beacon-hint gaat aan op 5 min.
+- [ ] Rad: landt op de speler met tag `uitverkoren`. Draai hem vijf keer, dan zie je meteen of
+      de slot-scores kloppen met de volgorde van de koppen.
 - [ ] King: kroon gaat naar de killer (test met 2 man). Kroon gaat naar random hunter bij val-dood.
       Respawn na 20 sec. Sudden death stopt respawns en krimpt de border. Timer 0 wijst
       finalist 1 aan en teleporteert de rest.
@@ -86,6 +89,7 @@ Doe minstens één keer de hele avond met 4 of 5 testers, van lobby tot kroning.
 - [ ] Coördinaten van alle tp-punten in een tekstbestand naast de commander.
 - [ ] Ref heeft [03-kroon-regels.md](03-kroon-regels.md) open.
 - [ ] Reserve-diamond-blocks in de admin-kist.
+- [ ] Tag `uitverkoren` staat op Clown en op niemand anders (`tag @a list`).
 
 ## Spelregels voor de streamers
 
@@ -104,6 +108,7 @@ Kort en op de lobbyborden:
 |---|---|
 | Server crasht | Backup terugzetten, `reset`, ronde opnieuw starten vanaf de laatste wachtkamer. |
 | Timer loopt niet | `schedule clear` en de start-functie van de ronde opnieuw draaien met de resterende tijd. |
+| Rad stopt op de verkeerde kop | Slot-score van die speler klopt niet met de plek van zijn kop. Host: "technische storing", ref fixt de score, rad nog een keer. |
 | Kroon zit bij niemand | `execute as <speler> run function bootcamp:king/give`. |
 | Kroon zit bij twee spelers | `tag <verkeerde> remove king` en de helm eraf; ref beslist wie hem hoort te hebben (laatste kill). |
 | Speler zit vast in een blok | `tp` door de ref. |

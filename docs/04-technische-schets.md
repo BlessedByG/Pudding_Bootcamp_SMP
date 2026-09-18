@@ -37,6 +37,7 @@ spawnen we zelf.
 |---|---|
 | `speler` | Doet mee (alle 20). |
 | `hunter` | Ronde 4: hunter. |
+| `uitverkoren` | De verborgen rol: op deze speler landt Het Rad. Vooraf op Clown zetten. |
 | `king` | Ronde 4 t/m 6: heeft een kroon. |
 | `out` | Uitgeschakeld, spectator. |
 | `finalist` | Finalist 1 of 2. |
@@ -77,6 +78,8 @@ scoreboard objectives add timer dummy
 scoreboard objectives add reign dummy
 scoreboard objectives add kills playerKillCount
 scoreboard objectives add hordedeaths dummy
+scoreboard objectives add slot dummy
+scoreboard objectives add rad dummy
 scoreboard objectives setdisplay sidebar reign
 ```
 
@@ -111,6 +114,13 @@ datapacks/bootcamp/
       ei/einde.mcfunction              # achterblijvers zonder ticket: clear + basiskit
       horde/volgende.mcfunction        # start de volgende wave
       horde/dood.mcfunction            # 15 sec spectator, dan respawn
+      rad/start.mcfunction             # Het Rad: rekent uit waar het moet landen
+      rad/stap.mcfunction              # lampje één positie verder, steeds langzamer
+      rad/lamp_aan.mcfunction          # setblock per slot
+      rad/lamp_uit.mcfunction
+      rad/lamp_uit_alles.mcfunction
+      rad/einde.mcfunction             # drama: title, geluid, particles
+      rad/naar_burcht.mcfunction       # koning naar de burcht, hunters naar de rand
       king/start.mcfunction
       king/tick.mcfunction             # timer, respawns, sudden death, bossbar
       king/transfer.mcfunction         # kroon naar de killer (run as killer)
@@ -210,6 +220,106 @@ kan altijd handmatig overrulen met `execute as <speler> run function bootcamp:ki
 execute if entity @a[tag=king,scores={deaths=1..}] as @r[tag=hunter,gamemode=survival] run function bootcamp:king/transfer
 ```
 
+## Het Rad (rigged)
+
+**Bouw:** een cirkel van 20 spelerskoppen op de achterwand van wachtkamer 4, met onder elke kop
+een blok dat aan of uit kan: `black_concrete` (uit) en `glowstone` (aan). Geen redstone lamps,
+die gaan uit bij de eerste block update. Nummer de slots 0 t/m 19 met de klok mee. Koppen haal
+je met `give @s minecraft:player_head[minecraft:profile="ClownPierce"]` (op 1.20.4 en ouder:
+`give @s minecraft:player_head{SkullOwner:"ClownPierce"}`).
+
+**De rol:** `tag ClownPierce add uitverkoren`. Vooraf zetten, in `setup` of met de hand. Verder
+krijgt elke speler een `slot`-score die overeenkomt met de plek van zijn kop:
+
+```
+scoreboard players set ClownPierce slot 7
+scoreboard players set SpelerA slot 0
+scoreboard players set SpelerB slot 1
+...
+```
+
+Het rad rekent uit hoeveel stappen het moet zetten om precies op het slot van de `uitverkoren`
+speler te eindigen. De startpositie en het aantal extra rondes zijn echt willekeurig; alleen het
+eindpunt staat vast.
+
+```
+# rad/start.mcfunction
+scoreboard players operation #doel rad = @a[tag=uitverkoren,limit=1] slot
+execute store result score #pos rad run random value 0..19
+execute store result score #rondes rad run random value 2..3
+scoreboard players set #twintig rad 20
+# stappen tot het doel: rondes * 20 + (doel - pos) mod 20
+scoreboard players operation #rest rad = #doel rad
+scoreboard players operation #rest rad -= #pos rad
+scoreboard players operation #rest rad %= #twintig rad
+scoreboard players operation #rondes rad *= #twintig rad
+scoreboard players operation #rest rad += #rondes rad
+function bootcamp:rad/lamp_uit_alles
+function bootcamp:rad/lamp_aan
+schedule function bootcamp:rad/stap 10t
+```
+
+`%=` in scoreboards is een floorMod, dus het resultaat is altijd 0 t/m 19. Op versies zonder
+`random` (vóór 1.20.2) zet je `#pos` en `#rondes` gewoon met de hand voor je begint.
+
+```
+# rad/stap.mcfunction
+function bootcamp:rad/lamp_uit
+scoreboard players add #pos rad 1
+scoreboard players operation #pos rad %= #twintig rad
+function bootcamp:rad/lamp_aan
+scoreboard players remove #rest rad 1
+playsound minecraft:block.note_block.hat master @a
+
+execute if score #rest rad matches 0 run function bootcamp:rad/einde
+# steeds langzamer richting het eind
+execute if score #rest rad matches 13.. run schedule function bootcamp:rad/stap 2t
+execute if score #rest rad matches 9..12 run schedule function bootcamp:rad/stap 4t
+execute if score #rest rad matches 6..8 run schedule function bootcamp:rad/stap 7t
+execute if score #rest rad matches 4..5 run schedule function bootcamp:rad/stap 10t
+execute if score #rest rad matches 3 run schedule function bootcamp:rad/stap 15t
+execute if score #rest rad matches 2 run schedule function bootcamp:rad/stap 20t
+execute if score #rest rad matches 1 run schedule function bootcamp:rad/stap 30t
+```
+
+```
+# rad/lamp_aan.mcfunction  (één regel per slot, coördinaten van het lichtblok)
+execute if score #pos rad matches 0 run setblock <x0 y0 z0> minecraft:glowstone
+execute if score #pos rad matches 1 run setblock <x1 y1 z1> minecraft:glowstone
+...
+execute if score #pos rad matches 19 run setblock <x19 y19 z19> minecraft:glowstone
+
+# rad/lamp_uit.mcfunction: zelfde regels met minecraft:black_concrete
+# rad/lamp_uit_alles.mcfunction: 20 setblocks black_concrete zonder de if
+```
+
+```
+# rad/einde.mcfunction
+playsound minecraft:entity.ender_dragon.growl master @a
+title @a times 10t 100t 20t
+title @a title {"text":"DE KONING","color":"gold"}
+title @a subtitle {"text":"","extra":[{"selector":"@a[tag=uitverkoren]"}]}
+execute at @a[tag=uitverkoren] run particle minecraft:totem_of_undying ~ ~1 ~ 1 1 1 0.5 200
+schedule function bootcamp:rad/naar_burcht 3s
+```
+
+```
+# rad/naar_burcht.mcfunction
+tag @a[tag=speler,tag=!uitverkoren] add hunter
+team join hunters @a[tag=hunter]
+tp @a[tag=hunter] <hunterspawn achter de hekjes>
+tp @a[tag=uitverkoren] <burcht>
+execute as @a[tag=uitverkoren] run function bootcamp:kit/boss
+execute as @a[tag=uitverkoren] run function bootcamp:king/give
+function bootcamp:king/start
+```
+
+**Fallback zonder bouwwerk:** hetzelfde ritme, maar in plaats van lampjes laat je met `title` de
+naam zien van de speler op de huidige positie. Geef elke speler per stap een score
+`cursor = slot - #pos` (via `scoreboard players operation`) en toon
+`@a[tag=speler,scores={cursor=0}]` in de title. Minder mooi op stream, wel in tien minuten
+gemaakt.
+
 ## Timer en tick
 
 Eén functie per ronde die zichzelf elke seconde opnieuw inplant:
@@ -256,8 +366,9 @@ team join out @s
 gamemode spectator @s
 ```
 
-`king/start` zet `#king timer` op 900, de bossbar op max 900, de worldborder op 200 rond de
-burcht, en plant de eerste `tick` in. Stoppen: `schedule clear bootcamp:king/tick`.
+`king/start` (aangeroepen vanuit `rad/naar_burcht`) zet `#king timer` op 900, de bossbar op max
+900 en de worldborder op 200 rond de burcht. Na 30 seconden voorsprong opent hij de hekjes bij de
+hunterspawns met `fill` en plant de eerste `tick` in. Stoppen: `schedule clear bootcamp:king/tick`.
 
 Bossbar-naam met de naam van de koning updaten:
 

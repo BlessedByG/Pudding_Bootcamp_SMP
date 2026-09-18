@@ -154,8 +154,13 @@ Hier het overzicht.
 **Setup**
 - 200 x 200 open map met een burcht in het midden, een dorpje, bos, water, een toren. Survival:
   bouwen mag.
-- ClownPierce start met de kroon in de burcht, met de **bosskit** (volledig diamond Protection II,
-  diamond sword Sharpness II, boog Power II, 32 pijlen, 4 gapples, 8 pearls, schild, 64 cobble).
+- Het begint in wachtkamer 4 met **Het Rad**: een cirkel van alle 20 spelerskoppen met een lampje
+  dat rondgaat, steeds langzamer, en stopt op ClownPierce. Het ziet eruit als toeval, het is
+  rigged: Clown heeft vooraf de verborgen rol `uitverkoren` en het rad landt altijd op die speler
+  (zie [03-kroon-regels.md](03-kroon-regels.md)).
+- Clown wordt naar de burcht geteleporteerd en krijgt de kroon en de **bosskit** (volledig diamond
+  Protection II, diamond sword Sharpness II, boog Power II, 32 pijlen, 4 gapples, 8 pearls, schild,
+  64 cobble).
 - De 19 hunters starten op 4 punten aan de rand met de spullen uit ronde 3 (of de basiskit als ze
   niks hebben). Team `hunters`, friendly fire uit: hunters kunnen elkaar niet raken.
 - De koning heeft Glowing: je ziet hem door alles heen. Bossbar: timer + naam van de koning.

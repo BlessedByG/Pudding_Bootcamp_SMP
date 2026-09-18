@@ -48,6 +48,14 @@ per ongeluk van de ene zone in de andere kijkt of loopt.
 Wachtkamers zijn ook de plek voor de **voorsprongkistjes** (bonus uit de vorige ronde, zie
 [02-rondes.md](02-rondes.md)).
 
+## Wachtkamer 4: Het Rad
+
+Wachtkamer 4 is groter dan de andere (zeg 15 x 10) en heeft op de achterwand **Het Rad**: een
+cirkel van alle 20 spelerskoppen, met onder elke kop een lichtblok. Aan het begin van ronde 4
+gaat het licht rond, steeds langzamer, tot het stopt op de koning. Iedereen staat ervoor, de
+stream kijkt mee. Het rad is rigged en stopt altijd op Clown; hoe dat werkt staat in
+[03-kroon-regels.md](03-kroon-regels.md) en [04-technische-schets.md](04-technische-schets.md).
+
 ## Vanaf ronde 4: teleports
 
 Na ronde 4 valt de groep uit elkaar (finalist 1, de rest naar de FFA, uitgeschakelde spelers naar

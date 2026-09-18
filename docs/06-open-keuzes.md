@@ -111,3 +111,15 @@ kroon misschien nooit over. Dan de timer korter (10 min) en sudden death eerder 
 Finalist 1 heeft niet gevochten in de FFA en is uitgerust. Finalist 2 komt net uit een
 gevecht. Daarom is de finale best of 3 met kit-reset en full heal per potje. Wil je het nog
 eerlijker, geef finalist 2 dan 2 minuten pauze voor de finale. Kost bijna niks.
+
+## 12. Weten de streamers dat Het Rad rigged is?
+
+**Nu in het concept:** nee. Alleen de staff en Clown weten het. De host speelt het recht en het
+rad ziet er elke keer anders uit (willekeurige start, willekeurig aantal rondes).
+
+**Alternatief:** iedereen weet dat het theater is. Dan is het rad gewoon een grappige entree
+voor de eindbaas en hoef je niet te liegen.
+
+**Aanbeveling:** geheim houden tot de kroning en het dan onthullen. De chats gaan het toch
+roepen ("dat was rigged!") en dat is precies de content. Bijkomend voordeel: valt Clown op de
+dag zelf uit, dan verhuis je de rol `uitverkoren` en heb je zonder gedoe een andere eindbaas.
