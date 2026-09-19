@@ -54,7 +54,7 @@ zone geteleporteerd (zie [docs/01-map-en-flow.md](docs/01-map-en-flow.md)).
 - [docs/01-map-en-flow.md](docs/01-map-en-flow.md): de open wereld, waar elke zone ligt, de verzamelpunten, de worldborder per ronde en hoe spelers van zone naar zone gaan.
 - [docs/02-rondes.md](docs/02-rondes.md): elke ronde uitgewerkt (doel, setup, regels, einde, bonus, wat kan misgaan).
 - [docs/03-kroon-regels.md](docs/03-kroon-regels.md): Het Rad en de kroonmechaniek van ronde 4 tot en met de finale, inclusief alle randgevallen.
-- [docs/04-technische-schets.md](docs/04-technische-schets.md): de Fabric-mod: projectopzet, modules, commands, kijkersmodus, voice via de API, bossbar en visuals, en hoe je hem vibecodet.
+- [docs/04-technische-schets.md](docs/04-technische-schets.md): de Fabric-mod: projectopzet, modules, commands, de tribune voor wie dood is, voice via de API, bossbar en visuals, en hoe je hem vibecodet.
 - [docs/05-draaiboek.md](docs/05-draaiboek.md): tijdschema van de avond, rollen van de staff, checklists.
 - [docs/06-open-keuzes.md](docs/06-open-keuzes.md): beslissingen die nog gemaakt moeten worden, met een aanbeveling per stuk.
 - [docs/07-voice.md](docs/07-voice.md): Simple Voice Chat, de voice-regels per ronde en hoe de groepen werken.

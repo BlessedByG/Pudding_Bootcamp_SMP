@@ -42,7 +42,8 @@ ronde 4.
 - Alles wat je vindt mag je houden.
 
 **Einde**
-- Timer 10 minuten. Wie de uitgang vindt, wordt doorgezet naar verzamelpunt 2 bij de arena.
+- Timer 10 minuten. Wie de uitgang vindt, wordt doorgezet naar verzamelpunt 2 bij de horde-arena
+  en hangt daar met de rest tot de ronde klaar is.
 - Na de timer wordt iedereen die nog in het doolhof zit ook naar verzamelpunt 2 geteleporteerd.
   Niemand ligt eruit.
 
@@ -84,9 +85,9 @@ ronde 4.
 
 **Regels**
 - Doodgaan = kijker tot het einde van de ronde. Je krijgt groot een doodtekst in beeld ("Grote L
-  gepakt!"), vliegt onaantastbaar mee met twee tp-items in je hotbar, je hoort alles, maar de
-  levenden horen jou niet. Met de andere doden kun je wel praten. Aan het eind van de ronde gaat
-  iedereen door, dood of levend.
+  gepakt!") en staat op de tribune van de ruïne-arena, met zicht op de vloer en met de andere
+  doden. Je hoort alles, maar de levenden horen jou niet. Aan het eind van de ronde gaat iedereen
+  door, dood of levend.
 - De volgorde van sneuvelen komt op het scoreboard in de sidebar. Puur voor de eer.
 
 **Einde**
@@ -172,7 +173,8 @@ Hier het overzicht.
 
 **Setup**
 - De Arena: een colosseum met een vloer van Ø 60 tot 80 met dekking, een verhoogd midden voor de
-  koning en tribunes rondom voor de doden. Adventure mode: geen bouwen.
+  koning en tribunes rondom voor de doden. **Bouwen is verboden**; adventure mode zorgt dat het
+  ook niet kan.
 - Het begint met **Het Rad**: iedereen op de vloer, een lampje loopt langs de 20 pilaren met
   spelerskoppen rond de vloer, steeds langzamer, en stopt op ClownPierce. Het ziet eruit als
   toeval, het is rigged: Clown heeft vooraf de verborgen rol `uitverkoren` en het rad landt
@@ -198,6 +200,7 @@ Hier het overzicht.
 - Gaat de koning dood zonder killer, dan gebeurt precies hetzelfde. De kroon gaat naar de laatste
   die hem raakte.
 - Hunters mogen elkaar raken. Samenwerken mag, verraden ook.
+- Bouwen is verboden. Pearls, gapples, boog en schild wel.
 - Timer 15 minuten. Wie de kroon heeft als de timer afloopt, of als alle hunters dood zijn, is
   **finalist 1**.
 

@@ -2,7 +2,7 @@
 
 Eén eigen mod, `bootcamp`, op een Fabric-server. Server-side only: spelers hebben alleen Simple
 Voice Chat nodig, verder een gewone client. De mod doet alles: regio's en punten zetten met een
-wand en commands, de rondes, de kroon, het rad, de kijkersmodus met tp-items, voice-filtering via
+wand en commands, de rondes, de kroon, het rad, de tribune voor wie dood is, voice-filtering via
 de API van de voice-mod, bossbar en visuals.
 
 De mod wordt gevibecode: Claude Code schrijft de Java, jij compileert, test en plakt fouten
@@ -23,7 +23,7 @@ terug. Deze doc is de spec die je hem geeft.
 | Simple Voice Chat (Fabric) + `voicechat-api` | Voice. De API is een gewone Java-dependency, versie-onafhankelijk. |
 | WorldEdit (Fabric) | Bouwen. Niet voor de spellogica. |
 
-Geen Skript, geen datapack, geen plugins. Dialogs (schermpjes met knoppen) bouwt de mod in code.
+Geen Skript, geen datapack, geen plugins.
 
 ## Project opzetten
 
@@ -68,7 +68,7 @@ In ronde 5 gaat iedereen uit zijn team behalve de koningen, dus daar is alles Pv
 | `crown` | Koning, laatste hit, kroonwissel, opstelling, bevriezing. | `ServerLivingEntityEvents.ALLOW_DEATH`, `ALLOW_DAMAGE` |
 | `rad` | Het Rad: lampjes, ritme, landing op de uitverkorene. | tick-gestuurd, geen threads |
 | `horde` | Waves spawnen en tellen. | `EntityType.spawn`, entity-tags |
-| `spectate` | Kijkersmodus, de twee tp-items, tp-dialog. | mixins (zie Kijkers), `ServerPlayer.openDialog` |
+| `tribune` | Wie dood is naar de tribune, daar houden, geen schade, locator bar uit. | `ALLOW_DAMAGE`, tick-check op regio `vloer` en `arena` |
 | `voice` | Voice-plugin: wie hoort wie. | `VoicechatPlugin`, `SoundPacketEvent` |
 | `visuals` | Bossbar, titles, geluid, particles, vuurwerk, zweefkroon, labels, locator bar. | `ServerBossEvent`, packets, `Display`-entities |
 
@@ -77,7 +77,7 @@ threads; een wachttijd is een tick-teller in een state-object.
 
 ## Commands
 
-Allemaal onder `/bc`, op-level 2, behalve `/bc tp` (ook voor kijkers).
+Allemaal onder `/bc`, op-level 2.
 
 | Command | Doet |
 |---|---|
@@ -90,10 +90,8 @@ Allemaal onder `/bc`, op-level 2, behalve `/bc tp` (ook voor kijkers).
 | `/bc kroon <speler>` | Kroonwissel forceren (de ref z'n noodknop). |
 | `/bc uitverkoren <speler>` / `/bc slot <speler> <0-19>` | De verborgen rol en de pilaar van elke kop in De Kring. |
 | `/bc rad` | Het Rad. |
-| `/bc kijker <speler> aan\|uit` | Kijkersmodus aan of uit, ook voor staff. |
-| `/bc tools` | De twee tp-items in je hotbar. |
-| `/bc tp <speler>` | Naar een speler; alleen voor kijkers en staff. Dit zit achter de knoppen. |
-| `/bc reset` | Alles terug naar de basiskamp-staat: vlaggen, teams, gamemode, attributes, inventory, tp, border, bossbar, kijkersmodus uit. |
+| `/bc kijker <speler> aan\|uit` | Noodknop: iemand met de hand op de tribune zetten of eraf halen. |
+| `/bc reset` | Alles terug naar de basiskamp-staat: vlaggen, teams, gamemode, attributes, inventory, tp, border, bossbar, kijkers weg. |
 
 ## Regio's en punten
 
@@ -120,7 +118,7 @@ center en grootte voor de worldborder.
 | `mob_1` t/m `mob_4`, `arena_spawn` | Horde-spawns en waar spelers de arena binnenkomen. |
 | `ei_start`, `ei_beacon` (blok) | Bosrand-ingang en het ontbrekende blok in de beaconpiramide onder het Ei. |
 | `troon`, `hunter_1` t/m `hunter_4` | Het midden van de Arena en de startpunten aan de rand van de vloer; bij elke kroonwissel gaat iedereen hierheen terug. |
-| `tribune_1` t/m `tribune_4` | Waar doden op de tribune neerkomen, verdeeld over de ringen. |
+| `tribune_1` t/m `tribune_4`, `tribune_horde_1` en `tribune_horde_2` | Waar doden neerkomen: op de tribune van de Arena (verdeeld over de ringen) en op die van de ruïne-arena. |
 | `finale_1`, `finale_2`, `kroning` | Startpunten van de finale en de plek van de kroning, in het midden van de Arena. |
 | `lamp_0` t/m `lamp_19` (blokken) | De lichtblokken van De Kring: de 20 pilaren rond de arenavloer, met de klok mee. |
 
@@ -189,52 +187,41 @@ title `DE KONING` met naam, drie seconden later `start(4)`.
 twee minuten rust (beide finalisten op de tribune, timer in de bossbar) en `start(6)`. Finale:
 potjes tellen, heal en kit-reset per potje, na twee gewonnen potjes de kroning in het midden.
 
-## Kijkers: doden, host en camera
+## Kijkers: wie dood of klaar is
 
-Doden gaan niet in spectator mode (daar kun je geen items in vasthouden) maar in **kijkersmodus**,
-die de mod zelf maakt:
+Geen spectator mode, geen tp-items, geen vliegen. Wie dood is wordt naar de tribune
+geteleporteerd en blijft daar bij de andere doden tot de ronde voorbij is; wie klaar is met een
+ronde staat bij het volgende verzamelpunt. De mod hoeft maar weinig te doen:
 
-- Adventure mode, mag vliegen, team `out` (grijs in de tab-list), hotbar leeg op de twee tp-items
-  na. Zichtbaar: op de tribune zijn de doden het publiek.
-- Onaantastbaar: geen schade (`ALLOW_DAMAGE` annuleren), pijlen en klappen gaan door je heen
-  (mixin op `Player`: `canBeHitByProjectile` en `isAttackable` geven `false` voor kijkers), mobs
-  zien je niet (mixin op `canBeSeenByAnyone`), geen botsing (mixin op `isPushable`), niks oppakken
-  (mixin op `ItemEntity`), niks aanraken of gebruiken (`UseBlockCallback`, `UseItemCallback`,
-  `AttackEntityCallback` geven `FAIL`, behalve voor de tp-items).
+- Adventure mode, team `out` (grijs in de tab-list), inventory leeg.
+- Geen schade (`ALLOW_DAMAGE` annuleren voor kijkers), ook niet van de border als die in de FFA of
+  de finale krimpt.
+- Blijft op zijn plek: glas tussen tribune en vloer, en een tick-check die een kijker die toch in
+  regio `vloer` (Arena) of `arena` (horde) komt terug op zijn tribunepunt zet.
 - Niet op de locator bar (`WAYPOINT_TRANSMIT_RANGE` op 0), geen Glowing.
 - Bij de dood een title met een willekeurige doodtekst, alleen voor de dode zelf, geen chatregel
   en geen geluid: `Grote L gepakt!`, `Had je nou maar beter je best gedaan`, `Gelukkig is dit niet
   de CSMP`. De lijst staat in `bootcamp.json`, zodat je er meer bij kunt zetten.
-- Grens: door muren vliegen kan niet, dat is client-side. Eroverheen wel.
+- Zichtbaar en hoorbaar voor elkaar: op de tribune zijn de doden het publiek en praten ze gewoon
+  via proximity. De levenden horen ze niet, zie Voice.
 
-**In de Arena (ronde 4, 5 en 6)** worden doden naar een `tribune_n`-punt geteleporteerd en
-blijven daar: de tp-items zijn in deze rondes uit, en een kijker die toch in regio `vloer` komt
-wordt terug op de tribune gezet. Vanaf de tribune zie je toch alles. Finalist 1 en Clown kijken
-tijdens de FFA ook vanaf de tribune.
+Waar kijkers heen gaan: ronde 2 naar `tribune_horde_n`, ronde 4 t/m 6 naar `tribune_n`. Finalist
+1 en Clown zitten tijdens de FFA ook op de tribune, met dezelfde regels. Aan het eind van ronde 2
+worden de doden weer gewoon speler bij verzamelpunt 3.
 
-**In ronde 1 t/m 3** vlieg je vrij rond met de twee items: een kompas **Levenden** en een
-spelerskop **Doden**, herkenbaar aan een custom data component. Rechtsklik opent een dialog
-(`ServerPlayer.openDialog`, type multi-action, drie kolommen) met een knop per speler uit die
-lijst; elke knop draait `/bc tp <naam>`. De lijst wordt bij elke klik opnieuw gebouwd. Levenden
-zijn alle spelers met een rol die niet kijker is, doden zijn de kijkers met rol `SPELER` (staff
-staat er niet tussen).
-
-**Staff** (host, camera's, admins): `/bc kijker <naam> aan` geeft dezelfde modus, met werkende
-tp-items in alle rondes en zonder de tribune-regel. Of blijf in creative en pak alleen de items
-met `/bc tools`. Echte spectator mode kan ook nog steeds, alleen zonder items.
+**Staff** (host, camera's, admins) gebruikt spectator of creative voor de camera; de mod dwingt
+daar niks af. `/bc kijker <naam> aan|uit` is de noodknop om iemand met de hand op de tribune te
+zetten of eraf te halen.
 
 ## Voice via de API
 
-De mod is ook een voice-plugin (`VoicechatPlugin`, entrypoint `voicechat`). Drie regels code
-doen wat we willen, zonder groepen, commands of knoppen. Details in [07-voice.md](07-voice.md).
+De mod is ook een voice-plugin (`VoicechatPlugin`, entrypoint `voicechat`). Eén regel code doet
+wat we willen, zonder groepen, commands of knoppen. Details in [07-voice.md](07-voice.md).
 
 - `SoundPacketEvent`: zender is kijker en ontvanger is levend, dan annuleren. Levenden horen
   doden nooit.
-- Doden horen elkaar overal: bij het opstarten maakt de mod een persistente, verborgen groep;
-  wie kijker wordt gaat erin (`connection.setGroup`), wie weer levend wordt eruit. Levenden zitten
-  nooit in een groep, dus alles is proximity.
-- `CreateGroupEvent` en `JoinGroupEvent`: annuleren voor spelers zonder staff-rol. Eigen groepen
-  maken kan dus gewoon niet.
+- Doden horen elkaar via proximity, want ze zitten samen op de tribune. Groepen staan in de
+  voice-config helemaal uit, dus alles is altijd proximity.
 
 ## Bossbar en visuals
 
@@ -285,7 +272,7 @@ staart, vluchtduur 1). Titles en actionbar gaan via de title-packets, geluid via
 
 ## Zo vibecode je dit
 
-1. **Volgorde.** Config en commands met de wand, dan kijkersmodus en de tp-items, dan ronde 1
+1. **Volgorde.** Config en commands met de wand, dan de tribune (kijkers), dan ronde 1
    t/m 3, dan de kroon en ronde 4, dan het rad, dan voice, dan visuals. Na elke stap iets
    testbaars, met een tweede account op de dev-server.
 2. **Context.** Geef Claude Code deze repo. Deze doc plus [02-rondes.md](02-rondes.md) en

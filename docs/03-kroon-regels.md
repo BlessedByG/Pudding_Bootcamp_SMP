@@ -71,7 +71,8 @@ iedereen bij een reset gerepareerd wordt, dan is dat één regel extra in de mod
 - Hunters kunnen elkaar raken. Samenwerken mag, verraden ook. De kroon gaat naar wie de laatste
   klap op de koning geeft, dus een hunter die zijn maat de kill wil afpakken kan dat proberen.
 - Eén leven, geen respawn. Sterf je aan een hunter, dan ben je net zo dood als aan de koning.
-- Adventure mode: geen bouwen of breken. Pearls, gapples, boog en schild wel.
+- **Bouwen is verboden.** Adventure mode zorgt dat het ook niet kan. Pearls, gapples, boog en
+  schild wel.
 
 ## Einde van ronde 4
 

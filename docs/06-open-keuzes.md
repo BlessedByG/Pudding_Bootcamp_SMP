@@ -20,13 +20,12 @@ wat die betekent voor het concept. De oude afwegingen staan in de git-geschieden
 | 13 | Stembereik | 48 blokken | Standaard van de voice-mod, fluister-toets voor stil. |
 | 14 | Overgangen | Teleporteren | De commander start elke volgende ronde op het sein van Pudding. |
 | 15 | King zone | Vervalt | Geen open King zone van 200 x 200 en geen burcht. Ronde 4, 5 en 6 spelen in één Arena: vloer Ø 60 tot 80 met dekking, verhoogd midden, tribunes rondom. |
-| 16 | Kijkers | Kijkersmodus met tp-items | Doden zijn zichtbaar, onaantastbaar en kunnen vliegen. In ronde 1 t/m 3 met de twee tp-items; in de Arena op de tribune, items uit. |
+| 16 | Kijkers | Op de tribune, in adventure | Doden zijn zichtbaar, krijgen geen schade en komen de vloer niet op. Geen vliegen, geen items, geen spectator mode. |
 | 17 | FFA-deelname | Iedereen behalve Clown en finalist 1 | Ook de doden van ronde 4. Clown speelt de finale als hij nog koning is, anders is de eindbaas klaar. |
 | 18 | Doodtekst | Alleen voor de dode | "Grote L gepakt!", "Had je nou maar beter je best gedaan", "Gelukkig is dit niet de CSMP". Geen chatregel voor de rest. Lijst staat in de config, uit te breiden. |
 
-**Eén afgeleide keuze die ik zelf heb gemaakt:** ronde 4 is adventure mode, dus geen bouwen. In
-een arena met één leven is inbouwen dodelijk saai en het houdt de vloer heel. Pearls, gapples,
-boog en schild blijven. Wil je toch bouwen, dan is dat één instelling in de mod.
+| 19 | Kijkers en tp-items | Geen spectator mode, geen tp-items | Wie klaar of dood is gaat naar het verzamelpunt of de tribune en socializet daar met de rest tot de ronde klaar is. Voice-groepen zijn daarmee ook niet meer nodig. |
+| 20 | Bouwen in ronde 4 | Verboden | Adventure mode, dus het kan ook niet. Pearls, gapples, boog en schild wel. |
 
 ## Nog open (techniek)
 

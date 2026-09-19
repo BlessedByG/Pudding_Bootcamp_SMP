@@ -13,36 +13,32 @@ bootcamp-mod regelt ze via de API van de voice-mod.
    bij je in de buurt is. Bereik 48 blokken, fluister-toets voor kleiner bereik.
 2. **Dood = kijker = niet hoorbaar voor de levenden.** Je hoort zelf nog alles wat er om je heen
    gebeurt, maar geen levende speler hoort jou.
-3. **Doden horen elkaar wel, overal.** Kijkers kunnen met elkaar praten waar ze ook rondzweven.
-   Word je weer levend (na ronde 2), dan is dat vanzelf weer voorbij.
+3. **Doden horen elkaar wel.** Ze zitten samen op de tribune en praten daar gewoon via proximity,
+   zoals iedereen.
 
 Per ronde:
 
 | Ronde | Levend | Dood / kijkers |
 |---|---|---|
-| Basiskamp, Doolhof, Horde, Het Ei | Proximity. | Ronde 2: kijker tot het einde van de ronde. Hoort alles, wordt niet gehoord, praat met de andere doden. |
+| Basiskamp, Doolhof, Horde, Het Ei | Proximity. | Ronde 2: kijker op de tribune van de ruïne-arena tot het einde van de ronde. Hoort alles, wordt niet gehoord, praat met de andere doden. |
 | King of the SMP | Proximity, hunters én koning. | Kijker op de tribune: hoort alles, wordt niet gehoord, praat met de andere doden. |
 | FFA en Finale | Proximity. | Hetzelfde. Finalist 1 kijkt tijdens de FFA ook als kijker. |
 | Kroning | Proximity in de Arena. | – |
 
 ## Hoe de mod dat doet
 
-De bootcamp-mod is ook een voice-plugin. Drie dingen, allemaal in code, de speler merkt er niks
-van:
+De bootcamp-mod is ook een voice-plugin. Eén ding, in code, de speler merkt er niks van:
 
-1. **Filter.** Bij elk geluidspakket dat de voice-mod wil versturen (`SoundPacketEvent`) kijkt de
-   mod: is de zender een kijker en de ontvanger levend? Dan gaat het pakket niet. Dat is regel 2,
-   en het hangt aan de eigen dood-vlag van de mod, niet aan spectator mode.
-2. **Verborgen groep.** Bij het opstarten maakt de mod één persistente, verborgen groep. Wie
-   kijker wordt gaat erin, wie weer levend wordt eruit. Leden van een groep horen elkaar overal,
-   dus regel 3. Levenden zitten nooit in een groep, dus voor hen is alles proximity. Niemand hoeft
-   de groep te maken of erin te blijven, de mod doet het.
-3. **Slot op eigen groepen.** Het maken van of joinen bij een groep wordt geannuleerd voor
-   iedereen zonder staff-rol. Een groepje hunters met een walkietalkie over de hele map kan dus
-   niet.
+**Filter.** Bij elk geluidspakket dat de voice-mod wil versturen (`SoundPacketEvent`) kijkt de
+mod: is de zender een kijker en de ontvanger levend? Dan gaat het pakket niet. Dat is regel 2, en
+het hangt aan de eigen dood-vlag van de mod, niet aan spectator mode. Regel 3 heeft geen code
+nodig: de doden zitten bij elkaar op de tribune, dus proximity doet de rest.
 
-Test in de testrun: een kijker naast een levende speler; de levende hoort niks, de kijker hoort
-alles, en twee kijkers aan weerskanten van de map horen elkaar.
+Groepen staan in de voice-config uit. Dan kan ook niemand een eigen groep maken als walkietalkie
+over de hele map.
+
+Test in de testrun: een kijker op de tribune en een levende speler op de vloer; de levende hoort
+niks, de kijker hoort alles, en twee kijkers op de tribune horen elkaar.
 
 ## Server-config
 
@@ -51,12 +47,11 @@ alles, en twee kijkers aan weerskanten van de map horen elkaar.
 ```
 port=24454
 max_voice_distance=48
-enable_groups=true
+enable_groups=false
 force_voice_chat=true
 ```
 
-- `enable_groups` moet aan blijven, anders kan de mod de kijkersgroep niet maken. Spelers kunnen
-  er zelf toch niks mee, zie hierboven.
+- `enable_groups=false`: geen groepen, dus alles is altijd proximity en niemand kan er een maken.
 - `force_voice_chat=true` kickt iedereen die de mod niet heeft. Voor een event wil je dat: dan
   weet je bij het joinen meteen wie er nog moet installeren.
 - **UDP-poort 24454** moet open staan naast de normale TCP-poort van de server. Bij een hoster

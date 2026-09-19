@@ -72,13 +72,14 @@ iedereen tegelijk op de goede plek en gaat de tijd in de rondes in plaats van in
 | 1 De Doolhof | midden van het doolhof | 80 |
 | 2 De Horde | midden van de ruïne-arena | 60 |
 | 3 Het Ei | midden van het bos | 150 |
-| 4 King of the SMP | midden van de Arena | de vloer plus een paar blokken marge, geen krimp |
-| 5 Arena FFA | midden van de Arena | de vloer, na 5 minuten naar 10 |
+| 4 King of the SMP | midden van de Arena | de hele Arena inclusief tribunes, geen krimp |
+| 5 Arena FFA | midden van de Arena | de hele Arena, na 5 minuten krimpt hij naar 10 |
 | 6 De Finale | midden van de Arena | 20, na 3 minuten naar 6 |
 
-De tribune ligt buiten de border van de vloer. Kijkers krijgen geen schade van de border en kunnen
-er net als iedereen niet doorheen, dus ze blijven vanzelf op de tribune. Levende spelers buiten de
-border krijgen wel schade, dus altijd eerst teleporteren, dan de border zetten.
+Krimpt de border in de FFA of de finale, dan komt de tribune erbuiten. Kijkers krijgen daar geen
+schade van, dat vangt de mod af. De vloer komen ze niet op: glas tussen tribune en vloer, en de mod
+zet iedereen die er toch komt terug. Levende spelers buiten de border krijgen wel schade, dus
+altijd eerst teleporteren, dan de border zetten.
 
 ## De zones
 
@@ -86,7 +87,7 @@ border krijgen wel schade, dus altijd eerst teleporteren, dan de border zetten.
 |---|---|---|---|
 | Basiskamp (V1) | Noord, bij de poort van het doolhof | Spawnpoint, kampvuur, tenten, regels op borden, wat targets om te warmen. | adventure |
 | 1 De Doolhof | Noord, in een dal | Hagendoolhof 64 x 64, hagen 4 hoog, geen plafond nodig: adventure mode en niemand heeft nog pearls. Genereer met een maze-generator (WorldEdit-script of online generator naar schematic). 10 tot 15 kisten in doodlopende gangen. | adventure |
-| 2 De Horde (V2) | Oost | Ruïne-arena Ø 50, muur 6 hoog, 4 mob-spawnpunten aan de rand, wat dekking in het midden. Verzamelpunt bij de poort. | adventure |
+| 2 De Horde (V2) | Oost | Ruïne-arena Ø 50, muur 6 hoog, 4 mob-spawnpunten aan de rand, wat dekking in het midden, een tribune met zicht op de vloer voor de doden. Verzamelpunt bij de poort. | adventure |
 | 3 Het Ei (V3) | Zuid | Bos met heuvels, grotten en een meertje, 150 x 150. Eén Groot Ei, 3 tot 5 nep-eitjes, beacon onder het Ei. Verzamelpunt met kampvuur aan de bosrand. | survival |
 | De Arena (V4) | Midden | Colosseum. Vloer Ø 60 tot 80 met dekking (pilaren, muurtjes, wat hoogteverschil), een verhoogd midden voor de koning, tribunes rondom in twee of drie ringen achter een borstwering, een poort. Rond de vloer de 20 pilaren van De Kring met koppen en lichtblokken. Ronde 4, 5, 6 en de kroning. | adventure |
 
@@ -99,14 +100,20 @@ het doolhof (niet door de haag), de horde (niet inbouwen) en de Arena (in een ar
 is inbouwen dodelijk saai, en de vloer blijft heel). Alleen in het Ei-bos moet je minen, dus daar
 survival.
 
-## Kijkers
+## Wie klaar of dood is
 
-Wie dood is wordt **kijker**: onaantastbaar, kan vliegen, met twee items in de hotbar (kompas
-Levenden, kop Doden) om naar een speler te teleporteren. In ronde 1 t/m 3 vlieg je vrij rond en
-gebruik je die items; in de Arena word je naar de tribune geteleporteerd en blijf je daar, want
-vanaf de tribune zie je toch alles. Kijkers zijn zichtbaar: op de tribune zijn de doden het
-publiek. Kijkers vliegen niet door muren, wel eroverheen. Staff kan dezelfde modus aanzetten. Zie
-[04-technische-schets.md](04-technische-schets.md).
+Niemand gaat ooit in spectator mode en er zijn geen tp-items. Wie klaar is met een ronde, of dood
+is, gaat naar een plek waar de rest ook komt en hangt daar samen tot de ronde voorbij is:
+
+- Uit het doolhof: naar verzamelpunt 2 bij de horde-arena.
+- Dood in de horde: naar de tribune van de ruïne-arena, met zicht op de vloer.
+- Ticket uit het Ei-bos: naar de vloer van de Arena, waar ronde 4 begint.
+- Dood in de Arena (ronde 4, 5 en 6): naar de tribune van de Arena.
+
+Op zo'n plek ben je een **kijker**: gewoon in adventure mode, je kunt lopen en praten, maar je
+krijgt geen schade, je komt de vloer niet op (glas, en de mod zet je terug), je staat niet op de
+locator bar en de levenden horen je niet (zie [07-voice.md](07-voice.md)). De doden op de tribune
+zijn het publiek. Alleen de staff gebruikt spectator of creative, voor de camera.
 
 ## Stream-overwegingen
 

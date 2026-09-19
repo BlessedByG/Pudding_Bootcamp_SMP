@@ -32,7 +32,7 @@ hard, dus het loopt vooral uit door praatjes. Dat is de host z'n verantwoordelij
 
 | Rol | Aantal | Wat |
 |---|---|---|
-| **Host / caster** | 1 | Praat op de stream, legt regels uit, kondigt rondes aan, houdt de verzamelpunten gezellig. Zit in kijkersmodus. Speelt Het Rad recht: "iedereen kan de koning worden". |
+| **Host / caster** | 1 | Praat op de stream, legt regels uit, kondigt rondes aan, houdt de verzamelpunten gezellig. Zit in spectator voor de camera. Speelt Het Rad recht: "iedereen kan de koning worden". |
 | **Admin 1: commander** | 1 | Start elke ronde op het sein van Pudding: poorten, timers, teleports. Doet verder niks anders. |
 | **Admin 2: ref** | 1 | Kijkt naar problemen: stuck spelers, disconnects, bugs met de kroon. Overrulet handmatig waar nodig. Houdt het randgevallen-lijstje uit [03-kroon-regels.md](03-kroon-regels.md) bij de hand. |
 | **Camera** | 0 tot 2 | Kijker-accounts voor een mooi hoofdbeeld op de stream (top-down doolhof, overzicht van de Arena). Optioneel. |
@@ -50,7 +50,7 @@ Grofweg op volgorde van werk:
    bestand (1 avond).
 2. Basiskamp en de verzamelpunten: kampvuur, banners, bordjes (uurtje).
 3. Hagendoolhof genereren en in het dal plaatsen, kisten vullen (1 avond).
-4. Ruïne-arena met 4 spawnpunten, dekking en een poort (1 avond).
+4. Ruïne-arena met 4 spawnpunten, dekking, een poort en een tribune voor de doden (1 avond).
 5. Ei-bos: plek kiezen, Grote Ei bouwen en vullen, nep-eitjes, beacon eronder, drukplaat bij de
    uitgang (1 tot 2 avonden).
 6. De Arena: colosseum met een vloer van Ø 60 tot 80 met dekking, een verhoogd midden, tribunes
@@ -78,11 +78,11 @@ Doe minstens één keer de hele avond met 4 of 5 testers, van basiskamp tot kron
 - [ ] Horde: waves volgen elkaar op, dood = kijker tot het einde, doden worden bij verzamelpunt 3
       weer levend, bossbar telt mobs. Ronde stopt ook als iedereen dood is.
 - [ ] Voice: proximity werkt; een kijker is niet hoorbaar voor een levende speler ernaast, hoort
-      die wel, en hoort andere kijkers overal. Niemand kan een eigen groep maken. Dit is de
-      belangrijkste voice-test, zie [07-voice.md](07-voice.md).
-- [ ] Kijkers: dood = doodtekst groot in beeld (alleen voor jou), onaantastbaar (pijlen en klappen
-      gaan door je heen, mobs zien je niet, niks oppakken of aanraken), niet op de locator bar.
-      In ronde 1 t/m 3 vliegen met de twee tp-items; in de Arena op de tribune en de items uit.
+      die wel, en hoort de andere kijkers op de tribune. Dit is de belangrijkste voice-test, zie
+      [07-voice.md](07-voice.md).
+- [ ] Kijkers: dood = doodtekst groot in beeld (alleen voor jou), naar de tribune, geen schade, je
+      komt de vloer niet op, niet op de locator bar. Uit het doolhof = naar verzamelpunt 2.
+      Niemand komt in spectator mode.
 - [ ] Ei: drukplaat neemt het diamond block in en teleporteert. Zonder block gebeurt er niks.
       Beacon-hint gaat aan op 5 min.
 - [ ] Rad: landt op de speler met tag `uitverkoren`. Draai hem vijf keer, dan zie je meteen of
@@ -112,7 +112,7 @@ Doe minstens één keer de hele avond met 4 of 5 testers, van basiskamp tot kron
 - [ ] Tag `uitverkoren` staat op Clown en op niemand anders (`tag @a list`).
 - [ ] Voice: `force_voice_chat=true`, UDP-poort open, voice-mod en bootcamp-mod geladen (staat in
       de serverlog bij het opstarten).
-- [ ] Host en camera-accounts staan in kijkersmodus (`/bc kijker <naam> aan`).
+- [ ] Host en camera-accounts staan in spectator of creative voor de camera.
 - [ ] De jar van de vorige werkende versie van de mod staat klaar naast de huidige.
 
 ## Spelregels voor de streamers
@@ -123,8 +123,8 @@ Kort en op de borden in het basiskamp:
    Simple Voice Chat is verplicht.
 2. Niet streamsnipen: niet kijken op andermans stream om de koning te vinden. Vertrouwen, geen
    controle. Wil je het hard afdwingen, dan een streamvertraging van een minuut voor iedereen.
-3. In ronde 4 mag alles: hunters kunnen elkaar raken. In de FFA mag je teamen, maar er wint er
-   één.
+3. In ronde 4 mag bijna alles: hunters kunnen elkaar raken. Bouwen is verboden. In de FFA mag je
+   teamen, maar er wint er één.
 4. Bug of stuck? Roep de ref, niet de chat.
 5. Als de admin zegt stop, dan stop.
 6. Geen Discord-call tijdens het event, alleen de voice-mod. Eigen voice-groepen maken kan niet,
