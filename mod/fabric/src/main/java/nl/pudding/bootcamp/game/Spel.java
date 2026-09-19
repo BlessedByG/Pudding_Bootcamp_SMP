@@ -91,6 +91,12 @@ public final class Spel {
 	/** Zet de rol en het team dat erbij hoort. */
 	public static void zetRol(MinecraftServer server, ServerPlayer speler, Rol rol) {
 		status(speler).rol = rol;
+		// Wie kijkt ziet geen border (en dus geen rood scherm); wie meedoet wel.
+		if (rol == Rol.KIJKER || rol == Rol.FINALIST) {
+			Border.verberg(speler);
+		} else {
+			Border.toonEcht(speler);
+		}
 		switch (rol) {
 			case SPELER -> Teams.zet(server, speler, Teams.SPELERS);
 			case HUNTER -> Teams.zet(server, speler, Teams.HUNTERS);

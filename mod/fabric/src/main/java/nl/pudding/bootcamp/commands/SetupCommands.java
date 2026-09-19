@@ -19,6 +19,7 @@ import nl.pudding.bootcamp.core.BootcampConfig;
 import nl.pudding.bootcamp.core.Punt;
 import nl.pudding.bootcamp.core.Regio;
 import nl.pudding.bootcamp.setup.Wand;
+import nl.pudding.bootcamp.visuals.Labels;
 
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -47,6 +48,11 @@ final class SetupCommands {
 				.then(Commands.literal("list").executes(SetupCommands::regionList))
 				.then(Commands.literal("del").then(Commands.argument("naam", StringArgumentType.word()).suggests(REGIOS)
 						.executes(SetupCommands::regionDel))));
+
+		bc.then(Commands.literal("label")
+				.then(Commands.literal("weg").executes(SetupCommands::labelWeg))
+				.then(Commands.literal("zet").then(Commands.argument("tekst", StringArgumentType.greedyString())
+						.executes(SetupCommands::labelZet))));
 
 		bc.then(Commands.literal("point")
 				.then(Commands.literal("set").then(Commands.argument("naam", StringArgumentType.word()).suggests(PUNTEN)
@@ -130,6 +136,26 @@ final class SetupCommands {
 	private static String beschrijf(Regio r) {
 		return r.min().x() + " " + r.min().y() + " " + r.min().z() + " t/m " + r.max().x() + " " + r.max().y() + " " + r.max().z()
 				+ " (" + r.breedteX() + " x " + r.hoogte() + " x " + r.breedteZ() + ", border " + r.grootte() + ")";
+	}
+
+	// label
+
+	private static int labelZet(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+		ServerPlayer speler = ctx.getSource().getPlayerOrException();
+		String tekst = StringArgumentType.getString(ctx, "tekst").strip();
+		if (tekst.isEmpty()) {
+			return BcCommand.fout(ctx, "Geef de tekst van het label.");
+		}
+		Labels.plaats(speler, tekst);
+		return BcCommand.ok(ctx, "Label '" + tekst + "' geplaatst boven je hoofd.");
+	}
+
+	private static int labelWeg(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+		ServerPlayer speler = ctx.getSource().getPlayerOrException();
+		if (!Labels.verwijderDichtstbij(speler)) {
+			return BcCommand.fout(ctx, "Er staat geen label binnen zes blokken.");
+		}
+		return BcCommand.ok(ctx, "Label verwijderd.");
 	}
 
 	// point

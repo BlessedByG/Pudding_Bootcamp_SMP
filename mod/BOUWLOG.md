@@ -1,6 +1,6 @@
 # Bouwlog
 
-Status: modus=A; klaar=T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13; bezig=T14
+Status: modus=A; klaar=T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14; bezig=T15
 
 Per taak: wat er gedaan is, wat geverifieerd is en wat open staat (in-game test, aanname,
 afwijking van de docs). Het plan staat in [../docs/08-taakplan.md](../docs/08-taakplan.md).
@@ -429,3 +429,37 @@ automatische start van de finale, drie potjes, kit en heal per potje, de kroning
   er zit geen extra pauze tussen.
 - Tijdens het disconnect-event staat een speler nog in de spelerslijst; de finale houdt daarom
   zelf bij wie uitgelogd is.
+
+## T14. Visuals
+
+De meeste visuals zijn met de rondes meegebouwd (bossbar per ronde, titles, geluiden, particles,
+vuurpijlen, zweefkroon, sidebar). Deze taak legt de tabel "per moment" uit docs/04 ernaast en vult
+aan wat ontbrak.
+
+**Gedaan**
+- `/bc label zet <tekst>` plaatst een text display boven je hoofd (goud, vet, draait mee met de
+  kijker); `/bc label weg` haalt het dichtstbijzijnde label binnen zes blokken weg. Labels horen
+  bij de wereld en overleven `/bc reset`.
+- **Kijkers zien geen border meer** (`game/Border`). Wie buiten de border staat krijgt van de
+  client een volledig rood scherm. Tijdens de finale (border 20) staat de hele tribune erbuiten,
+  en tijdens het doolhof staat `v2` erbuiten: dat zou op alle streams tegelijk rood zijn. Een
+  kijker of wachtende finalist krijgt daarom een eigen border-pakket met een border zo groot als
+  de wereld; wie weer meedoet krijgt de echte terug. De server stuurt bij elke borderwijziging de
+  echte border naar iedereen, en omdat alle wijzigingen via `Border` lopen gaat het eigen pakket
+  er direct achteraan.
+- Nagelopen tegen de tabel in docs/04: countdown, poort open, nieuwe wave, speler sneuvelt,
+  Ei-hint, ticket, het rad, kroonwissel, hunters op, finalist, kroning. Alles zit erin.
+
+**Geverifieerd**: build en `check.sh` groen. Geluiden en particles zijn compile-time constanten
+(`SoundEvents.RAID_HORN`, `ParticleTypes.TOTEM_OF_UNDYING`, ...), geen id-strings: een naam die in
+26.2 niet bestaat zou de build breken, niet pas de avond zelf.
+
+**Open: in-game testen**: het label, en vooral of kijkers op de tribune tijdens de finale geen rood
+scherm hebben en spelers op de vloer de border wel zien.
+
+**Afwijking van het taakplan**
+- Het plan wilde geluiden en particles via de registry op id opzoeken, omdat de namen in Modus B
+  niet te controleren waren. In Modus A controleert de compiler ze, en dat is strenger: een
+  id-string faalt pas tijdens het spel.
+- `/bc label` heeft de sub-commands `zet` en `weg` in plaats van alleen `<tekst>`, zodat een
+  verkeerd geplaatst label ook weer weg kan.
