@@ -1,6 +1,6 @@
 # Bouwlog
 
-Status: modus=A; klaar=T0,T1,T2,T3,T4,T5,T6; bezig=T7
+Status: modus=A; klaar=T0,T1,T2,T3,T4,T5,T6,T7; bezig=T8
 
 Per taak: wat er gedaan is, wat geverifieerd is en wat open staat (in-game test, aanname,
 afwijking van de docs). Het plan staat in [../docs/08-taakplan.md](../docs/08-taakplan.md).
@@ -208,3 +208,37 @@ Samen in één commit: het commandboompje verwijst naar de wand, dus los compile
   de twee minuten rust.
 - `Spel.buitenRegio`: een ronde weigert te starten als een startpunt buiten haar border-regio
   ligt, want wie buiten de border wordt neergezet krijgt schade.
+
+## T7. Kijkers en tribune
+
+**Gedaan**
+- `tribune/Tribune`: `ALLOW_DEATH` vangt elke dood van een deelnemer af (annuleren, zelf healen,
+  effecten weg) en geeft hem aan de lopende ronde (`onDeath`). Zonder ronde gaat de speler terug
+  naar het verzamelpunt van dat moment.
+- `ALLOW_DAMAGE`: geen schade voor kijkers en wachtende finalisten (ook niet van de border), geen
+  schade van kijkers, geen schade voor wie dan ook zolang een opstelling loopt, en de laatste hit
+  op de koning wordt onthouden (ook via een pijl: `getEntity()` is de schutter).
+- `maakKijker`: rol `KIJKER`, team `out`, adventure, geen Glowing, van de locator bar af, ontdooid,
+  geheald, naar `tribune_n` of `tribune_horde_n` (om en om), met de doodtekst als title voor
+  alleen de dode. Inventory: houden (klaar met het doolhof), bewaren (ronde 2, terug bij `v3`) of
+  legen (de Arena).
+- De tick-check (elke halve seconde) zet een kijker die in regio `arena` (ronde 2) of `vloer`
+  (ronde 4 t/m 6) komt terug op zijn eigen tribunepunt.
+- `/bc kijker <speler> aan|uit`.
+- `RondeLogica` heeft nu standaardgedrag voor uitloggen en terugkomen, op basis van de regels uit
+  `core` (`Regels.bijQuit`, `Regels.bijJoin`).
+
+**Geverifieerd**
+- `./gradlew build` en `check.sh` groen.
+
+**Open: in-game testen**
+- Doodgaan in een ronde: geen death-screen, doodtekst in beeld, op de tribune, geen schade daar.
+- Van de tribune de vloer op lopen: teruggezet.
+- Uitloggen en terugkomen in elke ronde.
+
+**Concretiseringen**
+- `/bc kijker <speler> uit` maakt iemand weer deelnemer van de lopende ronde: hunter in ronde 4,
+  FFA-speler in ronde 5, anders speler. Zijn spullen komen niet vanzelf terug (behalve de bewaarde
+  inventory van ronde 2); geef ze met `/bc kit`.
+- Een kijker die toch een dodelijke klap krijgt (de void in, `/kill`) gaat terug naar zijn
+  tribunepunt.

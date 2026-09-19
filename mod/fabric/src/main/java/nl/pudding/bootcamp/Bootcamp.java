@@ -17,6 +17,7 @@ import nl.pudding.bootcamp.game.SpelerReset;
 import nl.pudding.bootcamp.game.Spelregels;
 import nl.pudding.bootcamp.game.Teams;
 import nl.pudding.bootcamp.setup.Wand;
+import nl.pudding.bootcamp.tribune.Tribune;
 import nl.pudding.bootcamp.visuals.Bossbar;
 import nl.pudding.bootcamp.visuals.Zweefkroon;
 import org.slf4j.Logger;
@@ -30,6 +31,7 @@ public final class Bootcamp implements ModInitializer {
 	public void onInitialize() {
 		// De volgorde hier is de volgorde waarin /bc reset opruimt.
 		Spel.init();
+		Tribune.init();
 		Kroon.init();
 		Opstelling.init();
 		Zweefkroon.init();
@@ -55,6 +57,7 @@ public final class Bootcamp implements ModInitializer {
 		ServerTickEvents.END_SERVER_TICK.register(server -> {
 			Wand.tick(server);
 			Spel.tick(server);
+			Tribune.tick(server);
 			Zweefkroon.tick(server);
 		});
 

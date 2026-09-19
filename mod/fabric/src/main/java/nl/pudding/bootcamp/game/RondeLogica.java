@@ -3,7 +3,11 @@ package nl.pudding.bootcamp.game;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.level.GameType;
+import nl.pudding.bootcamp.core.Regels;
+import nl.pudding.bootcamp.core.Rol;
 import nl.pudding.bootcamp.core.Ronde;
+import nl.pudding.bootcamp.tribune.Tribune;
 
 import java.util.List;
 
@@ -54,11 +58,52 @@ public abstract class RondeLogica {
 	public void onDeath(MinecraftServer server, ServerPlayer speler, DamageSource bron) {
 	}
 
+	/**
+	 * Iemand logt uit. Standaard volgens de uitlog-regels uit {@code core}: wie als dood telt krijgt
+	 * de vlag en daarna {@link #naQuitDood}. Ronde 4 en 6 vullen de koning en de finalist zelf in.
+	 */
 	public void onQuit(MinecraftServer server, ServerPlayer speler) {
+		SpelerStatus st = Spel.status(speler);
+		if (st.dood) {
+			return;
+		}
+		if (Regels.bijQuit(ronde(), st.rol) == Regels.QuitActie.DOOD) {
+			st.dood = true;
+			naQuitDood(server, speler);
+		}
 	}
 
-	/** Iemand logt in terwijl deze ronde loopt. */
+	/** Een deelnemer is uitgelogd en telt als dood; hier kijkt de ronde of ze daarmee voorbij is. */
+	protected void naQuitDood(MinecraftServer server, ServerPlayer speler) {
+	}
+
+	/**
+	 * Iemand logt in terwijl deze ronde loopt. Standaard volgens de terugkom-regels uit
+	 * {@code core}; de koning en de finalist die terugkomen vult de ronde zelf in.
+	 */
 	public void onJoin(MinecraftServer server, ServerPlayer speler) {
+		SpelerStatus st = Spel.status(speler);
+		switch (Regels.bijJoin(ronde(), st.rol, st.klaar, false)) {
+			case STARTPUNT -> {
+				Spel.zetRol(server, speler, Rol.SPELER);
+				speler.setGameMode(ronde().survival() ? GameType.SURVIVAL : GameType.ADVENTURE);
+				if (startpunt() != null) {
+					Spel.naarPunt(speler, startpunt());
+				}
+			}
+			case VOLGEND_VERZAMELPUNT -> Tribune.maakKijkerOp(server, speler, Tribune.verzamelpuntNa(ronde()), Tribune.Spullen.HOUDEN, false);
+			case KIJKER_TRIBUNE -> {
+				st.dood = true;
+				Tribune.maakKijker(server, speler, ronde() == Ronde.HORDE ? Tribune.Spullen.BEWAREN : Tribune.Spullen.LEGEN, false);
+			}
+			case NIKS, KONING_TERUG, FINALIST_TERUG -> {
+			}
+		}
+	}
+
+	/** Waar een terugkomer heen gaat die nog niet klaar was (ronde 1 en 3). */
+	protected String startpunt() {
+		return null;
 	}
 
 	/**

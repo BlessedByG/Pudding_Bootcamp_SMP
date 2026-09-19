@@ -4,13 +4,17 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.server.level.ServerPlayer;
+import nl.pudding.bootcamp.Mc;
 import nl.pudding.bootcamp.config.ConfigStore;
 import nl.pudding.bootcamp.core.Ronde;
+import nl.pudding.bootcamp.tribune.Tribune;
 
 /** {@code /bc kroon|uitverkoren|slot|rad|kijker}: het rad, de kroon en de noodknoppen van de ref. */
 final class KroonCommands {
@@ -26,8 +30,8 @@ final class KroonCommands {
 				.executes(ctx -> SpelCommands.nogNiet(ctx, "kroon", "T11"))));
 		bc.then(Commands.literal("rad").executes(ctx -> SpelCommands.nogNiet(ctx, "rad", "T11")));
 		bc.then(Commands.literal("kijker").then(Commands.argument("speler", EntityArgument.player())
-				.then(Commands.literal("aan").executes(ctx -> SpelCommands.nogNiet(ctx, "kijker", "T7")))
-				.then(Commands.literal("uit").executes(ctx -> SpelCommands.nogNiet(ctx, "kijker", "T7")))));
+				.then(Commands.literal("aan").executes(ctx -> kijker(ctx, true)))
+				.then(Commands.literal("uit").executes(ctx -> kijker(ctx, false)))));
 
 		bc.then(Commands.literal("uitverkoren")
 				.executes(KroonCommands::toonUitverkoren)
@@ -36,6 +40,16 @@ final class KroonCommands {
 		bc.then(Commands.literal("slot").then(Commands.argument("speler", StringArgumentType.word()).suggests(ONLINE)
 				.then(Commands.argument("pilaar", IntegerArgumentType.integer(0, Ronde.AANTAL_LAMPEN - 1))
 						.executes(KroonCommands::zetSlot))));
+	}
+
+	private static int kijker(CommandContext<CommandSourceStack> ctx, boolean aan) throws CommandSyntaxException {
+		ServerPlayer speler = EntityArgument.getPlayer(ctx, "speler");
+		String fout = aan ? Tribune.handmatigAan(ctx.getSource().getServer(), speler)
+				: Tribune.handmatigUit(ctx.getSource().getServer(), speler);
+		if (fout != null) {
+			return BcCommand.fout(ctx, "Kijker: " + fout + ".");
+		}
+		return BcCommand.ok(ctx, Mc.naam(speler) + (aan ? " is nu kijker op de tribune." : " is geen kijker meer en doet weer mee."));
 	}
 
 	private static int toonUitverkoren(CommandContext<CommandSourceStack> ctx) {
