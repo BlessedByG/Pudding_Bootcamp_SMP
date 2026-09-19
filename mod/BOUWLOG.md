@@ -1,6 +1,6 @@
 # Bouwlog
 
-Status: modus=A; klaar=T0,T1,T2,T3,T4,T5,T6,T7,T8,T9; bezig=T10
+Status: modus=A; klaar=T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10; bezig=T11
 
 Per taak: wat er gedaan is, wat geverifieerd is en wat open staat (in-game test, aanname,
 afwijking van de docs). Het plan staat in [../docs/08-taakplan.md](../docs/08-taakplan.md).
@@ -302,3 +302,31 @@ de echte item-parser.
   vóór de ronde begint, niet halverwege wave 3.
 - De sidebar verdwijnt aan het eind van de ronde.
 - Wie dood was en uitlogde voor het einde krijgt zijn bewaarde spullen bij het inloggen terug.
+
+## T10. Ronde 3: Het Ei
+
+**Gedaan** (`game/ronde3/Ei`, `visuals/Vuurwerk`)
+- Start: iedereen speler in **survival** naar `ei_start`, border om `eibos`, de pickaxe erbij
+  (`ei.json`, `clear: false`), countdown van 5, poort `poort_bos` open, timer tien minuten.
+- Elke halve seconde: wie in regio `eiplaat` staat, nog geen ticket heeft en een diamond block bij
+  zich heeft, levert er precies een in, krijgt zijn ticket, gaat in adventure als kijker naar
+  `kring` en houdt al zijn loot. Levelup-geluid, happy-villager-particles, title. Zonder block
+  gebeurt er niks.
+- Hint met vijf minuten op de klok: een iron block op `ei_beacon`, `block.beacon.activate` voor
+  iedereen, bossbar geel. Met drie minuten een gouden vuurpijl boven het Ei.
+- Timer op nul, of iedereen heeft een ticket: wie geen ticket heeft krijgt een lege inventory plus
+  de basiskit, iedereen in adventure naar `kring`.
+- `end` haalt het iron block weer weg (wat er stond komt terug), zodat de ronde opnieuw kan.
+
+**Geverifieerd**: build en `check.sh` groen.
+
+**Open: in-game testen**: drukplaat met en zonder block, beacon gaat echt aan (de piramide moet op
+dat ene blok na compleet zijn en de beacon moet vrij zicht naar boven hebben), vuurpijlhoogte.
+
+**Concretiseringen**
+- **Het ontbrekende beaconblok is een iron block.** De vuurpijl start 22 blokken boven
+  `ei_beacon` (het Ei is ongeveer vijftien hoog en de beacon zit eronder).
+- Ontbreekt `basis.json` aan het eind van de ronde, dan staat dat in de console en houden spelers
+  zonder ticket een lege inventory. Zet het bestand er dus in voor de testrun.
+- Doodgaan in het bos (val, verdrinken): terug naar de bosrand, met je spullen.
+- `/bc start 3` wist tickets van een eerdere poging.
