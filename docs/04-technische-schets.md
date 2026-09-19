@@ -26,7 +26,7 @@ Skript-lijm te leren.
 | Simple Voice Chat (plugin) | Voice, zie [07-voice.md](07-voice.md). |
 | Optioneel: WorldGuard | Builds beschermen buiten de rondes. |
 | Optioneel: LuckPerms | Voice-groepen maken beperken tot staff. |
-| Optioneel: een mini-datapack | Alleen voor dialogs (zie Visuals). |
+| Optioneel: een mini-datapack | Alleen voor een regels-dialog (zie Visuals); de tp-menu's gaan inline. |
 
 ## Server
 
@@ -78,6 +78,7 @@ de locator bar.
 | `dood` | Ronde 2: gesneuveld, spectator tot het einde van de ronde. |
 | `ticket` | Ronde 3: diamond block ingeleverd. |
 | `out` | Uitgeschakeld. |
+| `voice_doden` | Zit in de voice-groep Doden (bijgehouden door de sync). |
 
 **Scoreboard:** `scoreboard objectives add reign dummy` met `setdisplay sidebar reign` voor de
 regeerperiodes. **Bossbar:** `bossbar add bootcamp:main "Pudding Bootcamp"` en
@@ -185,12 +186,14 @@ ronde een start en een einde, de tick-loop, de events (dood, schade), het rad, v
 
 | Command | Doet |
 |---|---|
-| `/bc start <ronde>` | Teleport naar het verzamelpunt, border, kits, voice-knop, countdown, poort open, timer. |
+| `/bc start <ronde>` | Teleport naar het verzamelpunt, border, kits, countdown, poort open, timer. |
 | `/bc stop` | Timer stil. |
 | `/bc timer <seconden>` | Resterende tijd bijstellen. |
 | `/bc poort <naam> open` / `dicht` | Handmatig een poort bedienen. |
 | `/bc kroon <speler>` | Kroon handmatig geven (de ref z'n noodknop). |
 | `/bc reset` | Alles terug naar de basiskamp-staat: tags weg, team `spelers`, adventure, inventory leeg, tp basiskamp, border groot, bossbar leeg. |
+| `/bc voicesync` | Haalt de `voice_doden`-tag bij iedereen weg zodat de sync alle doden opnieuw in de groep zet (na een verdwenen groep). |
+| `/bctools` | Geeft de twee tp-items aan een staff-account. |
 | `/bcuitverkoren <speler>` | De verborgen rol. Vooraf op Clown. |
 | `/bcslot <speler> <0-19>` | Welke pilaar van De Kring de kop van die speler heeft. |
 | `/bcrad` | Het Rad. |
@@ -231,22 +234,6 @@ function bcInRegio(loc: location, naam: text) :: boolean:
     z-coord of {_loc} is between min(z-coord of {_a}, z-coord of {_b}) and max(z-coord of {_a}, z-coord of {_b}) + 1
     return true
 
-function bcVoice(soort: text, doel: players):
-    if {_soort} is "doden":
-        set {_cmd} to "/voicechat join Doden"
-        set {_label} to "[DODEN]"
-        set {_kleur} to "red"
-    else if {_soort} is "ei":
-        set {_cmd} to "/voicechat join Ei"
-        set {_label} to "[EI-VOICE]"
-        set {_kleur} to "green"
-    else:
-        set {_cmd} to "/voicechat leave"
-        set {_label} to "[VERLATEN]"
-        set {_kleur} to "aqua"
-    loop {_doel::*}:
-        execute console command "tellraw %loop-value% [{""text"":""Voice: "",""color"":""gray""},{""text"":""%{_label}%"",""color"":""%{_kleur}%"",""bold"":true,""click_event"":{""action"":""run_command"",""command"":""%{_cmd}%""}}]"
-
 function bcBossbar(tekst: text, kleur: text, max: integer):
     execute console command "bossbar set bootcamp:main name {""text"":""%{_tekst}%""}"
     execute console command "bossbar set bootcamp:main color %{_kleur}%"
@@ -254,8 +241,26 @@ function bcBossbar(tekst: text, kleur: text, max: integer):
     execute console command "bossbar set bootcamp:main value %{_max}%"
 ```
 
-Doet de voice-knop niks, probeer dan het command zonder de schuine streep. Wie zonder Skript
-wil: dezelfde `tellraw` werkt ook vanuit een command block.
+**Voice gaat automatisch.** Niemand klikt of typt iets. Eén loop houdt de groep Doden in sync
+met wie spectator is, door het join- of leave-command van de mod *als die speler* uit te voeren:
+
+```
+every 2 seconds:
+    loop bcSpelers():
+        if gamemode of loop-player is spectator:
+            if scoreboard tags of loop-player doesn't contain "voice_doden":
+                make loop-player execute command "/voicechat join Doden"
+                add "voice_doden" to scoreboard tags of loop-player
+        else if scoreboard tags of loop-player contains "voice_doden":
+            make loop-player execute command "/voicechat leave"
+            remove "voice_doden" from scoreboard tags of loop-player
+```
+
+Dit dekt alle paden tegelijk: dood in de horde, eruit in ronde 4, respawn-wachttijd, finalist 1
+die de FFA bekijkt, en de ref die iemand met de hand op spectator zet. `make ... execute command`
+voert het command uit alsof de speler het typte; de speler ziet alleen het bevestigingsregeltje
+van de mod. Test of de voice-plugin het command via Skript accepteert; de groep `Doden` moet
+bestaan (de voice-admin zit erin, zie [07-voice.md](07-voice.md)).
 
 **Een ronde starten** (ronde 3 als voorbeeld; de andere volgen hetzelfde patroon)
 
@@ -267,7 +272,6 @@ function bcStart(ronde: integer):
         execute console command "gamemode survival @a[tag=speler]"
         bcBorder("eibos")
         bcKit("ei")
-        bcVoice("ei", bcSpelers())
         bcBossbar("Het Ei", "green", 600)
         bcCountdown()
         bcPoort("poort_bos", true)
@@ -371,7 +375,6 @@ function bcDood(p: player):
     wait 1 tick
     set gamemode of {_p} to spectator
     execute console command "tellraw @a [{""text"":""%{_p}%"",""color"":""gray""},{""text"":"" is gesneuveld"",""color"":""dark_gray""}]"
-    bcVoice("doden", {_p})
 
 function bcUit(p: player):
     add "out" to scoreboard tags of {_p}
@@ -380,7 +383,6 @@ function bcUit(p: player):
     execute console command "kill @e[tag=kroon_%{_p}%]"
     wait 1 tick
     set gamemode of {_p} to spectator
-    bcVoice("doden", {_p})
 
 function bcRespawn(p: player):
     set {_gen} to {bc::generatie}
@@ -533,9 +535,8 @@ command /bcrad:
 Startpositie en aantal rondes zijn willekeurig, het eindpunt is het slot van de `uitverkoren`
 speler. `bcRadEinde` doet de visuals (zie hieronder), wacht drie seconden en roept `bcStart(4)`
 aan: hunters getagd en in team, Clown de bosskit en `bcKroon` (die zet hem in de burcht), dan
-`bcOpstelling(30)` voor de hunters, bevroren op hun startpunt, iedereen de [VERLATEN]-knop,
-border `king`,
-locator bar aan voor de koning en de timer op 900.
+`bcOpstelling(30)` voor de hunters, bevroren op hun startpunt, border `king`, locator bar aan
+voor de koning en de timer op 900. Voice regelt zichzelf: wie spectator is zit bij de doden.
 
 **De horde**
 
@@ -572,7 +573,7 @@ function bcCheckFFA():
         bcStart(6)
 ```
 
-`bcStart(6)` zet beide koningen op adventure, geeft de finalekit, [VERLATEN]-knop, teleport naar
+`bcStart(6)` zet beide koningen op adventure, geeft de finalekit, teleport naar
 `finale_1` en `finale_2`, border `troonzaal`. `bcPotje(winnaar)` telt de score, healt, reset de
 kits, en na twee gewonnen potjes `bcKroning(winnaar)`.
 
@@ -655,25 +656,84 @@ Vuurpijl (gouden bol met staart):
 summon minecraft:firework_rocket <x> <y> <z> {LifeTime:20,FireworkItem:{id:"minecraft:firework_rocket",count:1,components:{"minecraft:fireworks":{explosions:[{shape:"large_ball",colors:[I;16766720,16777215],has_trail:true}],flight_duration:1}}}}
 ```
 
-**Dialogs (optioneel):** sinds 1.21.6 kun je spelers een echt schermpje met knoppen laten zien
-in plaats van een regel in de chat. Dat is netter voor de regels in het basiskamp en voor de
-voice-knoppen. Dialogs zijn data-driven, dus dit is het enige stukje datapack:
+**Dialogs:** sinds 1.21.6 kun je spelers een echt schermpje met knoppen laten zien. We gebruiken
+ze voor de tp-menu's van de kijkers (hieronder) en optioneel voor de regels in het basiskamp. Een
+vaste dialog kan als bestand in een mini-datapack (`data/bootcamp/dialog/regels.json`, type
+`minecraft:notice`), een dynamische bouw je inline in het `dialog show`-command.
 
-```json
-// data/bootcamp/dialog/doden.json
-{
-  "type": "minecraft:notice",
-  "title": "Je ligt eruit",
-  "body": [{ "type": "minecraft:plain_message", "contents": "Je kijkt nu mee als spectator. Klik om bij de Doden-voice te komen." }],
-  "action": {
-    "label": "Naar de Doden-voice",
-    "action": { "type": "minecraft:run_command", "command": "voicechat join Doden" }
-  }
-}
+## Kijkers: teleporteren naar spelers
+
+Doden zijn echte spectators; dat moet, want daar hangt de voice-regel aan. Echte spectators
+kunnen geen items vasthouden, dus voor hen zijn er twee wegen naar dezelfde twee lijsten:
+
+- **Het spectator-menu** van Minecraft zelf: druk op een hotbar-toets (1 t/m 9) en je krijgt
+  "Teleport to Player" en "Teleport to Team Member". Geef de teams een duidelijke naam, dan is
+  de tweede optie meteen de splitsing levend/dood:
+
+```
+team modify hunters displayName "Levend: hunters"
+team modify king displayName "Levend: koning"
+team modify out displayName "Dood"
 ```
 
-Tonen vanuit Skript: `execute console command "dialog show %{_p}% bootcamp:doden"`. De chatknop
-blijft de fallback als de dialog op 26.2 anders blijkt te werken.
+- **`/levend` en `/dood`**: openen een dialog met een knop per speler. Klik en je staat ernaast.
+
+**Staff** (host, camera-accounts, admins) zit in creative of adventure met fly en krijgt met
+`/bctools` twee items in de hotbar: een kompas **Levenden** en een spelerskop **Doden**.
+Rechtsklik opent dezelfde dialog. Achter elke knop zit `/bctp <speler>`, dat alleen werkt voor
+staff en spectators.
+
+```
+command /bctools:
+    permission: bc.admin
+    trigger:
+        give 1 compass named "&aLevenden" to player
+        give 1 player head named "&cDoden" to player
+
+on rightclick:
+    if player's tool is a compass named "&aLevenden":
+        cancel event
+        bcTpMenu(player, "levend")
+    else if player's tool is a player head named "&cDoden":
+        cancel event
+        bcTpMenu(player, "dood")
+
+command /levend:
+    trigger:
+        bcTpMenu(player, "levend")
+
+command /dood:
+    trigger:
+        bcTpMenu(player, "dood")
+
+function bcTpMenu(p: player, soort: text):
+    if {_soort} is "levend":
+        set {_lijst::*} to all players where [scoreboard tags of input contains "speler" and gamemode of input is not spectator]
+        set {_titel} to "Levenden"
+    else:
+        set {_lijst::*} to all players where [scoreboard tags of input contains "speler" and gamemode of input is spectator]
+        set {_titel} to "Doden"
+    if size of {_lijst::*} is 0:
+        send "&7Niemand." to {_p}
+        stop
+    loop {_lijst::*}:
+        add "{label:""%loop-value%"",action:{type:""minecraft:run_command"",command:""bctp %loop-value%""}}" to {_k::*}
+    set {_knoppen} to join {_k::*} with ","
+    execute console command "dialog show %{_p}% {type:""minecraft:multi_action"",title:""%{_titel}%"",columns:3,actions:[%{_knoppen}%],exit_action:{label:""Sluiten""}}"
+
+command /bctp <player>:
+    trigger:
+        if player has permission "bc.admin":
+            teleport player to arg-1
+        else if gamemode of player is spectator:
+            teleport player to arg-1
+        else:
+            send "&cAlleen voor kijkers."
+```
+
+De lijst wordt elke keer opnieuw gebouwd, dus hij klopt altijd met wie er op dat moment leeft.
+Werkt de knop niet, probeer dan `/bctp` met schuine streep in het `command`-veld. Wil je het
+zonder dialogs, dan is een kistmenu via SkBee of skript-gui het alternatief.
 
 ## Testen en herladen
 

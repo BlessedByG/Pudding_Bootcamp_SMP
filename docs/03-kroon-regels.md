@@ -30,8 +30,8 @@ kroon heeft, is de koning en is voor iedereen zichtbaar door muren heen.
 
 - De ex-koning verliest de kroon en gaat in spectator. Hij ligt eruit (zie
   [06-open-keuzes.md](06-open-keuzes.md) voor de variant waarin ex-koningen wel meedoen aan de FFA).
-  In voice hoort hij vanaf nu alles, maar niemand hoort hem; hij krijgt de knop voor de groep
-  Doden (zie [07-voice.md](07-voice.md)).
+  In voice hoort hij vanaf nu alles, maar niemand hoort hem; hij zit automatisch bij de doden
+  (zie [07-voice.md](07-voice.md)).
 - **Alle hunters** worden full hp geheald en teruggeteleporteerd naar hun startpunt aan de rand,
   waar ze bevroren staan. Ook wie op dat moment in zijn respawn-wachttijd zit: die staat meteen
   weer aan de rand, de wachttijd vervalt.

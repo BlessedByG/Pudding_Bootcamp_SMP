@@ -15,7 +15,7 @@ hoe je het technisch bouwt en hoe de avond zelf verloopt. Niet fancy, wel comple
 | **Spelers** | 20 (19 streamers + ClownPierce). Werkt vanaf ~8 tot ~30, de getallen schalen mee. |
 | **Duur** | ± 2 uur inclusief pauzes en praatjes van de host. |
 | **Server** | Paper op Minecraft 26.2 met Skript, WorldEdit en Simple Voice Chat als plugin. Eén open wereld (± 500 x 500) met alle zones in het landschap. Spelers hebben alleen de voice-mod nodig. |
-| **Voice** | Simple Voice Chat, verplicht. Proximity, met in ronde 3 één grote groep en vanaf ronde 2 een groep voor de doden. |
+| **Voice** | Simple Voice Chat, verplicht. Alles proximity; wie dood is hoort alles maar wordt niet gehoord. Gaat automatisch, niemand hoeft iets te doen. |
 | **Eliminatie** | Niemand ligt eruit vóór ronde 4. Elke streamer heeft dus minstens een uur content. |
 | **Winnaar** | De speler die de finale (1v1 tussen de twee kroondragers) wint, is King of the SMP. |
 

@@ -158,3 +158,18 @@ om de koning te vinden, ook met Glowing. En de koning kan in survival het doolho
 
 **Aanbeveling:** 200 x 200 houden. Wil je toch de hele wereld, begin de border dan op 400 en laat
 hem vanaf minuut 5 al krimpen.
+
+## 16. Echte spectators, of "nep-spectators" met items in de hotbar?
+
+**Nu in het concept:** echte spectator mode voor de doden. Daar hangt de voice-regel aan (de mod
+dempt spectators automatisch voor de levenden) en spectators vliegen door muren en de border.
+Nadeel: echte spectators kunnen geen items vasthouden, dus de tp-items zijn er alleen voor de
+staff; de doden gebruiken het spectator-menu of `/levend` en `/dood`.
+
+**Alternatief:** doden in adventure mode met fly en onzichtbaarheid, mét de twee tp-items in de
+hotbar. Dan werkt de voice-regel van de mod niet meer (die kijkt naar spectator mode), dus je
+moet met LuckPerms per dode `voicechat.speak` uitzetten: de dode hoort dan alles maar kan met
+niemand praten, ook niet met andere doden. En onzichtbare spelers hebben een hitbox: ze vangen
+pijlen op, staan in de weg in de arena en kunnen niet door muren.
+
+**Aanbeveling:** echte spectators. De items voor de staff, het menu voor de doden.

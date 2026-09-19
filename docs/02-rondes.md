@@ -84,8 +84,8 @@ ronde 4.
 
 **Regels**
 - Doodgaan = spectator tot het einde van de ronde. Je kijkt mee, je hoort alles, maar de
-  levenden horen jou niet. Je zit met de andere doden in de Doden-voice. Aan het eind van de
-  ronde gaat iedereen door, dood of levend.
+  levenden horen jou niet. Met de andere doden kun je wel praten. Aan het eind van de ronde
+  gaat iedereen door, dood of levend.
 - De volgorde van sneuvelen komt op het scoreboard in de sidebar. Puur voor de eer.
 - Optionele twist voor de laatste minuut: na wave 5 gaat PvP 60 seconden aan ("vrij vuur").
   Wie dan overblijft, of de meeste kills heeft, krijgt een extra bonus. Alleen doen als je de
@@ -99,7 +99,7 @@ ronde 4.
 **Bonus:** iedereen die de ronde overleeft, krijgt 1 ender pearl bij verzamelpunt 3.
 
 **Voice:** levend proximity. Dood = spectator: alles horen, niet gehoord worden, en met de andere
-doden praten in de groep Doden. Je krijgt bij je dood een knop in de chat om erin te gaan.
+doden praten. Gaat automatisch, je hoeft niks te doen.
 
 **Wat train je:** mobs, boog en schild, samen vechten, niet in de creeper rennen.
 
@@ -138,8 +138,8 @@ minstens één diamond block mee. Dat block is je ticket naar ronde 4.
 
 **Regels**
 - Geen PvP (iedereen zit nog in hetzelfde team).
-- Iedereen zit in één voice-groep (Ei): je hoort elkaar overal in het zoekgebied. Wie het Ei
-  vindt, moet dus zijn mond houden of bluffen.
+- Voice is gewoon proximity, ook hier. Wie het Ei vindt hoort alleen wie in de buurt is; roepen
+  kan, maar dan komt iedereen.
 - Pak wat je pakken kunt, maar je hebt maar één inventory.
 - Je komt alleen bij De Kring (verzamelpunt 4) met een diamond block op zak: de uitgang van het
   bos is een drukplaat die het block inneemt en je erheen teleporteert.
@@ -152,7 +152,7 @@ minstens één diamond block mee. Dat block is je ticket naar ronde 4.
 
 **Bonus:** je loot is je bonus. Wie snel is heeft de beste spullen voor ronde 4.
 
-**Voice:** iedereen in de groep Ei, geen proximity. Knop in de chat bij de start van de ronde.
+**Voice:** proximity, zoals overal.
 
 **Wat train je:** exploren, snel minen, kiezen wat je meeneemt, onder tijdsdruk werken.
 
@@ -207,9 +207,9 @@ Hier het overzicht.
 - Finalist 1 gaat kijken. Alle hunters die nog leven gaan naar ronde 5. Iedereen die dood is
   (ex-koningen, hunters gestorven in sudden death) is uitgeschakeld.
 
-**Voice:** iedereen terug naar proximity bij de start (knop na het rad). Dood = spectator: alles
-horen, niet gehoord worden. Wie eruit ligt krijgt de knop voor de groep Doden. Hunters die 20
-seconden op hun respawn wachten zijn ook even spectator en dus even stil.
+**Voice:** proximity. Dood = spectator: alles horen, niet gehoord worden, praten met de andere
+doden. Hunters die 20 seconden op hun respawn wachten zijn ook even spectator en dus even stil.
+Allemaal automatisch.
 
 **Wat train je:** PvP tegen overmacht, target focus, wanneer je wel en niet moet gaan.
 

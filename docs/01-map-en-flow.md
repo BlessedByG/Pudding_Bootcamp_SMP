@@ -108,6 +108,9 @@ trap bouwen, inbouwen op je laatste hartje).
 
 Gewoon spectator mode. Doden en staff vliegen vrij rond, door de border heen. Vraag de doden om
 in de buurt van de actie te blijven kijken (voor hun eigen stream), meer regels zijn er niet.
+Naar een speler teleporteren gaat via het spectator-menu (hotbar-toets) met de teams Levend en
+Dood, of via de tp-menu's van `/levend` en `/dood`; staff heeft er twee items voor. Zie
+[04-technische-schets.md](04-technische-schets.md).
 
 ## Stream-overwegingen
 

@@ -34,7 +34,7 @@ hard, dus het loopt vooral uit door praatjes. Dat is de host z'n verantwoordelij
 |---|---|---|
 | **Host / caster** | 1 | Praat op de stream, legt regels uit, kondigt rondes aan, houdt de verzamelpunten gezellig. Zit in spectator. Speelt Het Rad recht: "iedereen kan de koning worden". |
 | **Admin 1: commander** | 1 | Draait de functies: poorten, starts, timers, teleports. Doet verder niks anders. |
-| **Admin 2: ref** | 1 | Kijkt naar problemen: stuck spelers, disconnects, bugs met de kroon. Overrulet handmatig waar nodig. Houdt het randgevallen-lijstje uit [03-kroon-regels.md](03-kroon-regels.md) bij de hand. Is ook **voice-admin**: maakt de groepen Doden en Ei aan en blijft erin zitten zodat ze niet verdwijnen (zie [07-voice.md](07-voice.md)). |
+| **Admin 2: ref** | 1 | Kijkt naar problemen: stuck spelers, disconnects, bugs met de kroon. Overrulet handmatig waar nodig. Houdt het randgevallen-lijstje uit [03-kroon-regels.md](03-kroon-regels.md) bij de hand. Is ook **voice-admin**: maakt de groep Doden aan en blijft erin zitten zodat hij niet verdwijnt (zie [07-voice.md](07-voice.md)). |
 | **Camera** | 0 tot 2 | Spectator-accounts voor een mooi hoofdbeeld op de stream (top-down doolhof, overzicht King zone). Optioneel. |
 | **Bouwers** | 2 tot 4 | Vooraf. Zie de bouwlijst hieronder. |
 
@@ -75,9 +75,12 @@ Doe minstens één keer de hele avond met 4 of 5 testers, van basiskamp tot kron
 - [ ] Doolhof: niemand kan over of door het plafond. Kisten gevuld.
 - [ ] Horde: waves volgen elkaar op, dood = spectator tot het einde, doden worden bij verzamelpunt 3
       weer levend, bossbar telt mobs. Ronde stopt ook als iedereen dood is.
-- [ ] Voice: proximity werkt, de knoppen [DODEN], [EI-VOICE] en [VERLATEN] doen wat ze moeten, en
-      een spectator in de groep Doden is niet hoorbaar voor een levende speler ernaast maar hoort
-      die wel. Dit is de belangrijkste voice-test, zie [07-voice.md](07-voice.md).
+- [ ] Voice: proximity werkt, een dode zit binnen twee seconden automatisch in de groep Doden
+      (kijk linksboven) en gaat er weer uit als hij levend wordt, en een spectator in de groep
+      Doden is niet hoorbaar voor een levende speler ernaast maar hoort die wel. Dit is de
+      belangrijkste voice-test, zie [07-voice.md](07-voice.md).
+- [ ] Kijkers: de tp-items van de staff en `/levend` en `/dood` openen de spelerslijst en
+      teleporteren; het spectator-menu (hotbar-toets) toont de teams Levend en Dood.
 - [ ] Ei: drukplaat neemt het diamond block in en teleporteert. Zonder block gebeurt er niks.
       Beacon-hint gaat aan op 5 min.
 - [ ] Rad: landt op de speler met tag `uitverkoren`. Draai hem vijf keer, dan zie je meteen of
@@ -107,6 +110,7 @@ Doe minstens één keer de hele avond met 4 of 5 testers, van basiskamp tot kron
 - [ ] Tag `uitverkoren` staat op Clown en op niemand anders (`tag @a list`).
 - [ ] Voice: `force_voice_chat=true`, UDP-poort open, voice-admin heeft de groep Doden gemaakt
       voordat ronde 2 start.
+- [ ] Host en camera-accounts hebben de tp-items (`/bctools`).
 
 ## Spelregels voor de streamers
 
@@ -120,7 +124,7 @@ Kort en op de borden in het basiskamp:
 4. Bug of stuck? Roep de ref, niet de chat.
 5. Als de admin zegt stop, dan stop.
 6. Geen Discord-call tijdens het event, alleen de voice-mod. Geen eigen voice-groepen maken;
-   alleen Ei en Doden, en alleen via de knop. Je stream laat zien in welke groep je zit.
+   de groep Doden gaat automatisch. Je stream laat zien in welke groep je zit.
 
 ## Als het misgaat
 
@@ -134,4 +138,4 @@ Kort en op de borden in het basiskamp:
 | Speler zit vast in een blok | `tp` door de ref. |
 | Ei niet gevonden en de hint werkt niet | Ref zet handmatig een vuurpijl of zegt de richting in de chat. |
 | Iemand hoort niks in voice | Kruis door het voice-icoontje: UDP-poort dicht of verkeerde modversie. Geen kruis maar toch stil: kijk of hij per ongeluk in een groep zit (`/voicechat leave`). |
-| Groep Doden of Ei bestaat niet meer | Voice-admin is eruit gegaan. Opnieuw aanmaken met exact dezelfde naam, de knoppen werken dan weer. |
+| Groep Doden bestaat niet meer | Voice-admin is eruit gegaan. Opnieuw aanmaken met exact dezelfde naam en `/bc voicesync` draaien; iedereen zit binnen twee seconden weer goed. |
