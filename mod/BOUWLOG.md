@@ -1,6 +1,6 @@
 # Bouwlog
 
-Status: modus=A; klaar=T0,T1,T2,T3,T4,T5; bezig=T6
+Status: modus=A; klaar=T0,T1,T2,T3,T4,T5,T6; bezig=T7
 
 Per taak: wat er gedaan is, wat geverifieerd is en wat open staat (in-game test, aanname,
 afwijking van de docs). Het plan staat in [../docs/08-taakplan.md](../docs/08-taakplan.md).
@@ -158,3 +158,53 @@ Samen in één commit: het commandboompje verwijst naar de wand, dus los compile
 - De boss wave schaalt niet mee (docs/02: "boss wave vast"). Voor een testrun met vijf man is
   2 ravagers + 4 evokers + 10 vindicators te zwaar; zet dan de aantallen in
   `config/bootcamp/waves.json` omlaag of `"schaal": true`.
+
+## T6. Spelraamwerk en gedeelde primitieven
+
+**Gedaan**
+- `game/Spel`: de spelstatus (ronde, timer, per speler rol en vlaggen, finalisten), de tick-loop,
+  `start` met de vereiste-config-check ("ontbreekt: troon, hunter_3, ..." en dan verandert er
+  niets), `stop`, join en quit naar de lopende ronde, de spiegeltags elke seconde, `/bc status`.
+- `game/RondeLogica`: een ronde is een klasse met `start`, `tick`, `seconde`, `timerOp`, `onDeath`,
+  `onQuit`, `onJoin`, `end`, `vereisteRegios`, `vereistePunten`, `magStarten`. `game/Rondes` kiest
+  de klasse; tot T8 t/m T13 is dat `LegeRonde` (teleport, border, gamemode, countdown, timer).
+- `game/Planner`: "drie seconden later" als tick-teller. `game/Aftelling`: de countdown voor
+  iedereen (actionbar, laatste vijf als title met stijgende pling, groene GO met raid horn).
+- `game/Border`: border uit een regio, krimp met duur (`lerpSizeBetween` rekent in 26.2 in ticks
+  en wil de game time erbij), border weg.
+- `game/Poorten`: `poort_<naam>` open en dicht, met cloud-particles en raid horn.
+- `crown/Kroon`: kroon geven (oude helm naar de inventory) en afnemen, team `king`, Glowing,
+  finalist markeren, laatste hit, locator bar via `WAYPOINT_TRANSMIT_RANGE`.
+- `crown/Opstelling`: bevriezen (`MOVEMENT_SPEED` en `JUMP_STRENGTH` op 0, terug naar 0.1 en 0.42)
+  plus een `UseItemCallback` die pearls blokkeert zolang de vlag staat.
+- `visuals/Zweefkroon`: item display met een gouden helm, schaal 0.5, interpolatie 2 ticks, elke
+  twee ticks boven het hoofd gezet en zes graden gedraaid.
+- `/bc start|stop|timer|poort` werken; `Mc` heeft er titles, actionbar, geluid, particles,
+  attributes en effecten bij.
+- Reset-register, in deze volgorde: ronde stoppen en vlaggen wissen, kronen, bevriezing,
+  zweefkroon, poorten dicht, effecten en heal, inventory, gamemode, teleport naar basiskamp, teams,
+  gamerules, border, bossbar.
+
+**Geverifieerd**
+- `./gradlew build` en `check.sh` groen.
+
+**Open: in-game testen**
+- `/bc start 1` t/m `6` met de lege rondes: teleport, border, countdown, timer in de bossbar,
+  `/bc stop`, `/bc timer 30`.
+- Bevriezen: niet lopen, niet springen, niet pearlen; FOV-effect van snelheid 0 bekijken.
+- De zweefkroon: hoogte (2.45 boven de voeten) en of hij vloeiend meebeweegt.
+
+**Concretiseringen**
+- **Een poort onthoudt wat er stond** toen hij openging en zet dat terug bij dicht. Alleen als de
+  mod het niet meer weet (na een herstart met open poort) wordt het iron bars, zoals docs/04 zegt.
+  Een ronde zonder poort-regio start gewoon; een poort is niet verplicht.
+- **Ook wind charges en chorus fruit** zijn geblokkeerd tijdens een opstelling, niet alleen pearls.
+- **Tijdens een opstelling doet niemand elkaar schade** (komt in T7 in `ALLOW_DAMAGE`): anders
+  schiet de koning in zijn 30 seconden voorsprong op hunters die niet weg kunnen.
+- **Tussen twee rondes in is er geen border.** Bij het einde van een ronde gaat de border weg en
+  bij `/bc start` komt de nieuwe.
+- **`/bc start` tijdens een lopende ronde** breekt die eerst af.
+- **De commander start elke ronde**, ook ronde 5 (besluit 14). Alleen de finale start vanzelf na
+  de twee minuten rust.
+- `Spel.buitenRegio`: een ronde weigert te starten als een startpunt buiten haar border-regio
+  ligt, want wie buiten de border wordt neergezet krijgt schade.

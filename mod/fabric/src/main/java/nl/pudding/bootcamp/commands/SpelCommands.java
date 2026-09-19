@@ -14,7 +14,11 @@ import nl.pudding.bootcamp.Mc;
 import nl.pudding.bootcamp.config.ConfigStore;
 import nl.pudding.bootcamp.config.Standaardbestanden;
 import nl.pudding.bootcamp.core.BootcampConfig;
+import nl.pudding.bootcamp.core.Ronde;
+import nl.pudding.bootcamp.core.Tijd;
+import nl.pudding.bootcamp.game.Poorten;
 import nl.pudding.bootcamp.game.Reset;
+import nl.pudding.bootcamp.game.Spel;
 import nl.pudding.bootcamp.kits.Kits;
 
 import java.io.IOException;
@@ -33,13 +37,13 @@ final class SpelCommands {
 
 	static void voegToe(LiteralArgumentBuilder<CommandSourceStack> bc) {
 		bc.then(Commands.literal("start").then(Commands.argument("ronde", IntegerArgumentType.integer(1, 6))
-				.executes(ctx -> nogNiet(ctx, "start", "T6"))));
-		bc.then(Commands.literal("stop").executes(ctx -> nogNiet(ctx, "stop", "T6")));
-		bc.then(Commands.literal("timer").then(Commands.argument("sec", IntegerArgumentType.integer(0, 3600))
-				.executes(ctx -> nogNiet(ctx, "timer", "T6"))));
-		bc.then(Commands.literal("poort").then(Commands.argument("naam", StringArgumentType.word())
-				.then(Commands.literal("open").executes(ctx -> nogNiet(ctx, "poort", "T6")))
-				.then(Commands.literal("dicht").executes(ctx -> nogNiet(ctx, "poort", "T6")))));
+				.executes(SpelCommands::start)));
+		bc.then(Commands.literal("stop").executes(SpelCommands::stop));
+		bc.then(Commands.literal("timer").then(Commands.argument("sec", IntegerArgumentType.integer(1, 3600))
+				.executes(SpelCommands::timer)));
+		bc.then(Commands.literal("poort").then(Commands.argument("naam", StringArgumentType.word()).suggests(POORTEN)
+				.then(Commands.literal("open").executes(ctx -> poort(ctx, true)))
+				.then(Commands.literal("dicht").executes(ctx -> poort(ctx, false)))));
 		bc.then(Commands.literal("kit").then(Commands.argument("naam", StringArgumentType.word()).suggests(KITS)
 				.executes(ctx -> kit(ctx, Mc.deelnemers(ctx.getSource().getServer())))
 				.then(Commands.argument("speler", EntityArgument.player())
@@ -60,6 +64,46 @@ final class SpelCommands {
 		return SharedSuggestionProvider.suggest(namen, b);
 	};
 
+	private static final SuggestionProvider<CommandSourceStack> POORTEN = (ctx, b) -> SharedSuggestionProvider.suggest(
+			ConfigStore.get().regios().keySet().stream().filter(n -> n.startsWith(Poorten.PREFIX))
+					.map(n -> n.substring(Poorten.PREFIX.length())), b);
+
+	private static int start(CommandContext<CommandSourceStack> ctx) {
+		Ronde ronde = Ronde.vanNummer(IntegerArgumentType.getInteger(ctx, "ronde"));
+		String fout = Spel.start(ctx.getSource().getServer(), ronde);
+		if (fout != null) {
+			return BcCommand.fout(ctx, "Ronde " + ronde.nummer() + " start niet, " + fout);
+		}
+		return BcCommand.ok(ctx, "Ronde " + ronde.nummer() + " gestart: " + ronde.naam() + ".");
+	}
+
+	private static int stop(CommandContext<CommandSourceStack> ctx) {
+		if (!Spel.loopt()) {
+			return BcCommand.fout(ctx, "Er loopt geen ronde.");
+		}
+		Ronde was = Spel.ronde();
+		Spel.stop(ctx.getSource().getServer());
+		return BcCommand.ok(ctx, "Ronde " + was.nummer() + " afgebroken: timer stil, border weg, bevriezing eraf.");
+	}
+
+	private static int timer(CommandContext<CommandSourceStack> ctx) {
+		if (!Spel.loopt() || !Spel.timerLoopt()) {
+			return BcCommand.fout(ctx, "Er loopt geen timer.");
+		}
+		int sec = IntegerArgumentType.getInteger(ctx, "sec");
+		Spel.zetTimer(sec);
+		return BcCommand.ok(ctx, "Timer op " + Tijd.mmss(sec) + ".");
+	}
+
+	private static int poort(CommandContext<CommandSourceStack> ctx, boolean open) {
+		String naam = StringArgumentType.getString(ctx, "naam").toLowerCase(Locale.ROOT);
+		String fout = open ? Poorten.open(ctx.getSource().getServer(), naam) : Poorten.dicht(ctx.getSource().getServer(), naam);
+		if (fout != null) {
+			return BcCommand.fout(ctx, "Poort: " + fout + ".");
+		}
+		return BcCommand.ok(ctx, "Poort " + naam + (open ? " open." : " dicht."));
+	}
+
 	private static int kit(CommandContext<CommandSourceStack> ctx, Collection<ServerPlayer> spelers) {
 		String naam = StringArgumentType.getString(ctx, "naam").toLowerCase(Locale.ROOT);
 		String fout = Kits.geefAan(ctx.getSource().getServer(), naam, spelers);
@@ -76,7 +120,7 @@ final class SpelCommands {
 
 	private static int status(CommandContext<CommandSourceStack> ctx) {
 		BootcampConfig c = ConfigStore.get();
-		StringBuilder sb = new StringBuilder("Bootcamp-status");
+		StringBuilder sb = new StringBuilder(Spel.statusTekst(ctx.getSource().getServer()));
 		sb.append("\n  config: ").append(c.regios().size()).append(" regio's, ").append(c.punten().size()).append(" punten");
 		sb.append("\n  uitverkoren: ").append(c.uitverkoren() == null ? "niemand" : c.uitverkoren());
 		sb.append("\n  slots: ").append(c.slots().isEmpty() ? "geen" : c.slots().toString());

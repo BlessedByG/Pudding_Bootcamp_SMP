@@ -1,0 +1,394 @@
+package nl.pudding.bootcamp.game;
+
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.GameType;
+import nl.pudding.bootcamp.Bootcamp;
+import nl.pudding.bootcamp.Mc;
+import nl.pudding.bootcamp.config.ConfigStore;
+import nl.pudding.bootcamp.core.Punt;
+import nl.pudding.bootcamp.core.Regio;
+import nl.pudding.bootcamp.core.Rol;
+import nl.pudding.bootcamp.core.Ronde;
+import nl.pudding.bootcamp.crown.Opstelling;
+import nl.pudding.bootcamp.visuals.Bossbar;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
+
+/**
+ * De spelstatus: huidige ronde, timer, per speler een rol en vlaggen. De mod is de bron van
+ * waarheid; de scoreboard-tags ({@code king}, {@code hunter}, {@code kijker}, {@code uitverkoren},
+ * {@code ticket}) zijn read-only spiegels die elke seconde worden bijgezet.
+ */
+public final class Spel {
+	public static final Random RANDOM = new Random();
+	private static final List<String> SPIEGELTAGS = List.of("king", "hunter", "kijker", "uitverkoren", "ticket");
+
+	private static final Map<UUID, SpelerStatus> SPELERS = new LinkedHashMap<>();
+	private static Ronde ronde = Ronde.BASISKAMP;
+	private static RondeLogica actief;
+	private static int timer;
+	private static int timerStart;
+	private static boolean timerLoopt;
+	private static UUID finalist1;
+	private static UUID finalist2;
+
+	private Spel() {
+	}
+
+	public static void init() {
+		// Als eerste in het register: eerst de ronde stoppen, dan pas de rest opruimen.
+		Reset.REGISTER.registreer("ronde stoppen en vlaggen wissen", server -> {
+			stop(server);
+			ronde = Ronde.BASISKAMP;
+			finalist1 = null;
+			finalist2 = null;
+			SPELERS.values().forEach(SpelerStatus::wis);
+		});
+	}
+
+	// Status
+
+	public static Ronde ronde() {
+		return ronde;
+	}
+
+	/** De lopende ronde, of {@code null} tussen twee rondes in. */
+	public static RondeLogica actief() {
+		return actief;
+	}
+
+	public static boolean loopt() {
+		return actief != null;
+	}
+
+	public static SpelerStatus status(ServerPlayer speler) {
+		SpelerStatus s = SPELERS.computeIfAbsent(speler.getUUID(), id -> new SpelerStatus(id, Mc.naam(speler)));
+		s.naam = Mc.naam(speler);
+		return s;
+	}
+
+	/** De status van iemand die misschien offline is, of {@code null} als de mod hem niet kent. */
+	public static SpelerStatus status(UUID id) {
+		return SPELERS.get(id);
+	}
+
+	public static Collection<SpelerStatus> alleStatussen() {
+		return SPELERS.values();
+	}
+
+	public static Rol rol(ServerPlayer speler) {
+		return Mc.isStaff(speler) ? Rol.STAFF : status(speler).rol;
+	}
+
+	/** Zet de rol en het team dat erbij hoort. */
+	public static void zetRol(MinecraftServer server, ServerPlayer speler, Rol rol) {
+		status(speler).rol = rol;
+		switch (rol) {
+			case SPELER -> Teams.zet(server, speler, Teams.SPELERS);
+			case HUNTER -> Teams.zet(server, speler, Teams.HUNTERS);
+			case KING, FINALIST -> Teams.zet(server, speler, Teams.KING);
+			case KIJKER -> Teams.zet(server, speler, Teams.OUT);
+			// Ronde 5: iedereen uit zijn team, dus alles is PvP.
+			case FFA -> Teams.uitTeam(server, speler);
+			case STAFF -> {
+			}
+		}
+	}
+
+	/** Online, geen staff, met deze rol en nog in de ronde. */
+	public static List<ServerPlayer> levend(MinecraftServer server, Rol rol) {
+		List<ServerPlayer> uit = new ArrayList<>();
+		for (ServerPlayer s : Mc.deelnemers(server)) {
+			SpelerStatus st = status(s);
+			if (st.rol == rol && !st.dood) {
+				uit.add(s);
+			}
+		}
+		return uit;
+	}
+
+	public static UUID finalist1() {
+		return finalist1;
+	}
+
+	public static UUID finalist2() {
+		return finalist2;
+	}
+
+	public static void zetFinalist1(UUID id) {
+		finalist1 = id;
+	}
+
+	public static void zetFinalist2(UUID id) {
+		finalist2 = id;
+	}
+
+	/** De uitverkorene als hij online is, anders {@code null}. */
+	public static ServerPlayer clown(MinecraftServer server) {
+		String naam = ConfigStore.get().uitverkoren();
+		return naam == null ? null : server.getPlayerList().getPlayerByName(naam);
+	}
+
+	public static boolean isClown(ServerPlayer speler) {
+		return ConfigStore.get().isUitverkoren(Mc.naam(speler));
+	}
+
+	// Config
+
+	public static Punt punt(String naam) {
+		return ConfigStore.get().punten().get(naam);
+	}
+
+	public static Regio regio(String naam) {
+		return ConfigStore.get().regios().get(naam);
+	}
+
+	/**
+	 * Voor {@code magStarten}: wie buiten de border wordt neergezet krijgt schade, dus een startpunt
+	 * hoort binnen de regio van de ronde te liggen.
+	 *
+	 * @return {@code null} als het klopt, anders de melding
+	 */
+	public static String buitenRegio(String regioNaam, String... puntNamen) {
+		Regio r = regio(regioNaam);
+		if (r == null) {
+			return null;
+		}
+		List<String> buiten = new ArrayList<>();
+		for (String naam : puntNamen) {
+			Punt p = punt(naam);
+			if (p != null && !r.bevat(p.x(), p.z())) {
+				buiten.add(naam);
+			}
+		}
+		return buiten.isEmpty() ? null
+				: "deze punten liggen buiten regio " + regioNaam + " (en dus buiten de border): " + String.join(", ", buiten);
+	}
+
+	public static void naarPunt(ServerPlayer speler, String puntNaam) {
+		Punt p = punt(puntNaam);
+		if (p != null) {
+			Mc.teleport(speler, p);
+		} else {
+			Bootcamp.LOG.warn("Punt {} bestaat niet; {} blijft staan", puntNaam, Mc.naam(speler));
+		}
+	}
+
+	// Timer
+
+	public static int timer() {
+		return timer;
+	}
+
+	public static boolean timerLoopt() {
+		return timerLoopt;
+	}
+
+	public static void startTimer(int seconden) {
+		timer = seconden;
+		timerStart = Math.max(1, seconden);
+		timerLoopt = true;
+	}
+
+	/** {@code /bc timer}: de resterende tijd bijstellen. */
+	public static void zetTimer(int seconden) {
+		timer = seconden;
+		timerStart = Math.max(timerStart, Math.max(1, seconden));
+	}
+
+	public static void stopTimer() {
+		timerLoopt = false;
+	}
+
+	/** Hoeveel van de tijd er nog over is, van 1 naar 0, voor de vulling van de bossbar. */
+	public static float timerDeel() {
+		return timerStart <= 0 ? 0f : (float) timer / timerStart;
+	}
+
+	// Rondes starten en stoppen
+
+	/**
+	 * {@code /bc start}: weigert met één regel als er iets ontbreekt en verandert dan niets.
+	 *
+	 * @return {@code null} als de ronde gestart is, anders waarom niet
+	 */
+	public static String start(MinecraftServer server, Ronde nieuw) {
+		RondeLogica logica = Rondes.maak(nieuw);
+		List<String> mist = Ronde.ontbreekt(logica.vereisteRegios(), logica.vereistePunten(),
+				ConfigStore.get().regios().keySet(), ConfigStore.get().punten().keySet());
+		if (!mist.isEmpty()) {
+			return "ontbreekt: " + String.join(", ", mist);
+		}
+		String bezwaar = logica.magStarten(server);
+		if (bezwaar != null) {
+			return bezwaar;
+		}
+
+		if (actief != null) {
+			stop(server);
+		}
+		ronde = nieuw;
+		actief = logica;
+		SPELERS.values().forEach(SpelerStatus::nieuweRonde);
+		Bootcamp.LOG.info("Ronde {} ({}) start", nieuw.nummer(), nieuw.naam());
+		logica.start(server);
+		return null;
+	}
+
+	/**
+	 * {@code /bc stop}, en het gewone einde van een ronde: timer stil, geplande dingen weg,
+	 * bevriezing eraf, border weg, bossbar terug. De ronde ruimt haar eigen spullen op in
+	 * {@code end} (mobs, sidebar).
+	 */
+	public static void stop(MinecraftServer server) {
+		RondeLogica was = actief;
+		actief = null;
+		timerLoopt = false;
+		Planner.wisAlles();
+		Aftelling.stop();
+		Opstelling.losIedereen(server);
+		if (was != null) {
+			try {
+				was.end(server);
+			} catch (RuntimeException e) {
+				Bootcamp.LOG.error("Opruimen van ronde {} faalde", was.ronde().nummer(), e);
+			}
+			Bootcamp.LOG.info("Ronde {} gestopt", was.ronde().nummer());
+		}
+		Border.weg(server);
+		Bossbar.basiskamp();
+	}
+
+	/** Iedereen die meedoet wordt weer gewoon speler, in de goede gamemode, full hp. */
+	public static void maakSpelers(MinecraftServer server, boolean survival) {
+		for (ServerPlayer s : Mc.deelnemers(server)) {
+			zetRol(server, s, Rol.SPELER);
+			s.setGameMode(survival ? GameType.SURVIVAL : GameType.ADVENTURE);
+			Mc.heal(s);
+		}
+	}
+
+	// Tick
+
+	/** Elke servertick. */
+	public static void tick(MinecraftServer server) {
+		Planner.tick();
+		Aftelling.tick(server);
+		if (actief != null) {
+			actief.tick(server);
+		}
+		if (server.getTickCount() % 20 == 0) {
+			seconde(server);
+		}
+	}
+
+	private static void seconde(MinecraftServer server) {
+		if (actief != null && timerLoopt) {
+			timer = Math.max(0, timer - 1);
+			if (timer == 0) {
+				timerLoopt = false;
+				actief.timerOp(server);
+			}
+		}
+		// timerOp kan de ronde beëindigd hebben.
+		if (actief != null) {
+			actief.seconde(server);
+		}
+		spiegelTags(server);
+		Bossbar.iedereenErbij(server);
+	}
+
+	private static void spiegelTags(MinecraftServer server) {
+		for (ServerPlayer s : Mc.spelers(server)) {
+			SpelerStatus st = status(s);
+			String rolTag = Mc.isStaff(s) ? null : st.rol.tag();
+			for (String tag : SPIEGELTAGS) {
+				boolean hoort = switch (tag) {
+					case "uitverkoren" -> isClown(s);
+					case "ticket" -> st.ticket;
+					default -> tag.equals(rolTag);
+				};
+				if (hoort) {
+					s.addTag(tag);
+				} else {
+					s.removeTag(tag);
+				}
+			}
+		}
+	}
+
+	// Join en quit
+
+	public static void onJoin(MinecraftServer server, ServerPlayer speler) {
+		SpelerStatus st = status(speler);
+		Opstelling.herstelBijJoin(speler);
+		if (Mc.isStaff(speler)) {
+			return;
+		}
+		if (actief != null) {
+			actief.onJoin(server, speler);
+		} else {
+			// Tussen twee rondes in: terug in het team dat bij zijn rol hoort.
+			zetRol(server, speler, st.rol);
+		}
+	}
+
+	public static void onQuit(MinecraftServer server, ServerPlayer speler) {
+		if (actief != null && !Mc.isStaff(speler)) {
+			actief.onQuit(server, speler);
+		}
+	}
+
+	// /bc status
+
+	public static String statusTekst(MinecraftServer server) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Ronde ").append(ronde.nummer()).append(" (").append(ronde.naam()).append(")")
+				.append(actief != null ? ", loopt" : ", loopt niet");
+		if (timerLoopt) {
+			sb.append(", timer ").append(nl.pudding.bootcamp.core.Tijd.mmss(timer));
+		}
+		if (finalist1 != null) {
+			sb.append("\n  finalist 1: ").append(naamVan(finalist1));
+		}
+		if (finalist2 != null) {
+			sb.append("\n  finalist 2: ").append(naamVan(finalist2));
+		}
+		for (ServerPlayer s : Mc.spelers(server)) {
+			SpelerStatus st = status(s);
+			sb.append("\n  ").append(st.naam).append(": ").append(rol(s));
+			if (st.dood) {
+				sb.append(" dood");
+			}
+			if (st.klaar) {
+				sb.append(" klaar");
+			}
+			if (st.ticket) {
+				sb.append(" ticket");
+			}
+			if (st.bevroren) {
+				sb.append(" bevroren");
+			}
+			if (isClown(s)) {
+				sb.append(" uitverkoren");
+			}
+			int slot = ConfigStore.get().slotVan(st.naam);
+			if (slot >= 0) {
+				sb.append(" slot ").append(slot);
+			}
+		}
+		return sb.toString();
+	}
+
+	public static String naamVan(UUID id) {
+		SpelerStatus st = SPELERS.get(id);
+		return st == null ? id.toString() : st.naam;
+	}
+}
