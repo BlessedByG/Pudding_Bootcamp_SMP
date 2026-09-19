@@ -20,8 +20,9 @@ kroon heeft, is de koning en is voor iedereen zichtbaar door muren heen.
    Hij krijgt de kroon, de bosskit en Glowing. Bossbar: `Koning: ClownPierce · 15:00`.
 5. De 19 hunters worden verdeeld over 4 spawnpunten aan de rand, in team `hunters` (friendly fire
    uit). Ze hebben hun loot uit ronde 3, of de basiskit.
-6. 30 seconden voorsprong voor de koning: hunters staan achter een hekje. Daarna gaat het hek open
-   en start de timer van 15 minuten.
+6. 30 seconden voorsprong voor de koning: de hunters staan bevroren op hun startpunt, met een
+   countdown in beeld. Ze kunnen rondkijken en hun inventory sorteren, maar niet lopen, springen
+   of pearlen. Bij nul zijn ze los en start de timer van 15 minuten.
 
 ## De kroon wisselt: elke wissel is een reset
 
@@ -32,8 +33,8 @@ kroon heeft, is de koning en is voor iedereen zichtbaar door muren heen.
   In voice hoort hij vanaf nu alles, maar niemand hoort hem; hij krijgt de knop voor de groep
   Doden (zie [07-voice.md](07-voice.md)).
 - **Alle hunters** worden full hp geheald en teruggeteleporteerd naar hun startpunt aan de rand,
-  achter de hekjes. Ook wie op dat moment in zijn respawn-wachttijd zit: die staat meteen weer
-  aan de rand, de wachttijd vervalt.
+  waar ze bevroren staan. Ook wie op dat moment in zijn respawn-wachttijd zit: die staat meteen
+  weer aan de rand, de wachttijd vervalt.
 - **De nieuwe koning** wordt naar het midden van de burcht geteleporteerd en:
   - wordt full hp geheald, honger vol,
   - krijgt al zijn armor en wapens gerepareerd (volle durability),
@@ -41,7 +42,8 @@ kroon heeft, is de koning en is voor iedereen zichtbaar door muren heen.
   - krijgt 15 seconden Resistance II en Glowing,
   - gaat van team `hunters` naar team `king` en krijgt de helm.
 - Iedereen krijgt een `title`: **NIEUWE KONING: <naam>**. Bossbar update.
-- **10 seconden** later gaan de hekjes open en gaat de jacht verder. De timer loopt gewoon door.
+- **10 seconden** countdown, dan zijn de hunters los en gaat de jacht verder. De timer loopt
+  gewoon door.
 - Van 19v1 naar 18v1. Elke kroonwissel haalt één speler uit het spel.
 
 Alleen de koning krijgt zijn spullen gerepareerd; hunters slijten door de ronde heen. Wil je dat
@@ -70,8 +72,8 @@ iedereen bij een reset gerepareerd wordt, dan is dat één regel extra in Skript
 - De worldborder krimpt in 3 minuten van 200 x 200 naar 60 x 60 rond de burcht. Verstoppen kan
   niet meer, de koning moet vechten.
 - Een kroonwissel is nog steeds een reset, maar de startpunten aan de rand liggen dan buiten de
-  border. De hunters gaan daarom naar vier punten vlak bij de burcht, binnen de 60 x 60, en er
-  zijn geen hekjes: heal, teleport, meteen door.
+  border. De hunters gaan daarom naar vier punten vlak bij de burcht, binnen de 60 x 60. Verder
+  hetzelfde: heal, bevroren, 10 seconden, los.
 
 ## Einde van de timer
 
@@ -93,7 +95,7 @@ iedereen bij een reset gerepareerd wordt, dan is dat één regel extra in Skript
 | De koning logt uit | Zie hierboven: 30 seconden wachten, dan gaat de kroon door. |
 | De koning bouwt zich in | Mag. Sudden death en de border lossen het op. |
 | Kroonwissel terwijl een hunter op zijn respawn wacht | Wachttijd vervalt, hij staat meteen weer aan de rand. |
-| Kroonwissel midden in sudden death | Reset naar de vier punten bij de burcht, zonder hekjes. |
+| Kroonwissel midden in sudden death | Reset naar de vier punten bij de burcht, verder hetzelfde. |
 | De nieuwe koning stond midden in een gevecht op één hartje | Maakt niet uit: hij staat geheald in de burcht, de rest aan de rand. |
 | Iemand met de kroon gaat in spectator door een bug | Admin geeft de kroon handmatig met `/bc kroon <speler>` (zie technische schets). |
 | Er is maar één hunter over aan het eind van de timer | Die is finalist 2, de FFA vervalt. |

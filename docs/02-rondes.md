@@ -185,14 +185,15 @@ Hier het overzicht.
 - De 19 hunters starten op 4 punten aan de rand met de spullen uit ronde 3 (of de basiskit als ze
   niks hebben). Team `hunters`, friendly fire uit: hunters kunnen elkaar niet raken.
 - De koning heeft Glowing: je ziet hem door alles heen. Bossbar: timer + naam van de koning.
-- De koning krijgt 30 seconden voorsprong voordat de hunters los mogen.
+- De koning krijgt 30 seconden voorsprong: de hunters staan die tijd bevroren op hun startpunt,
+  met een countdown in beeld.
 
 **Regels in het kort**
 - Kill de koning en je krijgt de kroon. Elke kroonwissel is een **reset**: alle hunters worden
   geheald en terug naar hun startpunt aan de rand geteleporteerd. De nieuwe koning wordt geheald,
   krijgt zijn armor en wapens gerepareerd, het kroonpakketje (2 gapples, 2 pearls), 15 seconden
-  Resistance en Glowing, en staat in het midden van de burcht. Na 10 seconden gaan de hekjes
-  weer open.
+  Resistance en Glowing, en staat in het midden van de burcht. Tien seconden countdown waarin
+  niemand van zijn plek kan, dan los.
 - Gaat de koning dood zonder killer (val, lava), dan gebeurt precies hetzelfde. De kroon gaat naar
   de laatste die hem raakte.
 - De ex-koning ligt eruit. Van 19v1 naar 18v1 naar 17v1, enzovoort.

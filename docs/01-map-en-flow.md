@@ -91,7 +91,7 @@ teleporteren, dan de border zetten.
 | 1 De Doolhof | Noord, in een dal | Hagendoolhof 64 x 64, hagen 4 hoog, geen plafond nodig: adventure mode en niemand heeft nog pearls. Genereer met een maze-generator (WorldEdit-script of online generator naar schematic). 10 tot 15 kisten in doodlopende gangen. | adventure |
 | 2 De Horde (V2) | Oost | Ruïne-arena Ø 50, muur 6 hoog, 4 mob-spawnpunten aan de rand, wat dekking in het midden. Verzamelpunt bij de poort. | adventure |
 | 3 Het Ei (V3) | Zuid | Bos met heuvels, grotten en een meertje, 150 x 150. Eén Groot Ei, 3 tot 5 nep-eitjes, beacon onder het Ei. Verzamelpunt met kampvuur aan de bosrand. | survival |
-| 4 King zone (V4) | Midden, 200 x 200 rond de burcht | Burcht op een heuvel, dorpje, toren, bos, water. 4 hunterspawns met hekjes aan de rand. De Kring voor de poort van de burcht. | survival |
+| 4 King zone (V4) | Midden, 200 x 200 rond de burcht | Burcht op een heuvel, dorpje, toren, bos, water. 4 hunterspawns aan de rand. De Kring voor de poort van de burcht. | survival |
 | 5 Arena FFA | Binnenplaats van de burcht | Ø 40, plat met wat dekking (putrand, karren, pilaren). | adventure |
 | 6 De Finale | Troonzaal van de burcht (of het dak) | 20 x 20, twee startpunten tegenover elkaar. Hier is ook de kroning. | adventure |
 

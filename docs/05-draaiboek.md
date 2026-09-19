@@ -55,7 +55,7 @@ Grofweg op volgorde van werk:
 5. Ei-bos: plek kiezen, Grote Ei bouwen en vullen, nep-eitjes, beacon eronder, drukplaat bij de
    uitgang (1 tot 2 avonden).
 6. Burcht op de heuvel met binnenplaats (FFA) en troonzaal (finale), dorpje, toren, 4
-   hunterspawns met hekjes aan de rand van de King zone (2 avonden).
+   hunterspawns aan de rand van de King zone (2 avonden).
 7. Skript schrijven en per onderdeel testen, inclusief de borders per ronde (2 avonden). Daarna
    met de wand en `/bcpoint` alle regio's en punten in de wereld zetten (uurtje).
 8. Volledige testrun met 4 of 5 testers (1 avond).
@@ -85,9 +85,10 @@ Doe minstens één keer de hele avond met 4 of 5 testers, van basiskamp tot kron
 - [ ] King: kroon gaat naar de killer (test met 2 man). Kroon gaat naar random hunter bij val-dood.
       Respawn na 20 sec. Sudden death stopt respawns en krimpt de border. Timer 0 wijst
       finalist 1 aan en teleporteert de rest.
-- [ ] Kroonwissel: alle hunters staan geheald achter de hekjes, de nieuwe koning staat in de
-      burcht met volle armor, hekjes na 10 seconden open. Ook testen tijdens sudden death
-      (sd-punten, geen hekjes) en terwijl iemand op zijn respawn wacht.
+- [ ] Kroonwissel: alle hunters staan geheald en bevroren op hun startpunt (niet lopen, niet
+      springen, niet pearlen), de nieuwe koning staat in de burcht met volle armor, na 10
+      seconden is iedereen los en loopt weer normaal. Ook testen tijdens sudden death (sd-punten)
+      en terwijl iemand op zijn respawn wacht.
 - [ ] King: koning logt uit en weer in. Wat gebeurt er? Zorg dat de ref weet wat te doen.
 - [ ] FFA: laatste levende wordt finalist 2, teleport naar de 1v1-arena werkt.
 - [ ] Finale: kit reset en full heal per potje.

@@ -104,7 +104,6 @@ Wat je nodig hebt:
 |---|---|
 | `doolhof`, `arena`, `eibos`, `king`, `binnenplaats`, `troonzaal` | Worldborder per ronde (center en grootte worden uit de regio berekend). |
 | `poort_doolhof`, `poort_arena`, `poort_bos` | De muur die open en dicht gaat (`fill`). |
-| `hek_1` t/m `hek_4` | De hekjes bij de hunterspawns (voorsprong van 30 seconden). |
 | `eiplaat` | Het vak bij de uitgang van het bos waar je ticket wordt ingenomen. |
 
 | Punten | Waarvoor |
@@ -434,7 +433,9 @@ mini-datapack, `data/bootcamp/item_modifier/repair.json` met
 `armor.feet`, `weapon.mainhand`, `weapon.offhand` en `hotbar.0` t/m `hotbar.8`).
 
 **De kroonwissel is een reset.** Ex-koning eruit, nieuwe koning naar de burcht, alle hunters
-geheald en terug achter de hekjes, tien seconden later open:
+geheald en terug op hun startpunt, waar ze bevroren staan tot de countdown voorbij is. Geen
+hekjes, geen bouwwerk: bevriezen doe je met twee attributes (loopsnelheid en springkracht op 0)
+en een blokkade op pearls.
 
 ```
 function bcKroonwissel(oude: player, nieuwe: player):
@@ -444,9 +445,6 @@ function bcKroonwissel(oude: player, nieuwe: player):
 
 function bcOpstelling(wacht: integer):
     add 1 to {bc::generatie}
-    if {bc::sudden} is not true:
-        loop 4 times:
-            bcPoort("hek_%loop-number%", false)
     loop bcMetTag("hunter"):
         heal loop-player
         set food level of loop-player to 10
@@ -455,19 +453,45 @@ function bcOpstelling(wacht: integer):
             teleport loop-player to {bc::punt::sd_%mod(loop-iteration, 4) + 1%}
         else:
             teleport loop-player to {bc::punt::hunter_%mod(loop-iteration, 4) + 1%}
-    if {bc::sudden} is not true:
-        loop {_wacht} times:
-            send action bar "&eHekjes open over %{_wacht} - loop-number + 1%" to bcMetTag("hunter")
-            wait 1 second
-        loop 4 times:
-            bcPoort("hek_%loop-number%", true)
+        bcBevries(loop-player, true)
+    loop {_wacht} times:
+        set {_n} to {_wacht} - loop-number + 1
+        send action bar "&eLos over %{_n}%" to bcMetTag("hunter")
+        if {_n} <= 5:
+            execute console command "title @a[tag=hunter] title {""text"":""%{_n}%"",""color"":""yellow""}"
+            execute console command "playsound minecraft:block.note_block.pling master @a[tag=hunter]"
+        wait 1 second
+    loop bcMetTag("hunter"):
+        bcBevries(loop-player, false)
+    execute console command "title @a title {""text"":""GO"",""color"":""green""}"
+    execute console command "playsound minecraft:event.raid.horn master @a"
+
+function bcBevries(p: player, aan: boolean):
+    if {_aan} is true:
+        add "bevroren" to scoreboard tags of {_p}
+        execute console command "attribute %{_p}% minecraft:movement_speed base set 0"
+        execute console command "attribute %{_p}% minecraft:jump_strength base set 0"
+    else:
+        remove "bevroren" from scoreboard tags of {_p}
+        execute console command "attribute %{_p}% minecraft:movement_speed base set 0.1"
+        execute console command "attribute %{_p}% minecraft:jump_strength base set 0.42"
+
+on shoot:
+    shooter is a player
+    scoreboard tags of shooter contains "bevroren"
+    cancel event
 ```
+
+Bevroren spelers kunnen rondkijken, slaan en hun inventory sorteren, maar niet lopen, springen of
+een pearl gooien. De standaardwaarden zijn 0.1 voor loopsnelheid en 0.42 voor springkracht; zet
+ze ook in `/bc reset` terug, voor het geval een reset midden in een countdown valt. Wil je het
+zonder attributes: elke tick terugteleporteren naar het startpunt werkt ook, maar schokt.
 
 `{bc::generatie}` telt de resets; `bcRespawn` kijkt ernaar en stopt zijn wachttijd als er
 intussen een reset was, want die speler staat dan al aan de rand. Tijdens sudden death liggen de
-hunterspawns buiten de border, dus dan gaan de hunters naar `sd_1` t/m `sd_4` bij de burcht en
-zijn er geen hekjes. Bij de start van de ronde gebruikt `bcStart(4)` dezelfde `bcOpstelling`,
-met 30 seconden.
+hunterspawns buiten de border, dus dan gaan de hunters naar `sd_1` t/m `sd_4` bij de burcht;
+verder is de reset hetzelfde. Bij de start van de ronde gebruikt `bcStart(4)` dezelfde
+`bcOpstelling`, met 30 seconden.
 
 De ref z'n noodknop `/bc kroon <speler>` roept `bcKroonwissel` aan met de huidige koning als
 `oude`.
@@ -509,7 +533,8 @@ command /bcrad:
 Startpositie en aantal rondes zijn willekeurig, het eindpunt is het slot van de `uitverkoren`
 speler. `bcRadEinde` doet de visuals (zie hieronder), wacht drie seconden en roept `bcStart(4)`
 aan: hunters getagd en in team, Clown de bosskit en `bcKroon` (die zet hem in de burcht), dan
-`bcOpstelling(30)` voor de hunters achter de hekjes, iedereen de [VERLATEN]-knop, border `king`,
+`bcOpstelling(30)` voor de hunters, bevroren op hun startpunt, iedereen de [VERLATEN]-knop,
+border `king`,
 locator bar aan voor de koning en de timer op 900.
 
 **De horde**
