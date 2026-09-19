@@ -52,7 +52,7 @@ type Normal, en blijft erin zitten. Eén account kan maar in één groep tegelij
 - Start ronde 3: voice-admin maakt **Ei** (verlaat daarmee Doden; niemand is dan dood, dus prima).
 - Start ronde 4: voice-admin maakt **Doden** opnieuw en blijft erin tot de kroning.
 
-Spelers wisselen zelf van groep, maar hoeven niks te typen: de datapack stuurt op de goede
+Spelers wisselen zelf van groep, maar hoeven niks te typen: Skript stuurt op de goede
 momenten een klikbare knop in de chat (zie [04-technische-schets.md](04-technische-schets.md)).
 Klik op **[DODEN]** en je zit erin. Achter de knop zit gewoon `/voicechat join Doden`,
 `/voicechat join Ei` of `/voicechat leave`.

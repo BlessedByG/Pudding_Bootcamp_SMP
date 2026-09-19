@@ -10,7 +10,7 @@ Twee dingen houden het toch strak:
 - **Verzamelpunten.** Elke zone heeft bij de ingang een plek in de open lucht (kampvuur, banners,
   een bordje) waar iedereen tussen de rondes staat. Daar praat de host, daar staan de
   voorsprongkistjes, daar begint de countdown.
-- **Worldborder per ronde.** De datapack zet de worldborder elke ronde om de zone die aan de beurt
+- **Worldborder per ronde.** Skript zet de worldborder elke ronde om de zone die aan de beurt
   is. Buiten de zone kom je niet, dus je hoeft geen muren om het bos te bouwen.
 
 ## Plattegrond
@@ -54,7 +54,7 @@ blokken van de burcht, buiten de border van ronde 4.
 
 1. Iedereen staat bij het verzamelpunt van de zone. Host doet z'n praatje.
 2. Countdown (`title` 5..4..3..2..1). Bij het doolhof, de arena en de bosrand gaat een poort open
-   (een muur die de admin met één `fill` weghaalt). Daarna zet de datapack de worldborder om de
+   (een muur die de admin met één command weghaalt). Daarna zet Skript de worldborder om de
    zone.
 3. Ronde klaar (timer of doel gehaald): iedereen wordt naar het volgende verzamelpunt
    geteleporteerd. Wie eerder klaar is komt bij de uitgang van de zone uit en wordt meteen

@@ -14,7 +14,7 @@ hoe je het technisch bouwt en hoe de avond zelf verloopt. Niet fancy, wel comple
 |---|---|
 | **Spelers** | 20 (19 streamers + ClownPierce). Werkt vanaf ~8 tot ~30, de getallen schalen mee. |
 | **Duur** | ± 2 uur inclusief pauzes en praatjes van de host. |
-| **Server** | Java, één open wereld (± 500 x 500) met alle zones in het landschap. Vanilla + datapack is genoeg, geen plugins nodig. |
+| **Server** | Paper op Minecraft 26.2 met Skript, WorldEdit en Simple Voice Chat als plugin. Eén open wereld (± 500 x 500) met alle zones in het landschap. Spelers hebben alleen de voice-mod nodig. |
 | **Voice** | Simple Voice Chat, verplicht. Proximity, met in ronde 3 één grote groep en vanaf ronde 2 een groep voor de doden. |
 | **Eliminatie** | Niemand ligt eruit vóór ronde 4. Elke streamer heeft dus minstens een uur content. |
 | **Winnaar** | De speler die de finale (1v1 tussen de twee kroondragers) wint, is King of the SMP. |
@@ -54,7 +54,7 @@ zone geteleporteerd (zie [docs/01-map-en-flow.md](docs/01-map-en-flow.md)).
 - [docs/01-map-en-flow.md](docs/01-map-en-flow.md): de open wereld, waar elke zone ligt, de verzamelpunten, de worldborder per ronde en hoe spelers van zone naar zone gaan.
 - [docs/02-rondes.md](docs/02-rondes.md): elke ronde uitgewerkt (doel, setup, regels, einde, bonus, wat kan misgaan).
 - [docs/03-kroon-regels.md](docs/03-kroon-regels.md): Het Rad en de kroonmechaniek van ronde 4 tot en met de finale, inclusief alle randgevallen.
-- [docs/04-technische-schets.md](docs/04-technische-schets.md): hoe je het bouwt met een datapack (tags, teams, timer, kroon-overdracht, worldborder per ronde).
+- [docs/04-technische-schets.md](docs/04-technische-schets.md): hoe je het bouwt op Paper met Skript: setup-tools voor regio's en punten, spellogica, bossbar en visuals.
 - [docs/05-draaiboek.md](docs/05-draaiboek.md): tijdschema van de avond, rollen van de staff, checklists.
 - [docs/06-open-keuzes.md](docs/06-open-keuzes.md): beslissingen die nog gemaakt moeten worden, met een aanbeveling per stuk.
 - [docs/07-voice.md](docs/07-voice.md): Simple Voice Chat, de voice-regels per ronde en hoe de groepen werken.

@@ -93,10 +93,13 @@ Opties, kunnen ook gecombineerd:
 
 ## 9. Datapack of plugin?
 
-**Nu in het concept:** datapack.
-
-**Aanbeveling:** datapack, tenzij er een developer in de groep zit die zin heeft. Zie
+**Besloten:** Paper op Minecraft 26.2 met Skript. Regio's zet je met een wand, teleportpunten
+met een command, de rest is Skript. Spelers hebben alleen de voice-mod nodig. De datapack-versie
+staat nog in de git-geschiedenis voor wie nul plugins wil. Zie
 [04-technische-schets.md](04-technische-schets.md).
+
+**Nog open:** of alle plugins op tijd een 26.2-build hebben. Zo niet, dan bouwen op de nieuwste
+versie die alles ondersteunt en later updaten.
 
 ## 10. Hoeveel spelers?
 

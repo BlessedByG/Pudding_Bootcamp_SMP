@@ -1,20 +1,37 @@
-# Technische schets
+# Technische schets: Paper + Skript op Minecraft 26.2
 
-Hoe je dit bouwt zonder plugins: vanilla Java + een datapack. Alles hieronder is een schets om
-van te bouwen, geen kant-en-klaar pakket.
+Hoe je dit bouwt: een Paper-server op 26.2 met Skript voor alle spellogica en de setup-tools,
+WorldEdit voor het bouwen en Simple Voice Chat als plugin. Spelers hebben alleen de voice-mod
+nodig, verder een gewone client.
 
-> **Let op:** commands zijn geschreven voor Java 1.21.5 of nieuwer en zijn **niet getest**. Test
-> elke command op je eigen server voordat het event draait. Waar de syntax per versie verschilt
-> staat het erbij.
+Het principe: Skript doet events, variabelen en timers. Alles wat de speler ziet (bossbar, titles,
+particles, worldborder, fill) gaat via gewone Minecraft-commands die Skript als console uitvoert.
+Zo blijft de syntax van de effecten hetzelfde als in een command block en hoef je alleen de
+Skript-lijm te leren.
+
+> **Versie.** Doel is Minecraft 26.2. Ik kan niet controleren of Paper, Skript, SkBee, WorldEdit
+> en Simple Voice Chat op het moment van bouwen al een 26.2-build hebben; plugins lopen vaak
+> dagen tot weken achter op een nieuwe versie. Check dat vóór je begint. Zo niet: bouw op de
+> nieuwste versie die alles ondersteunt en update later. Alle commands hieronder zijn syntax van
+> 1.21.5 en nieuwer en horen op 26.2 te werken, maar zijn **niet getest**. De Skript-regels zijn
+> schetsen; controleer ze tegen de Skript-docs van jullie versie.
+
+## Stack
+
+| Wat | Waarvoor |
+|---|---|
+| Paper 26.2 | De server. Draait met gewone clients. |
+| Skript + SkBee | Alle spellogica en de setup-commands. SkBee voor NBT en wat extra's. |
+| WorldEdit of FAWE | Bouwen: doolhof plaatsen, Ei kopiëren, terrein. Niet voor de spellogica. |
+| Simple Voice Chat (plugin) | Voice, zie [07-voice.md](07-voice.md). |
+| Optioneel: WorldGuard | Builds beschermen buiten de rondes. |
+| Optioneel: LuckPerms | Voice-groepen maken beperken tot staff. |
+| Optioneel: een mini-datapack | Alleen voor dialogs (zie Visuals). |
 
 ## Server
 
-- Paper of vanilla, 1.21.x. Paper is fijner voor performance met 20 spelers en 60 mobs, en je
-  hebt er geen plugins bij nodig.
-- `view-distance=8`, `simulation-distance=6`. Whitelist aan.
-- `server.properties`: `pvp=true` (PvP regelen we via teams, niet via deze setting).
-- Simple Voice Chat als server-mod of Paper-plugin, plus UDP-poort 24454 open. Config en regels
-  staan in [07-voice.md](07-voice.md).
+- `view-distance=8`, `simulation-distance=6`, whitelist aan, `pvp=true` (PvP regelen we via teams).
+- UDP-poort 24454 open voor de voice-plugin.
 - Gamerules bij de start:
 
 ```
@@ -25,578 +42,568 @@ gamerule doMobSpawning false
 gamerule doDaylightCycle false
 gamerule announceAdvancements false
 gamerule spectatorsGenerateChunks false
+gamerule locatorBar false
 ```
 
-`doImmediateRespawn` staat aan zodat je de respawn-vertraging zelf kunt regelen (spectator voor
-X seconden) zonder dat iemand in het death-scherm blijft hangen. `doMobSpawning` uit, de horde
-spawnen we zelf.
+`doImmediateRespawn` staat aan zodat Skript de respawn-vertraging zelf regelt. `locatorBar` (de
+balk die spelers als stipjes laat zien) staat standaard uit, anders loop je in het Ei-bos gewoon
+achter de rest aan; in ronde 4 gaat hij aan voor alleen de koning, zie Visuals.
 
-## Bouwblokken
-
-**Tags** (per speler):
-
-| Tag | Betekenis |
-|---|---|
-| `speler` | Doet mee (alle 20). |
-| `hunter` | Ronde 4: hunter. |
-| `uitverkoren` | De verborgen rol: op deze speler landt Het Rad. Vooraf op Clown zetten. |
-| `king` | Ronde 4 t/m 6: heeft een kroon. |
-| `out` | Uitgeschakeld, spectator. |
-| `finalist` | Finalist 1 of 2. |
-| `ticket` | Ronde 3: heeft een diamond block ingeleverd. |
-| `dood` | Ronde 2: gesneuveld, spectator tot het einde van de ronde. |
-| `ffa` | Ronde 5: doet mee aan de FFA. |
-| `staff` | Admins, worden door alle selectors overgeslagen. |
-
-**Teams** (dit is de PvP-schakelaar; friendly fire uit betekent dat teamgenoten elkaar niet
-kunnen raken):
+**Teams** zijn de PvP-schakelaar (friendly fire uit betekent dat teamgenoten elkaar niet raken):
 
 ```
 team add spelers
 team modify spelers friendlyFire false
-team modify spelers color white
-
 team add hunters
 team modify hunters friendlyFire false
 team modify hunters color aqua
-
 team add king
 team modify king color gold
-
 team add out
 team modify out color gray
 ```
 
-Ronde 0 t/m 3: iedereen in `spelers`. Ronde 4: `hunters` + `king`. Ronde 5 en 6: iedereen
-`team leave`, behalve de koningen (die zitten in `king` maar `king` heeft friendly fire aan, dus
-ze kunnen elkaar in de finale gewoon raken). De teamkleur bepaalt ook de kleur van de
-Glowing-outline en de naam in de tab-list.
+Ronde 0 t/m 3: iedereen in `spelers`. Ronde 4: `hunters` + `king`. Ronde 5 en 6: iedereen uit
+zijn team behalve de koningen (`king` heeft friendly fire aan, dus die kunnen elkaar in de finale
+raken). De teamkleur is ook de kleur van de Glowing-outline, de naam in de tab-list en de stip op
+de locator bar.
 
-**Scoreboards:**
+**Tags** op spelers, gezet door Skript:
 
-```
-scoreboard objectives add deaths deathCount
-scoreboard objectives add respawn dummy
-scoreboard objectives add timer dummy
-scoreboard objectives add reign dummy
-scoreboard objectives add kills playerKillCount
-scoreboard objectives add slot dummy
-scoreboard objectives add rad dummy
-scoreboard objectives setdisplay sidebar reign
-```
+| Tag | Betekenis |
+|---|---|
+| `speler` | Doet mee. |
+| `uitverkoren` | De verborgen rol: op deze speler landt Het Rad. |
+| `hunter`, `king`, `ffa`, `finalist` | Rol in ronde 4 t/m 6. |
+| `dood` | Ronde 2: gesneuveld, spectator tot het einde van de ronde. |
+| `ticket` | Ronde 3: diamond block ingeleverd. |
+| `out` | Uitgeschakeld. |
 
-**Bossbar:**
+**Scoreboard:** `scoreboard objectives add reign dummy` met `setdisplay sidebar reign` voor de
+regeerperiodes. **Bossbar:** `bossbar add bootcamp:main "Pudding Bootcamp"` en
+`bossbar set bootcamp:main players @a`.
 
-```
-bossbar add bootcamp:main "Pudding Bootcamp"
-bossbar set bootcamp:main players @a
-bossbar set bootcamp:main color blue
-```
+## Setup-tools: regio's en punten
 
-## Datapack-structuur
+Dit is wat je in de wereld zelf doet, één keer, na het bouwen. Alles wordt opgeslagen in
+Skript-variabelen (die overleven een restart) en de spellogica leest ze uit. Geen coördinaten in
+bestanden.
 
-```
-datapacks/bootcamp/
-  pack.mcmeta
-  data/bootcamp/
-    function/
-      setup.mcfunction                 # teams, scoreboards, bossbar, gamerules
-      poort/open_1.mcfunction .. open_3 # fill de poort weg (doolhof, arena, bosrand)
-      poort/dicht_1.mcfunction .. dicht_3
-      border/<zone>.mcfunction         # worldborder center + set per ronde
-      doolhof/start.mcfunction         # timer 600, tp iedereen naar ingang
-      doolhof/tick.mcfunction
-      doolhof/einde.mcfunction         # tp achterblijvers naar verzamelpunt 2
-      horde/start.mcfunction
-      horde/wave_1.mcfunction .. wave_5
-      horde/tick.mcfunction            # telt mobs, start volgende wave
-      horde/kit.mcfunction
-      ei/start.mcfunction
-      ei/tick.mcfunction               # poortcheck, beacon-hint op 5 min
-      ei/pas.mcfunction                # neemt block in, tp naar De Kring
-      ei/einde.mcfunction              # achterblijvers zonder ticket: clear + basiskit
-      horde/volgende.mcfunction        # start de volgende wave
-      horde/dood.mcfunction            # dood = spectator tot einde ronde
-      horde/einde.mcfunction           # doden weer levend, pearls voor overlevers
-      rad/start.mcfunction             # Het Rad: rekent uit waar het moet landen
-      rad/stap.mcfunction              # lampje één positie verder, steeds langzamer
-      rad/lamp_aan.mcfunction          # setblock per slot
-      rad/lamp_uit.mcfunction
-      rad/lamp_uit_alles.mcfunction
-      rad/einde.mcfunction             # drama: title, geluid, particles
-      rad/naar_burcht.mcfunction       # koning naar de burcht, hunters naar de rand
-      king/start.mcfunction
-      king/tick.mcfunction             # timer, respawns, sudden death, bossbar
-      king/transfer.mcfunction         # kroon naar de killer (run as killer)
-      king/give.mcfunction             # kroon geven (run as de nieuwe koning)
-      king/dood.mcfunction             # hunter dood: 20 sec spectator
-      king/respawn.mcfunction          # hunter terug op een randpunt
-      king/uit.mcfunction              # sudden death: dood = eruit
-      king/einde.mcfunction            # finalist 1, rest naar FFA
-      ffa/start.mcfunction
-      ffa/tick.mcfunction              # last man standing check, border
-      ffa/uit.mcfunction               # dood = spectator
-      finale/start.mcfunction
-      finale/potje.mcfunction
-      voice/doden.mcfunction           # knop: /voicechat join Doden
-      voice/ei.mcfunction              # knop: /voicechat join Ei
-      voice/proximity.mcfunction       # knop: /voicechat leave
-      kit/basis.mcfunction
-      kit/horde.mcfunction
-      kit/boss.mcfunction
-      kit/arena.mcfunction
-      kit/finale.mcfunction
-      reset.mcfunction                 # alles terug naar basiskamp-staat
-    advancement/
-      kill_king.json                   # vuurt als je de koning killt
-```
+**Regio's** zet je met een wand: `/bcwand` geeft een stick. Linksklik op een blok is hoek 1,
+rechtsklik is hoek 2, dan `/bcregion save <naam>`. `/bcregion show <naam>` tekent tien seconden
+particles op de randen zodat je ziet wat je hebt, `/bcregion list` en `/bcregion del <naam>`
+spreken voor zich.
 
-Op 1.20.x heten de mappen `functions/` en `advancements/` (meervoud).
+**Punten** zet je met commands: ga staan waar je wilt (kijkrichting telt mee) en typ
+`/bcpoint set <naam>`. Voor een blok in plaats van een positie: kijk ernaar en typ
+`/bcpoint block <naam>`. `/bcpoint tp <naam>` om te testen, `/bcpoint list` voor het overzicht.
 
-## De kroon
+Wat je nodig hebt:
 
-**Geven** (`king/give.mcfunction`, run `as` de nieuwe koning):
+| Regio's | Waarvoor |
+|---|---|
+| `doolhof`, `arena`, `eibos`, `king`, `binnenplaats`, `troonzaal` | Worldborder per ronde (center en grootte worden uit de regio berekend). |
+| `poort_doolhof`, `poort_arena`, `poort_bos` | De muur die open en dicht gaat (`fill`). |
+| `hek_1` t/m `hek_4` | De hekjes bij de hunterspawns (voorsprong van 30 seconden). |
+| `eiplaat` | Het vak bij de uitgang van het bos waar je ticket wordt ingenomen. |
+
+| Punten | Waarvoor |
+|---|---|
+| `basiskamp`, `v2`, `v3`, `kring` | Verzamelpunten. |
+| `doolhof_start`, `doolhof_uit` | Ingang en waar je uitkomt. |
+| `mob_1` t/m `mob_4` | Spawnpunten van de horde. |
+| `arena_spawn` | Waar spelers de arena binnenkomen. |
+| `ei_start`, `ei_beacon` (blok) | Bosrand-ingang en het ontbrekende blok in de beaconpiramide onder het Ei. |
+| `burcht`, `hunter_1` t/m `hunter_4` | Startpunten ronde 4. |
+| `ffa_midden`, `finale_1`, `finale_2`, `kroning` | Binnenplaats en troonzaal. |
+| `lamp_0` t/m `lamp_19` (blokken) | De lichtblokken van De Kring, met de klok mee. |
+
+De Skript-kant van de tools:
 
 ```
-tag @s add king
-tag @s remove hunter
-team join king @s
-item replace entity @s armor.head with minecraft:golden_helmet[minecraft:enchantments={"minecraft:binding_curse":1},minecraft:unbreakable={}]
-effect give @s minecraft:glowing infinite 0 true
-effect give @s minecraft:instant_health 1 3 true
-effect give @s minecraft:resistance 15 1 true
-give @s minecraft:golden_apple 2
-give @s minecraft:ender_pearl 2
-scoreboard players reset @s deaths
-scoreboard players set @s reign 0
-title @a title {"text":"NIEUWE KONING","color":"gold"}
-title @a subtitle {"text":"","extra":[{"selector":"@s"}]}
+command /bcwand:
+    permission: bc.admin
+    trigger:
+        give 1 stick named "&6Regio-wand" to player
+        send "&7Linksklik = hoek 1, rechtsklik = hoek 2, dan /bcregion save <naam>"
+
+on leftclick on block:
+    player is holding a stick named "&6Regio-wand"
+    cancel event
+    set {bc::sel::%uuid of player%::a} to location of clicked block
+    send "&7Hoek 1: &f%location of clicked block%"
+
+on rightclick on block:
+    player is holding a stick named "&6Regio-wand"
+    cancel event
+    set {bc::sel::%uuid of player%::b} to location of clicked block
+    send "&7Hoek 2: &f%location of clicked block%"
+
+command /bcregion <text> [<text>]:
+    permission: bc.admin
+    trigger:
+        if arg-1 is "save":
+            set {bc::regio::%arg-2%::a} to {bc::sel::%uuid of player%::a}
+            set {bc::regio::%arg-2%::b} to {bc::sel::%uuid of player%::b}
+            send "&aRegio %arg-2% opgeslagen."
+        else if arg-1 is "show":
+            bcToonRegio(arg-2)
+        else if arg-1 is "list":
+            loop {bc::regio::*}:
+                send "%loop-index%"
+        else if arg-1 is "del":
+            delete {bc::regio::%arg-2%::*}
+
+command /bcpoint <text> [<text>]:
+    permission: bc.admin
+    trigger:
+        if arg-1 is "set":
+            set {bc::punt::%arg-2%} to location of player
+            send "&aPunt %arg-2%: %location of player%"
+        else if arg-1 is "block":
+            set {bc::punt::%arg-2%} to location of target block
+            send "&aPunt %arg-2%: %location of target block%"
+        else if arg-1 is "tp":
+            teleport player to {bc::punt::%arg-2%}
+        else if arg-1 is "list":
+            loop {bc::punt::*}:
+                send "%loop-index%: %loop-value%"
+        else if arg-1 is "del":
+            delete {bc::punt::%arg-2%}
 ```
 
-Op 1.20.5 t/m 1.21.4 is de enchantment-component `minecraft:enchantments={levels:{"minecraft:binding_curse":1}}`.
-Een naam op de helm is leuk maar niet nodig; de syntax van `custom_name` verschilt per versie.
+`bcToonRegio` tekent met `particle minecraft:end_rod` vier lijnen langs de randen op ooghoogte
+(één `particle`-command per rand, met de spreiding `dx`/`dz` gelijk aan de halve lengte) en de
+vier hoekpilaren. Tien keer, elke seconde.
 
-**Overdracht na een kill** (`king/transfer.mcfunction`, run `as` de killer):
+## Spellogica
+
+Eén bestand, `plugins/Skript/scripts/bootcamp.sk`, in blokken: helpers, admin-commands, per
+ronde een start en een einde, de tick-loop, de events (dood, schade), het rad, visuals.
+
+**Admin-commands**
+
+| Command | Doet |
+|---|---|
+| `/bc start <ronde>` | Teleport naar het verzamelpunt, border, kits, voice-knop, countdown, poort open, timer. |
+| `/bc stop` | Timer stil. |
+| `/bc timer <seconden>` | Resterende tijd bijstellen. |
+| `/bc poort <naam> open` / `dicht` | Handmatig een poort bedienen. |
+| `/bc kroon <speler>` | Kroon handmatig geven (de ref z'n noodknop). |
+| `/bc reset` | Alles terug naar de basiskamp-staat: tags weg, team `spelers`, adventure, inventory leeg, tp basiskamp, border groot, bossbar leeg. |
+| `/bcuitverkoren <speler>` | De verborgen rol. Vooraf op Clown. |
+| `/bcslot <speler> <0-19>` | Welke pilaar van De Kring de kop van die speler heeft. |
+| `/bcrad` | Het Rad. |
+
+**Helpers**
 
 ```
-# oude koning eruit
-execute as @a[tag=king] run function bootcamp:voice/doden
-item replace entity @a[tag=king] armor.head with minecraft:air
-effect clear @a[tag=king] minecraft:glowing
-tag @a[tag=king] add out
-tag @a[tag=king] remove king
-team join out @a[tag=out]
-gamemode spectator @a[tag=out]
+function bcSpelers() :: players:
+    return all players where [scoreboard tags of input contains "speler"]
 
-# nieuwe koning
-function bootcamp:king/give
-advancement revoke @s only bootcamp:kill_king
+function bcMetTag(tag: text) :: players:
+    return all players where [scoreboard tags of input contains {_tag}]
+
+function bcBorder(naam: text):
+    set {_a} to {bc::regio::%{_naam}%::a}
+    set {_b} to {bc::regio::%{_naam}%::b}
+    set {_cx} to (x-coord of {_a} + x-coord of {_b}) / 2 + 0.5
+    set {_cz} to (z-coord of {_a} + z-coord of {_b}) / 2 + 0.5
+    set {_dx} to abs(x-coord of {_a} - x-coord of {_b}) + 1
+    set {_dz} to abs(z-coord of {_a} - z-coord of {_b}) + 1
+    execute console command "worldborder center %{_cx}% %{_cz}%"
+    execute console command "worldborder set %max({_dx}, {_dz})%"
+    execute console command "worldborder warning distance 5"
+
+function bcPoort(naam: text, open: boolean):
+    set {_a} to {bc::regio::%{_naam}%::a}
+    set {_b} to {bc::regio::%{_naam}%::b}
+    set {_blok} to "minecraft:iron_bars"
+    if {_open} is true:
+        set {_blok} to "minecraft:air"
+    execute console command "fill %x-coord of {_a}% %y-coord of {_a}% %z-coord of {_a}% %x-coord of {_b}% %y-coord of {_b}% %z-coord of {_b}% %{_blok}%"
+
+function bcInRegio(loc: location, naam: text) :: boolean:
+    set {_a} to {bc::regio::%{_naam}%::a}
+    set {_b} to {bc::regio::%{_naam}%::b}
+    x-coord of {_loc} is between min(x-coord of {_a}, x-coord of {_b}) and max(x-coord of {_a}, x-coord of {_b}) + 1
+    y-coord of {_loc} is between min(y-coord of {_a}, y-coord of {_b}) and max(y-coord of {_a}, y-coord of {_b}) + 1
+    z-coord of {_loc} is between min(z-coord of {_a}, z-coord of {_b}) and max(z-coord of {_a}, z-coord of {_b}) + 1
+    return true
+
+function bcVoice(soort: text, doel: players):
+    if {_soort} is "doden":
+        set {_cmd} to "/voicechat join Doden"
+        set {_label} to "[DODEN]"
+        set {_kleur} to "red"
+    else if {_soort} is "ei":
+        set {_cmd} to "/voicechat join Ei"
+        set {_label} to "[EI-VOICE]"
+        set {_kleur} to "green"
+    else:
+        set {_cmd} to "/voicechat leave"
+        set {_label} to "[VERLATEN]"
+        set {_kleur} to "aqua"
+    loop {_doel::*}:
+        execute console command "tellraw %loop-value% [{""text"":""Voice: "",""color"":""gray""},{""text"":""%{_label}%"",""color"":""%{_kleur}%"",""bold"":true,""click_event"":{""action"":""run_command"",""command"":""%{_cmd}%""}}]"
+
+function bcBossbar(tekst: text, kleur: text, max: integer):
+    execute console command "bossbar set bootcamp:main name {""text"":""%{_tekst}%""}"
+    execute console command "bossbar set bootcamp:main color %{_kleur}%"
+    execute console command "bossbar set bootcamp:main max %{_max}%"
+    execute console command "bossbar set bootcamp:main value %{_max}%"
 ```
 
-**De trigger** (`advancement/kill_king.json`): vuurt voor de speler die een lid van team `king`
-doodt en draait dan `king/transfer` als die speler.
+Doet de voice-knop niks, probeer dan het command zonder de schuine streep. Wie zonder Skript
+wil: dezelfde `tellraw` werkt ook vanuit een command block.
+
+**Een ronde starten** (ronde 3 als voorbeeld; de andere volgen hetzelfde patroon)
+
+```
+function bcStart(ronde: integer):
+    set {bc::ronde} to {_ronde}
+    if {_ronde} is 3:
+        teleport bcSpelers() to {bc::punt::ei_start}
+        execute console command "gamemode survival @a[tag=speler]"
+        bcBorder("eibos")
+        bcKit("ei")
+        bcVoice("ei", bcSpelers())
+        bcBossbar("Het Ei", "green", 600)
+        bcCountdown()
+        bcPoort("poort_bos", true)
+        set {bc::timer} to 600
+```
+
+`bcCountdown` doet vijf titles met een stijgende `note_block.pling`, dan "GO" met de raid horn,
+en duurt vijf seconden (Skript `wait`). `bcKit` is een lijstje `clear`, `item replace` en `give`
+commands per kitnaam (basis, horde, ei, boss, arena, finale), bijvoorbeeld:
+
+```
+execute console command "item replace entity %{_p}% armor.chest with minecraft:diamond_chestplate[minecraft:enchantments={""minecraft:protection"":1}]"
+execute console command "give %{_p}% minecraft:diamond_sword[minecraft:enchantments={""minecraft:sharpness"":1}]"
+```
+
+**De tick-loop**
+
+```
+every second:
+    {bc::timer} is set
+    remove 1 from {bc::timer}
+    set {_m} to floor({bc::timer} / 60)
+    set {_s} to mod({bc::timer}, 60)
+    if {_s} < 10:
+        set {_s} to "0%{_s}%"
+    bcBossbarTekst("%{_m}%:%{_s}%")
+    execute console command "bossbar set bootcamp:main value %{bc::timer}%"
+    if {bc::ronde} is 3:
+        if {bc::timer} is 300:
+            bcEiHint()
+    if {bc::ronde} is 4:
+        add 1 to score of "reign" for bcMetTag("king")
+        if {bc::timer} is 180:
+            bcSuddenDeath()
+    if {bc::timer} is 0:
+        delete {bc::timer}
+        bcEinde({bc::ronde})
+```
+
+`bcBossbarTekst` plakt de tijd achter de rondetekst (en in ronde 4 de naam van de koning), zie
+Visuals. `bcSuddenDeath` zet `{bc::sudden}` op true, laat de border krimpen met
+`worldborder set 60 180` en doet de visuals. `bcEinde(4)` tagt de koning `finalist`, de levende
+hunters `ffa`, en start ronde 5; `bcEinde(1)`, `(2)` en `(3)` teleporteren de achterblijvers naar
+het volgende verzamelpunt.
+
+**De Ei-drukplaat** (ticketcheck, elke halve seconde):
+
+```
+every 10 ticks:
+    {bc::ronde} is 3
+    loop bcSpelers():
+        scoreboard tags of loop-player doesn't contain "ticket"
+        bcInRegio(location of loop-player, "eiplaat") is true
+        loop-player's inventory contains diamond block
+        remove 1 diamond block from loop-player's inventory
+        add "ticket" to scoreboard tags of loop-player
+        teleport loop-player to {bc::punt::kring}
+        execute console command "playsound minecraft:entity.player.levelup master %loop-player%"
+```
+
+Na de timer: wie geen `ticket` heeft krijgt `clear` plus de basiskit en gaat alsnog naar De Kring.
+
+**Dood en schade** (het hart van ronde 2, 4 en 5)
+
+```
+on damage of player:
+    scoreboard tags of victim contains "king"
+    attacker is a player
+    set {bc::lasthit} to attacker
+
+on death of player:
+    {bc::ronde} is set
+    if {bc::ronde} is 2:
+        bcDood(victim)
+    else if {bc::ronde} is 4:
+        if scoreboard tags of victim contains "king":
+            if attacker is a player:
+                set {_nieuw} to attacker
+            else if {bc::lasthit} is set:
+                set {_nieuw} to {bc::lasthit}
+            else:
+                set {_nieuw} to random element of bcMetTag("hunter")
+            bcUit(victim)
+            bcKroon({_nieuw})
+        else if {bc::sudden} is true:
+            bcUit(victim)
+        else:
+            bcRespawn(victim)
+    else if {bc::ronde} is 5:
+        bcUit(victim)
+        bcCheckFFA()
+    else if {bc::ronde} is 6:
+        bcPotje(attacker)
+```
+
+Skript geeft bij een pijl de schutter als `attacker`, dus boogkills tellen gewoon. De
+"laatste hit" voor een val- of lavadood is hier één regel, in een datapack was dat niet te doen.
+
+```
+function bcDood(p: player):
+    add "dood" to scoreboard tags of {_p}
+    wait 1 tick
+    set gamemode of {_p} to spectator
+    execute console command "tellraw @a [{""text"":""%{_p}%"",""color"":""gray""},{""text"":"" is gesneuveld"",""color"":""dark_gray""}]"
+    bcVoice("doden", {_p})
+
+function bcUit(p: player):
+    add "out" to scoreboard tags of {_p}
+    remove "hunter", "king" and "ffa" from scoreboard tags of {_p}
+    execute console command "team join out %{_p}%"
+    execute console command "kill @e[tag=kroon_%{_p}%]"
+    wait 1 tick
+    set gamemode of {_p} to spectator
+    bcVoice("doden", {_p})
+
+function bcRespawn(p: player):
+    wait 1 tick
+    set gamemode of {_p} to spectator
+    loop 20 times:
+        send action bar "&cRespawn in %21 - loop-number%" to {_p}
+        wait 1 second
+    teleport {_p} to {bc::punt::hunter_%random integer between 1 and 4%}
+    set gamemode of {_p} to survival
+    apply resistance of tier 5 to {_p} for 5 seconds
+```
+
+**De kroon**
+
+```
+function bcKroon(p: player):
+    add "king" to scoreboard tags of {_p}
+    remove "hunter" from scoreboard tags of {_p}
+    execute console command "team join king %{_p}%"
+    execute console command "item replace entity %{_p}% armor.head with minecraft:golden_helmet[minecraft:enchantments={""minecraft:binding_curse"":1},minecraft:unbreakable={}]"
+    heal {_p}
+    apply resistance of tier 2 to {_p} for 15 seconds
+    apply glowing to {_p} for 1 hour
+    give 2 golden apples and 2 ender pearls to {_p}
+    delete {bc::lasthit}
+    bcVisual("kroon", {_p})
+```
+
+De kroonwissel is dus: `bcUit(oude)` en `bcKroon(nieuwe)`, zie de death-handler. De ref z'n
+noodknop `/bc kroon <speler>` roept dezelfde functie aan.
+
+**Het Rad**
+
+```
+command /bcrad:
+    permission: bc.admin
+    trigger:
+        set {_doel} to {bc::slot::%{bc::uitverkoren}%}
+        set {_pos} to random integer between 0 and 19
+        set {_rest} to mod(({_doel} - {_pos} + 20), 20) + 20 * random integer between 2 and 3
+        loop 20 times:
+            set block at {bc::punt::lamp_%loop-number - 1%} to black concrete
+        while {_rest} > 0:
+            set block at {bc::punt::lamp_%{_pos}%} to black concrete
+            set {_pos} to mod({_pos} + 1, 20)
+            set block at {bc::punt::lamp_%{_pos}%} to glowstone
+            remove 1 from {_rest}
+            execute console command "playsound minecraft:block.note_block.hat master @a"
+            if {_rest} > 12:
+                wait 2 ticks
+            else if {_rest} > 8:
+                wait 4 ticks
+            else if {_rest} > 5:
+                wait 7 ticks
+            else if {_rest} > 3:
+                wait 10 ticks
+            else if {_rest} is 3:
+                wait 15 ticks
+            else if {_rest} is 2:
+                wait 20 ticks
+            else:
+                wait 30 ticks
+        bcRadEinde()
+```
+
+Startpositie en aantal rondes zijn willekeurig, het eindpunt is het slot van de `uitverkoren`
+speler. `bcRadEinde` doet de visuals (zie hieronder), wacht drie seconden en roept `bcStart(4)`
+aan: hunters getagd en in team, teleport naar `hunter_1` t/m `hunter_4` achter de hekjes, Clown
+naar `burcht` met bosskit en `bcKroon`, iedereen de [VERLATEN]-knop, border `king`, locator bar
+aan voor de koning, na 30 seconden de hekjes open met `bcPoort("hek_1".."hek_4", true)` en de
+timer op 900.
+
+**De horde**
+
+```
+function bcWave(n: integer):
+    set {bc::wave} to {_n}
+    set {bc::wavetimer} to 120
+    bcVisual("wave", {_n})
+    loop 4 times:
+        set {_loc} to {bc::punt::mob_%loop-number%}
+        loop 5 times:
+            spawn a zombie at {_loc}
+            add "horde" to scoreboard tags of last spawned entity
+            set name of last spawned entity to "Horde"
+```
+
+Per wave een ander lijstje mobs (zie [02-rondes.md](02-rondes.md)); gear op mobs via
+`set helmet of last spawned entity to iron helmet` enzovoort. Een naam geven is de simpelste
+manier om te zorgen dat mobs niet despawnen. De tick-loop telt
+`size of all entities where [scoreboard tags of input contains "horde"]` voor de bossbar en start
+de volgende wave als dat 0 is of `{bc::wavetimer}` op 0 staat. Geen levende spelers meer (niemand
+zonder tag `dood`) of wave 5 dood: `bcEinde(2)`, die de doden weer levend maakt bij `v3`.
+
+**FFA en finale**
+
+```
+function bcCheckFFA():
+    set {_levend::*} to bcMetTag("ffa")
+    if size of {_levend::*} is 1:
+        delete {bc::timer}
+        bcKroon({_levend::1})
+        bcVisual("finalist", {_levend::1})
+        wait 5 seconds
+        bcStart(6)
+```
+
+`bcStart(6)` zet beide koningen op adventure, geeft de finalekit, [VERLATEN]-knop, teleport naar
+`finale_1` en `finale_2`, border `troonzaal`. `bcPotje(winnaar)` telt de score, healt, reset de
+kits, en na twee gewonnen potjes `bcKroning(winnaar)`.
+
+## Bossbar en visuals
+
+Eén bossbar, kort, altijd hetzelfde formaat. Persoonlijke info (respawn-teller, "jij bent de
+koning") gaat via de actionbar, de regeerperiodes via de sidebar. Een bossbar is altijd even
+groot; "klein" betekent hier: één balk, korte tekst, geen tweede balk.
+
+**De bossbar per ronde**
+
+| Ronde | Tekst | Kleur | Vulling |
+|---|---|---|---|
+| Basiskamp | `Pudding Bootcamp` | wit | vol |
+| 1 | `Doolhof · 09:41` | groen | tijd |
+| 2 | `Wave 3 · 12 mobs` | rood | mobs over |
+| 3 | `Het Ei · 07:12` | groen, geel na de hint | tijd |
+| 4 | `Koning: Clown · 12:34` | geel | tijd |
+| 4, sudden death | `SUDDEN DEATH · 02:59` | rood | tijd |
+| 5 | `FFA · 7 over · 04:59` | paars | tijd |
+| 6 | `Finale · 1 - 0` | geel | vol |
+
+Bossbar-kleuren zijn beperkt tot blue, green, pink, purple, red, white en yellow; "goud" is dus
+yellow.
+
+**Locator bar** (de balk met spelerstipjes, sinds 1.21.6): uit in alle rondes, behalve ronde 4
+t/m 6 waar alleen de koningen een stip zijn. Hunters zenden niet:
+
+```
+gamerule locatorBar true
+attribute @a[tag=hunter] minecraft:waypoint_transmit_range base set 0
+attribute @a[tag=king] minecraft:waypoint_transmit_range base set 60000000
+```
+
+De stip heeft de teamkleur, dus goud. Samen met Glowing weet elke hunter altijd welke kant op.
+
+**Zweefkroon:** boven de koning draait een gouden helm. Een `item_display` met `teleport_duration`
+zodat hij vloeiend meebeweegt, elke twee ticks boven het hoofd van de koning geteleporteerd en een
+paar graden gedraaid:
+
+```
+function bcZweefkroon(p: player):
+    execute console command "kill @e[tag=kroon_%{_p}%]"
+    execute console command "execute at %{_p}% run summon minecraft:item_display ~ ~2.3 ~ {Tags:[""zweefkroon"",""kroon_%{_p}%""],item:{id:""minecraft:golden_helmet"",count:1},transformation:{translation:[0f,0f,0f],scale:[0.5f,0.5f,0.5f],left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f]},billboard:""fixed"",teleport_duration:2}"
+
+every 2 ticks:
+    add 6 to {bc::spin}
+    loop bcMetTag("king"):
+        execute console command "execute as @e[tag=kroon_%loop-player%,limit=1] at %loop-player% run tp @s ~ ~2.3 ~ %{bc::spin}% 0"
+```
+
+`bcUit` ruimt hem op. Twee koningen in de finale hebben elk hun eigen kroon.
+
+**Labels in de wereld:** boven elk verzamelpunt en boven De Kring een zwevende tekst, één keer
+neerzetten bij het bouwen:
+
+```
+summon minecraft:text_display ~ ~2.5 ~ {text:"VERZAMELPUNT 2",billboard:"center",background:1073741824}
+```
+
+**Visuals per moment**
+
+| Moment | Wat je ziet en hoort |
+|---|---|
+| Countdown | Titles 5 t/m 1 met een stijgende `block.note_block.pling`, dan `GO` met `event.raid.horn`. |
+| Poort open | `event.raid.horn` en `particle minecraft:cloud` in de poortopening. |
+| Nieuwe wave | Title `WAVE 3` in rood, `event.raid.horn`, bossbar rood met mob-teller. |
+| Speler sneuvelt (ronde 2) | Grijze regel in de chat, geen geluid. Het gaat snel genoeg. |
+| Ei-hint op 5 min | `setblock` het ontbrekende blok in de beaconpiramide (`ei_beacon`): lichtstraal aan, `block.beacon.activate` voor iedereen, bossbar geel. Op 3 min een vuurpijl boven het Ei. |
+| Ticket ingeleverd | `entity.player.levelup` voor de speler, `particle minecraft:happy_villager`. |
+| Het Rad | Lampjes rond met `note_block.hat` per stap. Aan het eind `entity.ender_dragon.growl`, `particle minecraft:totem_of_undying` op de uitverkorene, title `DE KONING` met de naam als subtitle. |
+| Kroonwissel | `entity.lightning_bolt.thunder` voor iedereen (geen echte bliksem, die zet dingen in de fik), `particle minecraft:flash` op de nieuwe koning, title `NIEUWE KONING` met naam, de zweefkroon springt over, bossbar-naam update. |
+| Sudden death | Title `SUDDEN DEATH` in rood, `entity.wither.spawn`, bossbar rood, `worldborder warning distance 15` zodat de rand rood aankleurt. |
+| Finalist | `ui.toast.challenge_complete` voor iedereen, vuurpijl boven de speler, title `FINALIST` met naam. |
+| Kroning | Twintig seconden vuurpijlen boven de troonzaal (elke seconde één), title `KING OF THE SMP` met naam, `ui.toast.challenge_complete`. |
+
+Vuurpijl (gouden bol met staart):
+
+```
+summon minecraft:firework_rocket <x> <y> <z> {LifeTime:20,FireworkItem:{id:"minecraft:firework_rocket",count:1,components:{"minecraft:fireworks":{explosions:[{shape:"large_ball",colors:[I;16766720,16777215],has_trail:true}],flight_duration:1}}}}
+```
+
+**Dialogs (optioneel):** sinds 1.21.6 kun je spelers een echt schermpje met knoppen laten zien
+in plaats van een regel in de chat. Dat is netter voor de regels in het basiskamp en voor de
+voice-knoppen. Dialogs zijn data-driven, dus dit is het enige stukje datapack:
 
 ```json
+// data/bootcamp/dialog/doden.json
 {
-  "criteria": {
-    "kill_king": {
-      "trigger": "minecraft:player_killed_entity",
-      "conditions": {
-        "entity": [
-          {
-            "condition": "minecraft:entity_properties",
-            "entity": "this",
-            "predicate": { "type": "minecraft:player", "team": "king" }
-          }
-        ]
-      }
-    }
-  },
-  "rewards": { "function": "bootcamp:king/transfer" }
+  "type": "minecraft:notice",
+  "title": "Je ligt eruit",
+  "body": [{ "type": "minecraft:plain_message", "contents": "Je kijkt nu mee als spectator. Klik om bij de Doden-voice te komen." }],
+  "action": {
+    "label": "Naar de Doden-voice",
+    "action": { "type": "minecraft:run_command", "command": "voicechat join Doden" }
+  }
 }
 ```
 
-Geen `display`, dus de advancement is onzichtbaar. De `advancement revoke` aan het eind van
-`transfer` zorgt dat hij opnieuw kan vuren voor dezelfde speler.
-
-**Koning dood zonder killer** (in `king/tick`): een koning met een death op zijn teller is dood
-gegaan zonder dat de advancement vuurde (val, lava, mob). Geef de kroon dan aan een random hunter.
-"Laatste hunter die hem raakte" is in vanilla lastig; random is de simpele versie, en de admin
-kan altijd handmatig overrulen met `execute as <speler> run function bootcamp:king/give`.
-
-```
-execute if entity @a[tag=king,scores={deaths=1..}] as @r[tag=hunter,gamemode=survival] run function bootcamp:king/transfer
-```
-
-## Het Rad (rigged)
-
-**Bouw:** De Kring: 20 pilaren in een cirkel voor de poort van de burcht, op elke pilaar een
-spelerskop en eronder een blok dat aan of uit kan: `black_concrete` (uit) en `glowstone` (aan). Geen redstone lamps,
-die gaan uit bij de eerste block update. Nummer de slots 0 t/m 19 met de klok mee. Koppen haal
-je met `give @s minecraft:player_head[minecraft:profile="ClownPierce"]` (op 1.20.4 en ouder:
-`give @s minecraft:player_head{SkullOwner:"ClownPierce"}`).
-
-**De rol:** `tag ClownPierce add uitverkoren`. Vooraf zetten, in `setup` of met de hand. Verder
-krijgt elke speler een `slot`-score die overeenkomt met de plek van zijn kop:
-
-```
-scoreboard players set ClownPierce slot 7
-scoreboard players set SpelerA slot 0
-scoreboard players set SpelerB slot 1
-...
-```
-
-Het rad rekent uit hoeveel stappen het moet zetten om precies op het slot van de `uitverkoren`
-speler te eindigen. De startpositie en het aantal extra rondes zijn echt willekeurig; alleen het
-eindpunt staat vast.
-
-```
-# rad/start.mcfunction
-scoreboard players operation #doel rad = @a[tag=uitverkoren,limit=1] slot
-execute store result score #pos rad run random value 0..19
-execute store result score #rondes rad run random value 2..3
-scoreboard players set #twintig rad 20
-# stappen tot het doel: rondes * 20 + (doel - pos) mod 20
-scoreboard players operation #rest rad = #doel rad
-scoreboard players operation #rest rad -= #pos rad
-scoreboard players operation #rest rad %= #twintig rad
-scoreboard players operation #rondes rad *= #twintig rad
-scoreboard players operation #rest rad += #rondes rad
-function bootcamp:rad/lamp_uit_alles
-function bootcamp:rad/lamp_aan
-schedule function bootcamp:rad/stap 10t
-```
-
-`%=` in scoreboards is een floorMod, dus het resultaat is altijd 0 t/m 19. Op versies zonder
-`random` (vóór 1.20.2) zet je `#pos` en `#rondes` gewoon met de hand voor je begint.
-
-```
-# rad/stap.mcfunction
-function bootcamp:rad/lamp_uit
-scoreboard players add #pos rad 1
-scoreboard players operation #pos rad %= #twintig rad
-function bootcamp:rad/lamp_aan
-scoreboard players remove #rest rad 1
-playsound minecraft:block.note_block.hat master @a
-
-execute if score #rest rad matches 0 run function bootcamp:rad/einde
-# steeds langzamer richting het eind
-execute if score #rest rad matches 13.. run schedule function bootcamp:rad/stap 2t
-execute if score #rest rad matches 9..12 run schedule function bootcamp:rad/stap 4t
-execute if score #rest rad matches 6..8 run schedule function bootcamp:rad/stap 7t
-execute if score #rest rad matches 4..5 run schedule function bootcamp:rad/stap 10t
-execute if score #rest rad matches 3 run schedule function bootcamp:rad/stap 15t
-execute if score #rest rad matches 2 run schedule function bootcamp:rad/stap 20t
-execute if score #rest rad matches 1 run schedule function bootcamp:rad/stap 30t
-```
-
-```
-# rad/lamp_aan.mcfunction  (één regel per slot, coördinaten van het lichtblok)
-execute if score #pos rad matches 0 run setblock <x0 y0 z0> minecraft:glowstone
-execute if score #pos rad matches 1 run setblock <x1 y1 z1> minecraft:glowstone
-...
-execute if score #pos rad matches 19 run setblock <x19 y19 z19> minecraft:glowstone
-
-# rad/lamp_uit.mcfunction: zelfde regels met minecraft:black_concrete
-# rad/lamp_uit_alles.mcfunction: 20 setblocks black_concrete zonder de if
-```
-
-```
-# rad/einde.mcfunction
-playsound minecraft:entity.ender_dragon.growl master @a
-title @a times 10t 100t 20t
-title @a title {"text":"DE KONING","color":"gold"}
-title @a subtitle {"text":"","extra":[{"selector":"@a[tag=uitverkoren]"}]}
-execute at @a[tag=uitverkoren] run particle minecraft:totem_of_undying ~ ~1 ~ 1 1 1 0.5 200
-schedule function bootcamp:rad/naar_burcht 3s
-```
-
-```
-# rad/naar_burcht.mcfunction
-tag @a[tag=speler,tag=!uitverkoren] add hunter
-team join hunters @a[tag=hunter]
-tp @a[tag=hunter] <hunterspawn achter de hekjes>
-tp @a[tag=uitverkoren] <burcht>
-execute as @a[tag=uitverkoren] run function bootcamp:kit/boss
-execute as @a[tag=uitverkoren] run function bootcamp:king/give
-execute as @a[tag=speler] run function bootcamp:voice/proximity
-function bootcamp:king/start
-```
-
-**Fallback zonder bouwwerk:** hetzelfde ritme, maar in plaats van lampjes laat je met `title` de
-naam zien van de speler op de huidige positie. Geef elke speler per stap een score
-`cursor = slot - #pos` (via `scoreboard players operation`) en toon
-`@a[tag=speler,scores={cursor=0}]` in de title. Minder mooi op stream, wel in tien minuten
-gemaakt.
-
-## Timer en tick
-
-Eén functie per ronde die zichzelf elke seconde opnieuw inplant:
-
-```
-# king/tick.mcfunction
-scoreboard players remove #king timer 1
-scoreboard players add @a[tag=king] reign 1
-execute store result bossbar bootcamp:main value run scoreboard players get #king timer
-
-# sudden death op 180 sec
-execute if score #king timer matches 180 run title @a title {"text":"SUDDEN DEATH","color":"red"}
-execute if score #king timer matches 180 run worldborder set 60 180
-execute if score #king timer matches 180 run bossbar set bootcamp:main color yellow
-
-# respawns (alleen buiten sudden death)
-execute if score #king timer matches 181.. as @a[tag=hunter,scores={deaths=1..}] run function bootcamp:king/dood
-execute if score #king timer matches ..180 as @a[tag=hunter,scores={deaths=1..}] run function bootcamp:king/uit
-scoreboard players remove @a[scores={respawn=1..}] respawn 1
-execute as @a[tag=hunter,gamemode=spectator,scores={respawn=0}] run function bootcamp:king/respawn
-
-# einde
-execute if score #king timer matches 0 run function bootcamp:king/einde
-execute if score #king timer matches 1.. run schedule function bootcamp:king/tick 1s
-```
-
-```
-# king/dood.mcfunction  (run as de dode hunter)
-scoreboard players reset @s deaths
-gamemode spectator @s
-scoreboard players set @s respawn 20
-
-# king/respawn.mcfunction
-scoreboard players reset @s respawn
-spreadplayers <x> <z> 0 1 false @s       # of tp naar een van de 4 randpunten
-gamemode survival @s
-effect give @s minecraft:resistance 5 4 true
-
-# king/uit.mcfunction  (sudden death: dood = eruit)
-scoreboard players reset @s deaths
-tag @s add out
-tag @s remove hunter
-team join out @s
-gamemode spectator @s
-function bootcamp:voice/doden
-```
-
-`king/start` (aangeroepen vanuit `rad/naar_burcht`) zet `#king timer` op 900, de bossbar op max
-900 en de worldborder op 200 rond de burcht. Na 30 seconden voorsprong opent hij de hekjes bij de
-hunterspawns met `fill` en plant de eerste `tick` in. Stoppen: `schedule clear bootcamp:king/tick`.
-
-Bossbar-naam met de naam van de koning updaten:
-
-```
-bossbar set bootcamp:main name {"text":"Koning: ","extra":[{"selector":"@a[tag=king,limit=1]"}]}
-```
-
-## Einde ronde 4 en de FFA
-
-```
-# king/einde.mcfunction
-tag @a[tag=king] add finalist
-tag @a[tag=hunter,gamemode=survival] add ffa
-execute as @a[tag=ffa] run function bootcamp:kit/arena
-effect give @a[tag=ffa] minecraft:instant_health 1 3 true
-team leave @a[tag=ffa]
-gamemode adventure @a[tag=ffa]
-spreadplayers <ffa-x> <ffa-z> 5 18 false @a[tag=ffa]
-gamemode spectator @a[tag=king]
-tp @a[tag=king] <muur van de binnenplaats>
-execute as @a[tag=king] run function bootcamp:voice/doden
-function bootcamp:ffa/start
-```
-
-Vervalt de FFA (maar één hunter over), dan tag je die direct `finalist` en `king` en ga je door
-naar `finale/start`.
-
-```
-# ffa/tick.mcfunction
-execute as @a[tag=ffa,scores={deaths=1..}] run function bootcamp:ffa/uit
-execute store result score #alive timer if entity @a[tag=ffa,gamemode=adventure]
-execute if score #alive timer matches 1 as @a[tag=ffa,gamemode=adventure] run function bootcamp:king/give
-execute if score #alive timer matches 1 run function bootcamp:finale/start
-execute if score #alive timer matches 2.. run schedule function bootcamp:ffa/tick 1s
-```
-
-```
-# ffa/uit.mcfunction  (run as de dode speler)
-scoreboard players reset @s deaths
-tag @s add out
-tag @s remove ffa
-team join out @s
-gamemode spectator @s
-function bootcamp:voice/doden
-```
-
-Border-shrink voor de FFA: `worldborder center <x> <z>`, `worldborder set 40`, en op 5 minuten
-`worldborder set 10 120`.
-
-`finale/start` zet beide `king`-spelers op `gamemode adventure`, geeft ze de finalekit, stuurt ze
-de [VERLATEN]-knop (`voice/proximity`) en teleporteert ze naar de twee startpunten.
-
-## Poorten en worldborder
-
-Drie zones hebben een poort (doolhof, arena, bosrand). Een poort is een muur die je met `fill`
-weghaalt en terugzet:
-
-```
-# poort/open_2.mcfunction
-fill <x1 y1 z1> <x2 y2 z2> minecraft:air
-# poort/dicht_2.mcfunction
-fill <x1 y1 z1> <x2 y2 z2> minecraft:iron_bars
-```
-
-Countdown ervoor met `title @a title {"text":"3"}` enzovoort via `schedule`.
-
-De worldborder bepaalt per ronde waar je mag komen, dus buiten de zone hoef je niks te bouwen.
-Elke start-functie zet hem, ná de teleport (wie buiten de border staat als hij gezet wordt,
-krijgt schade):
-
-```
-# border/ei.mcfunction (voorbeeld)
-worldborder center <x> <z>
-worldborder set 150
-worldborder warning distance 5
-```
-
-| Ronde | Center | Grootte |
-|---|---|---|
-| 1 Doolhof | midden van het doolhof | 80 |
-| 2 Horde | midden van de arena | 60 |
-| 3 Het Ei | midden van het bos | 150 |
-| 4 King | burcht | 200, in sudden death naar 60 |
-| 5 FFA | binnenplaats | 40, na 5 minuten naar 10 |
-| 6 Finale | troonzaal | 20, na 3 minuten naar 6 |
-
-Spectators vliegen door de border heen, dus staff en doden hebben er geen last van.
-
-## De Ei-poort (ticketcheck)
-
-In `ei/tick`: iedereen die op de drukplaat bij de uitgang van het bos staat en een diamond block
-bij zich heeft, gaat door:
-
-```
-execute as @a[tag=speler,tag=!ticket,x=<px>,y=<py>,z=<pz>,dx=2,dy=2,dz=2] if items entity @s container.* minecraft:diamond_block run function bootcamp:ei/pas
-```
-
-```
-# ei/pas.mcfunction
-clear @s minecraft:diamond_block 1
-tag @s add ticket
-tp @s <De Kring>
-playsound minecraft:entity.player.levelup master @s
-```
-
-Op versies vóór 1.20.5 bestaat `if items` niet; gebruik dan
-`@a[nbt={Inventory:[{id:"minecraft:diamond_block"}]}]`.
-
-Hint op 5 minuten: zet met `setblock` een blok neer dat het beacon-pyramidetje onder het Ei
-compleet maakt, en op 3 minuten `summon minecraft:firework_rocket` boven het Ei.
-
-Na de timer (`ei/einde`): `clear @a[tag=speler,tag=!ticket]`, `function bootcamp:kit/basis` voor
-die groep, en `tp` naar De Kring.
-
-## De horde
-
-Mobs spawnen met een tag, zodat je ze kunt tellen en opruimen:
-
-```
-# horde/wave_1.mcfunction (herhaal per spawnpunt)
-summon minecraft:zombie <x> <y> <z> {Tags:["horde"],PersistenceRequired:1b}
-...
-bossbar set bootcamp:main name {"text":"Wave 1"}
-```
-
-```
-# horde/tick.mcfunction
-execute store result score #mobs timer if entity @e[tag=horde]
-execute store result bossbar bootcamp:main value run scoreboard players get #mobs timer
-scoreboard players remove #wave timer 1
-execute if score #mobs timer matches 0 run function bootcamp:horde/volgende
-execute if score #wave timer matches 0 run function bootcamp:horde/volgende
-execute as @a[tag=speler,scores={deaths=1..}] run function bootcamp:horde/dood
-execute unless entity @a[tag=speler,gamemode=adventure] run function bootcamp:horde/einde
-...
-schedule function bootcamp:horde/tick 1s
-```
-
-`horde/volgende` zet `#wave timer` op 120 en roept de volgende wave-functie aan (bijhouden welke
-via een scoreboard `#wavenr`). Na wave 5 roept hij `horde/einde` aan.
-
-```
-# horde/dood.mcfunction  (run as de dode speler)
-scoreboard players reset @s deaths
-tag @s add dood
-gamemode spectator @s
-tellraw @a [{"selector":"@s"},{"text":" is gesneuveld","color":"gray"}]
-function bootcamp:voice/doden
-
-# horde/einde.mcfunction
-schedule clear bootcamp:horde/tick
-kill @e[tag=horde]
-give @a[tag=speler,tag=!dood] minecraft:ender_pearl 1
-gamemode adventure @a[tag=speler]
-tag @a[tag=dood] remove dood
-tp @a[tag=speler] <verzamelpunt 3>
-```
-
-Dood is dus spectator tot `horde/einde`, geen respawn. De laatste regel van de tick-check zorgt
-dat de ronde ook stopt als iedereen dood is.
-
-Gear op mobs (voor wave 3 en 4): `{HandItems:[{id:"minecraft:iron_sword",count:1},{}],ArmorItems:[{},{},{id:"minecraft:iron_chestplate",count:1},{}]}`
-achter de summon. Op 1.20.4 en ouder is dat `Count` met hoofdletter.
-
-## Voice-knoppen
-
-Spelers hoeven geen commands te typen voor de voice-groepen: de datapack stuurt een klikbare knop
-in de chat. Drie functies, allemaal `run as` de speler die de knop moet krijgen:
-
-```
-# voice/doden.mcfunction
-tellraw @s [{"text":"Je ligt eruit. Klik voor de voice van de doden: ","color":"gray"},{"text":"[DODEN]","color":"red","bold":true,"click_event":{"action":"run_command","command":"/voicechat join Doden"}}]
-
-# voice/ei.mcfunction
-tellraw @s [{"text":"Ronde 3: iedereen in één voice. Klik: ","color":"gray"},{"text":"[EI-VOICE]","color":"green","bold":true,"click_event":{"action":"run_command","command":"/voicechat join Ei"}}]
-
-# voice/proximity.mcfunction
-tellraw @s [{"text":"Terug naar proximity. Klik: ","color":"gray"},{"text":"[VERLATEN]","color":"aqua","bold":true,"click_event":{"action":"run_command","command":"/voicechat leave"}}]
-```
-
-Op versies vóór 1.21.5 heet het `"clickEvent":{"action":"run_command","value":"/voicechat join Doden"}`.
-Doet de knop niks, probeer dan het command zonder de schuine streep. De groepen moeten al bestaan
-(de voice-admin maakt ze, zie [07-voice.md](07-voice.md)); joinen op naam werkt alleen als de
-naam klopt, dus houd het bij `Doden` en `Ei`.
-
-Waar ze aangeroepen worden: `horde/dood`, `ei/start` (voor `@a[tag=speler]`), `rad/naar_burcht`,
-`king/transfer`, `king/uit`, `king/einde`, `ffa/uit`, `finale/start` en de kroning.
-
-## Kits
-
-Een kit is een lijstje `item replace` en `give` commands. Voorbeeld `kit/arena`:
-
-```
-clear @s
-item replace entity @s armor.head with minecraft:diamond_helmet[minecraft:enchantments={"minecraft:protection":1}]
-item replace entity @s armor.chest with minecraft:diamond_chestplate[minecraft:enchantments={"minecraft:protection":1}]
-item replace entity @s armor.legs with minecraft:diamond_leggings[minecraft:enchantments={"minecraft:protection":1}]
-item replace entity @s armor.feet with minecraft:diamond_boots[minecraft:enchantments={"minecraft:protection":1}]
-item replace entity @s weapon.offhand with minecraft:shield
-give @s minecraft:diamond_sword[minecraft:enchantments={"minecraft:sharpness":1}]
-give @s minecraft:bow[minecraft:enchantments={"minecraft:power":1}]
-give @s minecraft:arrow 16
-give @s minecraft:golden_apple 2
-give @s minecraft:cooked_beef 8
-```
-
-## Reset
-
-`reset.mcfunction`: alle tags weg, iedereen `team join spelers`, `gamemode adventure`, `clear`,
-`effect clear`, tp naar het basiskamp, alle timers `schedule clear`, bossbar leeg, worldborder terug op
-groot. Handig als er iets kapot gaat en voor de testrun.
-
-Maak daarnaast vóór het event een **wereldbackup**. Gaat het Ei op, dan kun je in het ergste
-geval de wereld terugzetten in plaats van het Ei opnieuw bouwen.
-
-## Alternatief: Paper-plugin
-
-Heb je een developer in de groep, dan is een kleine Paper-plugin netter: echte "laatste hit"
-tracking voor de kroon, per-zone PvP zonder team-trucs, en een respawn-vertraging zonder
-spectator-gedoe. Maar de datapack doet alles wat hierboven staat, en je hoeft niks te
-compileren. Begin met de datapack.
+Tonen vanuit Skript: `execute console command "dialog show %{_p}% bootcamp:doden"`. De chatknop
+blijft de fallback als de dialog op 26.2 anders blijkt te werken.
+
+## Testen en herladen
+
+- `/sk reload bootcamp` laadt het script opnieuw zonder restart. Fouten staan in de console met
+  regelnummer.
+- Test elk onderdeel los met een tweede account: `/bc start 4` met twee spelers, kill de koning,
+  kijk of de kroon overgaat. Spring van een klif als koning, kijk of de laatste hit hem krijgt.
+- `/bc reset` voor elke testrun. Wereldbackup vóór het event, want `fill` en mobs laten sporen na.
+- Kijk na de eerste start op 26.2 in de console of geen enkele plugin "unsupported version"
+  roept. Skript en SkBee zijn daar het gevoeligst voor.
+
+## De oude datapack-versie
+
+De eerdere schets met een datapack in plaats van Skript staat in de git-geschiedenis (commit
+`e51e143`). Die werkt nog steeds als je nul plugins wilt, maar regio's zetten met een tool is er
+houtje-touwtje en de laatste hit voor de kroon kan er niet in.

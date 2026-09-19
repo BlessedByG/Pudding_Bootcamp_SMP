@@ -6,7 +6,7 @@ Tijdschema, rollen en checklists voor de avond zelf. Tijden zijn een voorbeeld m
 
 | Tijd | Wat | Wie |
 |---|---|---|
-| 19:15 | Staff online. Wereldbackup maken. `reset` draaien. Elke poort en teleport even testen. | Admins |
+| 19:15 | Staff online. Wereldbackup maken. `/bc reset` draaien. Elke poort en teleport even testen. | Admins |
 | 19:40 | Whitelist open. Spelers spawnen in het basiskamp. Voice-test: iedereen zegt wat, loopt weg en komt terug. Wie de mod niet heeft wordt gekickt en installeert alsnog. | Iedereen |
 | 19:55 | Host legt de regels uit (ronde 1 t/m 3 kort, ronde 4 nog niet). | Host |
 | 20:00 | **Intro op stream.** Countdown, poort 1 open. | Host, Admin 1 |
@@ -56,7 +56,8 @@ Grofweg op volgorde van werk:
    uitgang (1 tot 2 avonden).
 6. Burcht op de heuvel met binnenplaats (FFA) en troonzaal (finale), dorpje, toren, 4
    hunterspawns met hekjes aan de rand van de King zone (2 avonden).
-7. Datapack schrijven en per functie testen, inclusief de borders per ronde (2 avonden).
+7. Skript schrijven en per onderdeel testen, inclusief de borders per ronde (2 avonden). Daarna
+   met de wand en `/bcpoint` alle regio's en punten in de wereld zetten (uurtje).
 8. Volledige testrun met 4 of 5 testers (1 avond).
 
 Reken op twee weken met een paar mensen die af en toe een avond hebben.
@@ -65,7 +66,10 @@ Reken op twee weken met een paar mensen die af en toe een avond hebben.
 
 Doe minstens één keer de hele avond met 4 of 5 testers, van basiskamp tot kroning. Let vooral op:
 
-- [ ] Elke poort opent en sluit met de juiste coördinaten.
+- [ ] Alle plugins draaien op 26.2 zonder "unsupported version" in de console.
+- [ ] Alle regio's en punten staan erin (`/bcregion list`, `/bcpoint list`) en `/bcregion show`
+      laat de goede randen zien.
+- [ ] Elke poort opent en sluit op de juiste plek.
 - [ ] Achterblijvers worden na elke timer naar het goede verzamelpunt geteleporteerd.
 - [ ] Worldborder staat per ronde om de goede zone en niemand staat erbuiten na de teleport.
 - [ ] Doolhof: niemand kan over of door het plafond. Kisten gevuld.
@@ -84,13 +88,13 @@ Doe minstens één keer de hele avond met 4 of 5 testers, van basiskamp tot kron
 - [ ] King: koning logt uit en weer in. Wat gebeurt er? Zorg dat de ref weet wat te doen.
 - [ ] FFA: laatste levende wordt finalist 2, teleport naar de 1v1-arena werkt.
 - [ ] Finale: kit reset en full heal per potje.
-- [ ] `reset` brengt alles terug naar de basiskamp-staat.
+- [ ] `/bc reset` brengt alles terug naar de basiskamp-staat.
 - [ ] Serverperformance tijdens wave 5 met alle mobs.
 
 ## Checklist: dag zelf
 
 - [ ] Wereldbackup gemaakt.
-- [ ] `reset` gedraaid, iedereen start schoon.
+- [ ] `/bc reset` gedraaid, iedereen start schoon.
 - [ ] Whitelist compleet, staff heeft op.
 - [ ] Bossbar zichtbaar voor iedereen.
 - [ ] Coördinaten van alle tp-punten in een tekstbestand naast de commander.
@@ -118,10 +122,10 @@ Kort en op de borden in het basiskamp:
 
 | Probleem | Oplossing |
 |---|---|
-| Server crasht | Backup terugzetten, `reset`, ronde opnieuw starten vanaf het laatste verzamelpunt. |
-| Timer loopt niet | `schedule clear` en de start-functie van de ronde opnieuw draaien met de resterende tijd. |
+| Server crasht | Backup terugzetten, `/bc reset`, ronde opnieuw starten vanaf het laatste verzamelpunt. |
+| Timer loopt niet | `/bc stop`, dan `/bc start <ronde>` en met `/bc timer <seconden>` de resterende tijd terugzetten. |
 | Rad stopt op de verkeerde kop | Slot-score van die speler klopt niet met de plek van zijn kop. Host: "technische storing", ref fixt de score, rad nog een keer. |
-| Kroon zit bij niemand | `execute as <speler> run function bootcamp:king/give`. |
+| Kroon zit bij niemand | `/bc kroon <speler>`. |
 | Kroon zit bij twee spelers | `tag <verkeerde> remove king` en de helm eraf; ref beslist wie hem hoort te hebben (laatste kill). |
 | Speler zit vast in een blok | `tp` door de ref. |
 | Ei niet gevonden en de hint werkt niet | Ref zet handmatig een vuurpijl of zegt de richting in de chat. |

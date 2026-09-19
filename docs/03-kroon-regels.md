@@ -11,8 +11,8 @@ kroon heeft, is de koning en is voor iedereen zichtbaar door muren heen.
    Het lot beslist."
 2. De commander start het rad. Het lampje gaat twee of drie rondes rond, wordt langzamer, en
    stopt op ClownPierce. Geluid, particles, `title` voor iedereen: **DE KONING: CLOWNPIERCE**.
-3. Het rad is rigged. Clown heeft vooraf de verborgen rol `uitverkoren` gekregen (een tag in de
-   datapack) en het rad landt altijd op de speler met die rol. De startpositie en het aantal
+3. Het rad is rigged. Clown heeft vooraf de verborgen rol `uitverkoren` gekregen (een tag die de
+   admin zet) en het rad landt altijd op de speler met die rol. De startpositie en het aantal
    rondes zijn wel echt willekeurig, zodat het er elke keer anders uitziet. Alleen de staff en
    Clown hoeven dit te weten. Valt Clown uit, dan verhuis je de rol en landt het rad op iemand
    anders.
@@ -82,7 +82,7 @@ kroon heeft, is de koning en is voor iedereen zichtbaar door muren heen.
 | Twee hunters raken de koning tegelijk | De speler die de laatste klap geeft krijgt de kroon. Het spel bepaalt dat, niet de admin. |
 | De koning logt uit | Zie hierboven: 30 seconden wachten, dan gaat de kroon door. |
 | De koning bouwt zich in | Mag. Sudden death en de border lossen het op. |
-| Iemand met de kroon gaat in spectator door een bug | Admin geeft de kroon handmatig met de `crown/give`-functie (zie technische schets). |
+| Iemand met de kroon gaat in spectator door een bug | Admin geeft de kroon handmatig met `/bc kroon <speler>` (zie technische schets). |
 | Er is maar één hunter over aan het eind van de timer | Die is finalist 2, de FFA vervalt. |
 
 ## De tweede kroon
