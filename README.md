@@ -16,7 +16,7 @@ hoe je het technisch bouwt en hoe de avond zelf verloopt. Niet fancy, wel comple
 | **Duur** | ± 2 uur inclusief pauzes en praatjes van de host. |
 | **Server** | Fabric-server op Minecraft 26.2 met een eigen server-side mod en Simple Voice Chat. Eén open wereld (± 500 x 500) met alle zones in het landschap. Spelers hebben alleen de voice-mod nodig. |
 | **Voice** | Simple Voice Chat, verplicht. Alles proximity; wie dood is hoort alles maar wordt niet gehoord. Gaat automatisch, niemand hoeft iets te doen. |
-| **Eliminatie** | Niemand ligt eruit vóór ronde 4. Elke streamer heeft dus minstens een uur content. |
+| **Eliminatie** | Niemand ligt eruit: wie in ronde 4 doodgaat kijkt vanaf de tribune en doet in de FFA weer mee. Elke streamer heeft de hele avond content. |
 | **Winnaar** | De speler die de finale (1v1 tussen de twee kroondragers) wint, is King of the SMP. |
 
 Het bootcamp-idee: elke ronde traint iets wat je op de SMP nodig hebt. Navigeren, mobs, looten
@@ -45,9 +45,9 @@ zone geteleporteerd (zie [docs/01-map-en-flow.md](docs/01-map-en-flow.md)).
 | 1 | **De Doolhof** | Vind de uitgang van het doolhof. Kistjes in doodlopende gangen. | 10 min | Navigeren, oriëntatie |
 | 2 | **De Horde** | Overleef 5 waves mobs als groep in een arena. Dood = kijken tot de ronde klaar is. | 10 min | Mobs, boog, schild, samenwerken |
 | 3 | **Het Ei** | Vind het Grote Ei, hak je naar binnen, pak loot + een diamond block als ticket. | 10 min | Zoeken, minen, looten onder druk |
-| 4 | **King of the SMP** | Het Rad "kiest" de koning en landt op Clown (rigged). 19v1. Kill de koning en je krijgt de kroon; iedereen terug naar start. Wie hem heeft als de timer afloopt is finalist 1. | 15 min | PvP, chaos, overleven |
-| 5 | **Arena FFA** | Iedereen zonder kroon, full hp, één arena. Laatste die overblijft is finalist 2. | max 10 min | PvP |
-| 6 | **De Finale** | 1v1 tussen de twee kroondragers, best of 3. | ± 10 min | PvP |
+| 4 | **King of the SMP** | Het Rad "kiest" de koning en landt op Clown (rigged). 19v1 in de Arena, één leven. Kill de koning en je krijgt de kroon; iedereen terug naar start. Wie hem heeft als de timer afloopt of als de hunters op zijn, is finalist 1. | max 15 min | PvP, chaos, overleven |
+| 5 | **Arena FFA** | Iedereen behalve Clown en finalist 1, full hp, op de arenavloer. Laatste die overblijft is finalist 2. | max 10 min | PvP |
+| 6 | **De Finale** | Na twee minuten rust: 1v1 tussen de twee kroondragers, best of 3. | ± 12 min | PvP |
 
 ## Waar staat wat
 
@@ -59,8 +59,7 @@ zone geteleporteerd (zie [docs/01-map-en-flow.md](docs/01-map-en-flow.md)).
 - [docs/06-open-keuzes.md](docs/06-open-keuzes.md): beslissingen die nog gemaakt moeten worden, met een aanbeveling per stuk.
 - [docs/07-voice.md](docs/07-voice.md): Simple Voice Chat, de voice-regels per ronde en hoe de groepen werken.
 
-## Nog te beslissen
+## Keuzes
 
-De belangrijkste open keuze: liggen ex-koningen (spelers die de kroon hadden en doodgingen) uit
-het hele event, of doen ze mee aan de FFA? Zie [docs/06-open-keuzes.md](docs/06-open-keuzes.md)
-voor die en de andere keuzes.
+Alle open keuzes zijn besloten. Ze staan met hun gevolgen in
+[docs/06-open-keuzes.md](docs/06-open-keuzes.md).

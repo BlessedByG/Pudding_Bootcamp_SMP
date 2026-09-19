@@ -65,7 +65,7 @@ ronde 4.
 **Doel:** overleef als groep 5 waves mobs.
 
 **Setup**
-- Ruïne-arena Ø 50 ten oosten van de burcht, met wat dekking. 4 spawnpunten voor mobs aan de rand.
+- Ruïne-arena Ø 50 ten oosten van de Arena, met wat dekking. 4 spawnpunten voor mobs aan de rand.
 - Iedereen krijgt bij binnenkomst de **hordekit**: volledig iron armor, iron sword, boog, 32
   pijlen, schild, 16 steak.
 - Waves (voor 20 spelers; grofweg 1 mob per speler per wave, boss wave vast):
@@ -83,13 +83,11 @@ ronde 4.
 - Bossbar laat zien: "Wave 3 · 12 mobs over".
 
 **Regels**
-- Doodgaan = kijker tot het einde van de ronde. Je vliegt onzichtbaar mee met twee tp-items in je
-  hotbar, je hoort alles, maar de levenden horen jou niet. Met de andere doden kun je wel praten.
-  Aan het eind van de ronde gaat iedereen door, dood of levend.
+- Doodgaan = kijker tot het einde van de ronde. Je krijgt groot een doodtekst in beeld ("Grote L
+  gepakt!"), vliegt onaantastbaar mee met twee tp-items in je hotbar, je hoort alles, maar de
+  levenden horen jou niet. Met de andere doden kun je wel praten. Aan het eind van de ronde gaat
+  iedereen door, dood of levend.
 - De volgorde van sneuvelen komt op het scoreboard in de sidebar. Puur voor de eer.
-- Optionele twist voor de laatste minuut: na wave 5 gaat PvP 60 seconden aan ("vrij vuur").
-  Wie dan overblijft, of de meeste kills heeft, krijgt een extra bonus. Alleen doen als je de
-  groep kent; het kan de sfeer ook kapotmaken.
 
 **Einde**
 - Wave 5 dood, iedereen dood, of timer 10 minuten. Iedereen naar verzamelpunt 3 aan de bosrand,
@@ -120,7 +118,7 @@ doden praten. Gaat automatisch, je hoeft niks te doen.
 minstens één diamond block mee. Dat block is je ticket naar ronde 4.
 
 **Setup**
-- 150 x 150 zoekgebied: het bos ten zuiden van de burcht, met heuvels, grotten en een meertje. De
+- 150 x 150 zoekgebied: het bos ten zuiden van de Arena, met heuvels, grotten en een meertje. De
   worldborder sluit het af, geen muur nodig.
 - Iedereen krijgt bij binnenkomst een iron pickaxe (Efficiency II) en houdt wat ze al hadden.
 - **Het Grote Ei:** ±15 hoog, ±11 breed, half verstopt (in een heuvel, in een grot, in het meer).
@@ -170,46 +168,47 @@ minstens één diamond block mee. Dat block is je ticket naar ronde 4.
 Dit is de hoofdronde. De volledige regels staan in [03-kroon-regels.md](03-kroon-regels.md).
 Hier het overzicht.
 
-**Doel:** heb de kroon als de timer afloopt.
+**Doel:** heb de kroon als de timer afloopt, of als er geen hunter meer over is.
 
 **Setup**
-- Het hart van de open wereld: 200 x 200 rond de burcht, met een dorpje, bos, water, een toren.
-  De worldborder sluit de rest van de wereld af. Survival: bouwen mag.
-- Het begint bij **De Kring** voor de poort van de burcht met **Het Rad**: 20 pilaren met alle
-  spelerskoppen en een lampje dat rondgaat, steeds langzamer, en stopt op ClownPierce. Het ziet eruit als toeval, het is
-  rigged: Clown heeft vooraf de verborgen rol `uitverkoren` en het rad landt altijd op die speler
-  (zie [03-kroon-regels.md](03-kroon-regels.md)).
-- Clown wordt naar de burcht geteleporteerd en krijgt de kroon en de **bosskit** (volledig diamond
-  Protection II, diamond sword Sharpness II, boog Power II, 32 pijlen, 4 gapples, 8 pearls, schild,
-  64 cobble).
-- De 19 hunters starten op 4 punten aan de rand met de spullen uit ronde 3 (of de basiskit als ze
-  niks hebben). Team `hunters`, friendly fire uit: hunters kunnen elkaar niet raken.
+- De Arena: een colosseum met een vloer van Ø 60 tot 80 met dekking, een verhoogd midden voor de
+  koning en tribunes rondom voor de doden. Adventure mode: geen bouwen.
+- Het begint met **Het Rad**: iedereen op de vloer, een lampje loopt langs de 20 pilaren met
+  spelerskoppen rond de vloer, steeds langzamer, en stopt op ClownPierce. Het ziet eruit als
+  toeval, het is rigged: Clown heeft vooraf de verborgen rol `uitverkoren` en het rad landt
+  altijd op die speler (zie [03-kroon-regels.md](03-kroon-regels.md)).
+- Clown wordt naar het midden geteleporteerd en krijgt de kroon en de **bosskit** (volledig
+  diamond Protection II, diamond sword Sharpness II, boog Power II, 32 pijlen, 4 gapples, 8
+  pearls, schild).
+- De 19 hunters starten op 4 punten aan de rand van de vloer met de spullen uit ronde 3 (of de
+  basiskit als ze niks hebben). Team `hunters`, friendly fire aan: hunters kunnen elkaar raken.
 - De koning heeft Glowing: je ziet hem door alles heen. Bossbar: timer + naam van de koning.
 - De koning krijgt 30 seconden voorsprong: de hunters staan die tijd bevroren op hun startpunt,
   met een countdown in beeld.
 
 **Regels in het kort**
-- Kill de koning en je krijgt de kroon. Elke kroonwissel is een **reset**: alle hunters worden
-  geheald en terug naar hun startpunt aan de rand geteleporteerd. De nieuwe koning wordt geheald,
-  krijgt zijn armor en wapens gerepareerd, het kroonpakketje (2 gapples, 2 pearls), 15 seconden
-  Resistance en Glowing, en staat in het midden van de burcht. Tien seconden countdown waarin
-  niemand van zijn plek kan, dan los.
-- Gaat de koning dood zonder killer (val, lava), dan gebeurt precies hetzelfde. De kroon gaat naar
-  de laatste die hem raakte.
-- De ex-koning ligt eruit. Van 19v1 naar 18v1 naar 17v1, enzovoort.
-- Hunters die doodgaan respawnen na 20 seconden aan de rand (keepInventory aan). Een kroonwissel
-  in die 20 seconden zet je meteen weer neer.
-- **Sudden death** in de laatste 3 minuten: geen respawns meer, de worldborder krimpt naar 60 x 60
-  rond de burcht.
-- Timer 15 minuten. Wie de kroon heeft als de timer afloopt is **finalist 1**.
+- **Eén leven.** Wie doodgaat, hunter of koning, is uit de ronde en gaat als kijker de tribune op.
+  Geen respawns. Groot in beeld voor de dode: een willekeurige doodtekst ("Grote L gepakt!",
+  "Had je nou maar beter je best gedaan", "Gelukkig is dit niet de CSMP").
+- Kill de koning en je krijgt de kroon. Elke kroonwissel is een **reset**: alle levende hunters
+  worden geheald en terug naar hun startpunt aan de rand geteleporteerd. De nieuwe koning wordt
+  geheald, krijgt zijn armor en wapens gerepareerd, het kroonpakketje (2 gapples, 2 pearls), 15
+  seconden Resistance en Glowing, en staat in het midden. Tien seconden countdown waarin niemand
+  van zijn plek kan, dan los. Doden blijven dood.
+- Gaat de koning dood zonder killer, dan gebeurt precies hetzelfde. De kroon gaat naar de laatste
+  die hem raakte.
+- Hunters mogen elkaar raken. Samenwerken mag, verraden ook.
+- Timer 15 minuten. Wie de kroon heeft als de timer afloopt, of als alle hunters dood zijn, is
+  **finalist 1**.
 
 **Einde**
-- Finalist 1 gaat kijken. Alle hunters die nog leven gaan naar ronde 5. Iedereen die dood is
-  (ex-koningen, hunters gestorven in sudden death) is uitgeschakeld.
+- Finalist 1 en Clown gaan de tribune op. **Iedereen anders gaat door naar ronde 5**, ook wie in
+  ronde 4 doodging, hunter of ex-koning. Ronde 4 is een eigen wedstrijd; de FFA begint schoon.
+- Is Clown nog koning, dan is hij finalist 1. Is hij de kroon kwijt, dan is de eindbaas klaar en
+  kijkt hij. Hij doet nooit mee aan de FFA.
 
-**Voice:** proximity. Dood = kijker: alles horen, niet gehoord worden, praten met de andere
-doden. Hunters die 20 seconden op hun respawn wachten zijn ook even kijker en dus even stil.
-Allemaal automatisch.
+**Voice:** proximity. Dood = kijker op de tribune: alles horen, niet gehoord worden, praten met de
+andere doden. Allemaal automatisch.
 
 **Wat train je:** PvP tegen overmacht, target focus, wanneer je wel en niet moet gaan.
 
@@ -220,25 +219,26 @@ Allemaal automatisch.
 **Doel:** laatste die overblijft.
 
 **Setup**
-- Iedereen zonder kroon die nog leeft wordt full hp naar de binnenplaats van de burcht
-  geteleporteerd, verspreid over de rand.
+- Iedereen behalve Clown en finalist 1 wordt full hp op de vloer van de Arena gezet, verspreid
+  over de rand. Ook wie in ronde 4 doodging.
 - Iedereen krijgt dezelfde **arenakit**: volledig diamond Protection I, diamond sword Sharpness I,
-  boog Power I, 16 pijlen, 2 gapples, 8 steak, schild. Eigen spullen worden weggehaald
-  (zie [06-open-keuzes.md](06-open-keuzes.md) als je liever met eigen gear vecht).
+  boog Power I, 16 pijlen, 2 gapples, 8 steak, schild. Eigen spullen worden weggehaald.
 - Teams weg: iedereen kan iedereen raken.
 - 10 seconden countdown, dan los.
 
 **Regels**
-- Dood = uit (kijker).
+- Dood = uit, tribune op. Doodtekst groot in beeld.
 - Teamen mag, maar er wint er maar één. Op eigen risico.
 - Na 5 minuten krimpt de worldborder in 2 minuten naar 10 x 10, zodat het niet blijft hangen.
 
 **Einde**
 - Laatste levende speler krijgt de tweede kroon: **finalist 2**.
 - Hard maximum 10 minuten; staan er dan nog meerdere, dan beslist het aantal kills.
+- Daarna **twee minuten rust**. Finalist 2 komt net uit een gevecht, finalist 1 is uitgerust. De
+  host bouwt het moment op, de finalisten staan naast elkaar op de tribune.
 
-**Voice:** loopt door op de stand van ronde 4. Levend proximity, dood wordt kijker. Finalist 1
-kijkt ook als kijker en is dus stil voor de vechters.
+**Voice:** loopt door op de stand van ronde 4. Levend proximity, dood wordt kijker op de tribune.
+Finalist 1 en Clown kijken ook als kijker en zijn dus stil voor de vechters.
 
 ---
 
@@ -247,7 +247,7 @@ kijkt ook als kijker en is dus stil voor de vechters.
 **Doel:** 1v1 tussen de twee kroondragers, best of 3.
 
 **Setup**
-- De troonzaal van de burcht, 20 x 20, twee startpunten tegenover elkaar.
+- Het midden van de Arena, border 20 x 20, twee startpunten tegenover elkaar. Tribunes vol.
 - Beiden krijgen de **finalekit**: volledig diamond Protection II, diamond sword Sharpness II,
   boog Power I, 16 pijlen, 2 gapples, 8 steak, schild. Geen pearls, geen potions.
 - Per potje: full heal, kit reset, 5 seconden countdown.
@@ -257,8 +257,8 @@ kijkt ook als kijker en is dus stil voor de vechters.
 - Duurt een potje langer dan 3 minuten, dan krimpt de border naar 6 x 6.
 
 **Einde**
-- Winnaar is King of the SMP. Kroning in de troonzaal, iedereen wordt erbij geteleporteerd. Prijs: zie
-  [06-open-keuzes.md](06-open-keuzes.md).
+- Winnaar is King of the SMP. Kroning in het midden van de Arena, iedereen op de tribune. Geen
+  prijs, just for fun: de eer, de kroon en de tribunes vol.
 
-**Voice:** de twee finalisten proximity in de arena, alle anderen kijker. Bij de kroning is
-iedereen weer levend: proximity in de troonzaal.
+**Voice:** de twee finalisten proximity op de vloer, alle anderen kijker. Bij de kroning is
+iedereen weer levend: proximity in de Arena.

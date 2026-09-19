@@ -9,11 +9,10 @@ bootcamp-mod regelt ze via de API van de voice-mod.
 
 ## De regels
 
-1. **Alles is proximity.** Basiskamp, doolhof, horde, Ei-bos, King zone, arena's: je hoort wie
+1. **Alles is proximity.** Basiskamp, doolhof, horde, Ei-bos, de Arena: je hoort wie
    bij je in de buurt is. Bereik 48 blokken, fluister-toets voor kleiner bereik.
 2. **Dood = kijker = niet hoorbaar voor de levenden.** Je hoort zelf nog alles wat er om je heen
-   gebeurt, maar geen levende speler hoort jou. Ook hunters die in ronde 4 op hun respawn wachten
-   zijn die 20 seconden stil.
+   gebeurt, maar geen levende speler hoort jou.
 3. **Doden horen elkaar wel, overal.** Kijkers kunnen met elkaar praten waar ze ook rondzweven.
    Word je weer levend (na ronde 2), dan is dat vanzelf weer voorbij.
 
@@ -22,9 +21,9 @@ Per ronde:
 | Ronde | Levend | Dood / kijkers |
 |---|---|---|
 | Basiskamp, Doolhof, Horde, Het Ei | Proximity. | Ronde 2: kijker tot het einde van de ronde. Hoort alles, wordt niet gehoord, praat met de andere doden. |
-| King of the SMP | Proximity, hunters én koning. | Kijker: hoort alles, wordt niet gehoord, praat met de andere doden. Wie op zijn respawn wacht is even stil. |
+| King of the SMP | Proximity, hunters én koning. | Kijker op de tribune: hoort alles, wordt niet gehoord, praat met de andere doden. |
 | FFA en Finale | Proximity. | Hetzelfde. Finalist 1 kijkt tijdens de FFA ook als kijker. |
-| Kroning | Proximity in de troonzaal. | – |
+| Kroning | Proximity in de Arena. | – |
 
 ## Hoe de mod dat doet
 

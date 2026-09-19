@@ -39,6 +39,24 @@ Geen Skript, geen datapack, geen plugins. Dialogs (schermpjes met knoppen) bouwt
    `build/libs/`. Fixen tijdens het event betekent jar vervangen en herstarten, dus test vooraf.
 5. Zet de mod in deze repo onder `mod/`, dan heeft Claude Code de docs en de code bij elkaar.
 
+## Serverinstellingen
+
+Gamerules die de mod bij het opstarten zet: `keepInventory` en `doImmediateRespawn` doen er niet
+toe (spelers gaan nooit echt dood), `naturalRegeneration` aan, `doMobSpawning` uit (de horde
+spawnen we zelf), `doDaylightCycle` uit, `announceAdvancements` uit, `locatorBar` uit (aan in
+ronde 4 t/m 6, zie Visuals).
+
+Teams zijn er voor de kleur van naam, Glowing-outline en locator-stip, en voor PvP tot ronde 4:
+
+| Team | Kleur | Friendly fire | Wie |
+|---|---|---|---|
+| `spelers` | wit | uit | Iedereen in ronde 0 t/m 3: geen PvP. |
+| `hunters` | aqua | **aan** | Ronde 4. Hunters kunnen elkaar raken; het team is er voor de kleur. |
+| `king` | goud | aan | De koning(en). In de finale raken de twee koningen elkaar gewoon. |
+| `out` | grijs | – | Kijkers. |
+
+In ronde 5 gaat iedereen uit zijn team behalve de koningen, dus daar is alles PvP.
+
 ## Modules
 
 | Package | Doet | Belangrijkste API |
@@ -88,7 +106,7 @@ center en grootte voor de worldborder.
 
 | Regio's | Waarvoor |
 |---|---|
-| `doolhof`, `arena`, `eibos`, `king`, `binnenplaats`, `troonzaal` | Worldborder per ronde. |
+| `doolhof`, `arena`, `eibos`, `vloer`, `finale` | Worldborder per ronde. `arena` is de horde-arena, `vloer` de vloer van de Arena (ronde 4 en 5), `finale` het midden (ronde 6). |
 | `poort_doolhof`, `poort_arena`, `poort_bos` | De muur die open en dicht gaat (`fill` met lucht of iron bars). |
 | `eiplaat` | Het vak bij de uitgang van het bos waar je ticket wordt ingenomen. |
 
@@ -101,53 +119,56 @@ center en grootte voor de worldborder.
 | `doolhof_start`, `doolhof_uit` | Ingang en waar je uitkomt. |
 | `mob_1` t/m `mob_4`, `arena_spawn` | Horde-spawns en waar spelers de arena binnenkomen. |
 | `ei_start`, `ei_beacon` (blok) | Bosrand-ingang en het ontbrekende blok in de beaconpiramide onder het Ei. |
-| `burcht`, `hunter_1` t/m `hunter_4` | Startpunten ronde 4; bij elke kroonwissel gaat iedereen hierheen terug. |
-| `sd_1` t/m `sd_4` | Startpunten voor een reset tijdens sudden death, binnen de 60 x 60. |
-| `ffa_midden`, `finale_1`, `finale_2`, `kroning` | Binnenplaats en troonzaal. |
-| `lamp_0` t/m `lamp_19` (blokken) | De lichtblokken van De Kring, met de klok mee. |
+| `troon`, `hunter_1` t/m `hunter_4` | Het midden van de Arena en de startpunten aan de rand van de vloer; bij elke kroonwissel gaat iedereen hierheen terug. |
+| `tribune_1` t/m `tribune_4` | Waar doden op de tribune neerkomen, verdeeld over de ringen. |
+| `finale_1`, `finale_2`, `kroning` | Startpunten van de finale en de plek van de kroning, in het midden van de Arena. |
+| `lamp_0` t/m `lamp_19` (blokken) | De lichtblokken van De Kring: de 20 pilaren rond de arenavloer, met de klok mee. |
 
 Worldborder per ronde: `ServerLevel.getWorldBorder()`, center en grootte uit de regio, krimpen met
 `lerpSizeBetween`. Altijd eerst teleporteren, dan de border zetten.
 
 ## Spellogica
 
-**Status.** Eén `GameState`: huidige ronde, timer in seconden, vlaggen (`sudden`, `bevroren`),
+**Status.** Eén `GameState`: huidige ronde, timer in seconden, vlaggen (`bevroren`),
 per speler een rol (`SPELER`, `HUNTER`, `KING`, `FFA`, `FINALIST`, `KIJKER`, `STAFF`) en
 vlaggen (`dood`, `ticket`, `uitverkoren`, slotnummer). Rollen staan ook als scoreboard-tag op de
 speler, zodat je ze met `@a[tag=...]` in de console kunt zien.
 
 **Tick.** `END_SERVER_TICK`; elke 20 ticks één seconde: timer omlaag, bossbar bijwerken, de
-actieve ronde z'n `tick()`. Ronde-specifieke momenten (Ei-hint op 5:00, sudden death op 3:00,
-einde op 0:00) zitten in die ronde.
+actieve ronde z'n `tick()`. Ronde-specifieke momenten (Ei-hint op 5:00, einde op 0:00, "hunters
+op" in ronde 4) zitten in die ronde.
 
 **Dood.** `ServerLivingEntityEvents.ALLOW_DEATH`: de mod laat spelers nooit echt doodgaan. Bij
 een dodelijke klap wordt de dood geannuleerd, de speler geheald en afgehandeld volgens de ronde:
 
 | Ronde | Wat er gebeurt |
 |---|---|
-| 2 | Kijker tot het einde van de ronde. Bericht in de chat. |
-| 4, koning | Kroonwissel naar de killer; anders de laatste hit; anders een willekeurige hunter. Ex-koning wordt kijker. |
-| 4, hunter | 20 seconden kijker op de plek van de dood (zonder tp-items), dan terug naar een randpunt met 5 seconden Resistance. Vervalt bij een reset. |
-| 4, sudden death | Kijker, uitgeschakeld. |
-| 5 | Kijker, uitgeschakeld; laatste over wordt finalist 2. |
+| 2 | Kijker tot het einde van de ronde. Doodtekst als title voor de dode, verder niks. |
+| 4, koning | Kroonwissel naar de killer; anders de laatste hit; anders een willekeurige levende hunter. Ex-koning wordt kijker op de tribune. |
+| 4, hunter | Kijker op de tribune, uit de ronde, geen respawn. Is er geen levende hunter meer, dan eindigt de ronde en is de koning finalist 1. |
+| 5 | Kijker op de tribune; laatste over wordt finalist 2. |
 | 6 | Potje voor de tegenstander. |
 
 Geen death-screen, geen respawn, geen keepInventory-gedoe. De laatste hit komt uit
 `ALLOW_DAMAGE`: is het slachtoffer de koning en de bron een speler (ook via een pijl), onthoud hem.
 
-**Kroonwissel** (`Crown.transfer(oude, nieuwe)`): oude wordt kijker; nieuwe naar `burcht`,
+**Kroonwissel** (`Crown.transfer(oude, nieuwe)`): oude wordt kijker op de tribune; nieuwe naar
+`troon`,
 heal, honger vol, alle items in inventory en armor op volle durability (`setDamageValue(0)`),
 gouden helm met Curse of Binding, 2 gapples en 2 pearls, 15 seconden Resistance II, Glowing
 (teamkleur goud), zweefkroon; dan `Opstelling(10)`.
 
-**Opstelling(seconden)**: alle hunters heal en naar `hunter_1..4` (of `sd_1..4` tijdens sudden
-death, want de randpunten liggen dan buiten de border), bevriezen, countdown in actionbar met de
-laatste vijf seconden als title plus pling, dan los met een groene GO en de raid horn. Bevriezen
-is `MOVEMENT_SPEED` en `JUMP_STRENGTH` op basiswaarde 0 (terug naar 0.1 en 0.42) plus een
-`UseItemCallback` die pearls blokkeert zolang de vlag staat. Bij de start van ronde 4 dezelfde
-functie met 30 seconden.
+**Opstelling(seconden)**: alle levende hunters heal en naar `hunter_1..4` aan de rand van de
+vloer, bevriezen, countdown in actionbar met de laatste vijf seconden als title plus pling, dan
+los met een groene GO en de raid horn. Bevriezen is `MOVEMENT_SPEED` en `JUMP_STRENGTH` op
+basiswaarde 0 (terug naar 0.1 en 0.42) plus een `UseItemCallback` die pearls blokkeert zolang de
+vlag staat. Bij de start van ronde 4 dezelfde functie met 30 seconden. Doden blijven dood: een
+reset geeft geen levens terug.
 
-**Sudden death**: vlag aan, border in 180 seconden naar 60, visuals, geen respawns meer.
+**Einde van ronde 4**: bij timer 0, of zodra er geen levende hunter meer is. De koning is
+finalist 1. Geen sudden death en geen border-krimp: de vloer is klein genoeg en iedereen heeft
+één leven. Daarna `start(5)`: iedereen behalve Clown en finalist 1 de vloer op, ook de doden van
+ronde 4.
 
 **Ei-drukplaat**: elke halve seconde: spelers in regio `eiplaat` zonder ticket met een diamond
 block in hun inventory, block eruit, ticket, tp naar `kring`, levelup-geluid. Na de timer: wie
@@ -164,38 +185,43 @@ lamp aan, `rest` - 1, hat-geluid, en de wachttijd tot de volgende stap loopt op 
 ticks naarmate `rest` kleiner wordt. Bij 0: dragon growl, totem-particles op de uitverkorene,
 title `DE KONING` met naam, drie seconden later `start(4)`.
 
-**FFA en finale**: levende `FFA`-spelers tellen; bij één over kroon, finalist-visual, vijf
-seconden later `start(6)`. Finale: potjes tellen, heal en kit-reset per potje, na twee gewonnen
-potjes de kroning.
+**FFA en finale**: levende `FFA`-spelers tellen; bij één over kroon en finalist-visual, dan
+twee minuten rust (beide finalisten op de tribune, timer in de bossbar) en `start(6)`. Finale:
+potjes tellen, heal en kit-reset per potje, na twee gewonnen potjes de kroning in het midden.
 
 ## Kijkers: doden, host en camera
 
 Doden gaan niet in spectator mode (daar kun je geen items in vasthouden) maar in **kijkersmodus**,
 die de mod zelf maakt:
 
-- Adventure mode, mag vliegen en vliegt, onzichtbaar (effect zonder particles), team `out` (grijs
-  in de tab-list), hotbar leeg op de twee tp-items na.
+- Adventure mode, mag vliegen, team `out` (grijs in de tab-list), hotbar leeg op de twee tp-items
+  na. Zichtbaar: op de tribune zijn de doden het publiek.
 - Onaantastbaar: geen schade (`ALLOW_DAMAGE` annuleren), pijlen en klappen gaan door je heen
-  (mixin op `Player`: `canBeHitByProjectile` en `isAttackable` geven `false` voor kijkers), geen
-  botsing (mixin op `isPushable`/`canCollideWith`), niks oppakken (mixin op `ItemEntity`), niks
-  aanraken of gebruiken (`UseBlockCallback`, `UseItemCallback`, `AttackEntityCallback` geven
-  `FAIL`, behalve voor de tp-items).
-- Niet op de locator bar (`WAYPOINT_TRANSMIT_RANGE` op 0), geen naamplaatje (onzichtbaar).
-- Grens: door muren vliegen kan niet, dat is client-side. Eroverheen wel. En kijkers komen niet
-  door de border; wie erbuiten zweeft als hij krimpt, kijkt van buiten mee.
+  (mixin op `Player`: `canBeHitByProjectile` en `isAttackable` geven `false` voor kijkers), mobs
+  zien je niet (mixin op `canBeSeenByAnyone`), geen botsing (mixin op `isPushable`), niks oppakken
+  (mixin op `ItemEntity`), niks aanraken of gebruiken (`UseBlockCallback`, `UseItemCallback`,
+  `AttackEntityCallback` geven `FAIL`, behalve voor de tp-items).
+- Niet op de locator bar (`WAYPOINT_TRANSMIT_RANGE` op 0), geen Glowing.
+- Bij de dood een title met een willekeurige doodtekst, alleen voor de dode zelf, geen chatregel
+  en geen geluid: `Grote L gepakt!`, `Had je nou maar beter je best gedaan`, `Gelukkig is dit niet
+  de CSMP`. De lijst staat in `bootcamp.json`, zodat je er meer bij kunt zetten.
+- Grens: door muren vliegen kan niet, dat is client-side. Eroverheen wel.
 
-**De twee items:** een kompas **Levenden** en een spelerskop **Doden**, herkenbaar aan een custom
-data component. Rechtsklik opent een dialog (`ServerPlayer.openDialog`, type multi-action,
-drie kolommen) met een knop per speler uit die lijst; elke knop draait `/bc tp <naam>`. De lijst
-wordt bij elke klik opnieuw gebouwd. Levenden zijn alle spelers met een rol die niet kijker is,
-doden zijn de kijkers met rol `SPELER` (staff staat er niet tussen).
+**In de Arena (ronde 4, 5 en 6)** worden doden naar een `tribune_n`-punt geteleporteerd en
+blijven daar: de tp-items zijn in deze rondes uit, en een kijker die toch in regio `vloer` komt
+wordt terug op de tribune gezet. Vanaf de tribune zie je toch alles. Finalist 1 en Clown kijken
+tijdens de FFA ook vanaf de tribune.
 
-**Staff** (host, camera's, admins): `/bc kijker <naam> aan` geeft dezelfde modus, of blijf in
-creative en pak alleen de items met `/bc tools`. Echte spectator mode kan ook nog steeds, alleen
-zonder items.
+**In ronde 1 t/m 3** vlieg je vrij rond met de twee items: een kompas **Levenden** en een
+spelerskop **Doden**, herkenbaar aan een custom data component. Rechtsklik opent een dialog
+(`ServerPlayer.openDialog`, type multi-action, drie kolommen) met een knop per speler uit die
+lijst; elke knop draait `/bc tp <naam>`. De lijst wordt bij elke klik opnieuw gebouwd. Levenden
+zijn alle spelers met een rol die niet kijker is, doden zijn de kijkers met rol `SPELER` (staff
+staat er niet tussen).
 
-**Respawn-wachttijd** in ronde 4 is dezelfde modus voor 20 seconden, zonder items, op de plek van
-de dood.
+**Staff** (host, camera's, admins): `/bc kijker <naam> aan` geeft dezelfde modus, met werkende
+tp-items in alle rondes en zonder de tribune-regel. Of blijf in creative en pak alleen de items
+met `/bc tools`. Echte spectator mode kan ook nog steeds, alleen zonder items.
 
 ## Voice via de API
 
@@ -222,7 +248,7 @@ Persoonlijke info via de actionbar, de regeerperiodes via de sidebar.
 | 2 | `Wave 3 · 12 mobs` | rood | mobs over |
 | 3 | `Het Ei · 07:12` | groen, geel na de hint | tijd |
 | 4 | `Koning: Clown · 12:34` | geel | tijd |
-| 4, sudden death | `SUDDEN DEATH · 02:59` | rood | tijd |
+| Rust | `Finale over 01:59` | wit | tijd |
 | 5 | `FFA · 7 over · 04:59` | paars | tijd |
 | 6 | `Finale · 1 - 0` | geel | vol |
 
@@ -244,14 +270,14 @@ geplaatst bij het bouwen.
 | Countdown | Titles 5 t/m 1 met een stijgende `note_block.pling`, dan `GO` met `event.raid.horn`. |
 | Poort open | `event.raid.horn` en cloud-particles in de poortopening. |
 | Nieuwe wave | Title `WAVE 3` in rood, `event.raid.horn`, bossbar rood met mob-teller. |
-| Speler sneuvelt (ronde 2) | Grijze regel in de chat, geen geluid. |
+| Speler sneuvelt | Alleen de dode ziet groot een willekeurige doodtekst als title: `Grote L gepakt!`, `Had je nou maar beter je best gedaan`, `Gelukkig is dit niet de CSMP`. Geen geluid, geen chatregel. Lijst in de config. |
 | Ei-hint op 5 min | Het ontbrekende blok in de beaconpiramide erin: lichtstraal aan, `block.beacon.activate` voor iedereen, bossbar geel. Op 3 min een vuurpijl boven het Ei. |
 | Ticket ingeleverd | `entity.player.levelup` voor de speler, happy-villager-particles. |
 | Het Rad | Lampjes rond met `note_block.hat` per stap. Aan het eind `entity.ender_dragon.growl`, totem-particles op de uitverkorene, title `DE KONING` met naam. |
 | Kroonwissel | `entity.lightning_bolt.thunder` voor iedereen (geen echte bliksem, die zet dingen in de fik), flash-particle op de nieuwe koning, title `NIEUWE KONING` met naam, de zweefkroon springt over. |
-| Sudden death | Title `SUDDEN DEATH` in rood, `entity.wither.spawn`, bossbar rood, border-warning op 15 zodat de rand rood kleurt. |
+| Hunters op | Title `DE KONING STAAT` met naam, `ui.toast.challenge_complete`; ronde 4 is voorbij. |
 | Finalist | `ui.toast.challenge_complete` voor iedereen, vuurpijl boven de speler, title `FINALIST` met naam. |
-| Kroning | Twintig seconden vuurpijlen boven de troonzaal, title `KING OF THE SMP` met naam. |
+| Kroning | Twintig seconden vuurpijlen boven de Arena, title `KING OF THE SMP` met naam, tribunes vol. |
 
 Vuurpijlen: een `FireworkRocketEntity` met een `Fireworks`-component (grote gouden bol met
 staart, vluchtduur 1). Titles en actionbar gaan via de title-packets, geluid via

@@ -16,13 +16,13 @@ Tijdschema, rollen en checklists voor de avond zelf. Tijden zijn een voorbeeld m
 | 20:27 | Verzamelpunt 3 aan de bosrand: pearls voor de overlevers. | Host |
 | 20:30 | **Pauze** (5 min). Toiletmoment, host houdt de stream warm. | Host |
 | 20:35 | **Ronde 3: Het Ei** (10 min) | |
-| 20:46 | De Kring: host legt nu de kroonregels uit. "Het lot beslist wie de koning wordt." Het Rad draait en landt op Clown. Clown naar de burcht. | Host, Admin 1 |
-| 20:50 | **Ronde 4: King of the SMP** (30 sec voorsprong + 15 min) | |
-| 21:06 | Uitslag: finalist 1. Rest wordt naar de FFA geteleporteerd. | Admin 1 |
+| 20:46 | In de Arena: host legt nu de kroonregels uit. "Het lot beslist wie de koning wordt." Het Rad loopt de vloer rond en landt op Clown. Clown naar het midden. | Host, Admin 1 |
+| 20:50 | **Ronde 4: King of the SMP** (30 sec voorsprong + max 15 min, één leven) | |
+| 21:06 | Uitslag: finalist 1. Iedereen behalve Clown en finalist 1 de vloer op, ook de doden van ronde 4. | Admin 1 |
 | 21:08 | **Ronde 5: Arena FFA** (max 10 min) | |
-| 21:19 | Uitslag: finalist 2. Beide finalisten naar de 1v1-arena. | Admin 1 |
+| 21:19 | Uitslag: finalist 2. Twee minuten rust, host bouwt het op. | Host |
 | 21:22 | **Ronde 6: De Finale** (best of 3, ± 10 min) | |
-| 21:33 | **Kroning** in de troonzaal, iedereen erbij. SMP-aankondiging als die er is. | Host |
+| 21:33 | **Kroning** in het midden van de Arena, tribunes vol. SMP-aankondiging als die er is. | Host |
 | 21:45 | Einde stream. | |
 
 Totaal ruim 1,5 uur speeltijd, plan 2 uur met buffer. Als een ronde uitloopt: de timers zijn
@@ -33,9 +33,9 @@ hard, dus het loopt vooral uit door praatjes. Dat is de host z'n verantwoordelij
 | Rol | Aantal | Wat |
 |---|---|---|
 | **Host / caster** | 1 | Praat op de stream, legt regels uit, kondigt rondes aan, houdt de verzamelpunten gezellig. Zit in kijkersmodus. Speelt Het Rad recht: "iedereen kan de koning worden". |
-| **Admin 1: commander** | 1 | Draait de functies: poorten, starts, timers, teleports. Doet verder niks anders. |
+| **Admin 1: commander** | 1 | Start elke ronde op het sein van Pudding: poorten, timers, teleports. Doet verder niks anders. |
 | **Admin 2: ref** | 1 | Kijkt naar problemen: stuck spelers, disconnects, bugs met de kroon. Overrulet handmatig waar nodig. Houdt het randgevallen-lijstje uit [03-kroon-regels.md](03-kroon-regels.md) bij de hand. |
-| **Camera** | 0 tot 2 | Kijker-accounts voor een mooi hoofdbeeld op de stream (top-down doolhof, overzicht King zone). Optioneel. |
+| **Camera** | 0 tot 2 | Kijker-accounts voor een mooi hoofdbeeld op de stream (top-down doolhof, overzicht van de Arena). Optioneel. |
 | **Bouwers** | 2 tot 4 | Vooraf. Zie de bouwlijst hieronder. |
 
 Eén persoon kan host en ref combineren als je krap zit, maar de commander moet alleen commander
@@ -48,14 +48,14 @@ Grofweg op volgorde van werk:
 1. De wereld kiezen of genereren: ± 500 x 500 met heuvels, bos en water. Bepaal waar elke zone
    komt (plattegrond in [01-map-en-flow.md](01-map-en-flow.md)) en zet alle coördinaten in een
    bestand (1 avond).
-2. Basiskamp en de verzamelpunten: kampvuur, banners, bordjes (uurtje). De Kring met 20 pilaren,
-   koppen en lichtblokken (uurtje extra).
+2. Basiskamp en de verzamelpunten: kampvuur, banners, bordjes (uurtje).
 3. Hagendoolhof genereren en in het dal plaatsen, kisten vullen (1 avond).
 4. Ruïne-arena met 4 spawnpunten, dekking en een poort (1 avond).
 5. Ei-bos: plek kiezen, Grote Ei bouwen en vullen, nep-eitjes, beacon eronder, drukplaat bij de
    uitgang (1 tot 2 avonden).
-6. Burcht op de heuvel met binnenplaats (FFA) en troonzaal (finale), dorpje, toren, 4
-   hunterspawns aan de rand van de King zone (2 avonden).
+6. De Arena: colosseum met een vloer van Ø 60 tot 80 met dekking, een verhoogd midden, tribunes
+   rondom achter een borstwering, een poort, en de 20 pilaren van De Kring met koppen en
+   lichtblokken (2 tot 3 avonden).
 7. De mod bouwen, module voor module, en per onderdeel testen op de dev-server (4 tot 5 avonden,
    zie [04-technische-schets.md](04-technische-schets.md)). Daarna met de wand en `/bc point`
    alle regio's en punten in de wereld zetten (uurtje).
@@ -80,22 +80,22 @@ Doe minstens één keer de hele avond met 4 of 5 testers, van basiskamp tot kron
 - [ ] Voice: proximity werkt; een kijker is niet hoorbaar voor een levende speler ernaast, hoort
       die wel, en hoort andere kijkers overal. Niemand kan een eigen groep maken. Dit is de
       belangrijkste voice-test, zie [07-voice.md](07-voice.md).
-- [ ] Kijkers: dood = onzichtbaar vliegen met de twee tp-items; pijlen en klappen gaan door je
-      heen, je kunt niks oppakken of aanraken, je staat niet op de locator bar, en de items
-      openen de spelerslijst en teleporteren.
+- [ ] Kijkers: dood = doodtekst groot in beeld (alleen voor jou), onaantastbaar (pijlen en klappen
+      gaan door je heen, mobs zien je niet, niks oppakken of aanraken), niet op de locator bar.
+      In ronde 1 t/m 3 vliegen met de twee tp-items; in de Arena op de tribune en de items uit.
 - [ ] Ei: drukplaat neemt het diamond block in en teleporteert. Zonder block gebeurt er niks.
       Beacon-hint gaat aan op 5 min.
 - [ ] Rad: landt op de speler met tag `uitverkoren`. Draai hem vijf keer, dan zie je meteen of
       de slot-scores kloppen met de volgorde van de koppen.
-- [ ] King: kroon gaat naar de killer (test met 2 man). Kroon gaat naar random hunter bij val-dood.
-      Respawn na 20 sec. Sudden death stopt respawns en krimpt de border. Timer 0 wijst
-      finalist 1 aan en teleporteert de rest.
-- [ ] Kroonwissel: alle hunters staan geheald en bevroren op hun startpunt (niet lopen, niet
-      springen, niet pearlen), de nieuwe koning staat in de burcht met volle armor, na 10
-      seconden is iedereen los en loopt weer normaal. Ook testen tijdens sudden death (sd-punten)
-      en terwijl iemand op zijn respawn wacht.
+- [ ] King: kroon gaat naar de killer (test met 2 man). Kroon gaat naar de laatste hit bij een
+      val-dood. Een dode hunter komt op de tribune en blijft daar. Alle hunters dood of timer 0:
+      finalist 1 aangewezen, iedereen behalve Clown en finalist 1 de vloer op voor de FFA.
+- [ ] Kroonwissel: alle levende hunters staan geheald en bevroren op hun startpunt (niet lopen,
+      niet springen, niet pearlen), de nieuwe koning staat in het midden met volle armor, na 10
+      seconden is iedereen los en loopt weer normaal. Doden blijven op de tribune.
 - [ ] King: koning logt uit en weer in. Wat gebeurt er? Zorg dat de ref weet wat te doen.
-- [ ] FFA: laatste levende wordt finalist 2, teleport naar de 1v1-arena werkt.
+- [ ] FFA: iedereen behalve Clown en finalist 1 staat op de vloer, laatste levende wordt
+      finalist 2, twee minuten rust, dan de finale in het midden.
 - [ ] Finale: kit reset en full heal per potje.
 - [ ] `/bc reset` brengt alles terug naar de basiskamp-staat.
 - [ ] Serverperformance tijdens wave 5 met alle mobs.
@@ -123,7 +123,8 @@ Kort en op de borden in het basiskamp:
    Simple Voice Chat is verplicht.
 2. Niet streamsnipen: niet kijken op andermans stream om de koning te vinden. Vertrouwen, geen
    controle. Wil je het hard afdwingen, dan een streamvertraging van een minuut voor iedereen.
-3. Hunters zijn een team tot de FFA. In de FFA mag je teamen, maar er wint er één.
+3. In ronde 4 mag alles: hunters kunnen elkaar raken. In de FFA mag je teamen, maar er wint er
+   één.
 4. Bug of stuck? Roep de ref, niet de chat.
 5. Als de admin zegt stop, dan stop.
 6. Geen Discord-call tijdens het event, alleen de voice-mod. Eigen voice-groepen maken kan niet,
