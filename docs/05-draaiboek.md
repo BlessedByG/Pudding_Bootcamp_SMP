@@ -22,7 +22,7 @@ Tijdschema, rollen en checklists voor de avond zelf. Tijden zijn een voorbeeld m
 | 21:08 | **Ronde 5: Arena FFA** (max 10 min) | |
 | 21:19 | Uitslag: finalist 2. Twee minuten rust, host bouwt het op. | Host |
 | 21:22 | **Ronde 6: De Finale** (best of 3, ± 10 min) | |
-| 21:33 | **Kroning** in het midden van de Arena, tribunes vol. SMP-aankondiging als die er is. | Host |
+| 21:33 | **Kroning** in het midden van de Arena, tribunes vol. | Host |
 | 21:45 | Einde stream. | |
 
 Totaal ruim 1,5 uur speeltijd, plan 2 uur met buffer. Als een ronde uitloopt: de timers zijn
@@ -56,9 +56,10 @@ Grofweg op volgorde van werk:
 6. De Arena: colosseum met een vloer van Ø 60 tot 80 met dekking, een verhoogd midden, tribunes
    rondom achter een borstwering, een poort, en de 20 pilaren van De Kring met koppen en
    lichtblokken (2 tot 3 avonden).
-7. De mod bouwen, module voor module, en per onderdeel testen op de dev-server (4 tot 5 avonden,
-   zie [04-technische-schets.md](04-technische-schets.md)). Daarna met de wand en `/bc point`
-   alle regio's en punten in de wereld zetten (uurtje).
+7. De mod bouwen, module voor module, en per onderdeel testen op de testserver (jar kopiëren,
+   4 tot 5 avonden, zie [04-technische-schets.md](04-technische-schets.md)). Daarna met de wand
+   en `/bc point` alle regio's en punten in de wereld zetten, en de kits als JSON invullen
+   (uurtje).
 8. Volledige testrun met 4 of 5 testers (1 avond).
 
 Reken op twee weken met een paar mensen die af en toe een avond hebben.
@@ -113,6 +114,7 @@ Doe minstens één keer de hele avond met 4 of 5 testers, van basiskamp tot kron
       de serverlog bij het opstarten).
 - [ ] Host en camera-accounts staan in spectator of creative voor de camera.
 - [ ] De jar van de vorige werkende versie van de mod staat klaar naast de huidige.
+- [ ] Alle kits staan in `config/bootcamp/kits/` en `/bc kit basis` werkt op een testaccount.
 
 ## Spelregels voor de streamers
 

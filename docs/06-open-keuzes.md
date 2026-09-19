@@ -28,8 +28,19 @@ wat die betekent voor het concept. De oude afwegingen staan in de git-geschieden
 | 20 | Bouwen in ronde 4 | Verboden | Adventure mode, dus het kan ook niet. Pearls, gapples, boog en schild wel. |
 | 21 | Tribune-voice | Iedereen hoort de tribune | Ook de vechters op de vloer. Geen voice-filter meer; de mod doet niks met voice en heeft de voice-API niet nodig. Doden mogen roepen wat ze willen. |
 
-## Nog open (techniek)
+## Praktisch geregeld
 
-- Of Fabric Loader, Fabric API en de Fabric-versie van Simple Voice Chat op tijd een 26.2-build
-  hebben. Zo niet: bouwen op de nieuwste versie die alles heeft en later updaten.
-- Wie de dev-loop draait: compileren, testen met een tweede account, fouten terugplakken.
+- Fabric Loader, Fabric API en de voice-mod zijn er voor 26.2.
+- Testen gebeurt op Pudding's eigen server: jar bouwen, kopiëren, herstarten.
+- De basiskit komt van Pudding als JSON. Alle kits zijn JSON-bestanden die de mod bij de start
+  van een ronde op iedereen zet, zie [04-technische-schets.md](04-technische-schets.md).
+- De Arena bouwen jullie zelf; daarna selecteer je de regio's met de wand.
+- Geen SMP-aankondiging bij de kroning.
+
+## Nog open (praktisch)
+
+- Datum en starttijd van het event.
+- Wie host, commander, ref en camera is.
+- De spelerslijst met 20 namen, voor de koppen op De Kring.
+- Datum van de testrun en wie er bouwt.
+- Meer doodteksten dan de drie die er nu zijn (optioneel).

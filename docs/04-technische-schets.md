@@ -8,11 +8,10 @@ Voice is puur proximity en gaat buiten de mod om.
 De mod wordt gevibecode: Claude Code schrijft de Java, jij compileert, test en plakt fouten
 terug. Deze doc is de spec die je hem geeft.
 
-> **Versie.** Doel is Minecraft 26.2. Check vóór je begint of Fabric Loader, Fabric API en de
-> Fabric-versie van Simple Voice Chat er al zijn voor 26.2 (Fabric is er meestal binnen dagen).
-> De interne namen van 26.2 zijn deels nieuw voor het model, dus reken op compile-fix-rondjes:
-> laat Loom de bronnen genereren (`./gradlew genSources`) zodat je de echte namen kunt opzoeken
-> als een gok niet compileert. Niets hieronder is getest.
+> **Versie.** Minecraft 26.2; Fabric Loader, Fabric API en de Fabric-versie van Simple Voice Chat
+> zijn er al voor. De interne namen van 26.2 zijn deels nieuw voor het model, dus reken op
+> compile-fix-rondjes: laat Loom de bronnen genereren (`./gradlew genSources`) zodat je de echte
+> namen kunt opzoeken als een gok niet compileert. Niets hieronder is getest.
 
 ## Stack
 
@@ -33,8 +32,9 @@ Geen Skript, geen datapack, geen plugins.
 2. `fabric.mod.json`: `"environment": "server"`, entrypoint `main`.
 3. `build.gradle`: alleen `fabric-api` als dependency. De voice-mod staat los van onze mod: als
    jar in `run/mods/` voor de dev-server en in `mods/` op de echte server.
-4. Dev-loop: `./gradlew runServer` start een testserver; `./gradlew build` maakt de jar in
-   `build/libs/`. Fixen tijdens het event betekent jar vervangen en herstarten, dus test vooraf.
+4. Dev-loop: `./gradlew build` maakt de jar in `build/libs/`; die kopieer je naar `mods/` van je
+   eigen testserver en je herstart. `./gradlew runServer` kan ook, voor snel lokaal testen. Fixen
+   tijdens het event betekent jar vervangen en herstarten, dus test vooraf.
 5. Zet de mod in deze repo onder `mod/`, dan heeft Claude Code de docs en de code bij elkaar.
 
 ## Serverinstellingen
@@ -60,6 +60,7 @@ In ronde 5 gaat iedereen uit zijn team behalve de koningen, dus daar is alles Pv
 | Package | Doet | Belangrijkste API |
 |---|---|---|
 | `config` | Regio's en punten opslaan en laden, JSON in `<wereld>/bootcamp.json`. | Gson, `ServerLifecycleEvents` |
+| `kits` | Kits uit JSON-bestanden lezen en op spelers zetten. | `ItemParser` (dezelfde syntax als `/give`) |
 | `commands` | Het hele `/bc`-commandboompje. | Brigadier, `CommandRegistrationCallback` |
 | `setup` | De wand, `region show` met particles. | `AttackBlockCallback`, `UseBlockCallback` |
 | `game` | Spelstatus, timer, de zes rondes als klassen met `start/tick/onDeath/end`. | `ServerTickEvents.END_SERVER_TICK` |
@@ -82,6 +83,7 @@ Allemaal onder `/bc`, op-level 2.
 | `/bc region save\|show\|list\|del <naam>` | Regio uit de wand-selectie opslaan; `show` tekent tien seconden particles op de randen. |
 | `/bc point set\|block\|tp\|list\|del <naam>` | Punt op je positie (met kijkrichting) of op het blok waar je naar kijkt. |
 | `/bc start <ronde>` | Teleport naar het verzamelpunt, border, kits, countdown, poort open, timer. |
+| `/bc kit <naam> [<speler>]` | Zet de kit uit `kits/<naam>.json` op iedereen die meedoet, of op één speler. De start van een ronde doet dit zelf. |
 | `/bc stop` / `/bc timer <sec>` | Timer stil, of resterende tijd bijstellen. |
 | `/bc poort <naam> open\|dicht` | Handmatig een poort bedienen. |
 | `/bc kroon <speler>` | Kroonwissel forceren (de ref z'n noodknop). |
@@ -97,7 +99,9 @@ leest het bij het opstarten. Geen coördinaten in code.
 
 **Regio's** met de wand: linksklik op een blok is hoek 1, rechtsklik hoek 2 (exacte blokposities
 uit de events), dan `/bc region save <naam>`. De mod bewaart `min` en `max` en berekent zelf
-center en grootte voor de worldborder.
+center en grootte voor de worldborder. Eerst bouwen, dan selecteren: voor de Arena die jullie
+zelf bouwen selecteer je na het bouwen `vloer` en `finale` en zet je de tribunepunten. Een regio
+opnieuw opslaan overschrijft de oude.
 
 | Regio's | Waarvoor |
 |---|---|
@@ -121,6 +125,51 @@ center en grootte voor de worldborder.
 
 Worldborder per ronde: `ServerLevel.getWorldBorder()`, center en grootte uit de regio, krimpen met
 `lerpSizeBetween`. Altijd eerst teleporteren, dan de border zetten.
+
+## Kits (JSON)
+
+Elke kit is een JSON-bestand in `config/bootcamp/kits/`, zodat iedereen exact hetzelfde aanheeft
+als een ronde begint en je de inhoud kunt aanpassen zonder te compileren. De basiskit komt van
+Pudding als JSON; de andere kits vul je op dezelfde manier in met de inhoud uit
+[02-rondes.md](02-rondes.md).
+
+| Bestand | Wanneer |
+|---|---|
+| `basis.json` | Wie zonder ticket uit het Ei-bos komt; hunters zonder loot in ronde 4. Inhoud volgt van Pudding. |
+| `horde.json` | Start ronde 2, iedereen. |
+| `ei.json` | Start ronde 3: alleen de pickaxe erbij, inventory blijft. |
+| `boss.json` | Clown bij de start van ronde 4. |
+| `kroonpakket.json` | Bij elke kroonwissel erbij: 2 gapples, 2 pearls. |
+| `arena.json` | Start ronde 5, iedereen. |
+| `finale.json` | Elk potje van ronde 6, beide finalisten. |
+
+Formaat: per slot een item in dezelfde syntax als `/give`, zodat enchantments en andere
+components gewoon werken. De mod parst dat met de vanilla item-parser.
+
+```json
+{
+  "clear": true,
+  "armor": {
+    "head":  "minecraft:iron_helmet",
+    "chest": "minecraft:iron_chestplate",
+    "legs":  "minecraft:iron_leggings",
+    "feet":  "minecraft:iron_boots"
+  },
+  "offhand": "minecraft:shield",
+  "hotbar": [
+    "minecraft:iron_sword",
+    "minecraft:bow[minecraft:enchantments={\"minecraft:power\":1}]",
+    "minecraft:arrow 16",
+    "minecraft:cooked_beef 8"
+  ],
+  "inventory": []
+}
+```
+
+`clear: false` voor kits die iets toevoegen (`ei`, `kroonpakket`). Een getal achter het item is
+het aantal. `/bc kit <naam>` zet hem op iedereen die meedoet, `/bc kit <naam> <speler>` op één
+speler; de rondes roepen hetzelfde aan bij de start. Een fout in een bestand komt als één
+duidelijke regel in de console met bestandsnaam en slot, niet als een crash.
 
 ## Spellogica
 
