@@ -1,6 +1,6 @@
 # Bouwlog
 
-Status: modus=A; klaar=T0,T1; bezig=T2
+Status: modus=A; klaar=T0,T1,T2; bezig=T3
 
 Per taak: wat er gedaan is, wat geverifieerd is en wat open staat (in-game test, aanname,
 afwijking van de docs). Het plan staat in [../docs/08-taakplan.md](../docs/08-taakplan.md).
@@ -49,3 +49,38 @@ afwijking van de docs). Het plan staat in [../docs/08-taakplan.md](../docs/08-ta
 - Package is `nl.pudding.bootcamp` (kern in `nl.pudding.bootcamp.core`).
 - `check.sh` doet in Modus A geen losse `javac`-syntaxcheck: de echte compile in
   `./gradlew build` vervangt die. `./check.sh --core-only` is de Modus B-variant.
+
+## T2. Kernlogica met tests (`mod/core`)
+
+**Gedaan**
+- [core/REGELS.md](core/REGELS.md): elke regel uit docs/02 en docs/03 die rekent of beslist, met
+  de test erbij.
+- `Regio`, `Punt`, `BlokPos`, `BootcampConfig` (JSON heen en terug), `Ronde` (duur, gamemode,
+  vereiste regio's en punten), `Rol`, `Rad`, `Countdown`, `Tijd`, `Regels` (kroonopvolging,
+  einde ronde 4, FFA-deelnemers, tiebreak, uitlog- en terugkomregels, mobs schalen),
+  `HordeVerloop`, `FinaleStand`, `Regeerperiodes`, `ResetRegister`, `KitDef`, `WavesDef`,
+  `Doodteksten`, `BossbarTekst`.
+
+**Geverifieerd**
+- `:core:test`: 74 tests, 0 fouten. Twee tests in `ResourcesTest` wachten op de kits en
+  `waves.json` uit T5 en slaan zichzelf tot dan over.
+
+**Aannames en concretiseringen** (komen in T16 ook in docs/04)
+- **Een regio is voor spelers een kolom**: alleen x en z tellen. Zo werkt een selectie van twee
+  hoeken op de grond ook voor wie erop staat, en voor een vloer met hoogteverschil. Poorten
+  gebruiken wel de hele doos.
+- **Spelers staan op naam in `bootcamp.json`** (slots, uitverkoren), in kleine letters, zodat de
+  staff alles kan klaarzetten voordat iemand online is. Een pilaar heeft één kop: een slot
+  opnieuw uitdelen haalt het bij de vorige weg.
+- **FFA-tiebreak bij een gelijk aantal kills**: de docs zeggen alleen "het aantal kills". Bij een
+  gelijke stand wint wie de meeste hp heeft, daarna het lot.
+- **Mobs schalen mee**: het aantal in `waves.json` geldt voor twintig spelers en schaalt naar
+  boven afgerond mee (minimaal 1); de boss wave staat vast (`"schaal": false`). Een testrun met
+  vijf man krijgt dus vijf zombies in wave 1.
+- **De laatste wave wacht niet op de klok**: die moet dood (of de rondetimer loopt af).
+- **Uitloggen buiten ronde 4**: een FFA-speler of een speler in de horde die uitlogt telt als
+  dood, net als een hunter. Een finalist die in de finale uitlogt verliest het lopende potje; hij
+  blijft finalist als hij terugkomt (anders kan de finale niet verder). De koning die binnen zijn
+  dertig seconden terugkomt blijft koning.
+- **Terugkomen in ronde 1 of 3**: naar de ingang van de zone, of naar het volgende verzamelpunt
+  als je al klaar was. In ronde 2: kijker op de tribune.
