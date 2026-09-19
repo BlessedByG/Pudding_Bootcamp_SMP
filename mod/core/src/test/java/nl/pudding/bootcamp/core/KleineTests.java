@@ -198,4 +198,18 @@ class KleineTests {
 			assertEquals("0:38", Tijd.mss(38));
 		}
 	}
+
+	@Nested
+	class KompasTest {
+		@Test
+		void achtStreken() {
+			assertEquals("noord", Kompas.richting(0, -10));
+			assertEquals("zuid", Kompas.richting(0, 10));
+			assertEquals("oost", Kompas.richting(10, 0));
+			assertEquals("west", Kompas.richting(-10, 0));
+			assertEquals("noordoost", Kompas.richting(7, -7));
+			assertEquals("zuidwest", Kompas.richting(-7, 7));
+			assertEquals("noord", Kompas.richting(1, -10));
+		}
+	}
 }

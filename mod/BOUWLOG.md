@@ -1,6 +1,6 @@
 # Bouwlog
 
-Status: modus=A; klaar=T0,T1,T2,T3,T4,T5,T6,T7; bezig=T8
+Status: modus=A; klaar=T0,T1,T2,T3,T4,T5,T6,T7,T8; bezig=T9
 
 Per taak: wat er gedaan is, wat geverifieerd is en wat open staat (in-game test, aanname,
 afwijking van de docs). Het plan staat in [../docs/08-taakplan.md](../docs/08-taakplan.md).
@@ -242,3 +242,29 @@ Samen in één commit: het commandboompje verwijst naar de wand, dus los compile
   inventory van ronde 2); geef ze met `/bc kit`.
 - Een kijker die toch een dodelijke klap krijgt (de void in, `/kill`) gaat terug naar zijn
   tribunepunt.
+
+## T8. Ronde 1: De Doolhof
+
+**Gedaan** (`game/ronde1/Doolhof`)
+- Start: poort dicht, iedereen speler in adventure naar `doolhof_start`, border om `doolhof`,
+  countdown van 5, poort `poort_doolhof` open, timer tien minuten.
+- Elke kwart seconde: wie in regio `doolhof_uit` staat is eruit en gaat als kijker naar `v2`, met
+  zijn spullen. De eerste vijf krijgen 1 gapple en 1 ender pearl direct in hun inventory, plus een
+  title met hun plek en het levelup-geluid.
+- Hint met drie minuten op de klok, alleen voor wie nog binnen is.
+- Timer op nul, of iedereen eruit: iedereen naar `v2`, weer gewoon speler. Niemand ligt eruit.
+- Bossbar `Doolhof · 09:41`, groen, vulling is de tijd.
+
+**Geverifieerd**: build en `check.sh` groen; `Kompas` heeft een test in `core`.
+
+**Open: in-game testen**: uitgang, voorsprong voor de eerste vijf, hint, achterblijvers naar `v2`.
+
+**Concretiseringen**
+- **De hint rekent de richting zelf uit** uit het midden van `doolhof` en van `doolhof_uit`
+  ("De uitgang ligt aan de noordoostkant"), zodat er geen tekst in de config hoeft.
+- **Het voorsprongkistje is geen kist**: de mod geeft de items direct. Staan er bij `v2` kisten
+  als decor, laat die dan leeg.
+- `/bc start 1` weigert als `doolhof_start` of het midden van `doolhof_uit` buiten regio `doolhof`
+  ligt: selecteer `doolhof` dus ruim, inclusief het plein voor de poort en het vak achter de
+  uitgang.
+- Doodgaan in het doolhof (het hoort niet te kunnen): terug naar de ingang.
