@@ -84,9 +84,8 @@ Minecraft-server), de bouw van de wereld, en spelregels. Ik verander geen regel 
 docs/03; kom ik iets tegen dat niet kan of tegenstrijdig is, dan kies ik de kleinste werkende
 interpretatie en schrijf dat op.
 
-**Nooit:** een pull request openen, pushen naar een andere branch dan
-`blessedbyg/dreamy-shannon-psxiuh`, client-side code, iets aan de voice-mod veranderen, of het
-raamwerk herschrijven nadat de rondes erop gebouwd zijn.
+**Nooit:** een pull request openen, pushen naar een andere branch dan `main`, client-side code,
+iets aan de voice-mod veranderen, of het raamwerk herschrijven nadat de rondes erop gebouwd zijn.
 
 ## Hoe ik het uitvoer
 
