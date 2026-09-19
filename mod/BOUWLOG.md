@@ -1,6 +1,6 @@
 # Bouwlog
 
-Status: modus=A; klaar=T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11; bezig=T12
+Status: modus=A; klaar=T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13; bezig=T14
 
 Per taak: wat er gedaan is, wat geverifieerd is en wat open staat (in-game test, aanname,
 afwijking van de docs). Het plan staat in [../docs/08-taakplan.md](../docs/08-taakplan.md).
@@ -384,3 +384,48 @@ gevecht, `/bc kroon`.
   meteen finalist 1.
 - **Wie net doodging houdt zijn doodtekst in beeld**; de title voor iedereen slaat hem over.
 - Een geforceerde wissel tijdens de voorsprong van dertig seconden start daarna gewoon de timer.
+
+## T12 + T13. Ronde 5: Arena FFA en de rust; ronde 6: De Finale en de kroning
+
+Samen in één commit: beide rondes vervangen de laatste lege rondes in `Rondes`, en `LegeRonde`
+is daarmee weg.
+
+**Gedaan** (`game/ronde5/Ffa`)
+- Deelnemers uit `Regels.ffaDeelnemers`: iedereen behalve Clown en finalist 1, ook de doden van
+  ronde 4. Clown en finalist 1 gaan (terug) de tribune op.
+- Rol `FFA` (uit elk team, dus alles is PvP), adventure, full hp, arenakit (eigen spullen weg),
+  om en om op `hunter_1..4`, tien seconden opstelling, dan de timer van tien minuten.
+- Bossbar `FFA · 7 over · 04:59`, paars. Na vijf minuten krimpt de border in twee minuten naar 10.
+- Dood of uitgelogd: tribune, doodtekst; de killer krijgt een kill. Eén over: die krijgt de
+  tweede kroon, title `FINALIST`, vuurpijl, `ui.toast.challenge_complete`, en staat naast
+  finalist 1 op de tribune. Bij tien minuten beslist `Regels.ffaTiebreak`.
+- **De rust**: de ronde blijft lopen in fase `RUST`, twee minuten, `Finale over 01:59` in de
+  bossbar, geen border. Daarna start de finale vanzelf; lukt dat niet, dan staat de reden in de
+  chat en kan de commander `/bc start 6` doen.
+
+**Gedaan** (`game/ronde6/Finale`)
+- Start alleen met twee verschillende finalisten die online zijn, en `finale_1` en `finale_2`
+  binnen de border van 20 x 20 om het midden van regio `finale`.
+- Per potje: beide finalisten koning (team `king`, friendly fire aan, Glowing, locator bar), full
+  heal, finalekit (de kroon blijft op), naar `finale_1` en `finale_2`, border 20, vijf seconden
+  opstelling. Na drie minuten krimpt de border in dertig seconden naar 6.
+- Dood is het potje voor de tegenstander; stand in de chat en in de bossbar (`Finale · 1 - 0`).
+  Twee gewonnen potjes: de kroning.
+- **Kroning**: verliezer naar de tribune, winnaar naar `kroning`, title `KING OF THE SMP` met naam,
+  twintig seconden gouden vuurpijlen boven de Arena, dan is de ronde voorbij.
+- Logt een finalist uit, dan gaat het lopende potje naar de tegenstander en wacht de mod tot
+  dertig seconden op hem voor het volgende potje; komt hij niet, dan gaat ook dat potje weg.
+
+**Geverifieerd**: build en `check.sh` groen. Deelnemers, tiebreak, best of 3 en de uitlogregels
+hebben tests in `core`.
+
+**Open: in-game testen**: FFA met drie accounts (of twee plus `/bc kijker`), de krimp, de rust en de
+automatische start van de finale, drie potjes, kit en heal per potje, de kroning.
+
+**Concretiseringen**
+- **Niemand meer over in de FFA** (de laatste twee loggen tegelijk uit): de ronde stopt met een
+  melding; start hem opnieuw met `/bc start 5`.
+- **Het volgende potje begint meteen** na een dood (teleport, heal, kit, vijf seconden bevroren);
+  er zit geen extra pauze tussen.
+- Tijdens het disconnect-event staat een speler nog in de spelerslijst; de finale houdt daarom
+  zelf bij wie uitgelogd is.
