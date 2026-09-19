@@ -222,12 +222,7 @@ public final class Spel {
 	 */
 	public static String start(MinecraftServer server, Ronde nieuw) {
 		RondeLogica logica = Rondes.maak(nieuw);
-		List<String> mist = Ronde.ontbreekt(logica.vereisteRegios(), logica.vereistePunten(),
-				ConfigStore.get().regios().keySet(), ConfigStore.get().punten().keySet());
-		if (!mist.isEmpty()) {
-			return "ontbreekt: " + String.join(", ", mist);
-		}
-		String bezwaar = logica.magStarten(server);
+		String bezwaar = controleer(server, logica);
 		if (bezwaar != null) {
 			return bezwaar;
 		}
@@ -241,6 +236,20 @@ public final class Spel {
 		Bootcamp.LOG.info("Ronde {} ({}) start", nieuw.nummer(), nieuw.naam());
 		logica.start(server);
 		return null;
+	}
+
+	/** Kan deze ronde nu starten? Verandert niets. Het rad vraagt dit voordat het gaat draaien. */
+	public static String controleer(MinecraftServer server, Ronde ronde) {
+		return controleer(server, Rondes.maak(ronde));
+	}
+
+	private static String controleer(MinecraftServer server, RondeLogica logica) {
+		List<String> mist = Ronde.ontbreekt(logica.vereisteRegios(), logica.vereistePunten(),
+				ConfigStore.get().regios().keySet(), ConfigStore.get().punten().keySet());
+		if (!mist.isEmpty()) {
+			return "ontbreekt: " + String.join(", ", mist);
+		}
+		return logica.magStarten(server);
 	}
 
 	/**

@@ -57,6 +57,10 @@ public final class Planner {
 		}
 	}
 
+	public static boolean heeftWerk() {
+		return !TAKEN.isEmpty();
+	}
+
 	public static void wisAlles() {
 		TAKEN.clear();
 	}

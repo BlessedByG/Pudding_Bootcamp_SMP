@@ -1,6 +1,6 @@
 # Bouwlog
 
-Status: modus=A; klaar=T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10; bezig=T11
+Status: modus=A; klaar=T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11; bezig=T12
 
 Per taak: wat er gedaan is, wat geverifieerd is en wat open staat (in-game test, aanname,
 afwijking van de docs). Het plan staat in [../docs/08-taakplan.md](../docs/08-taakplan.md).
@@ -330,3 +330,57 @@ dat ene blok na compleet zijn en de beacon moet vrij zicht naar boven hebben), v
   zonder ticket een lege inventory. Zet het bestand er dus in voor de testrun.
 - Doodgaan in het bos (val, verdrinken): terug naar de bosrand, met je spullen.
 - `/bc start 3` wist tickets van een eerdere poging.
+
+## T11. Ronde 4: King of the SMP, met Het Rad
+
+**Gedaan** (`rad/RadSpel`, `game/ronde4/King`)
+- **Het Rad** (`/bc rad`): ritme en landing uit `core` (`Rad`), tick-gestuurd. Per stap de vorige
+  lamp uit en de volgende aan, met `note_block.hat` die lager wordt naarmate het rad vertraagt.
+  Bij de landing `ender_dragon.growl`, totem-particles op de uitverkorene, title `DE KONING` met
+  naam, en drie seconden later `start(4)`.
+- Het rad weigert zonder uitverkorene, zonder pilaar voor de uitverkorene, zonder de twintig
+  lampen, terwijl er nog een ronde loopt, en **als ronde 4 straks niet zou kunnen starten**
+  (`Spel.controleer`): het rad landt dus nooit op een ronde die daarna weigert.
+- **Start ronde 4**: locator bar aan, iedereen adventure en full hp, hunters in team `hunters`
+  en van de locator bar af, basiskit voor wie een lege inventory heeft, Clown krijgt de bosskit en
+  de kroon en staat op `troon`, hunters om en om op `hunter_1..4`, border, sidebar met
+  regeerperiodes, opstelling van 30 seconden waarin alleen de hunters bevroren staan. Bij GO start
+  de timer van vijftien minuten.
+- **Dood**: een hunter wordt kijker op de tribune (lege inventory, doodtekst). Gaat de koning
+  dood, dan bepaalt `Regels.kroonOpvolger` de opvolger: killer, anders laatste hit, anders een
+  willekeurige levende hunter.
+- **Kroonwissel als reset**: ex-koning naar de tribune; nieuwe koning naar `troon` met heal,
+  reparatie van alles wat slijt, kroonpakket, 15 seconden Resistance II, kroon, Glowing, team
+  `king`; levende hunters geheald terug naar hun startpunt; title `NIEUWE KONING`, donder zonder
+  bliksem, gouden flash; tien seconden opstelling waarin niemand van zijn plek kan, ook de koning
+  niet. De timer loopt door. Doden blijven dood.
+- **Koning logt uit**: dertig seconden in de bossbar (`Koning X is weg · kroon door over 00:27`);
+  komt hij terug, dan blijft hij koning; anders dezelfde wissel als bij een val-dood en is hij
+  uit de ronde. Een hunter die uitlogt telt als dood.
+- **Einde** bij timer nul of geen levende hunter: de koning is finalist 1, gaat met zijn kroon en
+  zweefkroon de tribune op (geen Glowing, van de locator bar af), vuurpijl, title
+  `DE KONING STAAT`, `ui.toast.challenge_complete`, en de langste regeerperiode in de chat. Wie nog
+  op de vloer staat wordt weer speler (geen PvP) tot de commander de FFA start.
+- `/bc kroon <speler>` forceert een wissel, ook naar iemand die al op de tribune staat, en haalt
+  de kroon weg bij iedereen die hem ten onrechte draagt. `/bc stop` stopt ook een draaiend rad.
+
+**Geverifieerd**: build en `check.sh` groen. Opvolging, einde en uitlogregels hebben tests in
+`core`; het rad landt in de test voor alle 800 combinaties op het doel.
+
+**Open: in-game testen** (de belangrijkste van de hele mod): het rad vijf keer draaien, kill de
+koning, val-dood met laatste hit, koning logt uit, laatste hunter dood, timer nul midden in een
+gevecht, `/bc kroon`.
+
+**Concretiseringen**
+- **Een lamp is een brandende redstone lamp**; uit is wat er stond. Hij wordt gezet zonder buren
+  te updaten, want een redstone lamp zonder stroom gaat anders vanzelf uit. Zet op `lamp_0..19`
+  dus bij voorkeur een (gedoofde) redstone lamp, en geen redstone ernaast.
+- **Optionele regio `colosseum`**: docs/01 zet de border van ronde 4 om de hele Arena inclusief
+  tribunes, docs/04 noemt `vloer`. Bestaat `colosseum`, dan is dat de border van ronde 4 en 5;
+  anders `vloer` (kijkers krijgen buiten de border geen schade).
+- **Geen opvolger** (de koning valt terwijl er geen levende hunter meer is): hij blijft koning en
+  is finalist 1.
+- **De killer was de laatste hunter**: hij wordt koning, er is niemand meer om te jagen, dus hij is
+  meteen finalist 1.
+- **Wie net doodging houdt zijn doodtekst in beeld**; de title voor iedereen slaat hem over.
+- Een geforceerde wissel tijdens de voorsprong van dertig seconden start daarna gewoon de timer.

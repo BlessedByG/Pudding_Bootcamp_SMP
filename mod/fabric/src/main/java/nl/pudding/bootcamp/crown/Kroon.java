@@ -114,8 +114,8 @@ public final class Kroon {
 	}
 
 	/** Wie deze koning als laatste raakte, of {@code null}. */
-	public static UUID laatsteHit(ServerPlayer koning) {
-		return LAATSTE_HIT.get(koning.getUUID());
+	public static UUID laatsteHit(UUID koning) {
+		return LAATSTE_HIT.get(koning);
 	}
 
 	public static void wisHits() {

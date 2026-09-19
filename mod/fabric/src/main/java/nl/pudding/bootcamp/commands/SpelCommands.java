@@ -16,10 +16,12 @@ import nl.pudding.bootcamp.config.Standaardbestanden;
 import nl.pudding.bootcamp.core.BootcampConfig;
 import nl.pudding.bootcamp.core.Ronde;
 import nl.pudding.bootcamp.core.Tijd;
+import nl.pudding.bootcamp.game.Planner;
 import nl.pudding.bootcamp.game.Poorten;
 import nl.pudding.bootcamp.game.Reset;
 import nl.pudding.bootcamp.game.Spel;
 import nl.pudding.bootcamp.kits.Kits;
+import nl.pudding.bootcamp.rad.RadSpel;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -79,6 +81,12 @@ final class SpelCommands {
 
 	private static int stop(CommandContext<CommandSourceStack> ctx) {
 		if (!Spel.loopt()) {
+			if (RadSpel.draait() || Planner.heeftWerk()) {
+				// Het rad draait, of ronde 4 staat klaar om te starten.
+				RadSpel.stop(ctx.getSource().getServer());
+				Planner.wisAlles();
+				return BcCommand.ok(ctx, "Het rad gestopt; ronde 4 start niet vanzelf.");
+			}
 			return BcCommand.fout(ctx, "Er loopt geen ronde.");
 		}
 		Ronde was = Spel.ronde();

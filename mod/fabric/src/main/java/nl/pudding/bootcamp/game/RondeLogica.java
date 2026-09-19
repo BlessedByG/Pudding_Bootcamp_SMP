@@ -83,7 +83,7 @@ public abstract class RondeLogica {
 	 */
 	public void onJoin(MinecraftServer server, ServerPlayer speler) {
 		SpelerStatus st = Spel.status(speler);
-		switch (Regels.bijJoin(ronde(), st.rol, st.klaar, false)) {
+		switch (Regels.bijJoin(ronde(), st.rol, st.klaar, koningWachtLoopt(speler))) {
 			case STARTPUNT -> {
 				Spel.zetRol(server, speler, Rol.SPELER);
 				speler.setGameMode(ronde().survival() ? GameType.SURVIVAL : GameType.ADVENTURE);
@@ -96,9 +96,24 @@ public abstract class RondeLogica {
 				st.dood = true;
 				Tribune.maakKijker(server, speler, ronde() == Ronde.HORDE ? Tribune.Spullen.BEWAREN : Tribune.Spullen.LEGEN, false);
 			}
-			case NIKS, KONING_TERUG, FINALIST_TERUG -> {
+			case KONING_TERUG -> koningTerug(server, speler);
+			case FINALIST_TERUG -> finalistTerug(server, speler);
+			case NIKS -> {
 			}
 		}
+	}
+
+	/** Ronde 4: lopen de dertig seconden voor deze uitgelogde koning nog? */
+	protected boolean koningWachtLoopt(ServerPlayer speler) {
+		return false;
+	}
+
+	/** Ronde 4: de koning is binnen zijn dertig seconden terug. */
+	protected void koningTerug(MinecraftServer server, ServerPlayer speler) {
+	}
+
+	/** Ronde 5 en 6: een finalist komt terug. */
+	protected void finalistTerug(MinecraftServer server, ServerPlayer speler) {
 	}
 
 	/** Waar een terugkomer heen gaat die nog niet klaar was (ronde 1 en 3). */

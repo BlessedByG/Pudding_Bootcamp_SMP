@@ -114,6 +114,15 @@ public final class Mc {
 		}
 	}
 
+	/** Voor iedereen behalve deze spelers: wie net doodging houdt zijn doodtekst in beeld. */
+	public static void titleAllenBehalve(MinecraftServer server, java.util.Collection<java.util.UUID> niet, Component titel, Component ondertitel) {
+		for (ServerPlayer s : spelers(server)) {
+			if (!niet.contains(s.getUUID())) {
+				title(s, titel, ondertitel);
+			}
+		}
+	}
+
 	public static void actionbar(ServerPlayer speler, Component tekst) {
 		speler.connection.send(new ClientboundSetActionBarTextPacket(tekst));
 	}

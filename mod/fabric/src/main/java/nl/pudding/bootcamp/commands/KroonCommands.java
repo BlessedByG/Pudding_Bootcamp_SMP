@@ -14,6 +14,9 @@ import net.minecraft.server.level.ServerPlayer;
 import nl.pudding.bootcamp.Mc;
 import nl.pudding.bootcamp.config.ConfigStore;
 import nl.pudding.bootcamp.core.Ronde;
+import nl.pudding.bootcamp.game.Spel;
+import nl.pudding.bootcamp.game.ronde4.King;
+import nl.pudding.bootcamp.rad.RadSpel;
 import nl.pudding.bootcamp.tribune.Tribune;
 
 /** {@code /bc kroon|uitverkoren|slot|rad|kijker}: het rad, de kroon en de noodknoppen van de ref. */
@@ -27,8 +30,8 @@ final class KroonCommands {
 
 	static void voegToe(LiteralArgumentBuilder<CommandSourceStack> bc) {
 		bc.then(Commands.literal("kroon").then(Commands.argument("speler", EntityArgument.player())
-				.executes(ctx -> SpelCommands.nogNiet(ctx, "kroon", "T11"))));
-		bc.then(Commands.literal("rad").executes(ctx -> SpelCommands.nogNiet(ctx, "rad", "T11")));
+				.executes(KroonCommands::kroon)));
+		bc.then(Commands.literal("rad").executes(KroonCommands::rad));
 		bc.then(Commands.literal("kijker").then(Commands.argument("speler", EntityArgument.player())
 				.then(Commands.literal("aan").executes(ctx -> kijker(ctx, true)))
 				.then(Commands.literal("uit").executes(ctx -> kijker(ctx, false)))));
@@ -40,6 +43,26 @@ final class KroonCommands {
 		bc.then(Commands.literal("slot").then(Commands.argument("speler", StringArgumentType.word()).suggests(ONLINE)
 				.then(Commands.argument("pilaar", IntegerArgumentType.integer(0, Ronde.AANTAL_LAMPEN - 1))
 						.executes(KroonCommands::zetSlot))));
+	}
+
+	private static int kroon(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+		ServerPlayer speler = EntityArgument.getPlayer(ctx, "speler");
+		if (!(Spel.actief() instanceof King ronde4)) {
+			return BcCommand.fout(ctx, "De kroon forceren kan alleen terwijl ronde 4 loopt.");
+		}
+		String fout = ronde4.forceer(ctx.getSource().getServer(), speler);
+		if (fout != null) {
+			return BcCommand.fout(ctx, "Kroon: " + fout + ".");
+		}
+		return BcCommand.ok(ctx, "Kroon naar " + Mc.naam(speler) + ": reset, hunters terug naar hun startpunt.");
+	}
+
+	private static int rad(CommandContext<CommandSourceStack> ctx) {
+		String fout = RadSpel.start(ctx.getSource().getServer());
+		if (fout != null) {
+			return BcCommand.fout(ctx, "Het rad draait niet, " + fout + ".");
+		}
+		return BcCommand.info(ctx, "Het rad draait. Drie seconden na de landing begint ronde 4.");
 	}
 
 	private static int kijker(CommandContext<CommandSourceStack> ctx, boolean aan) throws CommandSyntaxException {

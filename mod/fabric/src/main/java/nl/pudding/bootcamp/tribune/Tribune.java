@@ -178,6 +178,16 @@ public final class Tribune {
 		}
 	}
 
+	/**
+	 * Zet iemand op de tribune zonder er een kijker van te maken: een finalist die op de finale
+	 * wacht. Ook hij wordt teruggezet als hij de vloer op komt.
+	 */
+	public static void naarTribune(ServerPlayer speler) {
+		String punt = volgendTribunepunt(Spel.ronde());
+		Spel.status(speler).tribunepunt = punt;
+		Spel.naarPunt(speler, punt);
+	}
+
 	/** Verdeelt kijkers om en om over de tribunepunten. */
 	private static String volgendTribunepunt(Ronde ronde) {
 		String prefix = ronde == Ronde.HORDE ? "tribune_horde_" : "tribune_";
