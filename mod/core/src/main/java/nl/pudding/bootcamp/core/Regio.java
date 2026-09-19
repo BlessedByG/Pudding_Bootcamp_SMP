@@ -47,6 +47,17 @@ public record Regio(BlokPos min, BlokPos max) {
 		return x >= min.x() && x < max.x() + 1 && z >= min.z() && z < max.z() + 1;
 	}
 
+	/**
+	 * Staat deze x/z binnen de ellips die precies in de selectie past? De vloer van de Arena en de
+	 * ruïne-arena zijn rond: je selecteert het omhullende vierkant, en de tribune in de hoeken en
+	 * vlak achter de rand telt dan niet als vloer.
+	 */
+	public boolean bevatRond(double x, double z) {
+		double dx = (x - centerX()) / (breedteX() / 2.0);
+		double dz = (z - centerZ()) / (breedteZ() / 2.0);
+		return dx * dx + dz * dz <= 1.0;
+	}
+
 	/** Staat dit punt binnen de doos, dus ook op hoogte? */
 	public boolean bevatDoos(double x, double y, double z) {
 		return bevat(x, z) && y >= min.y() && y < max.y() + 1;

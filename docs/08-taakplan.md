@@ -1,5 +1,11 @@
 # Taakplan: de bootcamp-mod bouwen
 
+> **Uitgevoerd op 19 september 2026**, T0 t/m T17, lokaal op Windows in Modus A (elke taak
+> gecompileerd tegen de echte 26.2-jar). Het resultaat staat in `mod/`; wat er per taak gedaan,
+> geverifieerd en afgeweken is staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md). De sectie "Wat er over
+> deze omgeving vaststaat" hieronder beschrijft de cloud-sandbox waar het plan voor geschreven is,
+> niet de machine waarop het gedraaid heeft.
+
 Dit is het plan dat Claude Code zonder toezicht uitvoert. Jij leest het, zegt "voer het taakplan
 uit", en gaat slapen. 's Ochtends ligt er een gepushte branch met de mod, een bouwlog met wat wel
 en niet is geverifieerd, en een testlijst voor op je eigen server.

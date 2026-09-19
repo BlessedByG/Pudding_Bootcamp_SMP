@@ -9,6 +9,7 @@ worden in-game getest.
 |---|---|---|---|
 | R0.1 | Een regio is twee hoeken, genormaliseerd; center en grootte voor de worldborder komen eruit. De border is vierkant: de langste zijde telt. | `Regio` | `RegioTest.normaliseertHoeken`, `RegioTest.centerEnGrootte` |
 | R0.2 | Voor spelers is een regio een kolom (alleen x en z); poorten gebruiken de hele doos. | `Regio.bevat`, `Regio.bevatDoos` | `RegioTest.kolomNegeertHoogte`, `RegioTest.randenHorenErbij` |
+| R0.2b | De vloer waar kijkers af moeten blijven is rond: de ellips die in de selectie past. De hoeken van het vierkant en de ring vlak achter de rand zijn tribune. | `Regio.bevatRond` | `RegioTest.rondeVloerLaatDeHoekenVrij` |
 | R0.3 | Regio's, punten, doodteksten, slots en de uitverkorene gaan heen en terug door `bootcamp.json`. | `BootcampConfig` | `ConfigTest.heenEnTerug`, `ConfigTest.kapotteJsonGeeftLeesbareFout` |
 | R0.4 | Een pilaar heeft één kop: een slot opnieuw uitdelen haalt het bij de vorige weg. Slots lopen van 0 t/m 19. | `BootcampConfig.zetSlot` | `ConfigTest.slotIsUniek`, `ConfigTest.slotBuitenBereik` |
 | R0.5 | `/bc start` weigert met de lijst van wat ontbreekt en verandert dan niets. | `Ronde.ontbreekt` | `RondeTest.ontbreektNoemtAlles`, `RondeTest.compleetIsLeeg` |

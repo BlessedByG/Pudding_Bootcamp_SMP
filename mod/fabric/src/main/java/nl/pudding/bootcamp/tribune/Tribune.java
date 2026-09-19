@@ -252,7 +252,7 @@ public final class Tribune {
 		for (ServerPlayer s : Mc.deelnemers(server)) {
 			SpelerStatus st = Spel.status(s);
 			boolean hoortOpTribune = st.rol == Rol.KIJKER || st.rol == Rol.FINALIST;
-			if (hoortOpTribune && st.tribunepunt != null && verboden.bevat(s.getX(), s.getZ())) {
+			if (hoortOpTribune && st.tribunepunt != null && verboden.bevatRond(s.getX(), s.getZ())) {
 				Spel.naarPunt(s, st.tribunepunt);
 			}
 		}

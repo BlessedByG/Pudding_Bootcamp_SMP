@@ -195,13 +195,13 @@ public final class Spel {
 		List<String> binnen = new ArrayList<>();
 		for (String naam : puntNamen) {
 			Punt p = punt(naam);
-			if (p != null && r.bevat(p.x(), p.z())) {
+			if (p != null && r.bevatRond(p.x(), p.z())) {
 				binnen.add(naam);
 			}
 		}
 		return binnen.isEmpty() ? null
-				: "deze tribunepunten liggen binnen regio " + regioNaam + " (alleen x en z tellen), waar kijkers juist af moeten blijven: "
-				+ String.join(", ", binnen) + ". Selecteer " + regioNaam + " krapper of verplaats de punten";
+				: "deze tribunepunten liggen op de vloer van regio " + regioNaam + " (de cirkel binnen de selectie), waar kijkers juist af moeten blijven: "
+				+ String.join(", ", binnen) + ". Verplaats de punten of selecteer " + regioNaam + " krapper";
 	}
 
 	public static void naarPunt(ServerPlayer speler, String puntNaam) {

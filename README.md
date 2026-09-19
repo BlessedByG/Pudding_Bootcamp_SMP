@@ -58,6 +58,8 @@ zone geteleporteerd (zie [docs/01-map-en-flow.md](docs/01-map-en-flow.md)).
 - [docs/05-draaiboek.md](docs/05-draaiboek.md): tijdschema van de avond, rollen van de staff, checklists.
 - [docs/06-open-keuzes.md](docs/06-open-keuzes.md): beslissingen die nog gemaakt moeten worden, met een aanbeveling per stuk.
 - [docs/07-voice.md](docs/07-voice.md): Simple Voice Chat, de voice-regels per ronde en hoe de groepen werken.
+- [docs/08-taakplan.md](docs/08-taakplan.md): het plan waarmee de mod gebouwd is.
+- [mod/](mod/README.md): de mod zelf. Bouwen, installeren, instellen en alle commands in [mod/README.md](mod/README.md); wat er gebouwd en geverifieerd is en wat nog in-game getest moet worden in [mod/BOUWLOG.md](mod/BOUWLOG.md).
 
 ## Keuzes
 

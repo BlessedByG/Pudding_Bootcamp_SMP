@@ -64,6 +64,34 @@ Grofweg op volgorde van werk:
 
 Reken op twee weken met een paar mensen die af en toe een avond hebben.
 
+## Checklist: eerste test van de mod
+
+De mod is gebouwd en gecompileerd tegen de echte 26.2-jar, maar nog nooit in-game gedraaid. Doe dit
+met een tweede account, op de testserver (Java 25, niet op peaceful, `spawn-protection=0`). Voor
+deze eerste test mogen alle punten dicht bij elkaar op een vlak stuk staan. Wat er per onderdeel
+te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md) onder "Open: in-game testen".
+
+- [ ] Jar uit `mod/fabric/build/libs/` naar `mods/`, samen met Fabric API en de voice-mod. In de
+      console staat `Pudding Bootcamp geladen` en dat de standaardbestanden in `config/bootcamp/`
+      zijn geschreven.
+- [ ] `basis.json` in `config/bootcamp/kits/` zetten (zie `basis.README.txt` daar).
+- [ ] `/bc wand`, een regio opslaan, `/bc region show`, `/bc point set`, `/bc point tp`,
+      `/bc status`.
+- [ ] `/bc kit horde`, `/bc kit basis`.
+- [ ] `/bc start 1`, loop `doolhof_uit` in (voorsprong, naar `v2`); opnieuw, dan `/bc stop`.
+- [ ] `/bc start 2`, ga dood (tribune, doodtekst, geen death-screen), `/kill @e[tag=horde]` om de
+      waves te forceren; aan het eind je spullen terug bij `v3`.
+- [ ] `/bc start 3`, lever een diamond block in op `eiplaat`; `/bc timer 305` voor de beacon-hint.
+- [ ] `/bc uitverkoren <naam>`, `/bc slot <naam> <0-19>` voor beide accounts, `/bc rad`.
+- [ ] In ronde 4: kill de koning (reset, kroon over, bevroren), laat de koning van een hoogte
+      vallen (laatste hit), log uit als koning (dertig seconden, kroon over), `/bc kroon <naam>`.
+- [ ] `/bc start 5`. Met twee accounts: laat Clown in ronde 4 koning blijven, dan is het tweede
+      account de enige vechter en meteen finalist 2 (of wijs ze aan met `/bc finalist 1 <naam>` en
+      `/bc finalist 2 <naam>`). Dan de twee minuten rust (`/bc timer` werkt hier niet; wacht of
+      doe `/bc start 6`), drie potjes, de kroning.
+- [ ] `/bc reset`.
+- [ ] Alles wat niet klopt in één bericht terug, met de console-regels erbij.
+
 ## Checklist: testrun
 
 Doe minstens één keer de hele avond met 4 of 5 testers, van basiskamp tot kroning. Let vooral op:
@@ -115,7 +143,9 @@ Doe minstens één keer de hele avond met 4 of 5 testers, van basiskamp tot kron
       de serverlog bij het opstarten).
 - [ ] Host en camera-accounts staan in spectator of creative voor de camera.
 - [ ] De jar van de vorige werkende versie van de mod staat klaar naast de huidige.
-- [ ] Alle kits staan in `config/bootcamp/kits/` en `/bc kit basis` werkt op een testaccount.
+- [ ] Alle kits staan in `config/bootcamp/kits/`, ook `basis.json` (zonder starten ronde 3 en 4
+      niet), en `/bc kit basis` werkt op een testaccount.
+- [ ] `spawn-protection=0` en de difficulty niet op peaceful.
 
 ## Spelregels voor de streamers
 
@@ -140,6 +170,8 @@ Kort en op de borden in het basiskamp:
 | Timer loopt niet | `/bc stop`, dan `/bc start <ronde>` en met `/bc timer <seconden>` de resterende tijd terugzetten. |
 | Rad stopt op de verkeerde kop | Slot-score van die speler klopt niet met de plek van zijn kop. Host: "technische storing", ref fixt de score, rad nog een keer. |
 | Kroon zit bij niemand | `/bc kroon <speler>`. |
+| Een finalist komt niet meer terug, of de server is herstart na ronde 4 | `/bc finalist <1\|2> <speler>` wijst een finalist aan en zet hem met zijn kroon op de tribune. Daarna `/bc start 5` of `/bc start 6`. |
+| Een ronde breekt zichzelf af met een rode melding in de chat | De mod ving een fout af in plaats van de server te laten crashen. De fout staat in de console. `/bc start <ronde>` opnieuw. |
 | Kroon zit bij twee spelers | `/bc kroon <goede speler>`: de mod haalt de kroon bij de ander weg. Ref beslist wie hem hoort te hebben (laatste kill). |
 | Speler zit vast in een blok | `tp` door de ref. |
 | Ei niet gevonden en de hint werkt niet | Ref zet handmatig een vuurpijl of zegt de richting in de chat. |

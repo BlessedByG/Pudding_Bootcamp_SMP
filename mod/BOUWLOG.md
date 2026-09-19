@@ -1,6 +1,6 @@
 # Bouwlog
 
-Status: modus=A; klaar=T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15; bezig=T16
+Status: modus=A; klaar=T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17; bezig=-
 
 Per taak: wat er gedaan is, wat geverifieerd is en wat open staat (in-game test, aanname,
 afwijking van de docs). Het plan staat in [../docs/08-taakplan.md](../docs/08-taakplan.md).
@@ -523,3 +523,71 @@ zijn genoemd heb ik zelf tegen de code gelegd; ze klopten alle zes. Dat scheelt 
 
 **Geverifieerd**: `./gradlew build` en `check.sh` groen na de fixronde; `check.sh` controleert nu
 ook de literals `label` en `finalist`.
+
+## T16. Documentatie
+
+**Gedaan**
+- [README.md](README.md) compleet: bouwen met JDK 25, installeren, wat er bij de eerste start
+  gebeurt, de bestanden, kits en waves, alle regio's en punten met wat erbinnen en erbuiten hoort,
+  alle commands, staff, de spiegeltags.
+- [docs/04](../docs/04-technische-schets.md) bijgewerkt waar de implementatie afwijkt of concreter
+  is: de status (compileert, nog niet in-game gedraaid), Fabric API 0.161.0, de 26.2-namen die
+  anders bleken, PvP als gamerule, staff, `/bc label`, `/bc finalist`, de regio als kolom en de
+  ronde vloer, `colosseum`, de poorten, de lampen, de kits, tussen twee rondes in, de foutafhandeling
+  in de tick, de opstelling, het einde van ronde 4, de horde, en de border voor kijkers.
+- [docs/05](../docs/05-draaiboek.md): de checklist "eerste test van de mod", twee regels erbij in
+  "Als het misgaat" (`/bc finalist`, een ronde die zichzelf afbreekt), en `basis.json`,
+  `spawn-protection=0` en de difficulty in de checklist voor de dag zelf.
+- De README in de root verwijst naar `mod/`; het taakplan heeft bovenaan staan dat het is
+  uitgevoerd en waar het resultaat staat.
+- **Nog laat gevonden, bij het opschrijven**: met een rechthoekige `vloer` konden de hunter-punten
+  aan de rand van een ronde vloer niet binnen de regio liggen terwijl de tribune er vlak achter
+  erbuiten moest. De vloer waar kijkers af moeten blijven telt nu als de cirkel die in de selectie
+  past (`Regio.bevatRond`, met test): je selecteert gewoon het vierkant om de ronde vloer heen.
+
+**`// TODO 26.2`-plekken**: geen. In Modus A is elke naam door de compiler gecontroleerd.
+
+## T17. Eindrapport
+
+**Wat er ligt**
+- `mod/core`: de kernlogica, 76 tests. `mod/fabric`: de mod, 5 tests met de echte 26.2-registries.
+- De jar: `mod/fabric/build/libs/bootcamp-0.1.0.jar` (na `./gradlew build`; de map `build/` staat
+  niet in git).
+- Alles staat op `main`, één commit per taak (T3+T4 en T12+T13 samen, zie daar).
+
+**Wat geverifieerd is**
+- `./gradlew build` groen tegen de echte Minecraft 26.2-jar met Fabric API 0.161.0+26.2, Loom
+  1.17.21, Gradle 9.5.1, JDK 25. Elke 26.2-naam is dus echt.
+- Elke spelregel die rekent heeft een test ([core/REGELS.md](core/REGELS.md)).
+- Alle standaardkits, de kroon en de wave-gear gaan door de vanilla item-parser van 26.2.
+- `check.sh` groen: geen threads of sleeps, `core` zonder Minecraft, alle commands aanwezig.
+- Drie onafhankelijke reviews tegen docs/02, 03 en 04; alles wat hoog of midden was is gefixt.
+
+**Wat niet geverifieerd is**
+- **Er is niets in-game gedraaid.** Geen server gestart, geen command getypt. Alles onder "Open:
+  in-game testen" hierboven staat nog open. De grootste onzekerheden, op volgorde:
+  1. De dood afvangen (`ALLOW_DEATH` annuleren en zelf healen): hier hangt elke ronde aan.
+  2. Bevriezen via attributes, en of de client dat zonder gekke FOV accepteert.
+  3. De border voor kijkers (eigen border-pakket).
+  4. De zweefkroon (hoogte, vloeiend meebewegen) en de lampen van het rad (blijven ze branden).
+  5. Performance van wave 5 met twintig spelers.
+- Simple Voice Chat is niet naast de mod gedraaid. De mod raakt voice niet aan, dus een conflict
+  ligt niet voor de hand.
+
+**Wat jij moet doen**
+1. `basis.json` maken (zie `config/bootcamp/kits/basis.README.txt` na de eerste start). Zonder
+   starten ronde 3 en 4 niet.
+2. De checklist "eerste test van de mod" in [docs/05](../docs/05-draaiboek.md), met een tweede
+   account. Alles wat niet klopt in één bericht terug, met de console-regels.
+3. Beslissen over de punten onder "Blijft staan" bij T15, als je ze anders wilt.
+
+**Aannames die ik heb gemaakt** (allemaal ook in docs/04)
+- Staff is wie in creative of spectator staat.
+- Een regio is voor spelers een kolom; de kijker-vloer is de cirkel binnen de selectie.
+- Tijdens een opstelling doet niemand elkaar schade, en na een wissel staat ook de koning stil.
+- FFA-tiebreak bij gelijke kills: meeste hp, dan het lot.
+- Uitloggen buiten ronde 4: FFA-speler en horde-speler tellen als dood; een finalist verliest het
+  lopende potje maar blijft finalist.
+- De commander start ronde 5 zelf; alleen de finale start vanzelf na de rust.
+- De optionele regio `colosseum` is de border van ronde 4 en 5 als hij bestaat.
+- Mobs schalen mee met het aantal spelers; de boss wave staat vast.

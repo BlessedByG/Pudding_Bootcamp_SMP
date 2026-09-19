@@ -52,6 +52,20 @@ class RegioTest {
 	}
 
 	@Test
+	void rondeVloerLaatDeHoekenVrij() {
+		// Omhullend vierkant van een ronde vloer van 70: midden 35, straal 35.
+		Regio r = Regio.van(new BlokPos(0, 64, 0), new BlokPos(69, 64, 69));
+		assertTrue(r.bevatRond(35, 35));
+		assertTrue(r.bevatRond(35, 1));
+		assertTrue(r.bevatRond(60, 35));
+		// De hoek van het vierkant ligt binnen de rechthoek maar buiten de cirkel: daar mag tribune staan.
+		assertTrue(r.bevat(3, 3));
+		assertFalse(r.bevatRond(3, 3));
+		// Vlak achter de rand, op de as.
+		assertFalse(r.bevatRond(35, 71));
+	}
+
+	@Test
 	void negatieveCoordinaten() {
 		Regio r = Regio.van(new BlokPos(-10, 64, -10), new BlokPos(-1, 64, -1));
 		assertEquals(-5.0, r.centerX());
