@@ -26,6 +26,7 @@ wat die betekent voor het concept. De oude afwegingen staan in de git-geschieden
 
 | 19 | Kijkers en tp-items | Geen spectator mode, geen tp-items | Wie klaar of dood is gaat naar het verzamelpunt of de tribune en socializet daar met de rest tot de ronde klaar is. Voice-groepen zijn daarmee ook niet meer nodig. |
 | 20 | Bouwen in ronde 4 | Verboden | Adventure mode, dus het kan ook niet. Pearls, gapples, boog en schild wel. |
+| 21 | Tribune-voice | Iedereen hoort de tribune | Ook de vechters op de vloer. Geen voice-filter meer; de mod doet niks met voice en heeft de voice-API niet nodig. Doden mogen roepen wat ze willen. |
 
 ## Nog open (techniek)
 

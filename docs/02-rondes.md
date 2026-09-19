@@ -86,8 +86,8 @@ ronde 4.
 **Regels**
 - Doodgaan = kijker tot het einde van de ronde. Je krijgt groot een doodtekst in beeld ("Grote L
   gepakt!") en staat op de tribune van de ruïne-arena, met zicht op de vloer en met de andere
-  doden. Je hoort alles, maar de levenden horen jou niet. Aan het eind van de ronde gaat iedereen
-  door, dood of levend.
+  doden. Je hoort alles en de vloer hoort jou. Aan het eind van de ronde gaat iedereen door, dood
+  of levend.
 - De volgorde van sneuvelen komt op het scoreboard in de sidebar. Puur voor de eer.
 
 **Einde**
@@ -97,8 +97,8 @@ ronde 4.
 
 **Bonus:** iedereen die de ronde overleeft, krijgt 1 ender pearl bij verzamelpunt 3.
 
-**Voice:** levend proximity. Dood = kijker: alles horen, niet gehoord worden, en met de andere
-doden praten. Gaat automatisch, je hoeft niks te doen.
+**Voice:** proximity voor iedereen. Dood = kijker op de tribune: je hoort de vloer en de vloer
+hoort jou, de tribune is publiek.
 
 **Wat train je:** mobs, boog en schild, samen vechten, niet in de creeper rennen.
 
@@ -210,8 +210,8 @@ Hier het overzicht.
 - Is Clown nog koning, dan is hij finalist 1. Is hij de kroon kwijt, dan is de eindbaas klaar en
   kijkt hij. Hij doet nooit mee aan de FFA.
 
-**Voice:** proximity. Dood = kijker op de tribune: alles horen, niet gehoord worden, praten met de
-andere doden. Allemaal automatisch.
+**Voice:** proximity voor iedereen. Dood = kijker op de tribune: je hoort de vloer en de vloer
+hoort jou. Roepen waar de koning zit mag, hij glowt toch.
 
 **Wat train je:** PvP tegen overmacht, target focus, wanneer je wel en niet moet gaan.
 
@@ -240,8 +240,8 @@ andere doden. Allemaal automatisch.
 - Daarna **twee minuten rust**. Finalist 2 komt net uit een gevecht, finalist 1 is uitgerust. De
   host bouwt het moment op, de finalisten staan naast elkaar op de tribune.
 
-**Voice:** loopt door op de stand van ronde 4. Levend proximity, dood wordt kijker op de tribune.
-Finalist 1 en Clown kijken ook als kijker en zijn dus stil voor de vechters.
+**Voice:** loopt door op de stand van ronde 4. Proximity voor iedereen, dood wordt kijker op de
+tribune. Finalist 1 en Clown zitten er ook en mogen meejoelen.
 
 ---
 

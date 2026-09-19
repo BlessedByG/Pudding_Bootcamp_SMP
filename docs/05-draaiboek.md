@@ -77,9 +77,8 @@ Doe minstens één keer de hele avond met 4 of 5 testers, van basiskamp tot kron
 - [ ] Doolhof: niemand kan over of door het plafond. Kisten gevuld.
 - [ ] Horde: waves volgen elkaar op, dood = kijker tot het einde, doden worden bij verzamelpunt 3
       weer levend, bossbar telt mobs. Ronde stopt ook als iedereen dood is.
-- [ ] Voice: proximity werkt; een kijker is niet hoorbaar voor een levende speler ernaast, hoort
-      die wel, en hoort de andere kijkers op de tribune. Dit is de belangrijkste voice-test, zie
-      [07-voice.md](07-voice.md).
+- [ ] Voice: proximity werkt, groepen staan uit, en de tribune is hoorbaar op de vloer en
+      andersom. Zie [07-voice.md](07-voice.md).
 - [ ] Kijkers: dood = doodtekst groot in beeld (alleen voor jou), naar de tribune, geen schade, je
       komt de vloer niet op, niet op de locator bar. Uit het doolhof = naar verzamelpunt 2.
       Niemand komt in spectator mode.
@@ -127,8 +126,8 @@ Kort en op de borden in het basiskamp:
    teamen, maar er wint er één.
 4. Bug of stuck? Roep de ref, niet de chat.
 5. Als de admin zegt stop, dan stop.
-6. Geen Discord-call tijdens het event, alleen de voice-mod. Eigen voice-groepen maken kan niet,
-   de mod blokkeert dat.
+6. Geen Discord-call tijdens het event, alleen de voice-mod. Groepen staan uit, alles is
+   proximity.
 
 ## Als het misgaat
 

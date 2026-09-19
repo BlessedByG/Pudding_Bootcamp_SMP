@@ -41,8 +41,8 @@ de Arena: een colosseum met tribunes waar de doden op komen.
 **Wie de koning killt, krijgt de kroon.** En op dat moment begint de jacht opnieuw:
 
 - De ex-koning verliest de kroon en gaat als kijker de tribune op. Voor ronde 4 ligt hij eruit;
-  in de FFA doet hij weer mee. In voice hoort hij vanaf nu alles, maar de levenden horen hem niet
-  (zie [07-voice.md](07-voice.md)).
+  in de FFA doet hij weer mee. In voice is hij nu publiek: hij hoort de vloer en de vloer hoort
+  hem (zie [07-voice.md](07-voice.md)).
 - **Alle levende hunters** worden full hp geheald en teruggeteleporteerd naar hun startpunt aan
   de rand, waar ze bevroren staan. Doden blijven dood: een reset geeft geen levens terug.
 - **De nieuwe koning** wordt naar het midden geteleporteerd en:

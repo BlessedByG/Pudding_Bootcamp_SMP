@@ -111,9 +111,10 @@ is, gaat naar een plek waar de rest ook komt en hangt daar samen tot de ronde vo
 - Dood in de Arena (ronde 4, 5 en 6): naar de tribune van de Arena.
 
 Op zo'n plek ben je een **kijker**: gewoon in adventure mode, je kunt lopen en praten, maar je
-krijgt geen schade, je komt de vloer niet op (glas, en de mod zet je terug), je staat niet op de
-locator bar en de levenden horen je niet (zie [07-voice.md](07-voice.md)). De doden op de tribune
-zijn het publiek. Alleen de staff gebruikt spectator of creative, voor de camera.
+krijgt geen schade, je komt de vloer niet op (glas, en de mod zet je terug) en je staat niet op de
+locator bar. Voice is gewoon proximity: de vloer hoort de tribune en andersom (zie
+[07-voice.md](07-voice.md)). De doden op de tribune zijn het publiek. Alleen de staff gebruikt
+spectator of creative, voor de camera.
 
 ## Stream-overwegingen
 

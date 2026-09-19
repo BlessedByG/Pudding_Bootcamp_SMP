@@ -2,8 +2,8 @@
 
 Eén eigen mod, `bootcamp`, op een Fabric-server. Server-side only: spelers hebben alleen Simple
 Voice Chat nodig, verder een gewone client. De mod doet alles: regio's en punten zetten met een
-wand en commands, de rondes, de kroon, het rad, de tribune voor wie dood is, voice-filtering via
-de API van de voice-mod, bossbar en visuals.
+wand en commands, de rondes, de kroon, het rad, de tribune voor wie dood is, bossbar en visuals.
+Voice is puur proximity en gaat buiten de mod om.
 
 De mod wordt gevibecode: Claude Code schrijft de Java, jij compileert, test en plakt fouten
 terug. Deze doc is de spec die je hem geeft.
@@ -20,7 +20,7 @@ terug. Deze doc is de spec die je hem geeft.
 |---|---|
 | Fabric-server 26.2 + Fabric API | De server en de event/command-API. |
 | `bootcamp`-mod (deze repo, map `mod/`) | Alles wat hieronder staat. |
-| Simple Voice Chat (Fabric) + `voicechat-api` | Voice. De API is een gewone Java-dependency, versie-onafhankelijk. |
+| Simple Voice Chat (Fabric) | Voice. Puur proximity, de mod doet er niks mee. |
 | WorldEdit (Fabric) | Bouwen. Niet voor de spellogica. |
 
 Geen Skript, geen datapack, geen plugins.
@@ -30,10 +30,8 @@ Geen Skript, geen datapack, geen plugins.
 1. Genereer een leeg project met de Fabric-template (fabricmc.net/develop/template): versie
    26.2, **Mojang mappings** (die namen zijn stabiel tussen versies en het model kent ze het
    best), de Java-versie die de template vraagt.
-2. `fabric.mod.json`: `"environment": "server"`, entrypoints `main` (mod-init) en `voicechat`
-   (de voice-plugin, zie Voice).
-3. `build.gradle`: naast `fabric-api` de dependency `de.maxhenkel.voicechat:voicechat-api` uit
-   de Maven-repo `https://maven.maxhenkel.de/repository/public`. De voice-mod zelf zet je als
+2. `fabric.mod.json`: `"environment": "server"`, entrypoint `main`.
+3. `build.gradle`: alleen `fabric-api` als dependency. De voice-mod staat los van onze mod: als
    jar in `run/mods/` voor de dev-server en in `mods/` op de echte server.
 4. Dev-loop: `./gradlew runServer` start een testserver; `./gradlew build` maakt de jar in
    `build/libs/`. Fixen tijdens het event betekent jar vervangen en herstarten, dus test vooraf.
@@ -69,7 +67,6 @@ In ronde 5 gaat iedereen uit zijn team behalve de koningen, dus daar is alles Pv
 | `rad` | Het Rad: lampjes, ritme, landing op de uitverkorene. | tick-gestuurd, geen threads |
 | `horde` | Waves spawnen en tellen. | `EntityType.spawn`, entity-tags |
 | `tribune` | Wie dood is naar de tribune, daar houden, geen schade, locator bar uit. | `ALLOW_DAMAGE`, tick-check op regio `vloer` en `arena` |
-| `voice` | Voice-plugin: wie hoort wie. | `VoicechatPlugin`, `SoundPacketEvent` |
 | `visuals` | Bossbar, titles, geluid, particles, vuurwerk, zweefkroon, labels, locator bar. | `ServerBossEvent`, packets, `Display`-entities |
 
 Vuistregel voor het model: alles draait op de server-tick. Geen `Thread.sleep`, geen eigen
@@ -202,8 +199,8 @@ ronde staat bij het volgende verzamelpunt. De mod hoeft maar weinig te doen:
 - Bij de dood een title met een willekeurige doodtekst, alleen voor de dode zelf, geen chatregel
   en geen geluid: `Grote L gepakt!`, `Had je nou maar beter je best gedaan`, `Gelukkig is dit niet
   de CSMP`. De lijst staat in `bootcamp.json`, zodat je er meer bij kunt zetten.
-- Zichtbaar en hoorbaar voor elkaar: op de tribune zijn de doden het publiek en praten ze gewoon
-  via proximity. De levenden horen ze niet, zie Voice.
+- Zichtbaar en hoorbaar: op de tribune zijn de doden het publiek. Voice is gewoon proximity, dus
+  de vloer hoort de tribune en andersom.
 
 Waar kijkers heen gaan: ronde 2 naar `tribune_horde_n`, ronde 4 t/m 6 naar `tribune_n`. Finalist
 1 en Clown zitten tijdens de FFA ook op de tribune, met dezelfde regels. Aan het eind van ronde 2
@@ -213,15 +210,11 @@ worden de doden weer gewoon speler bij verzamelpunt 3.
 daar niks af. `/bc kijker <naam> aan|uit` is de noodknop om iemand met de hand op de tribune te
 zetten of eraf te halen.
 
-## Voice via de API
+## Voice
 
-De mod is ook een voice-plugin (`VoicechatPlugin`, entrypoint `voicechat`). Eén regel code doet
-wat we willen, zonder groepen, commands of knoppen. Details in [07-voice.md](07-voice.md).
-
-- `SoundPacketEvent`: zender is kijker en ontvanger is levend, dan annuleren. Levenden horen
-  doden nooit.
-- Doden horen elkaar via proximity, want ze zitten samen op de tribune. Groepen staan in de
-  voice-config helemaal uit, dus alles is altijd proximity.
+Niks te doen in de mod. Simple Voice Chat draait ernaast op puur proximity, groepen staan in de
+voice-config uit, en de tribune is publiek: de vloer hoort de doden en andersom. Details in
+[07-voice.md](07-voice.md).
 
 ## Bossbar en visuals
 
@@ -273,7 +266,7 @@ staart, vluchtduur 1). Titles en actionbar gaan via de title-packets, geluid via
 ## Zo vibecode je dit
 
 1. **Volgorde.** Config en commands met de wand, dan de tribune (kijkers), dan ronde 1
-   t/m 3, dan de kroon en ronde 4, dan het rad, dan voice, dan visuals. Na elke stap iets
+   t/m 3, dan de kroon en ronde 4, dan het rad, dan visuals. Na elke stap iets
    testbaars, met een tweede account op de dev-server.
 2. **Context.** Geef Claude Code deze repo. Deze doc plus [02-rondes.md](02-rondes.md) en
    [03-kroon-regels.md](03-kroon-regels.md) zijn de spec; laat hem één module per keer doen.
