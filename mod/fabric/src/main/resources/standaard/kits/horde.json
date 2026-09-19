@@ -1,0 +1,18 @@
+{
+  "clear": false,
+  "armor": {
+    "head":  "minecraft:iron_helmet",
+    "chest": "minecraft:iron_chestplate",
+    "legs":  "minecraft:iron_leggings",
+    "feet":  "minecraft:iron_boots"
+  },
+  "offhand": "minecraft:shield",
+  "hotbar": [
+    "minecraft:iron_sword",
+    "minecraft:bow",
+    "minecraft:cooked_beef 16"
+  ],
+  "inventory": [
+    "minecraft:arrow 32"
+  ]
+}

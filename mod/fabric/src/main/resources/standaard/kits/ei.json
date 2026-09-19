@@ -1,0 +1,6 @@
+{
+  "clear": false,
+  "inventory": [
+    "minecraft:iron_pickaxe[minecraft:enchantments={\"minecraft:efficiency\":2}]"
+  ]
+}

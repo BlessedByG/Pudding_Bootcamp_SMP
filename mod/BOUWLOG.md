@@ -1,6 +1,6 @@
 # Bouwlog
 
-Status: modus=A; klaar=T0,T1,T2,T3,T4; bezig=T5
+Status: modus=A; klaar=T0,T1,T2,T3,T4,T5; bezig=T6
 
 Per taak: wat er gedaan is, wat geverifieerd is en wat open staat (in-game test, aanname,
 afwijking van de docs). Het plan staat in [../docs/08-taakplan.md](../docs/08-taakplan.md).
@@ -125,3 +125,36 @@ Samen in één commit: het commandboompje verwijst naar de wand, dus los compile
   klaarzetten. Hun antwoord gaat alleen naar wie het typt en niet naar de andere ops of de log:
   het rad blijft geheim. `/bc uitverkoren` zonder naam laat zien wie het is.
 - Namen van regio's en punten: kleine letters, cijfers en `_`.
+
+## T5. Kits
+
+**Gedaan**
+- `kits/Kits`: leest `config/bootcamp/kits/<naam>.json` bij elk gebruik opnieuw (aanpassen zonder
+  herstart), parst elk item met de vanilla `ItemParser`, zet de kit op spelers. `/bc kit <naam>
+  [<speler>]` met suggesties uit de map.
+- `kits/Items26`: item uit tekst, en de kroon zelf: gouden helm met Curse of Binding, onbreekbaar
+  (een gouden helm is anders zo stuk), herkenbaar aan `custom_data={bootcamp_kroon:1b}`.
+- Standaardbestanden in de jar (`standaard/`): `horde`, `ei`, `boss`, `kroonpakket`, `arena`,
+  `finale`, `basis.README.txt` en `waves.json`, ingevuld uit docs/02. `basis.json` wordt niet
+  meegeleverd; `/bc kit basis` meldt dat het ontbreekt en verwijst naar de README.
+
+**Geverifieerd**
+- `KitsParseTest` (fabric-project, draait met de echte 26.2-registries via `fabric-loader-junit`,
+  zonder server): alle zes kits parsen, enchantments komen erop, de kroon is te maken en wordt
+  herkend, de gear uit `waves.json` parst, en een onbekend item geeft
+  `test.json, hotbar[1]: ...`.
+- `ResourcesTest` in `core` slaat niks meer over: 76 tests groen.
+
+**Open: in-game testen**
+- `/bc kit horde`, `/bc kit basis` (na het neerzetten van `basis.json`), of armor goed aankomt.
+
+**Concretiseringen**
+- **De kroon blijft op doordat de kit naar het item kijkt**: zit de kroon in de head-slot, dan
+  schrijft geen enkele kit eroverheen en haalt `clear` hem niet weg.
+- **`horde.json` heeft `clear: false`**: docs/02 zegt dat je alles uit het doolhof mag houden, dus
+  de hordekit komt erbij. `boss`, `arena` en `finale` wissen wel.
+- Bij `clear: false` komt een item op zijn slot als dat leeg is en anders ergens in de inventory;
+  armor dat er al zat gaat naar de inventory.
+- De boss wave schaalt niet mee (docs/02: "boss wave vast"). Voor een testrun met vijf man is
+  2 ravagers + 4 evokers + 10 vindicators te zwaar; zet dan de aantallen in
+  `config/bootcamp/waves.json` omlaag of `"schaal": true`.

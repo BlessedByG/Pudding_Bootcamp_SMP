@@ -1,0 +1,26 @@
+basis.json ontbreekt hier met opzet: de inhoud van de basiskit komt van Pudding.
+
+Zet het bestand in deze map als basis.json, in hetzelfde formaat als de andere kits:
+
+{
+  "clear": true,
+  "armor": {
+    "head":  "minecraft:iron_helmet",
+    "chest": "minecraft:iron_chestplate",
+    "legs":  "minecraft:iron_leggings",
+    "feet":  "minecraft:iron_boots"
+  },
+  "offhand": "minecraft:shield",
+  "hotbar": [
+    "minecraft:iron_sword",
+    "minecraft:bow[minecraft:enchantments={\"minecraft:power\":1}]",
+    "minecraft:arrow 16",
+    "minecraft:cooked_beef 8"
+  ],
+  "inventory": []
+}
+
+Per slot een item in dezelfde syntax als /give; een getal achter het item is het aantal.
+"clear": true maakt de inventory eerst leeg, false voegt alleen toe.
+De basiskit is voor wie zonder ticket uit het Ei-bos komt en voor hunters zonder loot in ronde 4.
+Testen: /bc kit basis <speler>

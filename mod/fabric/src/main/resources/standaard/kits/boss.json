@@ -1,0 +1,18 @@
+{
+  "clear": true,
+  "armor": {
+    "chest": "minecraft:diamond_chestplate[minecraft:enchantments={\"minecraft:protection\":2}]",
+    "legs":  "minecraft:diamond_leggings[minecraft:enchantments={\"minecraft:protection\":2}]",
+    "feet":  "minecraft:diamond_boots[minecraft:enchantments={\"minecraft:protection\":2}]"
+  },
+  "offhand": "minecraft:shield",
+  "hotbar": [
+    "minecraft:diamond_sword[minecraft:enchantments={\"minecraft:sharpness\":2}]",
+    "minecraft:bow[minecraft:enchantments={\"minecraft:power\":2}]",
+    "minecraft:golden_apple 4",
+    "minecraft:ender_pearl 8"
+  ],
+  "inventory": [
+    "minecraft:arrow 32"
+  ]
+}
