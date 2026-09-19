@@ -11,6 +11,7 @@ import nl.pudding.bootcamp.core.Regio;
 import nl.pudding.bootcamp.core.Rol;
 import nl.pudding.bootcamp.core.Ronde;
 import nl.pudding.bootcamp.crown.Opstelling;
+import nl.pudding.bootcamp.tribune.Tribune;
 import nl.pudding.bootcamp.visuals.Bossbar;
 
 import java.util.ArrayList;
@@ -331,6 +332,10 @@ public final class Spel {
 		Opstelling.herstelBijJoin(speler);
 		if (Mc.isStaff(speler)) {
 			return;
+		}
+		if (actief == null || ronde != Ronde.HORDE) {
+			// Dood in de horde en daarna uitgelogd: de bewaarde spullen komen alsnog terug.
+			Tribune.geefBewaardTerug(speler);
 		}
 		if (actief != null) {
 			actief.onJoin(server, speler);

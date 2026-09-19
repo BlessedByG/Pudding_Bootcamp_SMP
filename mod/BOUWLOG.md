@@ -1,6 +1,6 @@
 # Bouwlog
 
-Status: modus=A; klaar=T0,T1,T2,T3,T4,T5,T6,T7,T8; bezig=T9
+Status: modus=A; klaar=T0,T1,T2,T3,T4,T5,T6,T7,T8,T9; bezig=T10
 
 Per taak: wat er gedaan is, wat geverifieerd is en wat open staat (in-game test, aanname,
 afwijking van de docs). Het plan staat in [../docs/08-taakplan.md](../docs/08-taakplan.md).
@@ -268,3 +268,37 @@ Samen in één commit: het commandboompje verwijst naar de wand, dus los compile
   ligt: selecteer `doolhof` dus ruim, inclusief het plein voor de poort en het vak achter de
   uitgang.
 - Doodgaan in het doolhof (het hoort niet te kunnen): terug naar de ingang.
+
+## T9. Ronde 2: De Horde
+
+**Gedaan** (`game/ronde2/Horde`, `visuals/Sidebar`)
+- Start: iedereen speler in adventure naar `arena_spawn`, border om `arena`, hordekit erbij,
+  countdown van 5, poort `poort_arena` open, timer tien minuten.
+- Waves uit `config/bootcamp/waves.json`, verloop uit `core` (`HordeVerloop`): volgende wave bij
+  nul mobs of na 120 seconden, de laatste wave moet dood. Per wave een rode title en de raid horn.
+- Spawnen: om en om op `mob_1..4` met twee blokken spreiding, `finalizeSpawn`, nooit een baby,
+  `setPersistenceRequired`, entity-tag `horde`, gear uit het bestand met dropkans 0, een doel uit
+  de levende spelers.
+- Bossbar `Wave 3 · 12 mobs`, rood, vulling is het deel van de wave dat nog leeft.
+- Dood of uitgelogd: op de sneuvellijst in de sidebar; wie doodgaat wordt kijker op
+  `tribune_horde_n` met zijn inventory bewaard.
+- Einde bij wave 5 dood, iedereen dood of de timer: mobs weg, bewaarde spullen terug, iedereen
+  weer speler bij `v3`, overlevers krijgen een ender pearl.
+- Reset-register: `horde-mobs` (alles met tag `horde`, ook van een vorige serverrun, plus vexes in
+  de arena) en `sidebar`.
+
+**Geverifieerd**: build en `check.sh` groen. De gear uit `waves.json` gaat in `KitsParseTest` door
+de echte item-parser.
+
+**Open: in-game testen**: waves, teller, tribune, spullen terug bij `v3`, performance in wave 5.
+
+**Concretiseringen**
+- **Een stenen knoop op het hoofd** van elke horde-mob zonder helm: de ruïne-arena ligt in de open
+  lucht en anders branden zombies en skeletons overdag weg. Je ziet hem niet, hij dropt niet.
+- **Volgbereik 64** voor horde-mobs: vanaf de rand van een arena van 50 zien de meeste mobs de
+  spelers in het midden anders niet.
+- **`/bc start 2` weigert** op peaceful, bij een fout in `waves.json` (onbekende entity, ongeldig
+  item), en als `arena_spawn` of een `mob_n` buiten regio `arena` ligt. Alles wordt gecontroleerd
+  vóór de ronde begint, niet halverwege wave 3.
+- De sidebar verdwijnt aan het eind van de ronde.
+- Wie dood was en uitlogde voor het einde krijgt zijn bewaarde spullen bij het inloggen terug.
