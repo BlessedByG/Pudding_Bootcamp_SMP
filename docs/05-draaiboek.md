@@ -93,7 +93,8 @@ Doe minstens één keer de hele avond met 4 of 5 testers, van basiskamp tot kron
 - [ ] Kroonwissel: alle levende hunters staan geheald en bevroren op hun startpunt (niet lopen,
       niet springen, niet pearlen), de nieuwe koning staat in het midden met volle armor, na 10
       seconden is iedereen los en loopt weer normaal. Doden blijven op de tribune.
-- [ ] King: koning logt uit en weer in. Wat gebeurt er? Zorg dat de ref weet wat te doen.
+- [ ] King: koning logt uit. De mod telt 30 seconden af in de bossbar en geeft dan de kroon door;
+      komt hij terug, dan als kijker op de tribune.
 - [ ] FFA: iedereen behalve Clown en finalist 1 staat op de vloer, laatste levende wordt
       finalist 2, twee minuten rust, dan de finale in het midden.
 - [ ] Finale: kit reset en full heal per potje.
@@ -109,7 +110,7 @@ Doe minstens één keer de hele avond met 4 of 5 testers, van basiskamp tot kron
 - [ ] Coördinaten van alle tp-punten in een tekstbestand naast de commander.
 - [ ] Ref heeft [03-kroon-regels.md](03-kroon-regels.md) open.
 - [ ] Reserve-diamond-blocks in de admin-kist.
-- [ ] Tag `uitverkoren` staat op Clown en op niemand anders (`tag @a list`).
+- [ ] `/bc status` laat zien dat Clown uitverkoren is en niemand anders.
 - [ ] Voice: `force_voice_chat=true`, UDP-poort open, voice-mod en bootcamp-mod geladen (staat in
       de serverlog bij het opstarten).
 - [ ] Host en camera-accounts staan in spectator of creative voor de camera.
@@ -139,7 +140,7 @@ Kort en op de borden in het basiskamp:
 | Timer loopt niet | `/bc stop`, dan `/bc start <ronde>` en met `/bc timer <seconden>` de resterende tijd terugzetten. |
 | Rad stopt op de verkeerde kop | Slot-score van die speler klopt niet met de plek van zijn kop. Host: "technische storing", ref fixt de score, rad nog een keer. |
 | Kroon zit bij niemand | `/bc kroon <speler>`. |
-| Kroon zit bij twee spelers | `tag <verkeerde> remove king` en de helm eraf; ref beslist wie hem hoort te hebben (laatste kill). |
+| Kroon zit bij twee spelers | `/bc kroon <goede speler>`: de mod haalt de kroon bij de ander weg. Ref beslist wie hem hoort te hebben (laatste kill). |
 | Speler zit vast in een blok | `tp` door de ref. |
 | Ei niet gevonden en de hint werkt niet | Ref zet handmatig een vuurpijl of zegt de richting in de chat. |
 | Iemand hoort niks in voice | Kruis door het voice-icoontje: UDP-poort dicht of verkeerde modversie. Geen kruis maar toch stil: kijk of hij per ongeluk als kijker staat (`/bc kijker <naam> uit`). |

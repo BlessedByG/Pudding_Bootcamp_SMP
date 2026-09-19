@@ -50,7 +50,8 @@ de Arena: een colosseum met tribunes waar de doden op komen.
   - krijgt al zijn armor en wapens gerepareerd (volle durability),
   - krijgt het kroonpakketje: 2 gapples + 2 ender pearls,
   - krijgt 15 seconden Resistance II en Glowing,
-  - gaat van team `hunters` naar team `king` en krijgt de helm.
+  - gaat van team `hunters` naar team `king` en krijgt de kroon als helm; zijn oude helm gaat naar
+    zijn inventory. Kits zetten nooit een andere helm op een koning.
 - Iedereen krijgt een `title`: **NIEUWE KONING: <naam>**. Bossbar update.
 - **10 seconden** countdown, dan zijn de hunters los en gaat de jacht verder. De timer loopt
   gewoon door.
@@ -63,8 +64,9 @@ iedereen bij een reset gerepareerd wordt, dan is dat één regel extra in de mod
 - Precies dezelfde reset. De kroon gaat naar de hunter die de koning als laatste heeft geraakt.
 - Is die er niet, dan naar een willekeurige levende hunter. De ronde mag nooit zonder koning
   zitten.
-- Bij een disconnect wacht de admin 30 seconden. Komt de speler niet terug, dan gaat de kroon
-  door op dezelfde manier en is de speler uit de ronde.
+- Bij een disconnect telt de mod 30 seconden af, zichtbaar in de bossbar. Komt de speler niet
+  terug, dan gaat de kroon door op dezelfde manier en is de speler uit de ronde; komt hij later
+  terug, dan als kijker op de tribune.
 
 ## Hunters
 

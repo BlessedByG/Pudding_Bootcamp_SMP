@@ -14,7 +14,7 @@ hoe je het technisch bouwt en hoe de avond zelf verloopt. Niet fancy, wel comple
 |---|---|
 | **Spelers** | 20 (19 streamers + ClownPierce). Werkt vanaf ~8 tot ~30, de getallen schalen mee. |
 | **Duur** | ± 2 uur inclusief pauzes en praatjes van de host. |
-| **Server** | Fabric-server op Minecraft 26.2 met een eigen server-side mod en Simple Voice Chat. Eén open wereld (± 500 x 500) met alle zones in het landschap. Spelers hebben alleen de voice-mod nodig. |
+| **Server** | Fabric-server op Minecraft 26.2 (Java 25) met een eigen server-side mod en Simple Voice Chat. Eén open wereld (± 500 x 500) met alle zones in het landschap. Spelers hebben alleen de voice-mod nodig. |
 | **Voice** | Simple Voice Chat, verplicht. Alles proximity, ook de tribune: de vechters horen het publiek. Niemand hoeft iets te doen. |
 | **Eliminatie** | Niemand ligt eruit: wie in ronde 4 doodgaat kijkt vanaf de tribune en doet in de FFA weer mee. Elke streamer heeft de hele avond content. |
 | **Winnaar** | De speler die de finale (1v1 tussen de twee kroondragers) wint, is King of the SMP. |

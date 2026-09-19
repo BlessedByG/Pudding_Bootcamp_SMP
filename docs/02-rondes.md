@@ -86,8 +86,8 @@ ronde 4.
 **Regels**
 - Doodgaan = kijker tot het einde van de ronde. Je krijgt groot een doodtekst in beeld ("Grote L
   gepakt!") en staat op de tribune van de ruïne-arena, met zicht op de vloer en met de andere
-  doden. Je hoort alles en de vloer hoort jou. Aan het eind van de ronde gaat iedereen door, dood
-  of levend.
+  doden. Je hoort alles en de vloer hoort jou. Je spullen blijven bewaard en krijg je aan het eind
+  van de ronde terug. Aan het eind van de ronde gaat iedereen door, dood of levend.
 - De volgorde van sneuvelen komt op het scoreboard in de sidebar. Puur voor de eer.
 
 **Einde**
@@ -131,7 +131,8 @@ minstens één diamond block mee. Dat block is je ticket naar ronde 4.
   - **Dooier:** in het midden 30 diamond blocks (1,5x het aantal spelers).
 - **Loot in de kisten** (dit is de PvP-gear voor ronde 4): losse diamond armor pieces (deels met
   Protection), diamond swords (deels Sharpness), bogen (deels Power), gapples, ender pearls,
-  potions (speed, fire resistance, healing), 32 cobblestone per kist. Geen Strength, geen lava.
+  potions (speed, fire resistance, healing). Geen Strength, geen lava, geen bouwblokken (bouwen
+  is in ronde 4 toch verboden).
 - **Nep-eitjes:** 3 tot 5 kleine eitjes (3 hoog) door het gebied, met één kistje met wat kleins en
   soms een bordje met een hint over de richting van het Grote Ei.
 
@@ -179,9 +180,9 @@ Hier het overzicht.
   spelerskoppen rond de vloer, steeds langzamer, en stopt op ClownPierce. Het ziet eruit als
   toeval, het is rigged: Clown heeft vooraf de verborgen rol `uitverkoren` en het rad landt
   altijd op die speler (zie [03-kroon-regels.md](03-kroon-regels.md)).
-- Clown wordt naar het midden geteleporteerd en krijgt de kroon en de **bosskit** (volledig
-  diamond Protection II, diamond sword Sharpness II, boog Power II, 32 pijlen, 4 gapples, 8
-  pearls, schild).
+- Clown wordt naar het midden geteleporteerd en krijgt de kroon en de **bosskit** (diamond
+  chestplate, leggings en boots Protection II, de kroon is de helm, diamond sword Sharpness II,
+  boog Power II, 32 pijlen, 4 gapples, 8 pearls, schild).
 - De 19 hunters starten op 4 punten aan de rand van de vloer met de spullen uit ronde 3 (of de
   basiskit als ze niks hebben). Team `hunters`, friendly fire aan: hunters kunnen elkaar raken.
 - De koning heeft Glowing: je ziet hem door alles heen. Bossbar: timer + naam van de koning.
@@ -251,13 +252,14 @@ tribune. Finalist 1 en Clown zitten er ook en mogen meejoelen.
 
 **Setup**
 - Het midden van de Arena, border 20 x 20, twee startpunten tegenover elkaar. Tribunes vol.
-- Beiden krijgen de **finalekit**: volledig diamond Protection II, diamond sword Sharpness II,
+- Beiden krijgen de **finalekit**: diamond chestplate, leggings en boots Protection II (de kroon
+  blijft de helm), diamond sword Sharpness II,
   boog Power I, 16 pijlen, 2 gapples, 8 steak, schild. Geen pearls, geen potions.
 - Per potje: full heal, kit reset, 5 seconden countdown.
 
 **Regels**
 - Wie er twee wint, wint.
-- Duurt een potje langer dan 3 minuten, dan krimpt de border naar 6 x 6.
+- Duurt een potje langer dan 3 minuten, dan krimpt de border in 30 seconden naar 6 x 6.
 
 **Einde**
 - Winnaar is King of the SMP. Kroning in het midden van de Arena, iedereen op de tribune. Geen

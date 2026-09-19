@@ -26,23 +26,36 @@ Geen Skript, geen datapack, geen plugins.
 
 ## Project opzetten
 
-1. Genereer een leeg project met de Fabric-template (fabricmc.net/develop/template): versie
-   26.2, **Mojang mappings** (die namen zijn stabiel tussen versies en het model kent ze het
-   best), de Java-versie die de template vraagt.
-2. `fabric.mod.json`: `"environment": "server"`, entrypoint `main`.
-3. `build.gradle`: alleen `fabric-api` als dependency. De voice-mod staat los van onze mod: als
+1. Neem de Fabric-template voor 26.2 als basis (FabricMC/fabric-example-mod, branch master).
+   Versies uit die template: `minecraft_version=26.2`, `loader_version=0.19.5`,
+   `loom_version=1.17-SNAPSHOT`, `fabric_api_version=0.160.0+26.2`, Gradle-wrapper 9.5.1,
+   plugin-id `net.fabricmc.fabric-loom`. **Java 25** is verplicht (`release 25`,
+   `"java": ">=25"`), ook op de testserver. Er is geen mappings-regel meer: 26.2 is niet
+   geobfusceerd, je werkt met de echte Mojang-namen.
+2. `fabric.mod.json`: `"environment": "server"`, entrypoint `main`, depends `fabricloader >=0.19.5`,
+   `minecraft ~26.2`, `java >=25`, `fabric-api *`. Geen mixins-config.
+3. `build.gradle`: `implementation` voor `net.fabricmc:fabric-loader` en
+   `net.fabricmc.fabric-api:fabric-api`, plus `implementation` én `include` van het
+   `core`-project zodat de kernlogica in de jar komt. De voice-mod staat los van onze mod: als
    jar in `run/mods/` voor de dev-server en in `mods/` op de echte server.
-4. Dev-loop: `./gradlew build` maakt de jar in `build/libs/`; die kopieer je naar `mods/` van je
-   eigen testserver en je herstart. `./gradlew runServer` kan ook, voor snel lokaal testen. Fixen
-   tijdens het event betekent jar vervangen en herstarten, dus test vooraf.
-5. Zet de mod in deze repo onder `mod/`, dan heeft Claude Code de docs en de code bij elkaar.
+4. Dev-loop: `./gradlew build` maakt de jar in `fabric/build/libs/`; die kopieer je naar `mods/`
+   van je eigen testserver en je herstart. `./gradlew runServer` kan ook, voor snel lokaal
+   testen. Fixen tijdens het event betekent jar vervangen en herstarten, dus test vooraf.
+5. De mod staat in deze repo onder `mod/`, in twee Gradle-projecten: `core` (pure Java, alle
+   rekenwerk, JUnit-tests, geen Minecraft) en `fabric` (de lijm naar Minecraft, Fabric Loom).
+   Met `-PcoreOnly` bouw en test je `core` zonder Loom.
 
 ## Serverinstellingen
 
-Gamerules die de mod bij het opstarten zet: `keepInventory` en `doImmediateRespawn` doen er niet
-toe (spelers gaan nooit echt dood), `naturalRegeneration` aan, `doMobSpawning` uit (de horde
-spawnen we zelf), `doDaylightCycle` uit, `announceAdvancements` uit, `locatorBar` uit (aan in
-ronde 4 t/m 6, zie Visuals).
+Gamerules die de mod bij het opstarten en bij `/bc reset` zet: `keepInventory` en
+`doImmediateRespawn` doen er niet toe (spelers gaan nooit echt dood), `naturalRegeneration` aan,
+`doMobSpawning` uit (de horde spawnen we zelf), `mobGriefing` uit (creepers in de ruïne-arena),
+`doDaylightCycle` uit, `announceAdvancements` uit, `locatorBar` uit (aan in ronde 4 t/m 6, zie
+Visuals). In 26.2 heten de gamerules in code anders (`GameRules.ADVANCE_TIME`, `SPAWN_MOBS`, ...)
+en zet je ze via `level.getGameRules().set(...)`.
+
+Gamemode zet `/bc start` per ronde: survival alleen in ronde 3 (minen), adventure in alle andere
+rondes; kijkers altijd adventure.
 
 Teams zijn er voor de kleur van naam, Glowing-outline en locator-stip, en voor PvP tot ronde 4:
 
@@ -84,13 +97,14 @@ Allemaal onder `/bc`, op-level 2.
 | `/bc point set\|block\|tp\|list\|del <naam>` | Punt op je positie (met kijkrichting) of op het blok waar je naar kijkt. |
 | `/bc start <ronde>` | Teleport naar het verzamelpunt, border, kits, countdown, poort open, timer. |
 | `/bc kit <naam> [<speler>]` | Zet de kit uit `kits/<naam>.json` op iedereen die meedoet, of op één speler. De start van een ronde doet dit zelf. |
-| `/bc stop` / `/bc timer <sec>` | Timer stil, of resterende tijd bijstellen. |
+| `/bc stop` / `/bc timer <sec>` | `stop` breekt de ronde af: timer stil, mobs en border weg, bevriezing eraf, bossbar terug. `timer` stelt de resterende tijd bij. |
+| `/bc status` | Rollen en vlaggen van alle spelers, huidige ronde en timer. |
 | `/bc poort <naam> open\|dicht` | Handmatig een poort bedienen. |
 | `/bc kroon <speler>` | Kroonwissel forceren (de ref z'n noodknop). |
 | `/bc uitverkoren <speler>` / `/bc slot <speler> <0-19>` | De verborgen rol en de pilaar van elke kop in De Kring. |
 | `/bc rad` | Het Rad. |
 | `/bc kijker <speler> aan\|uit` | Noodknop: iemand met de hand op de tribune zetten of eraf halen. |
-| `/bc reset` | Alles terug naar de basiskamp-staat: vlaggen, teams, gamemode, attributes, inventory, tp, border, bossbar, kijkers weg. |
+| `/bc reset` | Alles terug naar de basiskamp-staat via een register waar elk onderdeel zijn eigen opruimstap in zet: vlaggen, teams, gamemode, gamerules, effecten, attributes, pearl-blokkade, locator-attribute, zweefkroon, sidebar, horde-mobs, inventory, tp, border, bossbar, kijkers weg. Weigert niks, ruimt alles op. |
 
 ## Regio's en punten
 
@@ -106,6 +120,7 @@ opnieuw opslaan overschrijft de oude.
 | Regio's | Waarvoor |
 |---|---|
 | `doolhof`, `arena`, `eibos`, `vloer`, `finale` | Worldborder per ronde. `arena` is de horde-arena, `vloer` de vloer van de Arena (ronde 4 en 5), `finale` het midden (ronde 6). |
+| `doolhof_uit` | Het vak achter de uitgang van het doolhof: wie erin staat is eruit en gaat naar `v2`. |
 | `poort_doolhof`, `poort_arena`, `poort_bos` | De muur die open en dicht gaat (`fill` met lucht of iron bars). |
 | `eiplaat` | Het vak bij de uitgang van het bos waar je ticket wordt ingenomen. |
 
@@ -115,7 +130,7 @@ opnieuw opslaan overschrijft de oude.
 | Punten | Waarvoor |
 |---|---|
 | `basiskamp`, `v2`, `v3`, `kring` | Verzamelpunten. |
-| `doolhof_start`, `doolhof_uit` | Ingang en waar je uitkomt. |
+| `doolhof_start` | Ingang van het doolhof. |
 | `mob_1` t/m `mob_4`, `arena_spawn` | Horde-spawns en waar spelers de arena binnenkomen. |
 | `ei_start`, `ei_beacon` (blok) | Bosrand-ingang en het ontbrekende blok in de beaconpiramide onder het Ei. |
 | `troon`, `hunter_1` t/m `hunter_4` | Het midden van de Arena en de startpunten aan de rand van de vloer; bij elke kroonwissel gaat iedereen hierheen terug. |
@@ -166,6 +181,9 @@ components gewoon werken. De mod parst dat met de vanilla item-parser.
 }
 ```
 
+Een kit schrijft nooit over de head-slot van een koning of finalist: de kroon blijft op.
+`boss.json` en `finale.json` hebben daarom geen helm.
+
 `clear: false` voor kits die iets toevoegen (`ei`, `kroonpakket`). Een getal achter het item is
 het aantal. `/bc kit <naam>` zet hem op iedereen die meedoet, `/bc kit <naam> <speler>` op één
 speler; de rondes roepen hetzelfde aan bij de start. Een fout in een bestand komt als één
@@ -175,8 +193,18 @@ duidelijke regel in de console met bestandsnaam en slot, niet als een crash.
 
 **Status.** Eén `GameState`: huidige ronde, timer in seconden, vlaggen (`bevroren`),
 per speler een rol (`SPELER`, `HUNTER`, `KING`, `FFA`, `FINALIST`, `KIJKER`, `STAFF`) en
-vlaggen (`dood`, `ticket`, `uitverkoren`, slotnummer). Rollen staan ook als scoreboard-tag op de
-speler, zodat je ze met `@a[tag=...]` in de console kunt zien.
+vlaggen (`dood`, `ticket`, `uitverkoren`, slotnummer). De mod is de bron van waarheid;
+scoreboard-tags (`king`, `hunter`, `kijker`, `uitverkoren`, `ticket`) zijn read-only spiegels die
+elke seconde worden bijgezet, zodat je met `@a[tag=...]` kunt kijken. `/bc status` toont alles.
+
+**Ontbrekende config.** Elke ronde declareert welke regio's en punten ze nodig heeft. `/bc start`
+weigert met één regel ("ontbreekt: troon, hunter_3, ...") als er iets mist en verandert dan
+niets. `/bc rad` weigert zonder precies één uitverkorene.
+
+**Uitloggen en terugkomen.** Join en quit gaan naar de actieve ronde. Een hunter die uitlogt telt
+als dood. Logt de koning uit, dan telt de mod 30 seconden af (bossbar); komt hij niet terug, dan
+volgt dezelfde kroonwissel als bij een val-dood. Wie terugkomt in ronde 4 t/m 6 wordt kijker op
+de tribune; in ronde 1 t/m 3 gaat hij naar het verzamelpunt of de tribune van dat moment.
 
 **Tick.** `END_SERVER_TICK`; elke 20 ticks één seconde: timer omlaag, bossbar bijwerken, de
 actieve ronde z'n `tick()`. Ronde-specifieke momenten (Ei-hint op 5:00, einde op 0:00, "hunters
@@ -187,7 +215,7 @@ een dodelijke klap wordt de dood geannuleerd, de speler geheald en afgehandeld v
 
 | Ronde | Wat er gebeurt |
 |---|---|
-| 2 | Kijker tot het einde van de ronde. Doodtekst als title voor de dode, verder niks. |
+| 2 | Kijker tot het einde van de ronde. Doodtekst als title voor de dode, verder niks. Inventory wordt bewaard en bij `v3` teruggegeven. |
 | 4, koning | Kroonwissel naar de killer; anders de laatste hit; anders een willekeurige levende hunter. Ex-koning wordt kijker op de tribune. |
 | 4, hunter | Kijker op de tribune, uit de ronde, geen respawn. Is er geen levende hunter meer, dan eindigt de ronde en is de koning finalist 1. |
 | 5 | Kijker op de tribune; laatste over wordt finalist 2. |
@@ -239,7 +267,8 @@ Geen spectator mode, geen tp-items, geen vliegen. Wie dood is wordt naar de trib
 geteleporteerd en blijft daar bij de andere doden tot de ronde voorbij is; wie klaar is met een
 ronde staat bij het volgende verzamelpunt. De mod hoeft maar weinig te doen:
 
-- Adventure mode, team `out` (grijs in de tab-list), inventory leeg.
+- Adventure mode, team `out` (grijs in de tab-list), inventory leeg (in ronde 2 bewaard en bij
+  `v3` teruggegeven).
 - Geen schade (`ALLOW_DAMAGE` annuleren voor kijkers), ook niet van de border als die in de FFA of
   de finale krimpt.
 - Blijft op zijn plek: glas tussen tribune en vloer, en een tick-check die een kijker die toch in
@@ -268,7 +297,8 @@ voice-config uit, en de tribune is publiek: de vloer hoort de doden en andersom.
 ## Bossbar en visuals
 
 Eén bossbar, kort, altijd hetzelfde formaat (`ServerBossEvent`, alle spelers toegevoegd).
-Persoonlijke info via de actionbar, de regeerperiodes via de sidebar.
+Persoonlijke info via de actionbar. De sidebar toont in ronde 2 de sneuvelvolgorde en in ronde 4
+de regeerperiodes.
 
 | Ronde | Tekst | Kleur | Vulling |
 |---|---|---|---|
