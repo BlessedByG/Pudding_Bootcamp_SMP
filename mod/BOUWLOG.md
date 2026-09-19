@@ -1,6 +1,6 @@
 # Bouwlog
 
-Status: modus=A; klaar=T0,T1,T2; bezig=T3
+Status: modus=A; klaar=T0,T1,T2,T3,T4; bezig=T5
 
 Per taak: wat er gedaan is, wat geverifieerd is en wat open staat (in-game test, aanname,
 afwijking van de docs). Het plan staat in [../docs/08-taakplan.md](../docs/08-taakplan.md).
@@ -84,3 +84,44 @@ afwijking van de docs). Het plan staat in [../docs/08-taakplan.md](../docs/08-ta
   dertig seconden terugkomt blijft koning.
 - **Terugkomen in ronde 1 of 3**: naar de ingang van de zone, of naar het volgende verzamelpunt
   als je al klaar was. In ronde 2: kijker op de tribune.
+
+## T3 + T4. Config, gamerules, commands, wand, regio's en punten
+
+Samen in één commit: het commandboompje verwijst naar de wand, dus los compileren ze niet.
+
+**Gedaan**
+- `Mc`: de adapterlaag (tekst, spelers, staff, teleport, heal). Groeit per taak mee.
+- `config/ConfigStore`: `<wereld>/bootcamp.json` laden bij `SERVER_STARTED`, opslaan na elke
+  wijziging en bij `SERVER_STOPPING` (via een tmp-bestand). Een onleesbaar bestand wordt als
+  `bootcamp.json.kapot` opzij gezet; de mod begint dan leeg in plaats van te crashen.
+- `config/Standaardbestanden`: schrijft wat ontbreekt uit `standaard/` in de jar naar
+  `config/bootcamp/`. De bestanden zelf komen in T5.
+- `game/Spelregels`: gamerules met de 26.2-namen (`NATURAL_HEALTH_REGENERATION`, `SPAWN_MOBS`,
+  `MOB_GRIEFING`, `ADVANCE_TIME`, `ADVANCE_WEATHER`, `SHOW_ADVANCEMENT_MESSAGES`, `LOCATOR_BAR`).
+- `game/Teams`: `spelers` wit, `hunters` aqua met friendly fire, `king` goud, `out` grijs.
+- `game/Reset` + `SpelerReset`: het register achter `/bc reset`. Nu geregistreerd: effecten en
+  heal, inventory, gamemode, teleport naar `basiskamp` (overgeslagen als dat punt niet bestaat),
+  teams, gamerules, bossbar.
+- `visuals/Bossbar`: één `ServerBossEvent` voor iedereen.
+- `commands/`: het hele `/bc`-boompje op op-level 2 (`Commands.LEVEL_GAMEMASTERS`). Werkend:
+  `wand`, `region save|show|list|del`, `point set|block|tp|list|del`, `uitverkoren`, `slot`,
+  `status`, `reset`. De rest meldt netjes in welke taak het komt.
+- `setup/Wand`: stick met `custom_data`, linksklik hoek 1, rechtsklik hoek 2, `region show` tien
+  seconden `end_rod`-particles op de twaalf randen (maximaal 600 per tekenbeurt).
+
+**Geverifieerd**
+- `./gradlew build` groen tegen de echte 26.2-jar, `check.sh` groen (alle command-literals uit
+  docs/04 aanwezig).
+
+**Open: in-game testen**
+- Wand: klikken, `region save`, `region show`, of de klik in creative het blok niet sloopt.
+- `/bc point block` kijkt tot 32 blokken ver.
+
+**Concretiseringen**
+- **Staff is wie in creative of spectator staat.** De mod zet deelnemers zelf in adventure of
+  survival, dus wie in creative of spectator staat is host, camera of admin en wordt met rust
+  gelaten (geen teleport, geen kit, telt niet mee). Geen apart command nodig.
+- `/bc uitverkoren` en `/bc slot` nemen een naam, geen online speler, zodat je alles vooraf kunt
+  klaarzetten. Hun antwoord gaat alleen naar wie het typt en niet naar de andere ops of de log:
+  het rad blijft geheim. `/bc uitverkoren` zonder naam laat zien wie het is.
+- Namen van regio's en punten: kleine letters, cijfers en `_`.
