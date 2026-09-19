@@ -114,7 +114,8 @@ Wat je nodig hebt:
 | `mob_1` t/m `mob_4` | Spawnpunten van de horde. |
 | `arena_spawn` | Waar spelers de arena binnenkomen. |
 | `ei_start`, `ei_beacon` (blok) | Bosrand-ingang en het ontbrekende blok in de beaconpiramide onder het Ei. |
-| `burcht`, `hunter_1` t/m `hunter_4` | Startpunten ronde 4. |
+| `burcht`, `hunter_1` t/m `hunter_4` | Startpunten ronde 4; bij elke kroonwissel gaat iedereen hierheen terug. |
+| `sd_1` t/m `sd_4` | Startpunten voor een reset tijdens sudden death, binnen de 60 x 60 rond de burcht. |
 | `ffa_midden`, `finale_1`, `finale_2`, `kroning` | Binnenplaats en troonzaal. |
 | `lamp_0` t/m `lamp_19` (blokken) | De lichtblokken van De Kring, met de klok mee. |
 
@@ -350,8 +351,7 @@ on death of player:
                 set {_nieuw} to {bc::lasthit}
             else:
                 set {_nieuw} to random element of bcMetTag("hunter")
-            bcUit(victim)
-            bcKroon({_nieuw})
+            bcKroonwissel(victim, {_nieuw})
         else if {bc::sudden} is true:
             bcUit(victim)
         else:
@@ -384,11 +384,16 @@ function bcUit(p: player):
     bcVoice("doden", {_p})
 
 function bcRespawn(p: player):
+    set {_gen} to {bc::generatie}
     wait 1 tick
     set gamemode of {_p} to spectator
     loop 20 times:
+        if {bc::generatie} is not {_gen}:
+            stop
         send action bar "&cRespawn in %21 - loop-number%" to {_p}
         wait 1 second
+    if {bc::generatie} is not {_gen}:
+        stop
     teleport {_p} to {bc::punt::hunter_%random integer between 1 and 4%}
     set gamemode of {_p} to survival
     apply resistance of tier 5 to {_p} for 5 seconds
@@ -402,16 +407,70 @@ function bcKroon(p: player):
     remove "hunter" from scoreboard tags of {_p}
     execute console command "team join king %{_p}%"
     execute console command "item replace entity %{_p}% armor.head with minecraft:golden_helmet[minecraft:enchantments={""minecraft:binding_curse"":1},minecraft:unbreakable={}]"
+    teleport {_p} to {bc::punt::burcht}
     heal {_p}
+    set food level of {_p} to 10
+    bcRepareer({_p})
     apply resistance of tier 2 to {_p} for 15 seconds
     apply glowing to {_p} for 1 hour
     give 2 golden apples and 2 ender pearls to {_p}
     delete {bc::lasthit}
     bcVisual("kroon", {_p})
+
+function bcRepareer(p: player):
+    set damage value of helmet of {_p} to 0
+    set damage value of chestplate of {_p} to 0
+    set damage value of leggings of {_p} to 0
+    set damage value of boots of {_p} to 0
+    set damage value of tool of {_p} to 0
+    set damage value of offhand tool of {_p} to 0
 ```
 
-De kroonwissel is dus: `bcUit(oude)` en `bcKroon(nieuwe)`, zie de death-handler. De ref z'n
-noodknop `/bc kroon <speler>` roept dezelfde functie aan.
+Heet de expressie in jullie Skript-versie `durability` in plaats van `damage value`, zet hem
+dan op de maximale waarde. Versie-onafhankelijke fallback: een item modifier in de
+mini-datapack, `data/bootcamp/item_modifier/repair.json` met
+`{"function":"minecraft:set_damage","damage":1.0}`, en dan per slot
+`item modify entity %{_p}% armor.head bootcamp:repair` (ook `armor.chest`, `armor.legs`,
+`armor.feet`, `weapon.mainhand`, `weapon.offhand` en `hotbar.0` t/m `hotbar.8`).
+
+**De kroonwissel is een reset.** Ex-koning eruit, nieuwe koning naar de burcht, alle hunters
+geheald en terug achter de hekjes, tien seconden later open:
+
+```
+function bcKroonwissel(oude: player, nieuwe: player):
+    bcUit({_oude})
+    bcKroon({_nieuwe})
+    bcOpstelling(10)
+
+function bcOpstelling(wacht: integer):
+    add 1 to {bc::generatie}
+    if {bc::sudden} is not true:
+        loop 4 times:
+            bcPoort("hek_%loop-number%", false)
+    loop bcMetTag("hunter"):
+        heal loop-player
+        set food level of loop-player to 10
+        set gamemode of loop-player to survival
+        if {bc::sudden} is true:
+            teleport loop-player to {bc::punt::sd_%mod(loop-iteration, 4) + 1%}
+        else:
+            teleport loop-player to {bc::punt::hunter_%mod(loop-iteration, 4) + 1%}
+    if {bc::sudden} is not true:
+        loop {_wacht} times:
+            send action bar "&eHekjes open over %{_wacht} - loop-number + 1%" to bcMetTag("hunter")
+            wait 1 second
+        loop 4 times:
+            bcPoort("hek_%loop-number%", true)
+```
+
+`{bc::generatie}` telt de resets; `bcRespawn` kijkt ernaar en stopt zijn wachttijd als er
+intussen een reset was, want die speler staat dan al aan de rand. Tijdens sudden death liggen de
+hunterspawns buiten de border, dus dan gaan de hunters naar `sd_1` t/m `sd_4` bij de burcht en
+zijn er geen hekjes. Bij de start van de ronde gebruikt `bcStart(4)` dezelfde `bcOpstelling`,
+met 30 seconden.
+
+De ref z'n noodknop `/bc kroon <speler>` roept `bcKroonwissel` aan met de huidige koning als
+`oude`.
 
 **Het Rad**
 
@@ -449,10 +508,9 @@ command /bcrad:
 
 Startpositie en aantal rondes zijn willekeurig, het eindpunt is het slot van de `uitverkoren`
 speler. `bcRadEinde` doet de visuals (zie hieronder), wacht drie seconden en roept `bcStart(4)`
-aan: hunters getagd en in team, teleport naar `hunter_1` t/m `hunter_4` achter de hekjes, Clown
-naar `burcht` met bosskit en `bcKroon`, iedereen de [VERLATEN]-knop, border `king`, locator bar
-aan voor de koning, na 30 seconden de hekjes open met `bcPoort("hek_1".."hek_4", true)` en de
-timer op 900.
+aan: hunters getagd en in team, Clown de bosskit en `bcKroon` (die zet hem in de burcht), dan
+`bcOpstelling(30)` voor de hunters achter de hekjes, iedereen de [VERLATEN]-knop, border `king`,
+locator bar aan voor de koning en de timer op 900.
 
 **De horde**
 

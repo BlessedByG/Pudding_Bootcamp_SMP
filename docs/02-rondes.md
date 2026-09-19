@@ -188,10 +188,16 @@ Hier het overzicht.
 - De koning krijgt 30 seconden voorsprong voordat de hunters los mogen.
 
 **Regels in het kort**
-- Kill de koning en je krijgt de kroon: full heal, 15 seconden Resistance, een kroonpakketje
-  (2 gapples, 2 pearls), Glowing.
+- Kill de koning en je krijgt de kroon. Elke kroonwissel is een **reset**: alle hunters worden
+  geheald en terug naar hun startpunt aan de rand geteleporteerd. De nieuwe koning wordt geheald,
+  krijgt zijn armor en wapens gerepareerd, het kroonpakketje (2 gapples, 2 pearls), 15 seconden
+  Resistance en Glowing, en staat in het midden van de burcht. Na 10 seconden gaan de hekjes
+  weer open.
+- Gaat de koning dood zonder killer (val, lava), dan gebeurt precies hetzelfde. De kroon gaat naar
+  de laatste die hem raakte.
 - De ex-koning ligt eruit. Van 19v1 naar 18v1 naar 17v1, enzovoort.
-- Hunters die doodgaan respawnen na 20 seconden aan de rand (keepInventory aan).
+- Hunters die doodgaan respawnen na 20 seconden aan de rand (keepInventory aan). Een kroonwissel
+  in die 20 seconden zet je meteen weer neer.
 - **Sudden death** in de laatste 3 minuten: geen respawns meer, de worldborder krimpt naar 60 x 60
   rond de burcht.
 - Timer 15 minuten. Wie de kroon heeft als de timer afloopt is **finalist 1**.

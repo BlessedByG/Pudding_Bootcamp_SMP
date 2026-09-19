@@ -45,7 +45,7 @@ zone geteleporteerd (zie [docs/01-map-en-flow.md](docs/01-map-en-flow.md)).
 | 1 | **De Doolhof** | Vind de uitgang van het doolhof. Kistjes in doodlopende gangen. | 10 min | Navigeren, oriëntatie |
 | 2 | **De Horde** | Overleef 5 waves mobs als groep in een arena. Dood = kijken tot de ronde klaar is. | 10 min | Mobs, boog, schild, samenwerken |
 | 3 | **Het Ei** | Vind het Grote Ei, hak je naar binnen, pak loot + een diamond block als ticket. | 10 min | Zoeken, minen, looten onder druk |
-| 4 | **King of the SMP** | Het Rad "kiest" de koning en landt op Clown (rigged). 19v1. Kill de koning en je krijgt de kroon. Wie hem heeft als de timer afloopt is finalist 1. | 15 min | PvP, chaos, overleven |
+| 4 | **King of the SMP** | Het Rad "kiest" de koning en landt op Clown (rigged). 19v1. Kill de koning en je krijgt de kroon; iedereen terug naar start. Wie hem heeft als de timer afloopt is finalist 1. | 15 min | PvP, chaos, overleven |
 | 5 | **Arena FFA** | Iedereen zonder kroon, full hp, één arena. Laatste die overblijft is finalist 2. | max 10 min | PvP |
 | 6 | **De Finale** | 1v1 tussen de twee kroondragers, best of 3. | ± 10 min | PvP |
 

@@ -23,26 +23,33 @@ kroon heeft, is de koning en is voor iedereen zichtbaar door muren heen.
 6. 30 seconden voorsprong voor de koning: hunters staan achter een hekje. Daarna gaat het hek open
    en start de timer van 15 minuten.
 
-## De kroon wisselt
+## De kroon wisselt: elke wissel is een reset
 
-**Wie de koning killt, krijgt de kroon.** Direct, zonder tussenstap:
+**Wie de koning killt, krijgt de kroon.** En op dat moment begint de jacht opnieuw:
 
 - De ex-koning verliest de kroon en gaat in spectator. Hij ligt eruit (zie
   [06-open-keuzes.md](06-open-keuzes.md) voor de variant waarin ex-koningen wel meedoen aan de FFA).
   In voice hoort hij vanaf nu alles, maar niemand hoort hem; hij krijgt de knop voor de groep
   Doden (zie [07-voice.md](07-voice.md)).
-- De nieuwe koning:
-  - wordt full hp geheald,
-  - krijgt 15 seconden Resistance II (zodat je niet meteen doodgaat als je op één hartje de kill
-    maakt),
+- **Alle hunters** worden full hp geheald en teruggeteleporteerd naar hun startpunt aan de rand,
+  achter de hekjes. Ook wie op dat moment in zijn respawn-wachttijd zit: die staat meteen weer
+  aan de rand, de wachttijd vervalt.
+- **De nieuwe koning** wordt naar het midden van de burcht geteleporteerd en:
+  - wordt full hp geheald, honger vol,
+  - krijgt al zijn armor en wapens gerepareerd (volle durability),
   - krijgt het kroonpakketje: 2 gapples + 2 ender pearls,
-  - gaat van team `hunters` naar team `king`, krijgt de helm en Glowing.
+  - krijgt 15 seconden Resistance II en Glowing,
+  - gaat van team `hunters` naar team `king` en krijgt de helm.
 - Iedereen krijgt een `title`: **NIEUWE KONING: <naam>**. Bossbar update.
+- **10 seconden** later gaan de hekjes open en gaat de jacht verder. De timer loopt gewoon door.
 - Van 19v1 naar 18v1. Elke kroonwissel haalt één speler uit het spel.
+
+Alleen de koning krijgt zijn spullen gerepareerd; hunters slijten door de ronde heen. Wil je dat
+iedereen bij een reset gerepareerd wordt, dan is dat één regel extra in Skript.
 
 **De koning gaat dood zonder killer** (val, lava, mob, disconnect):
 
-- De kroon gaat naar de hunter die de koning als laatste heeft geraakt.
+- Precies dezelfde reset. De kroon gaat naar de hunter die de koning als laatste heeft geraakt.
 - Is die er niet, dan naar een willekeurige hunter. De ronde mag nooit zonder koning zitten.
 - Bij een disconnect wacht de admin 30 seconden. Komt de speler niet terug, dan gaat de kroon
   door op dezelfde manier.
@@ -53,7 +60,7 @@ kroon heeft, is de koning en is voor iedereen zichtbaar door muren heen.
 - Doodgaan als hunter = 20 seconden spectator, dan respawn op een van de 4 randpunten met al je
   spullen (keepInventory staat aan). 5 seconden Resistance na respawn tegen spawncampen. In die
   20 seconden hoor je alles maar kun je niet praten; dus geen "hij zit achter de toren" naar je
-  team.
+  team. Wisselt de kroon terwijl je wacht, dan sta je meteen weer aan de rand.
 - Bouwen mag. Pillaren, inbouwen, een trap zetten: allemaal SMP-gedrag.
 
 ## Sudden death: de laatste 3 minuten
@@ -62,6 +69,9 @@ kroon heeft, is de koning en is voor iedereen zichtbaar door muren heen.
 - Geen respawns meer. Een hunter die nu doodgaat is uitgeschakeld.
 - De worldborder krimpt in 3 minuten van 200 x 200 naar 60 x 60 rond de burcht. Verstoppen kan
   niet meer, de koning moet vechten.
+- Een kroonwissel is nog steeds een reset, maar de startpunten aan de rand liggen dan buiten de
+  border. De hunters gaan daarom naar vier punten vlak bij de burcht, binnen de 60 x 60, en er
+  zijn geen hekjes: heal, teleport, meteen door.
 
 ## Einde van de timer
 
@@ -82,6 +92,9 @@ kroon heeft, is de koning en is voor iedereen zichtbaar door muren heen.
 | Twee hunters raken de koning tegelijk | De speler die de laatste klap geeft krijgt de kroon. Het spel bepaalt dat, niet de admin. |
 | De koning logt uit | Zie hierboven: 30 seconden wachten, dan gaat de kroon door. |
 | De koning bouwt zich in | Mag. Sudden death en de border lossen het op. |
+| Kroonwissel terwijl een hunter op zijn respawn wacht | Wachttijd vervalt, hij staat meteen weer aan de rand. |
+| Kroonwissel midden in sudden death | Reset naar de vier punten bij de burcht, zonder hekjes. |
+| De nieuwe koning stond midden in een gevecht op één hartje | Maakt niet uit: hij staat geheald in de burcht, de rest aan de rand. |
 | Iemand met de kroon gaat in spectator door een bug | Admin geeft de kroon handmatig met `/bc kroon <speler>` (zie technische schets). |
 | Er is maar één hunter over aan het eind van de timer | Die is finalist 2, de FFA vervalt. |
 

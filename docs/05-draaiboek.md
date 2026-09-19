@@ -85,6 +85,9 @@ Doe minstens één keer de hele avond met 4 of 5 testers, van basiskamp tot kron
 - [ ] King: kroon gaat naar de killer (test met 2 man). Kroon gaat naar random hunter bij val-dood.
       Respawn na 20 sec. Sudden death stopt respawns en krimpt de border. Timer 0 wijst
       finalist 1 aan en teleporteert de rest.
+- [ ] Kroonwissel: alle hunters staan geheald achter de hekjes, de nieuwe koning staat in de
+      burcht met volle armor, hekjes na 10 seconden open. Ook testen tijdens sudden death
+      (sd-punten, geen hekjes) en terwijl iemand op zijn respawn wacht.
 - [ ] King: koning logt uit en weer in. Wat gebeurt er? Zorg dat de ref weet wat te doen.
 - [ ] FFA: laatste levende wordt finalist 2, teleport naar de 1v1-arena werkt.
 - [ ] Finale: kit reset en full heal per potje.
