@@ -1,0 +1,23 @@
+{
+	"schemaVersion": 1,
+	"id": "bootcamp",
+	"version": "${version}",
+	"name": "Pudding Bootcamp",
+	"description": "Server-side mod voor de Pudding Bootcamp SMP: rondes, kroon, rad, tribune, bossbar en visuals.",
+	"authors": [
+		"BlessedByG"
+	],
+	"license": "All-Rights-Reserved",
+	"environment": "server",
+	"entrypoints": {
+		"main": [
+			"nl.pudding.bootcamp.Bootcamp"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"minecraft": "~26.2",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}

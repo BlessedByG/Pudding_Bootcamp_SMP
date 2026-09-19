@@ -1,0 +1,35 @@
+plugins {
+	id 'java-library'
+}
+
+group = rootProject.group
+version = rootProject.version
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	// Gson zit al in Minecraft; hier alleen om tegen te compileren en te testen.
+	compileOnly "com.google.code.gson:gson:${gson_version}"
+	testImplementation "com.google.code.gson:gson:${gson_version}"
+
+	testImplementation platform("org.junit:junit-bom:${junit_version}")
+	testImplementation 'org.junit.jupiter:junit-jupiter'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 21
+	it.options.encoding = 'UTF-8'
+}
+
+test {
+	useJUnitPlatform()
+	// De resourcetest leest de standaardbestanden van het fabric-project.
+	systemProperty 'bootcamp.fabricResources', rootProject.file('fabric/src/main/resources').absolutePath
+	testLogging {
+		events 'failed'
+		exceptionFormat 'full'
+	}
+}

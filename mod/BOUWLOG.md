@@ -1,6 +1,6 @@
 # Bouwlog
 
-Status: modus=A; klaar=T0; bezig=T1
+Status: modus=A; klaar=T0,T1; bezig=T2
 
 Per taak: wat er gedaan is, wat geverifieerd is en wat open staat (in-game test, aanname,
 afwijking van de docs). Het plan staat in [../docs/08-taakplan.md](../docs/08-taakplan.md).
@@ -28,3 +28,24 @@ afwijking van de docs). Het plan staat in [../docs/08-taakplan.md](../docs/08-ta
 - Geen apt, geen JDK-installatie: JDK 25 stond er al.
 - `gradle wrapper` kan niet zonder globale Gradle; de wrapperbestanden zijn uit de template
   gekopieerd.
+
+## T1. Projectskelet
+
+**Gedaan**
+- `mod/settings.gradle` (Fabric-maven, Maven Central, Gradle-portal; `fabric` alleen zonder
+  `-PcoreOnly`), `gradle.properties` met de template-versies, wrapper 9.5.1.
+- `core`: `java-library`, `release 21`, JUnit 5, Gson als `compileOnly` (zit al in Minecraft).
+- `fabric`: Loom 1.17, `release 25`, `implementation` + `include` van `core`, `fabric.mod.json`
+  met `"environment": "server"` en zonder mixins, entrypoint `nl.pudding.bootcamp.Bootcamp`.
+- `check.sh`, `README.md`, `.gitignore`.
+
+**Geverifieerd**
+- `./gradlew build` groen (Loom 1.17.21, Gradle 9.5.1, JDK 25).
+- De jar bevat `META-INF/jars/core-0.1.0.jar`; Loom geeft die geneste jar zelf een
+  `fabric.mod.json`, dus de loader pakt hem op.
+- `check.sh` groen.
+
+**Afwijking van het taakplan**
+- Package is `nl.pudding.bootcamp` (kern in `nl.pudding.bootcamp.core`).
+- `check.sh` doet in Modus A geen losse `javac`-syntaxcheck: de echte compile in
+  `./gradlew build` vervangt die. `./check.sh --core-only` is de Modus B-variant.
