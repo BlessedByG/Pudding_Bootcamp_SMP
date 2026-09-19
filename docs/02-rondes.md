@@ -56,7 +56,7 @@ ronde 4.
 **Wat kan misgaan**
 - Niemand vindt de uitgang: na 7 minuten een `title` met een hint ("de uitgang ligt aan de
   noordkant"). Uiteindelijk lost de timer het op.
-- Spelers die stuck staan: admin in spectator kan ze met `tp` een gang verder zetten.
+- Spelers die stuck staan: admin kan ze met `tp` een gang verder zetten.
 
 ---
 
@@ -83,9 +83,9 @@ ronde 4.
 - Bossbar laat zien: "Wave 3 · 12 mobs over".
 
 **Regels**
-- Doodgaan = spectator tot het einde van de ronde. Je kijkt mee, je hoort alles, maar de
-  levenden horen jou niet. Met de andere doden kun je wel praten. Aan het eind van de ronde
-  gaat iedereen door, dood of levend.
+- Doodgaan = kijker tot het einde van de ronde. Je vliegt onzichtbaar mee met twee tp-items in je
+  hotbar, je hoort alles, maar de levenden horen jou niet. Met de andere doden kun je wel praten.
+  Aan het eind van de ronde gaat iedereen door, dood of levend.
 - De volgorde van sneuvelen komt op het scoreboard in de sidebar. Puur voor de eer.
 - Optionele twist voor de laatste minuut: na wave 5 gaat PvP 60 seconden aan ("vrij vuur").
   Wie dan overblijft, of de meeste kills heeft, krijgt een extra bonus. Alleen doen als je de
@@ -98,7 +98,7 @@ ronde 4.
 
 **Bonus:** iedereen die de ronde overleeft, krijgt 1 ender pearl bij verzamelpunt 3.
 
-**Voice:** levend proximity. Dood = spectator: alles horen, niet gehoord worden, en met de andere
+**Voice:** levend proximity. Dood = kijker: alles horen, niet gehoord worden, en met de andere
 doden praten. Gaat automatisch, je hoeft niks te doen.
 
 **Wat train je:** mobs, boog en schild, samen vechten, niet in de creeper rennen.
@@ -108,7 +108,7 @@ doden praten. Gaat automatisch, je hoeft niks te doen.
   4 punten in plaats van alles op één plek.
 - Mobs blijven ergens hangen (achter dekking, in een gat): wave-timer van 2 minuten vangt dit op.
   Admin kan met `kill @e[tag=horde]` een wave forceren.
-- Iedereen ligt er op wave 3 al uit: dan was het te zwaar, en een arena vol spectators is saai.
+- Iedereen ligt er op wave 3 al uit: dan was het te zwaar, en een arena vol kijkers is saai.
   Zonder respawns wil je de waves liever iets te makkelijk dan te moeilijk; schaal ze in de
   testrun.
 
@@ -207,8 +207,8 @@ Hier het overzicht.
 - Finalist 1 gaat kijken. Alle hunters die nog leven gaan naar ronde 5. Iedereen die dood is
   (ex-koningen, hunters gestorven in sudden death) is uitgeschakeld.
 
-**Voice:** proximity. Dood = spectator: alles horen, niet gehoord worden, praten met de andere
-doden. Hunters die 20 seconden op hun respawn wachten zijn ook even spectator en dus even stil.
+**Voice:** proximity. Dood = kijker: alles horen, niet gehoord worden, praten met de andere
+doden. Hunters die 20 seconden op hun respawn wachten zijn ook even kijker en dus even stil.
 Allemaal automatisch.
 
 **Wat train je:** PvP tegen overmacht, target focus, wanneer je wel en niet moet gaan.
@@ -229,7 +229,7 @@ Allemaal automatisch.
 - 10 seconden countdown, dan los.
 
 **Regels**
-- Dood = uit (spectator).
+- Dood = uit (kijker).
 - Teamen mag, maar er wint er maar één. Op eigen risico.
 - Na 5 minuten krimpt de worldborder in 2 minuten naar 10 x 10, zodat het niet blijft hangen.
 
@@ -237,8 +237,8 @@ Allemaal automatisch.
 - Laatste levende speler krijgt de tweede kroon: **finalist 2**.
 - Hard maximum 10 minuten; staan er dan nog meerdere, dan beslist het aantal kills.
 
-**Voice:** loopt door op de stand van ronde 4. Levend proximity, dood naar de groep Doden.
-Finalist 1 wacht ook in Doden.
+**Voice:** loopt door op de stand van ronde 4. Levend proximity, dood wordt kijker. Finalist 1
+kijkt ook als kijker en is dus stil voor de vechters.
 
 ---
 
@@ -260,5 +260,5 @@ Finalist 1 wacht ook in Doden.
 - Winnaar is King of the SMP. Kroning in de troonzaal, iedereen wordt erbij geteleporteerd. Prijs: zie
   [06-open-keuzes.md](06-open-keuzes.md).
 
-**Voice:** de twee finalisten proximity in de arena, alle anderen in Doden. Bij de kroning gaat
-iedereen uit zijn groep: proximity in de troonzaal.
+**Voice:** de twee finalisten proximity in de arena, alle anderen kijker. Bij de kroning is
+iedereen weer levend: proximity in de troonzaal.

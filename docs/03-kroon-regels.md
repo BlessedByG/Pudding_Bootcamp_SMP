@@ -28,7 +28,7 @@ kroon heeft, is de koning en is voor iedereen zichtbaar door muren heen.
 
 **Wie de koning killt, krijgt de kroon.** En op dat moment begint de jacht opnieuw:
 
-- De ex-koning verliest de kroon en gaat in spectator. Hij ligt eruit (zie
+- De ex-koning verliest de kroon en wordt kijker. Hij ligt eruit (zie
   [06-open-keuzes.md](06-open-keuzes.md) voor de variant waarin ex-koningen wel meedoen aan de FFA).
   In voice hoort hij vanaf nu alles, maar niemand hoort hem; hij zit automatisch bij de doden
   (zie [07-voice.md](07-voice.md)).
@@ -47,7 +47,7 @@ kroon heeft, is de koning en is voor iedereen zichtbaar door muren heen.
 - Van 19v1 naar 18v1. Elke kroonwissel haalt één speler uit het spel.
 
 Alleen de koning krijgt zijn spullen gerepareerd; hunters slijten door de ronde heen. Wil je dat
-iedereen bij een reset gerepareerd wordt, dan is dat één regel extra in Skript.
+iedereen bij een reset gerepareerd wordt, dan is dat één regel extra in de mod.
 
 **De koning gaat dood zonder killer** (val, lava, mob, disconnect):
 
@@ -59,7 +59,7 @@ iedereen bij een reset gerepareerd wordt, dan is dat één regel extra in Skript
 ## Hunters
 
 - Hunters kunnen elkaar niet raken (zelfde team). Het is 19 tegen 1, niet 19 tegen elkaar.
-- Doodgaan als hunter = 20 seconden spectator, dan respawn op een van de 4 randpunten met al je
+- Doodgaan als hunter = 20 seconden kijker, dan respawn op een van de 4 randpunten met al je
   spullen (keepInventory staat aan). 5 seconden Resistance na respawn tegen spawncampen. In die
   20 seconden hoor je alles maar kun je niet praten; dus geen "hij zit achter de toren" naar je
   team. Wisselt de kroon terwijl je wacht, dan sta je meteen weer aan de rand.
@@ -81,7 +81,7 @@ iedereen bij een reset gerepareerd wordt, dan is dat één regel extra in Skript
   gevecht; dat is prima, dat is spanning.
 - Alle hunters die nog leven gaan door naar de FFA.
 - Alle spelers die dood zijn (ex-koningen en hunters gestorven in sudden death) zijn uitgeschakeld
-  en kijken de rest in spectator.
+  en kijken de rest als kijker.
 
 ## Randgevallen
 
@@ -97,7 +97,7 @@ iedereen bij een reset gerepareerd wordt, dan is dat één regel extra in Skript
 | Kroonwissel terwijl een hunter op zijn respawn wacht | Wachttijd vervalt, hij staat meteen weer aan de rand. |
 | Kroonwissel midden in sudden death | Reset naar de vier punten bij de burcht, verder hetzelfde. |
 | De nieuwe koning stond midden in een gevecht op één hartje | Maakt niet uit: hij staat geheald in de burcht, de rest aan de rand. |
-| Iemand met de kroon gaat in spectator door een bug | Admin geeft de kroon handmatig met `/bc kroon <speler>` (zie technische schets). |
+| Iemand met de kroon wordt kijker door een bug | Admin geeft de kroon handmatig met `/bc kroon <speler>` (zie technische schets). |
 | Er is maar één hunter over aan het eind van de timer | Die is finalist 2, de FFA vervalt. |
 
 ## De tweede kroon

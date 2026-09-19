@@ -10,11 +10,11 @@ het idee van 19v1, 18v1, 17v1: elke kroonwissel haalt iemand uit het spel.
 
 **Het probleem:** dit straft precies het spannendste moment van de avond. Wie Clown killt, heeft
 de kroon en 18 man achter zich aan. Grote kans dat die binnen een minuut dood is en dan 40
-minuten in spectator zit. Slimme spelers gaan de kroon daardoor juist vermijden tot de laatste
+minuten als kijker rondzweeft. Slimme spelers gaan de kroon daardoor juist vermijden tot de laatste
 minuten. Met 19 streamers die niet samen kunnen overleggen zal het in de praktijk toch chaos
 worden, maar het is een rare prikkel.
 
-**Variant:** ex-koningen zitten de rest van ronde 4 in spectator (dus het blijft 18v1, 17v1),
+**Variant:** ex-koningen zijn de rest van ronde 4 kijker (dus het blijft 18v1, 17v1),
 maar doen wel weer mee aan de FFA. Killen van de koning is dan puur winst: highlight plus een
 kans op de kroon, en als het misgaat zit je hooguit een paar minuten uit. Alle streamers blijven
 tot de FFA actief. Nadeel: de FFA wordt groter (tot 19 man) en er is minder eliminatie-spanning
@@ -91,15 +91,17 @@ Opties, kunnen ook gecombineerd:
 
 **Aanbeveling:** kroon dragen plus de bounty. Dat trekt de bootcamp-verhaallijn de SMP in.
 
-## 9. Datapack of plugin?
+## 9. Datapack, plugin of eigen mod?
 
-**Besloten:** Paper op Minecraft 26.2 met Skript. Regio's zet je met een wand, teleportpunten
-met een command, de rest is Skript. Spelers hebben alleen de voice-mod nodig. De datapack-versie
-staat nog in de git-geschiedenis voor wie nul plugins wil. Zie
-[04-technische-schets.md](04-technische-schets.md).
+**Besloten:** een eigen server-side Fabric-mod op Minecraft 26.2, gevibecode met Claude Code.
+Regio's met een wand, teleportpunten met een command, en alles wat de laatste wensen lastig
+maakten in Skript (automatische voice, bevriezen, kijkers met items) zit rechtstreeks in de mod.
+Spelers hebben alleen de voice-mod nodig. Zie [04-technische-schets.md](04-technische-schets.md).
 
-**Nog open:** of alle plugins op tijd een 26.2-build hebben. Zo niet, dan bouwen op de nieuwste
-versie die alles ondersteunt en later updaten.
+**Nog open:** of Fabric Loader, Fabric API en de voice-mod op tijd een 26.2-build hebben, en of
+er iemand is die de dev-loop (compileren, testen, fouten terugplakken) wil draaien. De Paper +
+Skript-versie (`d351fd1`) en de datapack-versie (`e51e143`) staan in de git-geschiedenis als
+terugvaloptie.
 
 ## 10. Hoeveel spelers?
 
@@ -159,17 +161,15 @@ om de koning te vinden, ook met Glowing. En de koning kan in survival het doolho
 **Aanbeveling:** 200 x 200 houden. Wil je toch de hele wereld, begin de border dan op 400 en laat
 hem vanaf minuut 5 al krimpen.
 
-## 16. Echte spectators, of "nep-spectators" met items in de hotbar?
+## 16. Echte spectators, of kijkers met items in de hotbar?
 
-**Nu in het concept:** echte spectator mode voor de doden. Daar hangt de voice-regel aan (de mod
-dempt spectators automatisch voor de levenden) en spectators vliegen door muren en de border.
-Nadeel: echte spectators kunnen geen items vasthouden, dus de tp-items zijn er alleen voor de
-staff; de doden gebruiken het spectator-menu of `/levend` en `/dood`.
+**Besloten:** kijkersmodus in de mod. Doden gaan in adventure mode met fly en onzichtbaarheid,
+onaantastbaar (geen schade, pijlen en klappen gaan door je heen, geen botsing, niks oppakken), met
+de twee tp-items in de hotbar. De voice-regel hangt aan de dood-vlag van de mod, niet aan
+spectator mode.
 
-**Alternatief:** doden in adventure mode met fly en onzichtbaarheid, mét de twee tp-items in de
-hotbar. Dan werkt de voice-regel van de mod niet meer (die kijkt naar spectator mode), dus je
-moet met LuckPerms per dode `voicechat.speak` uitzetten: de dode hoort dan alles maar kan met
-niemand praten, ook niet met andere doden. En onzichtbare spelers hebben een hitbox: ze vangen
-pijlen op, staan in de weg in de arena en kunnen niet door muren.
+**Nadeel:** kijkers vliegen niet door muren; dat is client-side en zou een client-mod vragen.
+Eroverheen kan wel.
 
-**Aanbeveling:** echte spectators. De items voor de staff, het menu voor de doden.
+**Alternatief:** echte spectator mode. Wel door muren, geen items; teleporteren gaat dan via
+het ingebouwde spectator-menu. Staff kan dat altijd nog kiezen, de mod dwingt het niet af.

@@ -10,7 +10,7 @@ Twee dingen houden het toch strak:
 - **Verzamelpunten.** Elke zone heeft bij de ingang een plek in de open lucht (kampvuur, banners,
   een bordje) waar iedereen tussen de rondes staat. Daar praat de host, daar staan de
   voorsprongkistjes, daar begint de countdown.
-- **Worldborder per ronde.** Skript zet de worldborder elke ronde om de zone die aan de beurt
+- **Worldborder per ronde.** De mod zet de worldborder elke ronde om de zone die aan de beurt
   is. Buiten de zone kom je niet, dus je hoeft geen muren om het bos te bouwen.
 
 ## Plattegrond
@@ -54,7 +54,7 @@ blokken van de burcht, buiten de border van ronde 4.
 
 1. Iedereen staat bij het verzamelpunt van de zone. Host doet z'n praatje.
 2. Countdown (`title` 5..4..3..2..1). Bij het doolhof, de arena en de bosrand gaat een poort open
-   (een muur die de admin met één command weghaalt). Daarna zet Skript de worldborder om de
+   (een muur die de admin met één command weghaalt). Daarna zet de mod de worldborder om de
    zone.
 3. Ronde klaar (timer of doel gehaald): iedereen wordt naar het volgende verzamelpunt
    geteleporteerd. Wie eerder klaar is komt bij de uitgang van de zone uit en wordt meteen
@@ -62,7 +62,7 @@ blokken van de burcht, buiten de border van ronde 4.
 4. Ronde 4 begint bij De Kring voor de poort van de burcht. Na het rad worden Clown en de hunters
    naar hun startpunten geteleporteerd.
 5. Na ronde 4 valt de groep uit elkaar: finalist 1 op de muur van de binnenplaats, de rest naar
-   de FFA, de doden in spectator.
+   de FFA, de doden in kijkersmodus.
 
 Teleporteren in plaats van lopen is een keuze: iedereen staat tegelijk op de goede plek, de host
 heeft z'n moment en niemand loopt te dwalen. Wil je meer open-world-gevoel, laat ze dan lopen
@@ -79,9 +79,9 @@ over gemarkeerde paden; zie [06-open-keuzes.md](06-open-keuzes.md).
 | 5 Arena FFA | binnenplaats | 40, na 5 minuten naar 10 |
 | 6 De Finale | troonzaal | 20, na 3 minuten naar 6 |
 
-Spectators vliegen dwars door de border heen, dus doden en staff hebben er geen last van. Wie
-buiten de border staat op het moment dat hij gezet wordt krijgt schade, dus altijd eerst
-teleporteren, dan de border zetten.
+Kijkers krijgen geen schade van de border, maar kunnen er net als iedereen niet doorheen; wie
+erbuiten zweeft als hij gezet wordt, kijkt van buiten mee. Levende spelers buiten de border
+krijgen schade, dus altijd eerst teleporteren, dan de border zetten.
 
 ## De zones
 
@@ -104,17 +104,17 @@ het doolhof (niet door de haag), de horde (niet inbouwen) en de arena's (puur ve
 Ei-bos moet je juist minen, en in de King zone mag bouwen omdat dat SMP-achtig is (pillaren,
 trap bouwen, inbouwen op je laatste hartje).
 
-## Spectators
+## Kijkers
 
-Gewoon spectator mode. Doden en staff vliegen vrij rond, door de border heen. Vraag de doden om
-in de buurt van de actie te blijven kijken (voor hun eigen stream), meer regels zijn er niet.
-Naar een speler teleporteren gaat via het spectator-menu (hotbar-toets) met de teams Levend en
-Dood, of via de tp-menu's van `/levend` en `/dood`; staff heeft er twee items voor. Zie
+Wie dood is wordt **kijker**: onzichtbaar, vliegend, onaantastbaar, met twee items in de hotbar
+(kompas Levenden, kop Doden) om naar een speler te teleporteren. Kijkers vliegen niet door muren,
+wel eroverheen. Vraag de doden om in de buurt van de actie te blijven kijken (voor hun eigen
+stream), meer regels zijn er niet. Staff kan dezelfde modus aanzetten. Zie
 [04-technische-schets.md](04-technische-schets.md).
 
 ## Stream-overwegingen
 
-- Het doolhof is van bovenaf een mooi shot (spectator boven de hagen).
+- Het doolhof is van bovenaf een mooi shot (kijker boven de hagen).
 - De burcht is het centrale beeld: vanaf de muur zie je de hele King zone, de binnenplaats en de
   troonzaal.
 - Elk verzamelpunt is een vaste camerapositie voor de host: iedereen staat bij elkaar rond het
