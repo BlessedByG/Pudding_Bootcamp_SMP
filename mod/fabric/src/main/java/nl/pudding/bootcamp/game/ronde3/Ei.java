@@ -29,6 +29,7 @@ import nl.pudding.bootcamp.game.Poorten;
 import nl.pudding.bootcamp.game.RondeLogica;
 import nl.pudding.bootcamp.game.Spel;
 import nl.pudding.bootcamp.game.SpelerStatus;
+import nl.pudding.bootcamp.game.Spelregels;
 import nl.pudding.bootcamp.kits.Kits;
 import nl.pudding.bootcamp.tribune.Tribune;
 import nl.pudding.bootcamp.visuals.Bossbar;
@@ -64,7 +65,11 @@ public final class Ei extends RondeLogica {
 
 	@Override
 	public String magStarten(MinecraftServer server) {
-		String fout = Spel.buitenRegio("eibos", "ei_start", "ei_beacon");
+		// Zonder basis.json krijgt wie geen ticket haalt straks niks.
+		String fout = Kits.controleer(server, "ei", "basis");
+		if (fout == null) {
+			fout = Spel.buitenRegio("eibos", "ei_start", "ei_beacon");
+		}
 		if (fout != null) {
 			return fout;
 		}
@@ -80,6 +85,7 @@ public final class Ei extends RondeLogica {
 		Poorten.dichtAlsHijBestaat(server, POORT);
 		// Een ticket van een eerdere poging telt niet.
 		Spel.alleStatussen().forEach(st -> st.ticket = false);
+		Spelregels.locatorBar(server, false);
 		Spel.maakSpelers(server, true);
 		List<ServerPlayer> spelers = Mc.deelnemers(server);
 		for (ServerPlayer s : spelers) {
@@ -200,6 +206,7 @@ public final class Ei extends RondeLogica {
 		Spel.maakSpelers(server, false);
 		for (ServerPlayer s : Mc.deelnemers(server)) {
 			if (!Spel.status(s).klaar) {
+				Spel.status(s).klaar = true;
 				Spel.naarPunt(s, "kring");
 			}
 		}

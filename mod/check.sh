@@ -65,7 +65,7 @@ fi
 echo "== 5. Elk command uit docs/04 staat in het commands-package"
 CMD_DIR=fabric/src/main/java/nl/pudding/bootcamp/commands
 if [ -d "$CMD_DIR" ]; then
-	for c in wand region save show list del point set block tp start kit stop timer status poort kroon uitverkoren slot rad kijker reset; do
+	for c in wand region save show list del point set block tp label start kit stop timer status poort kroon uitverkoren slot rad finalist kijker reset; do
 		grep -rq "\"$c\"" "$CMD_DIR" || fout "command-literal \"$c\" ontbreekt"
 	done
 	[ $FAIL -eq 0 ] && ok "alle literals aanwezig"

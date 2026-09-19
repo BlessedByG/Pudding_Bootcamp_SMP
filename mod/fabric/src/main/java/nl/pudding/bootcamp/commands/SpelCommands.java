@@ -14,6 +14,7 @@ import nl.pudding.bootcamp.Mc;
 import nl.pudding.bootcamp.config.ConfigStore;
 import nl.pudding.bootcamp.config.Standaardbestanden;
 import nl.pudding.bootcamp.core.BootcampConfig;
+import nl.pudding.bootcamp.core.Rol;
 import nl.pudding.bootcamp.core.Ronde;
 import nl.pudding.bootcamp.core.Tijd;
 import nl.pudding.bootcamp.game.Planner;
@@ -47,7 +48,8 @@ final class SpelCommands {
 				.then(Commands.literal("open").executes(ctx -> poort(ctx, true)))
 				.then(Commands.literal("dicht").executes(ctx -> poort(ctx, false)))));
 		bc.then(Commands.literal("kit").then(Commands.argument("naam", StringArgumentType.word()).suggests(KITS)
-				.executes(ctx -> kit(ctx, Mc.deelnemers(ctx.getSource().getServer())))
+				.executes(ctx -> kit(ctx, Mc.deelnemers(ctx.getSource().getServer()).stream()
+						.filter(s -> Spel.rol(s) != Rol.KIJKER && Spel.rol(s) != Rol.FINALIST).toList()))
 				.then(Commands.argument("speler", EntityArgument.player())
 						.executes(ctx -> kit(ctx, List.of(EntityArgument.getPlayer(ctx, "speler")))))));
 		bc.then(Commands.literal("status").executes(SpelCommands::status));

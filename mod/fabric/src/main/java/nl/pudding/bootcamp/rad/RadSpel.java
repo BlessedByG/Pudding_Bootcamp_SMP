@@ -56,6 +56,9 @@ public final class RadSpel {
 		if (rad != null) {
 			return "het rad draait al";
 		}
+		if (Planner.heeftWerk()) {
+			return "het rad is net geland en ronde 4 start zo (/bc stop om dat af te breken)";
+		}
 		if (Spel.loopt()) {
 			return "er loopt nog een ronde (/bc stop)";
 		}
@@ -130,6 +133,13 @@ public final class RadSpel {
 				server.getPlayerList().broadcastSystemMessage(Mc.tekst("[bootcamp] Ronde 4 start niet, " + fout, ChatFormatting.RED), false);
 			}
 		});
+	}
+
+	/** Stopt een rad dat nog draait. Is het al geland, dan blijft de lamp van de koning aan. */
+	public static void stopDraaien(MinecraftServer server) {
+		if (rad != null) {
+			stop(server);
+		}
 	}
 
 	/** Stopt het rad en zet alle lampen uit. Ook voor {@code /bc stop} en {@code /bc reset}. */

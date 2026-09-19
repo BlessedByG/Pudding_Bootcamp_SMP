@@ -17,6 +17,7 @@ public final class Aftelling {
 	private static Countdown countdown;
 	private static Runnable bijNul;
 	private static String label;
+	private static int startgetal;
 
 	private Aftelling() {
 	}
@@ -27,6 +28,8 @@ public final class Aftelling {
 	 */
 	public static void start(int seconden, String label, Runnable bijNul) {
 		Aftelling.countdown = new Countdown(seconden);
+		// Het startgetal zelf hoort er ook bij: "5" met de laagste pling, niet pas "4".
+		Aftelling.startgetal = seconden;
 		Aftelling.label = label;
 		Aftelling.bijNul = bijNul;
 	}
@@ -38,6 +41,7 @@ public final class Aftelling {
 	public static void stop() {
 		countdown = null;
 		bijNul = null;
+		startgetal = 0;
 	}
 
 	/** Elke servertick. */
@@ -46,6 +50,10 @@ public final class Aftelling {
 			return;
 		}
 		int s = countdown.tick();
+		if (startgetal > 0) {
+			s = startgetal;
+			startgetal = 0;
+		}
 		if (s == Countdown.NIKS) {
 			return;
 		}

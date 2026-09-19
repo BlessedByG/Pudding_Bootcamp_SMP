@@ -1,5 +1,6 @@
 package nl.pudding.bootcamp.game;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.GameType;
@@ -10,7 +11,10 @@ import nl.pudding.bootcamp.core.Punt;
 import nl.pudding.bootcamp.core.Regio;
 import nl.pudding.bootcamp.core.Rol;
 import nl.pudding.bootcamp.core.Ronde;
+import nl.pudding.bootcamp.crown.Kroon;
 import nl.pudding.bootcamp.crown.Opstelling;
+import nl.pudding.bootcamp.kits.Kits;
+import nl.pudding.bootcamp.rad.RadSpel;
 import nl.pudding.bootcamp.tribune.Tribune;
 import nl.pudding.bootcamp.visuals.Bossbar;
 
@@ -179,6 +183,27 @@ public final class Spel {
 				: "deze punten liggen buiten regio " + regioNaam + " (en dus buiten de border): " + String.join(", ", buiten);
 	}
 
+	/**
+	 * Het omgekeerde van {@link #buitenRegio}: een tribunepunt binnen de regio waar kijkers af
+	 * moeten blijven zou ze elke halve seconde terugzetten.
+	 */
+	public static String binnenRegio(String regioNaam, String... puntNamen) {
+		Regio r = regio(regioNaam);
+		if (r == null) {
+			return null;
+		}
+		List<String> binnen = new ArrayList<>();
+		for (String naam : puntNamen) {
+			Punt p = punt(naam);
+			if (p != null && r.bevat(p.x(), p.z())) {
+				binnen.add(naam);
+			}
+		}
+		return binnen.isEmpty() ? null
+				: "deze tribunepunten liggen binnen regio " + regioNaam + " (alleen x en z tellen), waar kijkers juist af moeten blijven: "
+				+ String.join(", ", binnen) + ". Selecteer " + regioNaam + " krapper of verplaats de punten";
+	}
+
 	public static void naarPunt(ServerPlayer speler, String puntNaam) {
 		Punt p = punt(puntNaam);
 		if (p != null) {
@@ -236,6 +261,11 @@ public final class Spel {
 		if (actief != null) {
 			stop(server);
 		}
+		// Ook zonder lopende ronde: een draaiend rad of een klaarstaande start van ronde 4 mag deze
+		// ronde straks niet onderuit halen.
+		RadSpel.stopDraaien(server);
+		Planner.wisAlles();
+		Aftelling.stop();
 		ronde = nieuw;
 		actief = logica;
 		SPELERS.values().forEach(SpelerStatus::nieuweRonde);
@@ -295,14 +325,34 @@ public final class Spel {
 
 	/** Elke servertick. */
 	public static void tick(MinecraftServer server) {
-		Planner.tick();
-		Aftelling.tick(server);
-		if (actief != null) {
-			actief.tick(server);
+		try {
+			Planner.tick();
+			Aftelling.tick(server);
+			RadSpel.tick(server);
+			if (actief != null) {
+				actief.tick(server);
+			}
+			if (server.getTickCount() % 20 == 0) {
+				seconde(server);
+			}
+		} catch (RuntimeException e) {
+			// Een fout hier zou de hele server stoppen, midden in het event. Liever de ronde afbreken.
+			noodstop(server, e);
 		}
-		if (server.getTickCount() % 20 == 0) {
-			seconde(server);
+	}
+
+	private static void noodstop(MinecraftServer server, RuntimeException oorzaak) {
+		Bootcamp.LOG.error("Fout in de tick van ronde {}; de ronde wordt afgebroken", ronde.nummer(), oorzaak);
+		try {
+			RadSpel.stop(server);
+			stop(server);
+		} catch (RuntimeException nogEen) {
+			Bootcamp.LOG.error("Ook het afbreken faalde", nogEen);
+			actief = null;
 		}
+		server.getPlayerList().broadcastSystemMessage(Mc.tekst("[bootcamp] Er ging iets mis in ronde " + ronde.nummer()
+				+ "; de ronde is afgebroken. Kijk in de console en start hem opnieuw met /bc start " + ronde.nummer() + ".",
+				ChatFormatting.RED), false);
 	}
 
 	private static void seconde(MinecraftServer server) {
@@ -355,8 +405,45 @@ public final class Spel {
 		if (actief != null) {
 			actief.onJoin(server, speler);
 		} else {
-			// Tussen twee rondes in: terug in het team dat bij zijn rol hoort.
-			zetRol(server, speler, st.rol);
+			herstelTussenRondes(server, speler, st);
+		}
+	}
+
+	/**
+	 * Iemand logt in terwijl er geen ronde loopt. De ronde waarin hij wegviel is zonder hem
+	 * afgelopen, dus wat het einde van die ronde met iedereen deed krijgt hij alsnog.
+	 */
+	private static void herstelTussenRondes(MinecraftServer server, ServerPlayer speler, SpelerStatus st) {
+		speler.setGameMode(GameType.ADVENTURE);
+		boolean finalist = speler.getUUID().equals(finalist1) || speler.getUUID().equals(finalist2);
+		if (finalist && ronde.inArena()) {
+			Kroon.maakFinalist(server, speler);
+			Tribune.naarTribune(speler);
+			return;
+		}
+		// Een kroon die is doorgegeven terwijl hij weg was zit nog in zijn spelerdata.
+		if (Kroon.draagtKroon(speler) || st.rol == Rol.KING || st.rol == Rol.FINALIST) {
+			Kroon.neemAf(speler);
+		}
+		if (ronde.inArena()) {
+			// Na ronde 4 t/m 6: wie wegviel telde als dood en komt terug als kijker.
+			if (st.rol != Rol.SPELER) {
+				st.dood = true;
+				Tribune.maakKijker(server, speler, Tribune.Spullen.LEGEN, false);
+			} else {
+				zetRol(server, speler, Rol.SPELER);
+			}
+			return;
+		}
+		if (ronde == Ronde.EI && !st.ticket && !st.klaar) {
+			// Geen ticket is geen loot, ook niet voor wie op het eind uitlogde.
+			speler.getInventory().clearContent();
+			Kits.geefAan(server, "basis", List.of(speler));
+		}
+		zetRol(server, speler, Rol.SPELER);
+		if (ronde != Ronde.BASISKAMP && !st.klaar) {
+			st.klaar = true;
+			naarPunt(speler, Tribune.verzamelpuntNa(ronde));
 		}
 	}
 

@@ -10,12 +10,15 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import nl.pudding.bootcamp.Mc;
 import nl.pudding.bootcamp.config.ConfigStore;
 import nl.pudding.bootcamp.core.Ronde;
 import nl.pudding.bootcamp.game.Spel;
+import nl.pudding.bootcamp.crown.Kroon;
 import nl.pudding.bootcamp.game.ronde4.King;
+import nl.pudding.bootcamp.game.ronde6.Finale;
 import nl.pudding.bootcamp.rad.RadSpel;
 import nl.pudding.bootcamp.tribune.Tribune;
 
@@ -32,6 +35,8 @@ final class KroonCommands {
 		bc.then(Commands.literal("kroon").then(Commands.argument("speler", EntityArgument.player())
 				.executes(KroonCommands::kroon)));
 		bc.then(Commands.literal("rad").executes(KroonCommands::rad));
+		bc.then(Commands.literal("finalist").then(Commands.argument("nummer", IntegerArgumentType.integer(1, 2))
+				.then(Commands.argument("speler", EntityArgument.player()).executes(KroonCommands::finalist))));
 		bc.then(Commands.literal("kijker").then(Commands.argument("speler", EntityArgument.player())
 				.then(Commands.literal("aan").executes(ctx -> kijker(ctx, true)))
 				.then(Commands.literal("uit").executes(ctx -> kijker(ctx, false)))));
@@ -55,6 +60,36 @@ final class KroonCommands {
 			return BcCommand.fout(ctx, "Kroon: " + fout + ".");
 		}
 		return BcCommand.ok(ctx, "Kroon naar " + Mc.naam(speler) + ": reset, hunters terug naar hun startpunt.");
+	}
+
+	/**
+	 * Noodknop: de finalisten staan alleen in het geheugen. Na een crash, of als een finalist niet
+	 * meer terugkomt, wijst de ref er hiermee een aan.
+	 */
+	private static int finalist(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+		ServerPlayer speler = EntityArgument.getPlayer(ctx, "speler");
+		int nummer = IntegerArgumentType.getInteger(ctx, "nummer");
+		if (Mc.isStaff(speler)) {
+			return BcCommand.fout(ctx, Mc.naam(speler) + " staat in creative of spectator en doet niet mee.");
+		}
+		if (Spel.actief() instanceof King || Spel.actief() instanceof Finale) {
+			return BcCommand.fout(ctx, "Niet terwijl ronde 4 of de finale loopt; gebruik /bc kroon of /bc stop.");
+		}
+		MinecraftServer server = ctx.getSource().getServer();
+		java.util.UUID ander = nummer == 1 ? Spel.finalist2() : Spel.finalist1();
+		if (speler.getUUID().equals(ander)) {
+			return BcCommand.fout(ctx, Mc.naam(speler) + " is de andere finalist al.");
+		}
+		if (nummer == 1) {
+			Spel.zetFinalist1(speler.getUUID());
+		} else {
+			Spel.zetFinalist2(speler.getUUID());
+		}
+		Spel.status(speler).dood = false;
+		speler.getInventory().clearContent();
+		Kroon.maakFinalist(server, speler);
+		Tribune.naarTribune(speler);
+		return BcCommand.ok(ctx, Mc.naam(speler) + " is finalist " + nummer + " en staat met zijn kroon op de tribune.");
 	}
 
 	private static int rad(CommandContext<CommandSourceStack> ctx) {

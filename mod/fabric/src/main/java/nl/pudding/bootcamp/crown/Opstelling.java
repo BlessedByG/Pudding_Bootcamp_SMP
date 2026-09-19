@@ -5,7 +5,9 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownEnderpearl;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import nl.pudding.bootcamp.Mc;
@@ -14,7 +16,9 @@ import nl.pudding.bootcamp.game.Reset;
 import nl.pudding.bootcamp.game.Spel;
 import nl.pudding.bootcamp.game.SpelerStatus;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Opstelling: spelers staan bevroren op hun startpunt tot de countdown op nul staat. Bevriezen is
@@ -58,6 +62,14 @@ public final class Opstelling {
 	 */
 	public static void start(MinecraftServer server, Collection<ServerPlayer> bevriezen, int seconden, String label, Runnable bijNul) {
 		actief = true;
+		// Een pearl die al onderweg is zou zijn eigenaar na de teleport alsnog van zijn startpunt halen.
+		List<Entity> pearls = new ArrayList<>();
+		for (Entity e : Mc.wereld(server).getAllEntities()) {
+			if (e instanceof ThrownEnderpearl) {
+				pearls.add(e);
+			}
+		}
+		pearls.forEach(Entity::discard);
 		for (ServerPlayer s : bevriezen) {
 			bevries(s);
 		}

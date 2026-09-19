@@ -1,6 +1,7 @@
 package nl.pudding.bootcamp.visuals;
 
 import com.mojang.math.Transformation;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -39,6 +40,10 @@ public final class Zweefkroon {
 
 	public static void init() {
 		Reset.REGISTER.registreer("zweefkroon", Zweefkroon::ruimAllesOp);
+		// Een zweefkroon die van schijf geladen wordt is een overblijfsel van een vorige serverrun
+		// (of van een chunk die uit- en weer ingeladen is): nooit binnenlaten. Opruimen bij het
+		// opstarten vangt alleen geladen chunks, dit vangt de rest.
+		ServerEntityEvents.ALLOW_LOAD.register((entity, level, reden, vanSchijf) -> !(vanSchijf && entity.entityTags().contains(TAG)));
 	}
 
 	public static void aan(ServerPlayer koning) {
@@ -53,8 +58,8 @@ public final class Zweefkroon {
 		kroon.setPosRotInterpolationDuration(ELKE_TICKS);
 		kroon.setPos(koning.getX(), koning.getY() + HOOGTE, koning.getZ());
 		kroon.addTag(TAG);
-		wereld.addFreshEntity(kroon);
 		KRONEN.put(koning.getUUID(), kroon);
+		wereld.addFreshEntity(kroon);
 	}
 
 	public static void uit(UUID koning) {
@@ -70,12 +75,16 @@ public final class Zweefkroon {
 			return;
 		}
 		hoek = (hoek + GRADEN_PER_STAP) % 360f;
+		List<ServerPlayer> opnieuw = new ArrayList<>();
 		for (Iterator<Map.Entry<UUID, Display.ItemDisplay>> it = KRONEN.entrySet().iterator(); it.hasNext(); ) {
 			Map.Entry<UUID, Display.ItemDisplay> e = it.next();
 			ServerPlayer koning = server.getPlayerList().getPlayer(e.getKey());
 			Display.ItemDisplay kroon = e.getValue();
 			if (kroon.isRemoved()) {
 				it.remove();
+				if (koning != null) {
+					opnieuw.add(koning);
+				}
 				continue;
 			}
 			if (koning == null) {
@@ -84,6 +93,8 @@ public final class Zweefkroon {
 			}
 			kroon.absSnapTo(koning.getX(), koning.getY() + HOOGTE, koning.getZ(), hoek, 0f);
 		}
+		// De entity is weggevallen (chunk uitgeladen) maar de koning is er nog: nieuwe kroon.
+		opnieuw.forEach(Zweefkroon::aan);
 	}
 
 	/** Ook de kronen die een vorige serverrun heeft achtergelaten. */

@@ -63,13 +63,15 @@ public final class Bootcamp implements ModInitializer {
 		ServerTickEvents.END_SERVER_TICK.register(server -> {
 			Wand.tick(server);
 			Spel.tick(server);
-			RadSpel.tick(server);
 			Tribune.tick(server);
 			Zweefkroon.tick(server);
 		});
 
 		ServerPlayConnectionEvents.JOIN.register((listener, sender, server) -> Spel.onJoin(server, listener.getPlayer()));
-		ServerPlayConnectionEvents.DISCONNECT.register((listener, server) -> Spel.onQuit(server, listener.getPlayer()));
+		ServerPlayConnectionEvents.DISCONNECT.register((listener, server) -> {
+			Spel.onQuit(server, listener.getPlayer());
+			Bossbar.verwijder(listener.getPlayer());
+		});
 
 		LOG.info("Pudding Bootcamp geladen");
 	}

@@ -16,6 +16,7 @@ import nl.pudding.bootcamp.core.Rol;
 import nl.pudding.bootcamp.core.Ronde;
 import nl.pudding.bootcamp.crown.Kroon;
 import nl.pudding.bootcamp.crown.Opstelling;
+import nl.pudding.bootcamp.game.Aftelling;
 import nl.pudding.bootcamp.game.Border;
 import nl.pudding.bootcamp.game.RondeLogica;
 import nl.pudding.bootcamp.game.Spel;
@@ -61,7 +62,14 @@ public final class Ffa extends RondeLogica {
 		if (deelnemers(server).isEmpty()) {
 			return "er is niemand om mee te doen: iedereen online is Clown, finalist 1 of staff";
 		}
-		return Spel.buitenRegio("vloer", "hunter_1", "hunter_2", "hunter_3", "hunter_4");
+		String fout = Kits.controleer(server, "arena");
+		if (fout == null) {
+			fout = Spel.buitenRegio("vloer", "hunter_1", "hunter_2", "hunter_3", "hunter_4");
+		}
+		if (fout == null) {
+			fout = Spel.binnenRegio("vloer", "tribune_1", "tribune_2", "tribune_3", "tribune_4");
+		}
+		return fout;
 	}
 
 	/** Iedereen behalve Clown en finalist 1, ook de doden van ronde 4. */
@@ -97,6 +105,8 @@ public final class Ffa extends RondeLogica {
 			SpelerStatus st = Spel.status(s);
 			st.dood = false;
 			st.tribunepunt = null;
+			// Een oude kroon (ex-koning, finalist 2 van een eerdere poging) gaat eraf: de kit blijft er anders vanaf.
+			Kroon.neemAf(s);
 			// Teams weg: iedereen kan iedereen raken.
 			Spel.zetRol(server, s, Rol.FFA);
 			s.setGameMode(GameType.ADVENTURE);
@@ -193,6 +203,7 @@ public final class Ffa extends RondeLogica {
 		fase = Fase.RUST;
 		rust = Regels.RUST;
 		Spel.stopTimer();
+		Aftelling.stop();
 		Opstelling.losIedereen(server);
 		Border.weg(server);
 		Spel.zetFinalist2(speler.getUUID());
@@ -233,6 +244,11 @@ public final class Ffa extends RondeLogica {
 			return;
 		}
 		int over = Spel.levend(server, Rol.FFA).size();
+		if (over <= 1) {
+			// Niet alleen bij een dood: ook met maar één vechter, of na /bc kijker.
+			controleerWinnaar(server);
+			return;
+		}
 		int tijd = Spel.timerLoopt() ? Spel.timer() : ronde().duurSeconden();
 		Bossbar.zet(BossbarTekst.ffa(over, tijd), BossEvent.BossBarColor.PURPLE, (float) tijd / ronde().duurSeconden());
 

@@ -17,6 +17,8 @@ public final class Spelregels {
 	public static void zet(MinecraftServer server) {
 		GameRules regels = Mc.wereld(server).getGameRules();
 		regels.set(GameRules.NATURAL_HEALTH_REGENERATION, true, server);
+		// In 26.2 is PvP een gamerule. Tot ronde 4 houdt team spelers (friendly fire uit) het tegen.
+		regels.set(GameRules.PVP, true, server);
 		// De horde spawnen we zelf.
 		regels.set(GameRules.SPAWN_MOBS, false, server);
 		// Creepers in de ruïne-arena mogen niks slopen.

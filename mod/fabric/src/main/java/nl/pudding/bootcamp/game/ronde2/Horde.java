@@ -1,6 +1,7 @@
 package nl.pudding.bootcamp.game.ronde2;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -41,6 +42,7 @@ import nl.pudding.bootcamp.game.Reset;
 import nl.pudding.bootcamp.game.RondeLogica;
 import nl.pudding.bootcamp.game.Spel;
 import nl.pudding.bootcamp.game.SpelerStatus;
+import nl.pudding.bootcamp.game.Spelregels;
 import nl.pudding.bootcamp.kits.Items26;
 import nl.pudding.bootcamp.kits.Kits;
 import nl.pudding.bootcamp.tribune.Tribune;
@@ -76,6 +78,10 @@ public final class Horde extends RondeLogica {
 
 	public static void init() {
 		Reset.REGISTER.registreer("horde-mobs", Horde::ruimMobsOp);
+		// Horde-mobs zijn persistent en worden dus met de wereld opgeslagen. Na een crash midden in
+		// ronde 2 mogen ze niet terugkomen zodra iemand de arena inloopt.
+		ServerEntityEvents.ALLOW_LOAD.register((entity, level, reden, vanSchijf) ->
+				!(vanSchijf && entity.entityTags().contains(TAG) && !(Spel.actief() instanceof Horde)));
 	}
 
 	@Override
@@ -109,7 +115,14 @@ public final class Horde extends RondeLogica {
 				}
 			}
 		}
-		return Spel.buitenRegio("arena", "arena_spawn", "mob_1", "mob_2", "mob_3", "mob_4");
+		String fout = Kits.controleer(server, "horde");
+		if (fout == null) {
+			fout = Spel.buitenRegio("arena", "arena_spawn", "mob_1", "mob_2", "mob_3", "mob_4");
+		}
+		if (fout == null) {
+			fout = Spel.binnenRegio("arena", "tribune_horde_1", "tribune_horde_2");
+		}
+		return fout;
 	}
 
 	private static WavesDef leesWaves() {
@@ -125,6 +138,7 @@ public final class Horde extends RondeLogica {
 	public void start(MinecraftServer server) {
 		ruimMobsOp(server);
 		Poorten.dichtAlsHijBestaat(server, POORT);
+		Spelregels.locatorBar(server, false);
 		Spel.maakSpelers(server, false);
 		List<ServerPlayer> spelers = Mc.deelnemers(server);
 		spelersBijStart = spelers.size();
@@ -277,6 +291,7 @@ public final class Horde extends RondeLogica {
 		// Iedereen gaat door, dood of levend. De doden hebben in end() hun spullen al terug.
 		Spel.maakSpelers(server, false);
 		for (ServerPlayer s : Mc.deelnemers(server)) {
+			Spel.status(s).klaar = true;
 			Spel.naarPunt(s, "v3");
 		}
 		// Bonus: wie de ronde overleeft krijgt een ender pearl.

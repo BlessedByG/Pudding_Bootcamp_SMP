@@ -1,6 +1,6 @@
 # Bouwlog
 
-Status: modus=A; klaar=T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14; bezig=T15
+Status: modus=A; klaar=T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15; bezig=T16
 
 Per taak: wat er gedaan is, wat geverifieerd is en wat open staat (in-game test, aanname,
 afwijking van de docs). Het plan staat in [../docs/08-taakplan.md](../docs/08-taakplan.md).
@@ -463,3 +463,63 @@ scherm hebben en spelers op de vloer de border wel zien.
   id-string faalt pas tijdens het spel.
 - `/bc label` heeft de sub-commands `zet` en `weg` in plaats van alleen `<tekst>`, zodat een
   verkeerd geplaatst label ook weer weg kan.
+
+## T15. Reviewronde (begrensd)
+
+Drie agents, elk maximaal tien bevindingen: één legde de code naast docs/02 en docs/03, één naast
+docs/04 (plus docs/01 en docs/05), één zocht bugs. Ze lazen alleen; de fixes zijn daarna in één
+ronde gedaan, zonder het raamwerk te herschrijven. Geen enkele bevinding zat in de normale flow:
+het ging om herstelpaden (`/bc stop` en opnieuw starten), uitloggen op een ongelukkig moment, en
+controles vooraf.
+
+**Afwijking van het taakplan: het tegenspreken.** Het plan wilde elke bevinding door een tweede
+agent laten tegenspreken. De drie lijsten overlapten zo sterk dat ze dat zelf al deden: zeven
+bevindingen zijn door twee reviewers onafhankelijk gevonden. De zes die maar door één reviewer
+zijn genoemd heb ik zelf tegen de code gelegd; ze klopten alle zes. Dat scheelt een ronde agents.
+
+**Gefixt (hoog en midden)**
+
+| # | Bevinding | Gevonden door | Fix |
+|---|---|---|---|
+| 1 | De timer van ronde 4 loopt af terwijl de koning is uitgelogd: een afwezige speler wordt finalist 1, en komt hij niet terug dan weigert de finale. | regels, bugs | `King.einde`: loopt de dertig seconden nog, dan gaat de kroon eerst door (laatste hit, anders willekeurig), zonder reset. |
+| 2 | De finalisten staan alleen in het geheugen: na een crash of een finalist die wegblijft kan de finale niet starten. | spec, bugs | Nieuw noodcommand `/bc finalist <1\|2> <speler>`. |
+| 3 | Een fout in de tick-loop stopt de hele server (bijvoorbeeld `/bc region del doolhof_uit` tijdens ronde 1). | bugs | `Spel.tick` vangt fouten af: loggen, de ronde afbreken, melding in de chat. Het rad tikt nu ook binnen die bescherming. |
+| 4 | Wie terugkomt tussen twee rondes ontloopt het einde van de ronde: nog in survival in het bos, loot zonder ticket, een hunter met PvP in de pauze, een ex-koning met kroon en Glowing. | regels, spec, bugs | `Spel.herstelTussenRondes`: adventure, kroon eraf (tenzij finalist), na ronde 3 zonder ticket de basiskit-straf, naar het verzamelpunt; na ronde 4 t/m 6 kijker op de tribune. |
+| 5 | Na `/bc stop` en opnieuw `/bc start 4` of `5` blijft een oude kroon zitten (Curse of Binding, kit blijft van de kroon af). | spec, bugs | `King.start` en `Ffa.start` nemen de kroon af bij iedereen die hem niet hoort te hebben. |
+| 6 | Het einde van ronde 4 en 5 werd alleen bij een dood of uitlog gecontroleerd: een FFA met één vechter liep tien minuten, en `/bc kijker` op de laatste hunter beëindigde niks. | spec, bugs | Controle elke seconde in `King.seconde` en `Ffa.seconde`. |
+| 7 | Een tribunepunt binnen regio `vloer` of `arena` (alleen x en z tellen) zet elke kijker elke halve seconde terug, met omgeklapte camera, op alle streams. | spec, bugs | Ronde 2, 4, 5 en 6 weigeren te starten met één regel (`Spel.binnenRegio`). |
+| 8 | Ender pearls die al in de lucht hangen overleven een kroonreset: de eigenaar wordt alsnog van zijn startpunt gehaald. | regels | `Opstelling.start` ruimt alle pearls in de lucht op. |
+| 9 | De start van ronde 4 die na het rad klaarstaat overleeft een handmatige `/bc start`, of een tweede `/bc rad` binnen de drie seconden. | bugs | `Spel.start` stopt altijd een draaiend rad, de planner en de aftelling; `/bc rad` weigert zolang de start klaarstaat. |
+| 10 | Finale: de zweefkroon van een uitgelogde verliezer blijft hangen en hij komt terug als tweede koning; een winnaar die relogt tijdens zijn kroning verliest zijn kroon. | bugs | `Finale.kroning` en `Finale.finalistTerug`. |
+| 11 | Zweefkroon en horde-mobs worden met de wereld opgeslagen; opruimen bij het opstarten vangt alleen geladen chunks. | bugs | `ServerEntityEvents.ALLOW_LOAD` weigert ze zodra ze van schijf komen. Een zweefkroon die wegvalt terwijl de koning er nog is wordt opnieuw gemaakt. |
+
+**Ook meegenomen (laag, maar een enkele regel)**
+- De countdown van vijf toonde 4, 3, 2, 1: het startgetal ontbrak. Nu 5 t/m 1.
+- De aftelling liep door nadat er al een winnaar was (een GO over `FINALIST` heen).
+- De locator bar gaat uit bij de start van ronde 1 t/m 3, ook zonder `/bc reset` ertussen.
+- `/bc kit <naam>` zonder speler slaat kijkers en wachtende finalisten over.
+
+**Zelf gevonden tijdens de reviewronde**
+- **PvP is in 26.2 een gamerule** (`GameRules.PVP`). De mod zet hem nu aan; op een server waar hij
+  uit stond zou ronde 4 niet werken. Tot ronde 4 houdt team `spelers` (friendly fire uit) PvP tegen.
+- **Een ronde weigert te starten als een kit die ze nodig heeft ontbreekt of kapot is**
+  (`Kits.controleer`): ronde 2 `horde`; ronde 3 `ei` en `basis`; ronde 4 `boss`, `kroonpakket` en
+  `basis`; ronde 5 `arena`; ronde 6 `finale`. **Zonder `basis.json` starten ronde 3 en 4 dus niet.**
+- Wie in het basiskamp inlogt gaat naar adventure (een nieuwe speler staat anders in survival en
+  kan blokken slopen). Staff staat in creative of spectator en wordt met rust gelaten.
+- De bossbar laat een speler los als hij uitlogt.
+
+**Blijft staan (laag, niet gefixt)**
+- FFA-kills tellen alleen bij een directe klap van een speler. Wie iemand de krimpende border in
+  slaat krijgt geen kill; dat speelt alleen in de tiebreak bij tien minuten.
+- De laatste hit wordt in `ALLOW_DAMAGE` onthouden, dus vóór het schild: een geblokte pijl telt ook
+  als laatste hit.
+- Na een reset gaan hunters om en om naar `hunter_1..4` op basis van wie er nog leeft, niet naar
+  het punt waar ze zelf begonnen.
+- `/bc kroon` op iemand die al op de tribune stond geeft hem de kroon en het kroonpakket, maar zijn
+  inventory was al leeg. Geef er `/bc kit boss <speler>` of `/bc kit basis <speler>` achteraan.
+- Verwijder je tijdens een ronde een punt of regio die de ronde gebruikt, dan breekt de ronde
+  zichzelf netjes af (zie fix 3) in plaats van dat het command weigert.
+
+**Geverifieerd**: `./gradlew build` en `check.sh` groen na de fixronde; `check.sh` controleert nu
+ook de literals `label` en `finalist`.

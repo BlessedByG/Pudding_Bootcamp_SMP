@@ -21,6 +21,7 @@ import nl.pudding.bootcamp.game.Poorten;
 import nl.pudding.bootcamp.game.RondeLogica;
 import nl.pudding.bootcamp.game.Spel;
 import nl.pudding.bootcamp.game.SpelerStatus;
+import nl.pudding.bootcamp.game.Spelregels;
 import nl.pudding.bootcamp.kits.Kits;
 import nl.pudding.bootcamp.tribune.Tribune;
 import nl.pudding.bootcamp.visuals.Bossbar;
@@ -63,6 +64,7 @@ public final class Doolhof extends RondeLogica {
 	@Override
 	public void start(MinecraftServer server) {
 		Poorten.dichtAlsHijBestaat(server, POORT);
+		Spelregels.locatorBar(server, false);
 		Spel.maakSpelers(server, false);
 		for (ServerPlayer s : Mc.deelnemers(server)) {
 			Spel.naarPunt(s, startpunt());
@@ -143,6 +145,7 @@ public final class Doolhof extends RondeLogica {
 		for (ServerPlayer s : Mc.deelnemers(server)) {
 			SpelerStatus st = Spel.status(s);
 			if (!st.klaar) {
+				st.klaar = true;
 				Spel.naarPunt(s, "v2");
 			}
 		}

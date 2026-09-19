@@ -18,6 +18,7 @@ import nl.pudding.bootcamp.core.Rol;
 import nl.pudding.bootcamp.core.Ronde;
 import nl.pudding.bootcamp.crown.Kroon;
 import nl.pudding.bootcamp.crown.Opstelling;
+import nl.pudding.bootcamp.game.Aftelling;
 import nl.pudding.bootcamp.game.Border;
 import nl.pudding.bootcamp.game.RondeLogica;
 import nl.pudding.bootcamp.game.Spel;
@@ -27,6 +28,7 @@ import nl.pudding.bootcamp.kits.Kits;
 import nl.pudding.bootcamp.tribune.Tribune;
 import nl.pudding.bootcamp.visuals.Bossbar;
 import nl.pudding.bootcamp.visuals.Vuurwerk;
+import nl.pudding.bootcamp.visuals.Zweefkroon;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -90,8 +92,11 @@ public final class Finale extends RondeLogica {
 				buiten.add(naam);
 			}
 		}
-		return buiten.isEmpty() ? null
-				: "deze punten liggen buiten de border van 20 x 20 om het midden van regio finale: " + String.join(", ", buiten);
+		if (!buiten.isEmpty()) {
+			return "deze punten liggen buiten de border van 20 x 20 om het midden van regio finale: " + String.join(", ", buiten);
+		}
+		String fout = Kits.controleer(server, "finale");
+		return fout != null ? fout : Spel.binnenRegio("vloer", "tribune_1", "tribune_2", "tribune_3", "tribune_4");
 	}
 
 	@Override
@@ -125,6 +130,8 @@ public final class Finale extends RondeLogica {
 			fase = Fase.WACHT_OP_FINALIST;
 			wacht = Regels.KONING_UITLOG_WACHT;
 			Spel.stopTimer();
+			Aftelling.stop();
+			Opstelling.losIedereen(server);
 			return;
 		}
 		fase = Fase.POTJE;
@@ -207,6 +214,10 @@ public final class Finale extends RondeLogica {
 	protected void finalistTerug(MinecraftServer server, ServerPlayer speler) {
 		if (fase == Fase.WACHT_OP_FINALIST) {
 			startPotje(server);
+		} else if (fase == Fase.KRONING && speler.getUUID().equals(winnaar)) {
+			// De winnaar relogt tijdens zijn eigen kroning: hij houdt zijn kroon.
+			Kroon.geef(server, speler);
+			Spel.naarPunt(speler, "kroning");
 		} else if (fase == Fase.KRONING) {
 			Tribune.maakKijker(server, speler, Tribune.Spullen.LEGEN, false);
 		}
@@ -242,11 +253,22 @@ public final class Finale extends RondeLogica {
 		fase = Fase.KRONING;
 		winnaar = winnaarId;
 		kroning = Regels.KRONING_VUURWERK;
+		Aftelling.stop();
 		Opstelling.losIedereen(server);
 		Border.weg(server);
 
 		// De verliezer gaat naar de tribune; de tribunes zijn vol.
-		ServerPlayer verliezer = speler(server, stand.tegenstander(winnaarId));
+		UUID verliezerId = stand.tegenstander(winnaarId);
+		ServerPlayer verliezer = speler(server, verliezerId);
+		if (verliezer == null) {
+			// Uitgelogd: zijn zweefkroon hangt er nog, en hij mag straks niet als koning terugkomen.
+			Zweefkroon.uit(verliezerId);
+			SpelerStatus weg = Spel.status(verliezerId);
+			if (weg != null) {
+				weg.dood = true;
+				weg.rol = Rol.KIJKER;
+			}
+		}
 		if (verliezer != null) {
 			Spel.status(verliezer).dood = true;
 			Tribune.maakKijker(server, verliezer, Tribune.Spullen.LEGEN, false);

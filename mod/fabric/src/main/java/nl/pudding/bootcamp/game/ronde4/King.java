@@ -75,7 +75,14 @@ public final class King extends RondeLogica {
 		if (Mc.isStaff(clown)) {
 			return "de uitverkorene staat in creative of spectator en doet dus niet mee";
 		}
-		return Spel.buitenRegio("vloer", "troon", "hunter_1", "hunter_2", "hunter_3", "hunter_4");
+		String fout = Kits.controleer(server, "boss", "kroonpakket", "basis");
+		if (fout == null) {
+			fout = Spel.buitenRegio("vloer", "troon", "hunter_1", "hunter_2", "hunter_3", "hunter_4");
+		}
+		if (fout == null) {
+			fout = Spel.binnenRegio("vloer", "tribune_1", "tribune_2", "tribune_3", "tribune_4");
+		}
+		return fout;
 	}
 
 	@Override
@@ -89,6 +96,8 @@ public final class King extends RondeLogica {
 			s.setGameMode(GameType.ADVENTURE);
 			Mc.heal(s);
 			if (s != clown) {
+				// Een kroon uit een eerdere poging (na /bc stop) mag niet blijven zitten.
+				Kroon.neemAf(s);
 				Spel.zetRol(server, s, Rol.HUNTER);
 				Kroon.toonOpLocator(s, false);
 				// De loot uit ronde 3, of de basiskit voor wie niks heeft.
@@ -299,6 +308,8 @@ public final class King extends RondeLogica {
 			regeerperiodes.seconde();
 			toonSidebar(server);
 		}
+		// Niet alleen bij een dood: ook als de ref de laatste hunter met /bc kijker van de vloer haalt.
+		controleerEinde(server);
 	}
 
 	private void toonSidebar(MinecraftServer server) {
@@ -319,6 +330,21 @@ public final class King extends RondeLogica {
 	// Einde
 
 	private void einde(MinecraftServer server) {
+		if (koningWeg >= 0) {
+			// De koning is uitgelogd en niet terug: de ronde mag niet eindigen met een afwezige
+			// finalist. De kroon gaat eerst door, zonder reset, want de ronde is voorbij.
+			List<UUID> levend = Spel.levend(server, Rol.HUNTER).stream().map(ServerPlayer::getUUID).toList();
+			Optional<UUID> opvolger = Regels.kroonOpvolger(null, Kroon.laatsteHit(koning), levend, Spel.RANDOM);
+			if (opvolger.isPresent()) {
+				SpelerStatus weg = Spel.status(koning);
+				if (weg != null) {
+					weg.dood = true;
+					weg.rol = Rol.KIJKER;
+				}
+				Zweefkroon.uit(koning);
+				wordKoning(server, server.getPlayerList().getPlayer(opvolger.get()));
+			}
+		}
 		UUID finalist = koning;
 		Regeerperiodes.Periode langste = regeerperiodes.langste();
 		Spel.stop(server);

@@ -141,6 +141,23 @@ public final class Kits {
 	}
 
 	/**
+	 * Voor {@code magStarten}: bestaan deze kits en zijn ze geldig? Een ronde hoort te weigeren
+	 * voordat ze begint, niet halverwege te merken dat een kit kapot is.
+	 *
+	 * @return {@code null} als alles klopt, anders de eerste foutregel
+	 */
+	public static String controleer(MinecraftServer server, String... namen) {
+		for (String naam : namen) {
+			try {
+				laad(server, naam);
+			} catch (KitFout e) {
+				return "kit " + e.getMessage();
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Laadt de kit en zet hem op alle spelers. Gaat het laden mis, dan gebeurt er niks en komt de
 	 * fout in de console.
 	 *
