@@ -52,10 +52,9 @@ class ResourcesTest {
 				KitDef.uitJson(p.getFileName().toString(), lees(p));
 			}
 			List<String> namen = bestanden.stream().map(p -> p.getFileName().toString()).toList();
-			for (String verwacht : List.of("horde.json", "ei.json", "boss.json", "kroonpakket.json", "arena.json", "finale.json")) {
+			for (String verwacht : List.of("basis.json", "horde.json", "ei.json", "boss.json", "kroonpakket.json", "arena.json", "finale.json")) {
 				assertTrue(namen.contains(verwacht), verwacht + " ontbreekt");
 			}
-			assertFalse(namen.contains("basis.json"), "basis.json komt van Pudding en wordt niet meegeleverd");
 		}
 		// De kroon blijft op: deze kits hebben geen helm.
 		assertFalse(KitDef.uitJson("boss.json", lees(kits.resolve("boss.json"))).heeftHelm());

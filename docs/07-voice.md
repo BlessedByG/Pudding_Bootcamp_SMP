@@ -5,32 +5,30 @@ client-mod, de server draait de Fabric-versie. Geen Discord-call ernaast, anders
 zinloos.
 
 Spelers hoeven **niks** te doen, te typen of aan te klikken, en de bootcamp-mod doet ook niks met
-voice. Het is puur proximity, de hele avond.
+voice. Het is puur proximity, de hele avond, ook in de teamrondes: er zijn geen teamkanalen.
 
 ## De regels
 
-1. **Alles is proximity, voor iedereen.** Basiskamp, doolhof, horde, Ei-bos, de Arena: je hoort
-   wie bij je in de buurt is. Bereik 48 blokken, fluister-toets voor kleiner bereik.
-2. **Dood ben je publiek.** Op de tribune hoor je de vloer, en de vloer hoort jou. Joelen,
-   juichen, roepen waar iemand zit: mag allemaal. In een open arena met een glowende koning verraad
-   je toch niks.
+1. **Alles is proximity, voor iedereen.** Je hoort wie bij je in de buurt is. Bereik 48 blokken,
+   fluister-toets voor kleiner bereik.
+2. **Af ben je publiek.** Op de tribune en in de kooi hoor je het veld, en het veld hoort jou.
 3. **Geen groepen.** Die staan in de voice-config uit, dus niemand kan een walkietalkie maken over
-   de hele map.
+   de hele map, ook niet met zijn team.
 
 Per ronde:
 
-| Ronde | Levend | Dood / kijkers |
+| Ronde | Levend | Af / kijkers |
 |---|---|---|
-| Basiskamp, Doolhof, Horde, Het Ei | Proximity. | Ronde 2: op de tribune van de ruïne-arena, hoorbaar voor de vloer en voor elkaar. |
-| King of the SMP | Proximity, hunters én koning. | Op de tribune van de Arena: publiek. |
-| FFA en Finale | Proximity. | Tribune, ook finalist 1 en Clown. |
+| Basiskamp, Doolhof, Het Ei | Proximity. | – |
+| Mob Arena | Proximity. Je team staat bij elkaar in de arena. | Kooi naast het veld, of de tribune tussen de arena's: hoorbaar voor beide velden. |
+| Quiz | Proximity. Het podium is klein: iedereen hoort de host en elkaar. Overleggen met je team kan, de rest hoort mee. | – |
+| Clown vs All | Proximity, jagers en kroonhouder. | Tribune van de Arena: publiek. |
+| FFA | Proximity. | Tribune, ook Clown. |
 | Kroning | Proximity in de Arena, tribunes vol. | – |
 
 ## Wat de mod doet
 
-Niks. Simple Voice Chat draait naast de bootcamp-mod en die heeft de voice-API niet nodig. Wil je
-later toch iets extra's, zoals een omroepknop voor de host, dan is de API er en is dat een losse
-uitbreiding.
+Niks. Simple Voice Chat draait naast de bootcamp-mod en die heeft de voice-API niet nodig.
 
 ## Server-config
 
@@ -43,23 +41,20 @@ enable_groups=false
 force_voice_chat=true
 ```
 
-- `enable_groups=false`: geen groepen, dus alles is altijd proximity en niemand kan er een maken.
-- `force_voice_chat=true` kickt iedereen die de mod niet heeft. Voor een event wil je dat: dan
-  weet je bij het joinen meteen wie er nog moet installeren.
-- **UDP-poort 24454** moet open staan naast de normale TCP-poort van de server. Bij een hoster
-  moet je die vaak apart aanvragen. Dit is de nummer-één oorzaak van "ik hoor niks".
+- `enable_groups=false`: geen groepen, dus alles is altijd proximity.
+- `force_voice_chat=true` kickt iedereen die de mod niet heeft. Dan weet je bij het joinen meteen
+  wie er nog moet installeren.
+- **UDP-poort 24454** moet open staan naast de normale TCP-poort. Bij een hoster moet je die vaak
+  apart aanvragen. Dit is de nummer-één oorzaak van "ik hoor niks".
 - De client- en servermod moeten dezelfde hoofdversie hebben.
 
 ## Praktisch
 
-- **Voice-test om 19:40** in het basiskamp: iedereen zegt wat, iedereen loopt een stuk weg en
-  terug. Wie een kruis door het voice-icoontje heeft is niet verbonden (bijna altijd de UDP-poort
-  of een verkeerde modversie).
-- **Streams:** de mod is gewoon game-audio, dus proximity komt vanzelf op de stream. Push-to-talk
-  of stemactivatie is aan de streamer zelf.
-- **Host:** zit niet in de spelersvoice, praat op zijn eigen stream. Aankondigingen in-game gaan
-  via `title` en chat. Wil de host toch tegen iedereen in-game praten, dan is er de addon
-  *Voice Chat Broadcast* (ops kunnen met een toets naar iedereen omroepen); check of die er is
-  voor jullie versie.
-- **Tribune:** de doden mogen alles roepen. De enige regel die blijft is niet streamsnipen (zie
-  het draaiboek).
+- **Voice-test om 19:40** in het basiskamp: iedereen zegt wat, loopt een stuk weg en terug.
+- **Streams:** de mod is gewoon game-audio, dus proximity komt vanzelf op de stream.
+- **Host:** praat op de eigen stream en zit meestal niet in de spelersvoice. **Bij de quiz wel**:
+  de host staat dan in-game bij het podium en leest de vragen voor via proximity. Daarvoor moet
+  het host-account de voice-mod hebben; test in de testrun of de host vanuit spectator gehoord
+  wordt, en anders in creative bij het podium. Of gebruik de addon *Voice Chat
+  Broadcast* (ops kunnen met een toets naar iedereen omroepen) als die er is voor 26.2.
+- **Tribune:** de doden mogen alles roepen. Niet streamsnipen blijft de regel.

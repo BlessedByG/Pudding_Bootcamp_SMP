@@ -59,7 +59,7 @@ class KitsParseTest {
 			assertFalse(kit.items().isEmpty(), naam);
 			kits++;
 		}
-		assertEquals(6, kits);
+		assertEquals(7, kits);
 	}
 
 	@Test

@@ -58,7 +58,7 @@ Jar vervangen betekent server herstarten. Bewaar de jar van de vorige werkende v
 
 - In de console: `Pudding Bootcamp geladen`, `Gamerules gezet`.
 - `config/bootcamp/` wordt gevuld met wat ontbreekt: `waves.json` en in `kits/` de bestanden
-  `horde`, `ei`, `boss`, `kroonpakket`, `arena`, `finale` en `basis.README.txt`. Wat er al staat
+  `basis`, `horde`, `ei`, `boss`, `kroonpakket`, `arena` en `finale`. Wat er al staat
   wordt nooit overschreven.
 - `<wereld>/bootcamp.json` bestaat nog niet; de mod begint met een lege config.
 - Gamerules: natural regeneration en PvP aan (PvP is in 26.2 een gamerule; tot ronde 4 houdt team
@@ -72,7 +72,7 @@ Jar vervangen betekent server herstarten. Bewaar de jar van de vorige werkende v
 |---|---|
 | `<wereld>/bootcamp.json` | Regio's, punten, doodteksten, de pilaar van elke kop, de uitverkorene. Wordt na elke wijziging opgeslagen. Met de hand aanpassen mag, maar alleen als de server uit staat. Een onleesbaar bestand wordt opzij gezet als `bootcamp.json.kapot`. |
 | `config/bootcamp/kits/<naam>.json` | Een kit. Wordt bij elk gebruik opnieuw gelezen: aanpassen zonder herstart. |
-| `config/bootcamp/kits/basis.json` | **Moet je zelf neerzetten**, de inhoud komt van Pudding. Zie `basis.README.txt` ernaast. Zonder dit bestand weigeren ronde 3 en ronde 4 te starten. |
+| `config/bootcamp/kits/basis.json` | De basiskit van Pudding: iron armor, iron sword, 32 steak. Iedereen krijgt hem bij de start van het doolhof. Zonder dit bestand weigeren ronde 1, 3 en 4 te starten. |
 | `config/bootcamp/waves.json` | De waves van de horde. Wordt bij `/bc start 2` gelezen. |
 
 ### Kits

@@ -50,7 +50,11 @@ public final class Doolhof extends RondeLogica {
 
 	@Override
 	public String magStarten(MinecraftServer server) {
-		String fout = Spel.buitenRegio("doolhof", "doolhof_start");
+		String fout = Kits.controleer(server, "basis");
+		if (fout != null) {
+			return fout;
+		}
+		fout = Spel.buitenRegio("doolhof", "doolhof_start");
 		if (fout != null) {
 			return fout;
 		}
@@ -69,6 +73,7 @@ public final class Doolhof extends RondeLogica {
 		for (ServerPlayer s : Mc.deelnemers(server)) {
 			Spel.naarPunt(s, startpunt());
 		}
+		Kits.geefAan(server, "basis", Mc.deelnemers(server));
 		Border.zet(server, Spel.regio("doolhof"));
 		Aftelling.start(5, "Het doolhof opent over", () -> {
 			Poorten.openAlsHijBestaat(server, POORT);

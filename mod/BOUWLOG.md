@@ -575,8 +575,8 @@ ook de literals `label` en `finalist`.
   ligt niet voor de hand.
 
 **Wat jij moet doen**
-1. `basis.json` maken (zie `config/bootcamp/kits/basis.README.txt` na de eerste start). Zonder
-   starten ronde 3 en 4 niet.
+1. ~~`basis.json` maken~~: geleverd op 2026-09-25 (iron armor, iron sword, 32 steak) en zit nu in
+   de jar.
 2. De checklist "eerste test van de mod" in [docs/05](../docs/05-draaiboek.md), met een tweede
    account. Alles wat niet klopt in één bericht terug, met de console-regels.
 3. Beslissen over de punten onder "Blijft staan" bij T15, als je ze anders wilt.

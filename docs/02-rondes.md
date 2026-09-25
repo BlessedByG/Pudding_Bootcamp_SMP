@@ -1,269 +1,314 @@
 # De rondes
 
-Alle rondes uitgewerkt. Per ronde: doel, setup, regels, hoe het eindigt, wat je eraan overhoudt
-(bonus) en wat er mis kan gaan.
+Alle rondes uitgewerkt. Per ronde: doel, setup, regels, hoe het eindigt, wie wint en wat er mis
+kan gaan.
 
-Getallen zijn uitgangspunt voor 20 spelers. Schaal ze mee met het aantal spelers.
+Getallen zijn uitgangspunt voor 20 spelers: 4 teams van 5. Schaal ze mee met het aantal spelers.
+
+| # | Ronde | Solo of team | Winnaar |
+|---|---|---|---|
+| 1 | De Doolhof | solo | geen; bij de uitgang kies je je team |
+| 2 | Het Ei | solo | de speler met de meeste punten |
+| 3 | De Mob Arena | team | het team dat het langst overleeft (knock-out) |
+| 4 | De Quiz | team | het team dat de host aanwijst |
+| 5 | Clown vs All | solo | de laatste die overblijft |
+| 6 | De FFA | solo | de laatste die overblijft: King of the SMP |
+
+Er is geen totaalstand over de avond: elke ronde met een winnaar staat op zichzelf.
+
+**Gear.** Je start het doolhof met de basiskit. Wat je in de doolhofkisten vindt houd je in het Ei,
+de mob arena en de quiz. Bij Clown vs All gaat alles weg en krijgt iedereen dezelfde kit, en in de
+FFA weer.
+
+**PvP** staat de hele avond uit, behalve voor de kroonhouder in Clown vs All en voor iedereen in
+de FFA. De mod regelt dat, niet de teams.
+
+**Doodgaan.** De mod laat niemand echt doodgaan: geen death-screen, geen respawn. Wat er dan
+gebeurt hangt af van de ronde en staat per ronde hieronder. Wie uit een ronde ligt, gaat naar de
+tribune: in adventure, zonder schade, met de andere doden. Niemand komt ooit in spectator mode.
 
 ---
 
 ## Ronde 0: Basiskamp
 
-Iedereen spawnt in het basiskamp, een kampement bij de poort van het doolhof, en leest de regels
-op de borden. Host legt kort uit wat er komen
-gaat (niet alles verklappen: de kroonregels pas uitleggen bij ronde 4). Countdown, poort 1 open.
+Iedereen spawnt in het basiskamp en leest de regels op de borden. De host legt uit wat er komen
+gaat, maar niet alles: Clown vs All en het Rad pas bij ronde 5. Nog geen teams; iedereen is wit.
 
-Iedereen zit in één team (`spelers`) met friendly fire uit, dus je kunt elkaar niet raken tot
-ronde 4.
-
-**Voice:** proximity vanaf het moment dat je joint. Voice-test in het basiskamp voor de start
-(zie [07-voice.md](07-voice.md)).
+**Voice:** proximity vanaf het moment dat je joint. Voice-test voor de start (zie
+[07-voice.md](07-voice.md)).
 
 ---
 
 ## Ronde 1: De Doolhof
 
-**Doel:** vind de uitgang van het doolhof.
+**Doel:** vind als eerste de uitgang, want wie het eerst buiten is kiest het eerst een team.
 
 **Setup**
-- 64 x 64 hagendoolhof in een dal, hagen 4 hoog, geen plafond. Ingang bij het basiskamp, uitgang
-  aan de overkant.
-- Adventure mode: niet breken, niet bouwen.
-- 10 tot 15 kisten in doodlopende gangen met kleine loot die je later in de avond kunt gebruiken:
-  een gapple, wat pijlen, een potion. Geen pearls: zonder plafond gooi je die zo over de haag.
-- Optioneel: 2 of 3 "gevaarlijke" gangen met een zombie-spawner of een valkuil. Niet dodelijk,
-  wel vervelend.
-- Iedereen start tegelijk bij dezelfde ingang. Wil je het wat spreiden, maak dan 4 ingangen in de
-  hoeken en één uitgang in het midden.
+- Hagendoolhof van ongeveer 64 x 64, hagen 4 hoog, geen plafond. Adventure mode: niet breken,
+  niet bouwen.
+- In het midden één grote startruimte. Daaruit lopen **4 gangen** het doolhof in. Maar één daarvan
+  leidt naar de echte uitgang. De andere 3 eindigen in een **nep-uitgang**.
+- Iedereen krijgt bij de start de **basiskit**: volledig iron armor, iron sword, 32 steak. De
+  inventory gaat eerst leeg.
+- **Kisten** in doodlopende gangen, 10 tot 15 stuks, met betere gear dan de basiskit. De mod vult
+  ze bij de start uit een loot-tabel, dus elke run ligt er iets anders in en niemand hoeft ze met
+  de hand te vullen. Denk aan losse diamond armor pieces, een enchanted sword, een boog met
+  pijlen, een gapple. Geen ender pearls: zonder plafond gooi je die zo over de haag.
+- 2 of 3 **schrikplekken** in het doolhof: loop je erdoor, dan krijg je de jumpscare. Per plek één
+  keer per speler.
+
+**Nep-uitgang**
+- Loop je een nep-uitgang in, dan: een creeper-explosie (particles en geluid, geen schade), groot
+  een grapje in beeld ("BOEM. Verkeerde deur.", "Haha, nep!", "Dit is niet de uitgang, sukkel")
+  en je staat weer in de startruimte in het midden. De grapjes staan in de config.
+
+**Jumpscare**
+- Een foto van Clown schermvullend in beeld met het lachje van Clown erbij, een paar tellen. Daarvoor
+  gebruikt de server een resource pack; zie [04-technische-schets.md](04-technische-schets.md).
+
+**De uitgang**
+- De uitgang is een poort die pas **na 4 minuten** opengaat. Tot die tijd kun je de echte gang
+  vinden, maar niet eruit. De bossbar telt af tot de poort open is.
+- Wie door de uitgang komt, krijgt een menu met 4 kleuren: **rood, blauw, groen, geel**. Klik een
+  kleur en je zit in dat team: je naam krijgt die kleur. **Een team is vol bij 5**; een vol team
+  staat grijs in het menu en kun je niet kiezen. Clown kiest ook gewoon een kleur, als teamlid.
+- Menu dicht zonder te kiezen? Dan komt het terug. Wie gekozen heeft gaat naar verzamelpunt 2 aan
+  de bosrand en wacht daar op de rest.
 
 **Regels**
-- Niemand heeft pearls in deze ronde (de eerste komen uit het voorsprongkistje erna), dus over de
-  haag heen kan niet. Adventure mode, dus door de haag heen ook niet.
-- Alles wat je vindt mag je houden.
+- Alles wat je vindt mag je houden, tot Clown vs All.
+- Doodgaan kan eigenlijk niet. Gebeurt het toch, dan sta je geheald terug in de startruimte.
 
 **Einde**
-- Timer 10 minuten. Wie de uitgang vindt, wordt doorgezet naar verzamelpunt 2 bij de horde-arena
-  en hangt daar met de rest tot de ronde klaar is.
-- Na de timer wordt iedereen die nog in het doolhof zit ook naar verzamelpunt 2 geteleporteerd.
-  Niemand ligt eruit.
+- Timer 10 minuten. Na de timer gaat iedereen die nog binnen zit naar verzamelpunt 2 en komt in
+  het team met de minste spelers. Wie buiten stond maar niet koos ook.
 
-**Bonus:** de eerste 5 spelers die eruit zijn krijgen een voorsprongkistje bij verzamelpunt 2:
-1 gapple + 1 ender pearl.
+**Winnaar:** geen. Wie het eerst buiten is heeft de vrije keuze uit de teams.
 
-**Voice:** proximity. Je hoort wie in de gang naast je loopt, en dat is het.
+**Voice:** proximity. Je hoort wie in de gang naast je loopt.
 
 **Wat train je:** oriëntatie, rustig blijven, dead ends herkennen.
 
 **Wat kan misgaan**
-- Niemand vindt de uitgang: na 7 minuten een `title` met een hint ("de uitgang ligt aan de
-  noordkant"). Uiteindelijk lost de timer het op.
-- Spelers die stuck staan: admin kan ze met `tp` een gang verder zetten.
+- Niemand vindt de uitgang: na 7 minuten een hint als title ("de echte gang begint bij de ...").
+  Uiteindelijk lost de timer het op.
+- Stuck: de ref zet iemand met `tp` een gang verder.
+- Teams worden scheef doordat vrienden samen kiezen: dat mag. Maximaal 5 is de enige grens.
 
 ---
 
-## Ronde 2: De Horde
+## Ronde 2: Het Ei
 
-**Doel:** overleef als groep 5 waves mobs.
+**Doel:** hak zo veel mogelijk punten uit het Grote Ei. Solo: de speler met de meeste punten wint.
 
 **Setup**
-- Ruïne-arena Ø 50 ten oosten van de Arena, met wat dekking. 4 spawnpunten voor mobs aan de rand.
-- Iedereen krijgt bij binnenkomst de **hordekit**: volledig iron armor, iron sword, boog, 32
-  pijlen, schild, 16 steak.
-- Waves (voor 20 spelers; grofweg 1 mob per speler per wave, boss wave vast):
+- Zoekgebied van 150 x 150: bos met heuvels, grotten en een meertje. De worldborder sluit het af.
+- Survival: je moet minen. Je houdt je gear en krijgt er een **diamond pickaxe met Efficiency II**
+  bij. Diamond, omdat je een netherite block met iron niet kapot krijgt.
+- **Het Grote Ei:** ±15 hoog, ±11 breed, half verstopt. Een schil van steen (stone, deepslate,
+  andesite, tuff, wat obsidian-vlekken) en binnenin de puntenblokken, rommelig door elkaar met
+  opvulling ertussen. Met 20 spelers ongeveer:
+
+| Block | Wat het doet | Aantal |
+|---|---|---|
+| Netherite block | **50 punten.** Kost met een diamond pickaxe een paar tellen: je staat even stil. | 3 |
+| Diamond block | **10 punten** | 30 |
+| Gold block | **5 punten** | 40 |
+| Redstone block | **Gok.** Of jij krijgt 10 seconden Haste, of iedereen behalve jij staat 15 seconden stil. 50/50. | 8 |
+| Emerald block | **Jumpscare** bij een willekeurige andere speler. | 5 |
+
+- Nep-eitjes: 3 tot 5 kleine eitjes met soms een bordje met een hint over de richting.
+
+**Regels**
+- Punten tellen **op het moment dat je het block breekt**. Het block valt niet: er is niks om mee
+  te nemen, niks om te stelen.
+- Je eigen score staat in je actionbar, de top van het klassement in de sidebar.
+- **Stilstaan** bij een redstone-bevriezing: niet lopen, niet springen, niet minen. Rondkijken
+  kan. Iedereen ziet in beeld wie het deed. Breekt iemand anders tijdens een bevriezing weer een
+  redstone block en valt die ook op bevriezen, dan begint de bevriezing opnieuw, nu met die
+  speler als enige die los is.
+- Geen PvP.
+- Doodgaan (val, lava, verdrinken): je staat geheald terug aan de bosrand, je punten en spullen
+  houd je.
+
+**Einde**
+- Timer 10 minuten. Wie de meeste punten heeft, wint: title voor iedereen, vuurpijl boven de
+  winnaar. Gelijk? Dan wint wie die score het eerst had.
+- Iedereen naar verzamelpunt 3 bij de mob arena. De punten tellen verder nergens voor.
+
+**Voice:** proximity. Wie het Ei vindt hoort alleen wie in de buurt is.
+
+**Wat train je:** exploren, snel minen, kiezen waar je je tijd in steekt.
+
+**Wat kan misgaan**
+- Niemand vindt het Ei: op 5 minuten gaat een beacon onder het Ei aan, op 3 minuten een vuurpijl.
+- Het Ei is binnen twee minuten leeg: meer gold en diamond erin bij de testrun.
+- Iemand zit in een grot vast: ref `tp`.
+
+---
+
+## Ronde 3: De Mob Arena
+
+**Doel:** houd het met je team langer vol dan het andere team. Knock-out: twee halve finales,
+dan de finale.
+
+**Setup**
+- **Twee identieke arena's naast elkaar**, A en B, met een tribune ertussen die op allebei
+  uitkijkt. Elke arena heeft 4 mob-spawnpunten, wat dekking, en naast het veld een **kooi**: een
+  glazen hok waar je in staat als je dood bent, met zicht op het veld.
+- Iedereen houdt zijn gear en krijgt er de **mob-arenakit** bij: boog, 32 pijlen, schild, 16
+  steak.
+- **Loting** bij de start: de mod trekt welke twee teams tegen elkaar spelen. Bijvoorbeeld:
+
+```
+halve finale 1:  Rood (A)   vs  Blauw (B)
+halve finale 2:  Groen (A)  vs  Geel (B)
+finale:          winnaar 1  vs  winnaar 2
+```
+
+**Een wedstrijd**
+- Twee teams, elk in een eigen arena. De rest staat op de tribune.
+- De waves spawnen **in beide arena's tegelijk**, dezelfde mobs. Is jouw team eerder klaar, dan
+  heb je rust tot de andere arena de wave ook dood heeft. **10 seconden** daarna komt de volgende
+  wave, weer in allebei.
+- De waves worden steeds zwaarder en houden niet op. Na de laatste wave uit de lijst komt die
+  wave steeds opnieuw, met elke keer meer mobs.
+- Waves voor een team van 5 (per arena):
 
 | Wave | Wat | Aantal |
 |---|---|---|
-| 1 | Zombies | 20 |
-| 2 | Skeletons + spiders | 15 + 10 |
-| 3 | Zombies met iron gear + creepers | 15 + 8 |
-| 4 | Zombies met iron gear + witches + cave spiders | 15 + 6 + 8 |
-| 5 (boss) | Ravagers + evokers + vindicators | 2 + 4 + 10 |
+| 1 | Zombies | 5 |
+| 2 | Skeletons + spiders | 4 + 3 |
+| 3 | Zombies met iron gear + creepers | 5 + 2 |
+| 4 | Zombies met iron gear + witches + cave spiders | 5 + 2 + 3 |
+| 5 | Ravager + vindicators + evoker | 1 + 3 + 1 |
+| 6 en verder | Wave 5, met elke wave één extra van elk | |
 
-- Een wave start als de vorige dood is, of na 2 minuten, wat het eerst komt. Zo blijft het tempo
-  erin.
-- Bossbar laat zien: "Wave 3 · 12 mobs over".
+- Bossbar: `Rood vs Blauw · Wave 4`. Sidebar: per team hoeveel er nog staan.
 
 **Regels**
-- Doodgaan = kijker tot het einde van de ronde. Je krijgt groot een doodtekst in beeld ("Grote L
-  gepakt!") en staat op de tribune van de ruïne-arena, met zicht op de vloer en met de andere
-  doden. Je hoort alles en de vloer hoort jou. Je spullen blijven bewaard en krijg je aan het eind
-  van de ronde terug. Aan het eind van de ronde gaat iedereen door, dood of levend.
-- De volgorde van sneuvelen komt op het scoreboard in de sidebar. Puur voor de eer.
+- Doodgaan = je gaat **in de kooi** van je arena en kijkt de rest van de wedstrijd daar. Doodtekst
+  groot in beeld, alleen voor jou. Je spullen worden bewaard en je krijgt ze na de mob arena
+  terug.
+- Een wedstrijd is afgelopen als een team **niemand meer op het veld** heeft. Het andere team wint.
+  Gaan beide teams in dezelfde wave onderuit, dan wint het team waarvan de laatste speler het
+  langst bleef staan.
+- Na een wedstrijd gaan beide teams naar de tribune.
+- **Dood blijft dood tot het einde van de mob arena.** Wie in de halve finale sneuvelde, begint de
+  finale in de kooi, niet op het veld. De finale speel je met wie er over is. Wie wel overleefde
+  begint de finale geheald.
+- Geen PvP, ook niet binnen je team.
 
 **Einde**
-- Wave 5 dood, iedereen dood, of timer 10 minuten. Iedereen naar verzamelpunt 3 aan de bosrand,
-  de doden worden daar weer levend gemaakt.
-- Loot die mobs droppen mag je houden (pijlen, wat rommel).
+- Het team dat de finale wint, wint de mob arena: title voor iedereen, vuurpijlen boven het team.
+- Iedereen weer levend, spullen terug, naar de quiz.
 
-**Bonus:** iedereen die de ronde overleeft, krijgt 1 ender pearl bij verzamelpunt 3.
+**Voice:** proximity. De tribune staat tussen de twee arena's, dus je hoort beide teams en zij
+jou.
 
-**Voice:** proximity voor iedereen. Dood = kijker op de tribune: je hoort de vloer en de vloer
-hoort jou, de tribune is publiek.
-
-**Wat train je:** mobs, boog en schild, samen vechten, niet in de creeper rennen.
+**Wat train je:** mobs, boog en schild, samenwerken, niet in de creeper rennen.
 
 **Wat kan misgaan**
-- Server lag door 60 mobs + 20 spelers: houd view distance op 8 en spawn mobs verspreid over de
-  4 punten in plaats van alles op één plek.
-- Mobs blijven ergens hangen (achter dekking, in een gat): wave-timer van 2 minuten vangt dit op.
-  Admin kan met `kill @e[tag=horde]` een wave forceren.
-- Iedereen ligt er op wave 3 al uit: dan was het te zwaar, en een arena vol kijkers is saai.
-  Zonder respawns wil je de waves liever iets te makkelijk dan te moeilijk; schaal ze in de
-  testrun.
+- Een mob blijft hangen achter dekking en de wave wordt nooit klaar: na 2 minuten telt de wave
+  als klaar en komt de volgende. De ref kan een wave forceren met `/bc wave volgende`.
+- Een wedstrijd duurt eindeloos omdat het doolhof-gear te sterk is: de waves worden elke keer
+  zwaarder, dus uiteindelijk valt er een team. Stel de aantallen bij in de testrun.
+- Server lag: 2 arena's met elk hooguit 20 mobs is weinig, maar houd view distance op 8.
 
 ---
 
-## Ronde 3: Het Ei
+## Ronde 4: De Quiz
 
-**Doel:** vind het Grote Ei, hak je naar binnen, pak zoveel loot als je kunt dragen en neem
-minstens één diamond block mee. Dat block is je ticket naar ronde 4.
+**Doel:** beantwoord als team zo veel mogelijk vragen goed. Rustronde na de mob arena.
 
 **Setup**
-- 150 x 150 zoekgebied: het bos ten zuiden van de Arena, met heuvels, grotten en een meertje. De
-  worldborder sluit het af, geen muur nodig.
-- Iedereen krijgt bij binnenkomst een iron pickaxe (Efficiency II) en houdt wat ze al hadden.
-- **Het Grote Ei:** ±15 hoog, ±11 breed, half verstopt (in een heuvel, in een grot, in het meer).
-  Van buiten naar binnen:
-  - **Schil:** mix van stone, deepslate, andesite, tuff, mossy cobble. Ziet eruit als een rots-ei.
-    Een paar vlekken obsidian, zodat je moet zoeken naar een zachte plek.
-  - **Eiwit:** een rommelige laag van van alles (blokken, iron blocks, gold blocks) met daartussen
-    25 tot 30 kisten. Elke kist is een "setje", zodat de eerste niet alles kan meenemen.
-  - **Dooier:** in het midden 30 diamond blocks (1,5x het aantal spelers).
-- **Loot in de kisten** (dit is de PvP-gear voor ronde 4): losse diamond armor pieces (deels met
-  Protection), diamond swords (deels Sharpness), bogen (deels Power), gapples, ender pearls,
-  potions (speed, fire resistance, healing). Geen Strength, geen lava, geen bouwblokken (bouwen
-  is in ronde 4 toch verboden).
-- **Nep-eitjes:** 3 tot 5 kleine eitjes (3 hoog) door het gebied, met één kistje met wat kleins en
-  soms een bordje met een hint over de richting van het Grote Ei.
+- Een podium met vier vakken, één per team in de teamkleur. Voor elk vak een lamp. Iedereen staat
+  in het vak van zijn team.
+- Adventure, geen schade, geen timer.
+
+**Hoe het loopt**
+1. De **randomizer**: een lichtje loopt langs de vier lampen, steeds langzamer, en stopt op een
+   team. Dit is echt willekeurig, niet rigged.
+2. De host stelt dat team vragen. Het team overlegt en geeft antwoord.
+3. Goed? Dan krijgt het team de volgende vraag. **Fout? Dan draait de randomizer opnieuw**, over
+   alle vier de teams. Hetzelfde team kan dus weer uitkomen.
+4. Dit gaat door tot de host stopt.
 
 **Regels**
-- Geen PvP (iedereen zit nog in hetzelfde team).
-- Voice is gewoon proximity, ook hier. Wie het Ei vindt hoort alleen wie in de buurt is; roepen
-  kan, maar dan komt iedereen.
-- Pak wat je pakken kunt, maar je hebt maar één inventory.
-- Je komt alleen bij De Kring (verzamelpunt 4) met een diamond block op zak: de uitgang van het
-  bos is een drukplaat die het block inneemt en je erheen teleporteert.
+- De host leest de vragen voor, keurt de antwoorden, houdt de punten bij en bepaalt hoeveel vragen
+  het worden. De mod doet alleen de randomizer en laat de stand zien als de host die bijhoudt
+  (zie de commands in [04-technische-schets.md](04-technische-schets.md)).
+- Alleen het team dat aan de beurt is antwoordt.
 
 **Einde**
-- Timer 10 minuten. Wie een block heeft, gaat zelf via de drukplaat (block wordt ingenomen, je
-  staat bij De Kring).
-- Na de timer wordt iedereen zonder ticket alsnog doorgelaten, maar met een **lege inventory +
-  basiskit**. Geen ticket = geen loot. Dat is de straf.
+- De host wijst het winnende team aan: title voor iedereen, vuurpijlen boven dat vak.
+- Daarna naar de Arena voor Clown vs All.
 
-**Bonus:** je loot is je bonus. Wie snel is heeft de beste spullen voor ronde 4.
-
-**Voice:** proximity, zoals overal.
-
-**Wat train je:** exploren, snel minen, kiezen wat je meeneemt, onder tijdsdruk werken.
+**Voice:** proximity. Het podium is klein, dus iedereen hoort de host en elkaar. Overleggen met je
+team kan hardop: de andere teams horen het ook. Dat is onderdeel van het spel.
 
 **Wat kan misgaan**
-- Niemand vindt het Ei: op 5 minuten gaat een beacon onder het Ei aan (lichtstraal), op 3 minuten
-  gaat er een vuurpijl af. Uiteindelijk vindt iedereen het.
-- De dooier is leeg: 1,5x het aantal spelers is ruim, maar zet 5 extra diamond blocks in een
-  admin-kist als reserve.
-- Iemand zit in een grot vast: admin `tp`.
+- De host is niet te horen: de host staat in-game bij het podium, binnen 48 blokken van iedereen.
+- De randomizer landt steeds op hetzelfde team: dat is toeval. De host kan het wegpraten.
 
 ---
 
-## Ronde 4: King of the SMP
+## Ronde 5: Clown vs All
 
-Dit is de hoofdronde. De volledige regels staan in [03-kroon-regels.md](03-kroon-regels.md).
-Hier het overzicht.
+De volledige regels staan in [03-kroon-regels.md](03-kroon-regels.md). Hier het overzicht.
 
-**Doel:** heb de kroon als de timer afloopt, of als er geen hunter meer over is.
+**Doel:** blijf als laatste over.
 
 **Setup**
-- De Arena: een colosseum met een vloer van Ø 60 tot 80 met dekking, een verhoogd midden voor de
-  koning en tribunes rondom voor de doden. **Bouwen is verboden**; adventure mode zorgt dat het
-  ook niet kan.
+- De Arena: een colosseum met een vloer van Ø 60 tot 80 met dekking, een verhoogd midden en
+  tribunes rondom. Adventure: niet bouwen.
+- De teams zijn vanaf nu weg. Iedereen speelt solo.
 - Het begint met **Het Rad**: iedereen op de vloer, een lampje loopt langs de 20 pilaren met
-  spelerskoppen rond de vloer, steeds langzamer, en stopt op ClownPierce. Het ziet eruit als
-  toeval, het is rigged: Clown heeft vooraf de verborgen rol `uitverkoren` en het rad landt
-  altijd op die speler (zie [03-kroon-regels.md](03-kroon-regels.md)).
-- Clown wordt naar het midden geteleporteerd en krijgt de kroon en de **bosskit** (diamond
-  chestplate, leggings en boots Protection II, de kroon is de helm, diamond sword Sharpness II,
-  boog Power II, 32 pijlen, 4 gapples, 8 pearls, schild).
-- De 19 hunters starten op 4 punten aan de rand van de vloer met de spullen uit ronde 3 (of de
-  basiskit als ze niks hebben). Team `hunters`, friendly fire aan: hunters kunnen elkaar raken.
-- De koning heeft Glowing: je ziet hem door alles heen. Bossbar: timer + naam van de koning.
-- De koning krijgt 30 seconden voorsprong: de hunters staan die tijd bevroren op hun startpunt,
-  met een countdown in beeld.
+  spelerskoppen rond de vloer en stopt op Clown. Het ziet eruit als toeval, het is rigged: alleen
+  de admins weten dat het altijd op Clown landt.
+- Alle gear gaat weg. Clown krijgt de kroon en de **bosskit**, iedereen anders dezelfde
+  **jagerskit**.
 
 **Regels in het kort**
-- **Eén leven.** Wie doodgaat, hunter of koning, is uit de ronde en gaat als kijker de tribune op.
-  Geen respawns. Groot in beeld voor de dode: een willekeurige doodtekst ("Grote L gepakt!",
-  "Had je nou maar beter je best gedaan", "Gelukkig is dit niet de CSMP").
-- Kill de koning en je krijgt de kroon. Elke kroonwissel is een **reset**: alle levende hunters
-  worden geheald en terug naar hun startpunt aan de rand geteleporteerd. De nieuwe koning wordt
-  geheald, krijgt zijn armor en wapens gerepareerd, het kroonpakketje (2 gapples, 2 pearls), 15
-  seconden Resistance en Glowing, en staat in het midden. Tien seconden countdown waarin niemand
-  van zijn plek kan, dan los. Doden blijven dood.
-- Gaat de koning dood zonder killer, dan gebeurt precies hetzelfde. De kroon gaat naar de laatste
-  die hem raakte.
-- Hunters mogen elkaar raken. Samenwerken mag, verraden ook.
-- Bouwen is verboden. Pearls, gapples, boog en schild wel.
-- Timer 15 minuten. Wie de kroon heeft als de timer afloopt, of als alle hunters dood zijn, is
-  **finalist 1**.
+- **Friendly fire uit.** Alleen de kroonhouder kan iemand doden, en alleen de kroonhouder kan
+  geraakt worden door de rest. Jagers kunnen elkaar niks doen.
+- Word je gedood door de kroonhouder, dan ben je **af** en ga je de tribune op.
+- **Kill je de kroonhouder, dan krijg jij de kroon.** Dan begint het opnieuw: iedereen die nog
+  leeft staat geheald op zijn startpunt, de nieuwe kroonhouder in het midden, en de jacht begint
+  weer.
+- **Geen timer.** Het gaat door tot er één over is.
 
 **Einde**
-- Finalist 1 en Clown gaan de tribune op. **Iedereen anders gaat door naar ronde 5**, ook wie in
-  ronde 4 doodging, hunter of ex-koning. Ronde 4 is een eigen wedstrijd; de FFA begint schoon.
-- Is Clown nog koning, dan is hij finalist 1. Is hij de kroon kwijt, dan is de eindbaas klaar en
-  kijkt hij. Hij doet nooit mee aan de FFA.
+- De laatste die overblijft wint Clown vs All. Is dat Clown, dan heeft de eindbaas gewonnen.
+- Clown doet niet mee aan de FFA, ook niet na een overwinning. Iedereen anders wel, ook wie
+  af was.
 
-**Voice:** proximity voor iedereen. Dood = kijker op de tribune: je hoort de vloer en de vloer
-hoort jou. Roepen waar de koning zit mag, hij glowt toch.
+**Voice:** proximity. De tribune is publiek: de vloer hoort de doden.
 
-**Wat train je:** PvP tegen overmacht, target focus, wanneer je wel en niet moet gaan.
+**Wat train je:** PvP tegen overmacht, samen op één doel, wanneer je wel en niet moet gaan.
 
 ---
 
-## Ronde 5: Arena FFA
+## Ronde 6: De FFA
 
-**Doel:** laatste die overblijft.
+**Doel:** laatste die overblijft. Die is **King of the SMP**.
 
 **Setup**
-- Iedereen behalve Clown en finalist 1 wordt full hp op de vloer van de Arena gezet, verspreid
-  over de rand. Ook wie in ronde 4 doodging.
+- Iedereen behalve Clown, full hp, verspreid over de rand van de Arena. Ook wie in Clown vs All
+  af was, en de winnaar ervan.
 - Iedereen krijgt dezelfde **arenakit**: volledig diamond Protection I, diamond sword Sharpness I,
-  boog Power I, 16 pijlen, 2 gapples, 8 steak, schild. Eigen spullen worden weggehaald.
-- Teams weg: iedereen kan iedereen raken.
-- 10 seconden countdown, dan los.
+  boog Power I, 16 pijlen, 2 gapples, 8 steak, schild. Eigen spullen gaan weg.
+- 10 seconden countdown, dan los. Iedereen kan iedereen raken.
 
 **Regels**
 - Dood = uit, tribune op. Doodtekst groot in beeld.
-- Teamen mag, maar er wint er maar één. Op eigen risico.
-- Na 5 minuten krimpt de worldborder in 2 minuten naar 10 x 10, zodat het niet blijft hangen.
+- Teamen mag, maar er wint er maar één.
+- Na 5 minuten krimpt de worldborder in 2 minuten naar 10 x 10.
 
 **Einde**
-- Laatste levende speler krijgt de tweede kroon: **finalist 2**.
+- De laatste levende speler is **King of the SMP**.
 - Hard maximum 10 minuten; staan er dan nog meerdere, dan beslist het aantal kills.
-- Daarna **twee minuten rust**. Finalist 2 komt net uit een gevecht, finalist 1 is uitgerust. De
-  host bouwt het moment op, de finalisten staan naast elkaar op de tribune.
+- Meteen daarna de **kroning** in het midden van de Arena: de kroon op, twintig seconden
+  vuurpijlen, iedereen op de tribune. Geen prijs, just for fun.
 
-**Voice:** loopt door op de stand van ronde 4. Proximity voor iedereen, dood wordt kijker op de
-tribune. Finalist 1 en Clown zitten er ook en mogen meejoelen.
-
----
-
-## Ronde 6: De Finale
-
-**Doel:** 1v1 tussen de twee kroondragers, best of 3.
-
-**Setup**
-- Het midden van de Arena, border 20 x 20, twee startpunten tegenover elkaar. Tribunes vol.
-- Beiden krijgen de **finalekit**: diamond chestplate, leggings en boots Protection II (de kroon
-  blijft de helm), diamond sword Sharpness II,
-  boog Power I, 16 pijlen, 2 gapples, 8 steak, schild. Geen pearls, geen potions.
-- Per potje: full heal, kit reset, 5 seconden countdown.
-
-**Regels**
-- Wie er twee wint, wint.
-- Duurt een potje langer dan 3 minuten, dan krimpt de border in 30 seconden naar 6 x 6.
-
-**Einde**
-- Winnaar is King of the SMP. Kroning in het midden van de Arena, iedereen op de tribune. Geen
-  prijs, just for fun: de eer, de kroon en de tribunes vol.
-
-**Voice:** de twee finalisten proximity op de vloer, alle anderen kijker. Bij de kroning is
-iedereen weer levend: proximity in de Arena.
+**Voice:** proximity. Clown zit op de tribune en mag meejoelen.

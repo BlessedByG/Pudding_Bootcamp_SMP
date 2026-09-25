@@ -52,8 +52,7 @@ public final class Kits {
 		}
 		Path pad = Standaardbestanden.kitsMap().resolve(bestand);
 		if (!Files.exists(pad)) {
-			String extra = naam.equals("basis") ? " De basiskit komt van Pudding; zie basis.README.txt in die map." : "";
-			throw new KitFout(bestand, null, "het bestand ontbreekt in " + Standaardbestanden.kitsMap() + "." + extra);
+			throw new KitFout(bestand, null, "het bestand ontbreekt in " + Standaardbestanden.kitsMap() + ".");
 		}
 		String json;
 		try {

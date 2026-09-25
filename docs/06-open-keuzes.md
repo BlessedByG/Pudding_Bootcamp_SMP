@@ -1,46 +1,58 @@
 # Keuzes
 
-Alle open punten zijn op 19 september 2026 doorgesproken en besloten. Per punt de beslissing en
-wat die betekent voor het concept. De oude afwegingen staan in de git-geschiedenis.
+Op 25 september 2026 is het rondeplan omgegooid. De besluiten daarvan staan hieronder, en daarna
+welke besluiten van 19 september nog gelden. De oude lijst staat in de git-geschiedenis (tot
+commit `b93727a`).
+
+## Het nieuwe rondeplan (25 september)
 
 | # | Keuze | Besluit | Gevolg |
 |---|---|---|---|
-| 1 | Ex-koningen | Terug in de FFA | Wie de kroon had en doodgaat, kijkt de rest van ronde 4 vanaf de tribune en doet daarna gewoon mee aan de FFA. Clown killen is puur winst. |
-| 2 | Kroon naar | De killer | Zonder killer: de laatste hit, anders een willekeurige levende hunter. |
-| 3 | Hunter-PvP | Aan | Hunters kunnen elkaar raken in ronde 4. Samenwerken mag, verraden ook. Team `hunters` is er alleen voor de kleur. |
-| 4 | Gear FFA en finale | Standaardkit | Ei-loot telt alleen in ronde 4. |
-| 5 | Clown | Speelt mee | Ronde 1 t/m 3 gewoon meedoen, in ronde 4 via het rad de kroon en de bosskit. |
-| 6 | Sudden death | Nee | Vervangen door: ronde 4 in de Arena (colosseum met tribunes), één leven voor iedereen, doden op de tribune, de ronde eindigt bij de timer of als de hunters op zijn. Bij doodgaan groot in beeld een willekeurige doodtekst, alleen voor de dode. |
-| 7 | PvP-twist na de horde | Uit | Ronde 2 blijft de samenwerkronde. |
-| 8 | Prijs | Geen | Just for fun. Eer, kroon en de kroning met de tribunes vol. |
-| 9 | Techniek | Eigen server-side Fabric-mod op 26.2 | Gevibecode met Claude Code. Spelers hebben alleen de voice-mod nodig. Paper + Skript (`d351fd1`) en datapack (`e51e143`) staan in de git-geschiedenis als terugval. |
-| 10 | Spelers | 20 | 19 plus Clown. Alles schaalt mee als het anders wordt. |
-| 11 | Rust finalist 2 | Ja, 2 minuten | Tussen de FFA en de finale. Host bouwt het op. |
-| 12 | Rad geheim | Nooit vertellen | Alleen staff en Clown weten het. Ook na de avond niet onthullen. |
-| 13 | Stembereik | 48 blokken | Standaard van de voice-mod, fluister-toets voor stil. |
-| 14 | Overgangen | Teleporteren | De commander start elke volgende ronde op het sein van Pudding. |
-| 15 | King zone | Vervalt | Geen open King zone van 200 x 200 en geen burcht. Ronde 4, 5 en 6 spelen in één Arena: vloer Ø 60 tot 80 met dekking, verhoogd midden, tribunes rondom. |
-| 16 | Kijkers | Op de tribune, in adventure | Doden zijn zichtbaar, krijgen geen schade en komen de vloer niet op. Geen vliegen, geen items, geen spectator mode. |
-| 17 | FFA-deelname | Iedereen behalve Clown en finalist 1 | Ook de doden van ronde 4. Clown speelt de finale als hij nog koning is, anders is de eindbaas klaar. |
-| 18 | Doodtekst | Alleen voor de dode | "Grote L gepakt!", "Had je nou maar beter je best gedaan", "Gelukkig is dit niet de CSMP". Geen chatregel voor de rest. Lijst staat in de config, uit te breiden. |
+| 1 | Volgorde | Doolhof (solo), Ei (solo), Mob Arena (team), Quiz (team), Clown vs All (solo), FFA (solo) | De horde, King of the SMP en de 1v1-finale vervallen. |
+| 2 | Teams | 4 kleuren, max 5 per team, gekozen bij de uitgang van het doolhof | Wie het eerst buiten is kiest het eerst. Na de timer gaat wie nog geen team heeft naar het kleinste. |
+| 3 | Clown in de teamrondes | Gewoon teamlid | Kiest ook een kleur. Gaat pas solo bij Clown vs All. |
+| 4 | Basiskit | Iron armor, iron sword, 32 steak | Start van het doolhof, inventory eerst leeg. |
+| 5 | Gear | Doolhof-gear blijft tot Clown vs All | Daar gaat alles weg: iedereen dezelfde kit, Clown de bosskit. In de FFA weer een gelijke kit. |
+| 6 | Winnaars | Ei (1 speler), Mob Arena (1 team), Quiz (1 team), Clown vs All (1 speler), FFA (1 speler) | Het doolhof heeft geen winnaar. Geen totaalstand over de avond. |
+| 7 | Doolhof | Start in het midden, 4 gangen, 1 echt, 3 nep; uitgang open na 4 minuten | Nep-uitgang: knal, grapje, terug naar start. Kisten door de mod gevuld uit een loot-tabel. |
+| 8 | Jumpscare | Foto van Clown met lachje | Server resource pack nodig. In het doolhof op vaste plekken, in het Ei via het emerald block. |
+| 9 | Ei-punten | Netherite 50, diamond 10, gold 5 | Tellen bij het breken, block valt niet. Diamond pickaxe nodig voor netherite. |
+| 10 | Redstone block | 50/50: zelf 10 s Haste, of iedereen behalve jij 15 s stil | Stil betekent: niet lopen en niet minen. |
+| 11 | Emerald block | Jumpscare bij een willekeurige ander | – |
+| 12 | Mob arena | Twee arena's, twee teams tegelijk, knock-out | Waves tegelijk, 10 s na beide klaar de volgende, tot een team leeg is. Halve finales, dan finale. |
+| 13 | Dood in de mob arena | Kooi naast je veld, dood blijft dood tot het einde van de mob arena | Wie in de halve finale sneuvelt, start de finale in de kooi. |
+| 14 | Quiz | Host leest voor, keurt, telt en bepaalt het aantal vragen | Randomizer wijst een team aan; dat team krijgt vragen tot het fout gaat, dan draait hij opnieuw over alle vier. |
+| 15 | Clown vs All | Rigged Rad kiest Clown, friendly fire uit, geen timer | Alleen de kroonhouder kan doden en geraakt worden. Wie de kroonhouder killt krijgt de kroon, reset met de overlevenden. Laatste over wint. |
+| 16 | Rad geheim | Alleen de admins weten het | Nooit vertellen. |
+| 17 | FFA | Iedereen behalve Clown | Ook wie af was in Clown vs All. De winnaar is King of the SMP, kroning meteen daarna. |
+| 18 | Kijkers | Tribune, nooit spectator mode | In de mob arena de kooi tijdens de wedstrijd van je team. |
 
-| 19 | Kijkers en tp-items | Geen spectator mode, geen tp-items | Wie klaar of dood is gaat naar het verzamelpunt of de tribune en socializet daar met de rest tot de ronde klaar is. Voice-groepen zijn daarmee ook niet meer nodig. |
-| 20 | Bouwen in ronde 4 | Verboden | Adventure mode, dus het kan ook niet. Pearls, gapples, boog en schild wel. |
-| 21 | Tribune-voice | Iedereen hoort de tribune | Ook de vechters op de vloer. Geen voice-filter meer; de mod doet niks met voice en heeft de voice-API niet nodig. Doden mogen roepen wat ze willen. |
+## Wat van 19 september nog geldt
+
+| Keuze | Besluit |
+|---|---|
+| Techniek | Eigen server-side Fabric-mod op 26.2, gevibecode met Claude Code. Spelers hebben alleen de voice-mod nodig (plus nu het resource pack, dat de server zelf aanbiedt). |
+| Spelers | 20, Clown inbegrepen. Alles schaalt mee. |
+| Prijs | Geen. Just for fun. |
+| Overgangen | Teleporteren. De commander start elke ronde op het sein van Pudding. |
+| Doodtekst | Alleen voor de dode, lijst in de config: "Grote L gepakt!", "Had je nou maar beter je best gedaan", "Gelukkig is dit niet de CSMP". |
+| Kijkers | Geen spectator mode, geen tp-items. Adventure, geen schade, blijven van het veld. |
+| Bouwen | Nergens, behalve minen in het Ei. |
+| Voice | Puur proximity, 48 blokken, geen groepen, de tribune is hoorbaar voor iedereen. |
+| Kroon | Gaat naar de killer; zonder killer de laatste hit, anders willekeurig. Elke wissel is een reset. |
 
 ## Praktisch geregeld
 
 - Fabric Loader, Fabric API en de voice-mod zijn er voor 26.2.
-- Testen gebeurt op Pudding's eigen server: jar bouwen, kopiëren, herstarten.
-- De basiskit komt van Pudding als JSON. Alle kits zijn JSON-bestanden die de mod bij de start
-  van een ronde op iedereen zet, zie [04-technische-schets.md](04-technische-schets.md).
-- De Arena bouwen jullie zelf; daarna selecteer je de regio's met de wand.
+- Testen op Pudding's eigen server: jar bouwen, kopiëren, herstarten.
+- De basiskit is binnen (25 september) en zit in de jar.
 - Geen SMP-aankondiging bij de kroning.
 
 ## Nog open (praktisch)
 
-- Datum en starttijd van het event.
-- Wie host, commander, ref en camera is.
+- De foto van Clown en het lachje voor het resource pack.
+- De quizvragen (host).
+- De grapjes voor de nep-uitgangen (er staan er drie als voorbeeld in de config).
+- Datum en starttijd, wie host, commander, ref en camera is.
 - De spelerslijst met 20 namen, voor de koppen op De Kring.
 - Datum van de testrun en wie er bouwt.
-- Meer doodteksten dan de drie die er nu zijn (optioneel).

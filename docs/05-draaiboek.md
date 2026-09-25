@@ -6,145 +6,122 @@ Tijdschema, rollen en checklists voor de avond zelf. Tijden zijn een voorbeeld m
 
 | Tijd | Wat | Wie |
 |---|---|---|
-| 19:15 | Staff online. Wereldbackup maken. `/bc reset` draaien. Elke poort en teleport even testen. | Admins |
-| 19:40 | Whitelist open. Spelers spawnen in het basiskamp. Voice-test: iedereen zegt wat, loopt weg en komt terug. Wie de mod niet heeft wordt gekickt en installeert alsnog. | Iedereen |
-| 19:55 | Host legt de regels uit (ronde 1 t/m 3 kort, ronde 4 nog niet). | Host |
-| 20:00 | **Intro op stream.** Countdown, poort 1 open. | Host, Admin 1 |
-| 20:02 | **Ronde 1: De Doolhof** (10 min) | |
-| 20:13 | Verzamelpunt 2 bij de arena: voorsprongkistjes, praatje. | Host |
-| 20:16 | **Ronde 2: De Horde** (10 min) | |
-| 20:27 | Verzamelpunt 3 aan de bosrand: pearls voor de overlevers. | Host |
-| 20:30 | **Pauze** (5 min). Toiletmoment, host houdt de stream warm. | Host |
-| 20:35 | **Ronde 3: Het Ei** (10 min) | |
-| 20:46 | In de Arena: host legt nu de kroonregels uit. "Het lot beslist wie de koning wordt." Het Rad loopt de vloer rond en landt op Clown. Clown naar het midden. | Host, Admin 1 |
-| 20:50 | **Ronde 4: King of the SMP** (30 sec voorsprong + max 15 min, één leven) | |
-| 21:06 | Uitslag: finalist 1. Iedereen behalve Clown en finalist 1 de vloer op, ook de doden van ronde 4. | Admin 1 |
-| 21:08 | **Ronde 5: Arena FFA** (max 10 min) | |
-| 21:19 | Uitslag: finalist 2. Twee minuten rust, host bouwt het op. | Host |
-| 21:22 | **Ronde 6: De Finale** (best of 3, ± 10 min) | |
-| 21:33 | **Kroning** in het midden van de Arena, tribunes vol. | Host |
-| 21:45 | Einde stream. | |
+| 19:15 | Staff online. Wereldbackup maken. `/bc reset` draaien. Poort, teleports en `/bc schrik` op een testaccount even testen. | Admins |
+| 19:40 | Whitelist open. Spelers spawnen in het basiskamp en krijgen het resource pack. Voice-test: iedereen zegt wat, loopt weg en komt terug. | Iedereen |
+| 19:55 | Host legt de regels uit, zonder Clown vs All te verklappen. | Host |
+| 20:00 | **Intro op stream.** Iedereen naar de startruimte van het doolhof, countdown. | Host, Admin 1 |
+| 20:02 | **Ronde 1: De Doolhof** (10 min, uitgang open na 4 min, teamkeuze bij de uitgang) | |
+| 20:13 | V2 aan de bosrand: teams in beeld, praatje. | Host |
+| 20:15 | **Ronde 2: Het Ei** (10 min) | |
+| 20:26 | Winnaar van het Ei. Naar V3 bij de mob arena. | Host |
+| 20:28 | **Pauze** (5 min). | Host |
+| 20:33 | **Ronde 3: De Mob Arena**: loting, halve finale 1, halve finale 2, finale (± 25 min) | |
+| 20:58 | Winnend team. Naar de quiz. | Host |
+| 21:00 | **Ronde 4: De Quiz** (± 15 min, host bepaalt) | Host |
+| 21:15 | Winnend team. Naar de Arena. Host legt Clown vs All uit. "Het lot beslist wie de kroon krijgt." Het Rad landt op Clown. | Host, Admin 1 |
+| 21:18 | **Ronde 5: Clown vs All** (30 sec voorsprong, geen timer, reken op 10 tot 20 min) | |
+| 21:35 | Winnaar. Iedereen behalve Clown de vloer op. | Admin 1 |
+| 21:37 | **Ronde 6: De FFA** (max 10 min) | |
+| 21:48 | **Kroning** in het midden van de Arena, tribunes vol. | Host |
+| 22:00 | Einde stream. | |
 
-Totaal ruim 1,5 uur speeltijd, plan 2 uur met buffer. Als een ronde uitloopt: de timers zijn
-hard, dus het loopt vooral uit door praatjes. Dat is de host z'n verantwoordelijkheid.
+Totaal ruim 1,5 uur speeltijd, plan 2 uur met buffer. De mob arena en Clown vs All hebben geen
+harde timer; die kunnen uitlopen. Loopt het echt uit, dan kan de ref een wave forceren
+(`/bc wave volgende`) of de border laten krimpen (`/bc krimp`).
 
 ## Rollen
 
 | Rol | Aantal | Wat |
 |---|---|---|
-| **Host / caster** | 1 | Praat op de stream, legt regels uit, kondigt rondes aan, houdt de verzamelpunten gezellig. Zit in spectator voor de camera. Speelt Het Rad recht: "iedereen kan de koning worden". |
-| **Admin 1: commander** | 1 | Start elke ronde op het sein van Pudding: poorten, timers, teleports. Doet verder niks anders. |
-| **Admin 2: ref** | 1 | Kijkt naar problemen: stuck spelers, disconnects, bugs met de kroon. Overrulet handmatig waar nodig. Houdt het randgevallen-lijstje uit [03-kroon-regels.md](03-kroon-regels.md) bij de hand. |
-| **Camera** | 0 tot 2 | Kijker-accounts voor een mooi hoofdbeeld op de stream (top-down doolhof, overzicht van de Arena). Optioneel. |
+| **Host / caster** | 1 | Praat op de stream, legt regels uit, kondigt rondes aan. **Leest de quizvragen voor** en houdt de quizstand bij; staat daarvoor in-game bij het podium. Speelt Het Rad recht: "iedereen kan de kroon krijgen". |
+| **Admin 1: commander** | 1 | Start elke ronde op het sein van Pudding, draait de quiz-randomizer (`/bc quiz draai`) op het teken van de host, en het Rad. |
+| **Admin 2: ref** | 1 | Kijkt naar problemen: stuck spelers, disconnects, bugs met de kroon, een team dat scheef zit. Heeft het randgevallen-lijstje uit [03-kroon-regels.md](03-kroon-regels.md) bij de hand. |
+| **Camera** | 0 tot 2 | Kijker-accounts voor het hoofdbeeld: boven het doolhof, boven de mob-arenatribune, voor het podium, boven de Arena. |
 | **Bouwers** | 2 tot 4 | Vooraf. Zie de bouwlijst hieronder. |
 
-Eén persoon kan host en ref combineren als je krap zit, maar de commander moet alleen commander
-zijn.
+Alleen de admins weten dat het Rad rigged is. Eén persoon kan host en ref combineren als je krap
+zit, maar de commander moet alleen commander zijn.
 
 ## Bouwlijst (vooraf)
 
-Grofweg op volgorde van werk:
-
 1. De wereld kiezen of genereren: ± 500 x 500 met heuvels, bos en water. Bepaal waar elke zone
-   komt (plattegrond in [01-map-en-flow.md](01-map-en-flow.md)) en zet alle coördinaten in een
-   bestand (1 avond).
-2. Basiskamp en de verzamelpunten: kampvuur, banners, bordjes (uurtje).
-3. Hagendoolhof genereren en in het dal plaatsen, kisten vullen (1 avond).
-4. Ruïne-arena met 4 spawnpunten, dekking, een poort en een tribune voor de doden (1 avond).
-5. Ei-bos: plek kiezen, Grote Ei bouwen en vullen, nep-eitjes, beacon eronder, drukplaat bij de
-   uitgang (1 tot 2 avonden).
-6. De Arena: colosseum met een vloer van Ø 60 tot 80 met dekking, een verhoogd midden, tribunes
-   rondom achter een borstwering, een poort, en de 20 pilaren van De Kring met koppen en
-   lichtblokken (2 tot 3 avonden).
-7. De mod bouwen, module voor module, en per onderdeel testen op de testserver (jar kopiëren,
-   4 tot 5 avonden, zie [04-technische-schets.md](04-technische-schets.md)). Daarna met de wand
-   en `/bc point` alle regio's en punten in de wereld zetten, en de kits als JSON invullen
-   (uurtje).
-8. Volledige testrun met 4 of 5 testers (1 avond).
-
-Reken op twee weken met een paar mensen die af en toe een avond hebben.
+   komt (plattegrond in [01-map-en-flow.md](01-map-en-flow.md)) (1 avond).
+2. Basiskamp en de verzamelpunten (uurtje).
+3. Het doolhof: startruimte in het midden, 4 gangen, 1 echte uitgang met een poort, 3
+   nep-uitgangen, lege kisten, schrikplekken, het teamkeuzevak achter de uitgang (1 tot 2
+   avonden).
+4. Ei-bos: Groot Ei met de puntenblokken, nep-eitjes, beacon eronder (1 tot 2 avonden).
+5. De mob arena: twee identieke arena's met elk 4 spawnpunten, een tribune ertussen, een kooi
+   naast elk veld (1 tot 2 avonden).
+6. Het quizpodium met 4 gekleurde vakken en lampen (uurtje).
+7. De Arena: colosseum met vloer, verhoogd midden, tribunes, en de 20 pilaren van De Kring met
+   koppen en lichtblokken (2 tot 3 avonden).
+8. Het resource pack: foto van Clown en het lachje aanleveren, pack bouwen en online zetten
+   (uurtje, zie [04-technische-schets.md](04-technische-schets.md)).
+9. De mod ombouwen naar dit rondeplan ([08-taakplan.md](08-taakplan.md)), dan met de wand en
+   `/bc point` alle regio's en punten zetten (uurtje).
+10. Volledige testrun met 4 tot 8 testers, zodat er minstens twee teams zijn (1 avond).
 
 ## Checklist: eerste test van de mod
 
-De mod is gebouwd en gecompileerd tegen de echte 26.2-jar, maar nog nooit in-game gedraaid. Doe dit
-met een tweede account, op de testserver (Java 25, niet op peaceful, `spawn-protection=0`). Voor
-deze eerste test mogen alle punten dicht bij elkaar op een vlak stuk staan. Wat er per onderdeel
-te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md) onder "Open: in-game testen".
+Met een tweede account op de testserver (Java 25, niet op peaceful, `spawn-protection=0`). Voor
+de eerste test mogen alle punten dicht bij elkaar op een vlak stuk staan. Wat er per onderdeel
+te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
 
-- [ ] Jar uit `mod/fabric/build/libs/` naar `mods/`, samen met Fabric API en de voice-mod. In de
-      console staat `Pudding Bootcamp geladen` en dat de standaardbestanden in `config/bootcamp/`
-      zijn geschreven.
-- [ ] `basis.json` in `config/bootcamp/kits/` zetten (zie `basis.README.txt` daar).
+- [ ] Jar in `mods/`, samen met Fabric API en de voice-mod. In de console `Pudding Bootcamp
+      geladen` en dat de standaardbestanden in `config/bootcamp/` zijn geschreven.
+- [ ] Resource pack wordt aangeboden bij het joinen. `/bc schrik <naam>`: foto vult het scherm,
+      lachje klinkt.
 - [ ] `/bc wand`, een regio opslaan, `/bc region show`, `/bc point set`, `/bc point tp`,
-      `/bc status`.
-- [ ] `/bc kit horde`, `/bc kit basis`.
-- [ ] `/bc start 1`, loop `doolhof_uit` in (voorsprong, naar `v2`); opnieuw, dan `/bc stop`.
-- [ ] `/bc start 2`, ga dood (tribune, doodtekst, geen death-screen), `/kill @e[tag=horde]` om de
-      waves te forceren; aan het eind je spullen terug bij `v3`.
-- [ ] `/bc start 3`, lever een diamond block in op `eiplaat`; `/bc timer 305` voor de beacon-hint.
-- [ ] `/bc uitverkoren <naam>`, `/bc slot <naam> <0-19>` voor beide accounts, `/bc rad`.
-- [ ] In ronde 4: kill de koning (reset, kroon over, bevroren), laat de koning van een hoogte
-      vallen (laatste hit), log uit als koning (dertig seconden, kroon over), `/bc kroon <naam>`.
-- [ ] `/bc start 5`. Met twee accounts: laat Clown in ronde 4 koning blijven, dan is het tweede
-      account de enige vechter en meteen finalist 2 (of wijs ze aan met `/bc finalist 1 <naam>` en
-      `/bc finalist 2 <naam>`). Dan de twee minuten rust (`/bc timer` werkt hier niet; wacht of
-      doe `/bc start 6`), drie potjes, de kroning.
-- [ ] `/bc reset`.
+      `/bc status`, `/bc kit basis`.
+- [ ] `/bc start 1`: kisten gevuld, nep-uitgang zet je terug met knal en grapje, schrikplek werkt
+      één keer, poort open na 4 minuten (`/bc timer 365` om te versnellen), teammenu bij de
+      uitgang, vol team is grijs.
+- [ ] `/bc start 2`: punten per block, redstone (beide uitkomsten, een paar keer breken),
+      emerald geeft de ander een jumpscare, winnaar bij de timer.
+- [ ] `/bc start 3` met twee accounts in twee teams: loting, waves tegelijk, 10 seconden na
+      beide klaar de volgende, ga dood (kooi), einde wedstrijd, spullen terug.
+- [ ] `/bc start 4`: iedereen in zijn vak, `/bc quiz draai` een paar keer, `/bc quiz punt`,
+      `/bc quiz winnaar`.
+- [ ] `/bc uitverkoren <naam>`, `/bc slot` voor beide accounts, `/bc rad`: ronde 5 begint.
+      Jager raakt jager: geen schade. Kill de kroonhouder: kroon over, reset. Laatste over wint.
+- [ ] `/bc start 6`, FFA, kroning.
+- [ ] `/bc reset`: alles terug, ook de teams.
 - [ ] Alles wat niet klopt in één bericht terug, met de console-regels erbij.
 
 ## Checklist: testrun
 
-Doe minstens één keer de hele avond met 4 of 5 testers, van basiskamp tot kroning. Let vooral op:
+Minstens één keer de hele avond met 4 tot 8 testers. Let vooral op:
 
-- [ ] Fabric Loader, Fabric API, de voice-mod en de bootcamp-mod draaien op 26.2 zonder errors in
-      de console.
-- [ ] Alle regio's en punten staan erin (`/bc region list`, `/bc point list`) en `/bc region show`
-      laat de goede randen zien.
-- [ ] Elke poort opent en sluit op de juiste plek.
-- [ ] Achterblijvers worden na elke timer naar het goede verzamelpunt geteleporteerd.
-- [ ] Worldborder staat per ronde om de goede zone en niemand staat erbuiten na de teleport.
-- [ ] Doolhof: niemand kan over of door het plafond. Kisten gevuld.
-- [ ] Horde: waves volgen elkaar op, dood = kijker tot het einde, doden worden bij verzamelpunt 3
-      weer levend, bossbar telt mobs. Ronde stopt ook als iedereen dood is.
-- [ ] Voice: proximity werkt, groepen staan uit, en de tribune is hoorbaar op de vloer en
-      andersom. Zie [07-voice.md](07-voice.md).
-- [ ] Kijkers: dood = doodtekst groot in beeld (alleen voor jou), naar de tribune, geen schade, je
-      komt de vloer niet op, niet op de locator bar. Uit het doolhof = naar verzamelpunt 2.
-      Niemand komt in spectator mode.
-- [ ] Ei: drukplaat neemt het diamond block in en teleporteert. Zonder block gebeurt er niks.
-      Beacon-hint gaat aan op 5 min.
-- [ ] Rad: landt op de speler met tag `uitverkoren`. Draai hem vijf keer, dan zie je meteen of
-      de slot-scores kloppen met de volgorde van de koppen.
-- [ ] King: kroon gaat naar de killer (test met 2 man). Kroon gaat naar de laatste hit bij een
-      val-dood. Een dode hunter komt op de tribune en blijft daar. Alle hunters dood of timer 0:
-      finalist 1 aangewezen, iedereen behalve Clown en finalist 1 de vloer op voor de FFA.
-- [ ] Kroonwissel: alle levende hunters staan geheald en bevroren op hun startpunt (niet lopen,
-      niet springen, niet pearlen), de nieuwe koning staat in het midden met volle armor, na 10
-      seconden is iedereen los en loopt weer normaal. Doden blijven op de tribune.
-- [ ] King: koning logt uit. De mod telt 30 seconden af in de bossbar en geeft dan de kroon door;
-      komt hij terug, dan als kijker op de tribune.
-- [ ] FFA: iedereen behalve Clown en finalist 1 staat op de vloer, laatste levende wordt
-      finalist 2, twee minuten rust, dan de finale in het midden.
-- [ ] Finale: kit reset en full heal per potje.
+- [ ] Geen errors in de console van Fabric, de voice-mod of de bootcamp-mod.
+- [ ] Alle regio's en punten staan erin (`/bc region list`, `/bc point list`).
+- [ ] Doolhof: niemand kan over de haag. Nep-uitgangen triggeren op de goede plek. Poort gaat
+      open op 4 minuten. Teamkeuze werkt, en na de timer krijgt iedereen zonder team er een.
+- [ ] Het Ei: netherite is te minen met de diamond pickaxe. Punten kloppen. Bevriezing voelt
+      niet oneerlijk lang. Er zijn genoeg blokken voor 10 minuten.
+- [ ] Mob arena: beide arena's krijgen dezelfde wave op hetzelfde moment. Een wedstrijd duurt
+      niet langer dan 10 minuten; anders de waves zwaarder maken in `waves.json`.
+- [ ] Quiz: de host is overal op het podium te horen.
+- [ ] Clown vs All: jagers kunnen elkaar niet raken, ook niet met pijlen. Kroonwissel zet
+      iedereen goed terug. Rad landt op de uitverkorene; draai hem vijf keer.
+- [ ] FFA: iedereen behalve Clown staat op de vloer.
+- [ ] Kijkers: tribune en kooi, geen schade, niet het veld op.
+- [ ] Voice: proximity werkt, de tribune is hoorbaar.
+- [ ] Serverperformance met twee arena's vol mobs.
 - [ ] `/bc reset` brengt alles terug naar de basiskamp-staat.
-- [ ] Serverperformance tijdens wave 5 met alle mobs.
 
 ## Checklist: dag zelf
 
 - [ ] Wereldbackup gemaakt.
-- [ ] `/bc reset` gedraaid, iedereen start schoon.
+- [ ] `/bc reset` gedraaid, iedereen start schoon en zonder team.
 - [ ] Whitelist compleet, staff heeft op.
-- [ ] Bossbar zichtbaar voor iedereen.
-- [ ] Coördinaten van alle tp-punten in een tekstbestand naast de commander.
-- [ ] Ref heeft [03-kroon-regels.md](03-kroon-regels.md) open.
-- [ ] Reserve-diamond-blocks in de admin-kist.
+- [ ] Resource pack online, URL en SHA-1 kloppen in `server.properties`.
 - [ ] `/bc status` laat zien dat Clown uitverkoren is en niemand anders.
-- [ ] Voice: `force_voice_chat=true`, UDP-poort open, voice-mod en bootcamp-mod geladen (staat in
-      de serverlog bij het opstarten).
-- [ ] Host en camera-accounts staan in spectator of creative voor de camera.
-- [ ] De jar van de vorige werkende versie van de mod staat klaar naast de huidige.
-- [ ] Alle kits staan in `config/bootcamp/kits/`, ook `basis.json` (zonder starten ronde 3 en 4
-      niet), en `/bc kit basis` werkt op een testaccount.
+- [ ] Host heeft de quizvragen klaar.
+- [ ] Voice: `force_voice_chat=true`, UDP-poort open.
+- [ ] Host en camera-accounts staan in spectator of creative.
+- [ ] De jar van de vorige werkende versie staat klaar.
+- [ ] Alle kits en `doolhof_loot.json` en `waves.json` staan in `config/bootcamp/`.
 - [ ] `spawn-protection=0` en de difficulty niet op peaceful.
 
 ## Spelregels voor de streamers
@@ -152,28 +129,28 @@ Doe minstens één keer de hele avond met 4 of 5 testers, van basiskamp tot kron
 Kort en op de borden in het basiskamp:
 
 1. Geen x-ray, geen cheats, geen mods die voordeel geven. Sodium en dat soort dingen mag.
-   Simple Voice Chat is verplicht.
-2. Niet streamsnipen: niet kijken op andermans stream om de koning te vinden. Vertrouwen, geen
-   controle. Wil je het hard afdwingen, dan een streamvertraging van een minuut voor iedereen.
-3. In ronde 4 mag bijna alles: hunters kunnen elkaar raken. Bouwen is verboden. In de FFA mag je
-   teamen, maar er wint er één.
-4. Bug of stuck? Roep de ref, niet de chat.
-5. Als de admin zegt stop, dan stop.
-6. Geen Discord-call tijdens het event, alleen de voice-mod. Groepen staan uit, alles is
-   proximity.
+   Simple Voice Chat en het resource pack zijn verplicht.
+2. Niet streamsnipen: niet op andermans stream kijken waar de uitgang of het Ei is.
+3. Teams: maximaal 5. Wie het eerst uit het doolhof is, kiest het eerst.
+4. PvP staat uit tot het eind. Wat PvP wel mag, hoor je als het zover is.
+5. Bug of stuck? Roep de ref, niet de chat.
+6. Als de admin zegt stop, dan stop.
+7. Geen Discord-call tijdens het event, alleen de voice-mod.
 
 ## Als het misgaat
 
 | Probleem | Oplossing |
 |---|---|
-| Server crasht | Backup terugzetten, `/bc reset`, ronde opnieuw starten vanaf het laatste verzamelpunt. |
-| Timer loopt niet | `/bc stop`, dan `/bc start <ronde>` en met `/bc timer <seconden>` de resterende tijd terugzetten. |
-| Rad stopt op de verkeerde kop | Slot-score van die speler klopt niet met de plek van zijn kop. Host: "technische storing", ref fixt de score, rad nog een keer. |
-| Kroon zit bij niemand | `/bc kroon <speler>`. |
-| Een finalist komt niet meer terug, of de server is herstart na ronde 4 | `/bc finalist <1\|2> <speler>` wijst een finalist aan en zet hem met zijn kroon op de tribune. Daarna `/bc start 5` of `/bc start 6`. |
-| Een ronde breekt zichzelf af met een rode melding in de chat | De mod ving een fout af in plaats van de server te laten crashen. De fout staat in de console. `/bc start <ronde>` opnieuw. |
-| Kroon zit bij twee spelers | `/bc kroon <goede speler>`: de mod haalt de kroon bij de ander weg. Ref beslist wie hem hoort te hebben (laatste kill). |
+| Server crasht | Backup terugzetten, ronde opnieuw starten. De teams staan in `bootcamp.json` en overleven een herstart; klopt er iets niet, dan `/bc team`. |
+| Timer loopt niet | `/bc stop`, dan `/bc start <ronde>` en `/bc timer <seconden>`. |
+| Iemand heeft geen team of het verkeerde | `/bc team <speler> <kleur>`. |
+| Iemand ziet de jumpscare als leeg vierkantje | Pack niet geladen. Opnieuw joinen, of accepteren in het menu. |
+| Mob arena: een wave komt niet af | `/bc wave volgende`. |
+| Clown vs All valt stil | `/bc krimp <grootte>`. |
+| Rad stopt op de verkeerde kop | Slot van die speler klopt niet. Host: "technische storing", ref fixt `/bc slot`, rad nog een keer. |
+| Kroon zit bij niemand of bij twee | `/bc kroon <speler>`. |
+| Een ronde breekt zichzelf af met een rode melding | De mod ving een fout af. De fout staat in de console. `/bc start <ronde>` opnieuw. |
 | Speler zit vast in een blok | `tp` door de ref. |
-| Ei niet gevonden en de hint werkt niet | Ref zet handmatig een vuurpijl of zegt de richting in de chat. |
-| Iemand hoort niks in voice | Kruis door het voice-icoontje: UDP-poort dicht of verkeerde modversie. Geen kruis maar toch stil: kijk of hij per ongeluk als kijker staat (`/bc kijker <naam> uit`). |
-| De mod gooit errors in de console | `/bc stop`, `/bc reset`, ronde opnieuw. Blijft het misgaan: server herstarten met de vorige jar. Daarom alles vooraf testen en die jar bij de hand houden. |
+| Ei niet gevonden en de hint werkt niet | Ref zet een vuurpijl of zegt de richting in de chat. |
+| Iemand hoort niks in voice | Kruis door het voice-icoontje: UDP-poort dicht of verkeerde versie. Geen kruis maar stil: `/bc kijker <naam> uit`. |
+| De mod gooit errors | `/bc stop`, `/bc reset`, ronde opnieuw. Blijft het misgaan: herstarten met de vorige jar. |

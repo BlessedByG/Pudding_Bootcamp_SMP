@@ -24,7 +24,7 @@ public final class Standaardbestanden {
 			"kits/kroonpakket.json",
 			"kits/arena.json",
 			"kits/finale.json",
-			"kits/basis.README.txt");
+			"kits/basis.json");
 
 	private Standaardbestanden() {
 	}

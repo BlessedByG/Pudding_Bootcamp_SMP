@@ -1,19 +1,21 @@
 # Technische schets: een server-side Fabric-mod op Minecraft 26.2
 
 Eén eigen mod, `bootcamp`, op een Fabric-server. Server-side only: spelers hebben alleen Simple
-Voice Chat nodig, verder een gewone client. De mod doet alles: regio's en punten zetten met een
-wand en commands, de rondes, de kroon, het rad, de tribune voor wie dood is, bossbar en visuals.
-Voice is puur proximity en gaat buiten de mod om.
+Voice Chat nodig, plus een server resource pack dat ze bij het joinen automatisch krijgen. De mod
+doet alles: regio's en punten zetten met een wand en commands, de rondes, de teams, de kroon, het
+rad, de randomizer van de quiz, de tribune voor wie af is, jumpscares, bossbar en visuals. Voice
+is puur proximity en gaat buiten de mod om.
 
-De mod is gevibecode met Claude Code en staat in `mod/`. Deze doc was de spec en is na het bouwen
-bijgewerkt waar de implementatie afwijkt of concreter is. Hoe je hem bouwt, installeert en instelt
+De mod is gevibecode met Claude Code en staat in `mod/`. Hoe je hem bouwt, installeert en instelt
 staat in [mod/README.md](../mod/README.md); wat er gebouwd en geverifieerd is, en wat er nog in-game
 getest moet worden, in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
 
 > **Versie en status.** Minecraft 26.2; Fabric Loader, Fabric API en de Fabric-versie van Simple
-> Voice Chat zijn er voor. De mod compileert tegen de echte 26.2-jar en de kernlogica heeft tests,
-> maar **er is nog niets in-game gedraaid**. De eerste test staat in
-> [05-draaiboek.md](05-draaiboek.md). Een naam uit 26.2 opzoeken: `./gradlew :fabric:genSources`.
+> Voice Chat zijn er voor. **Deze doc beschrijft het nieuwe rondeplan van 25 september 2026**
+> (doolhof, Ei, mob arena, quiz, Clown vs All, FFA). De code in `mod/` implementeert nog het oude
+> plan (doolhof, horde, Ei met ticket, King of the SMP, FFA, finale) en is nog nooit in-game
+> gedraaid. De ombouw staat in [08-taakplan.md](08-taakplan.md). Een naam uit 26.2 opzoeken:
+> `./gradlew :fabric:genSources`.
 
 ## Stack
 
@@ -21,10 +23,11 @@ getest moet worden, in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
 |---|---|
 | Fabric-server 26.2 + Fabric API | De server en de event/command-API. |
 | `bootcamp`-mod (deze repo, map `mod/`) | Alles wat hieronder staat. |
+| Server resource pack (deze repo, map `pack/`) | De foto van Clown en het lachje voor de jumpscare. |
 | Simple Voice Chat (Fabric) | Voice. Puur proximity, de mod doet er niks mee. |
 | WorldEdit (Fabric) | Bouwen. Niet voor de spellogica. |
 
-Geen Skript, geen datapack, geen plugins.
+Geen Skript, geen datapack, geen plugins, geen client-mod behalve voice.
 
 ## Project opzetten
 
@@ -38,11 +41,10 @@ Geen Skript, geen datapack, geen plugins.
    `minecraft ~26.2`, `java >=25`, `fabric-api *`. Geen mixins-config.
 3. `build.gradle`: `implementation` voor `net.fabricmc:fabric-loader` en
    `net.fabricmc.fabric-api:fabric-api`, plus `implementation` én `include` van het
-   `core`-project zodat de kernlogica in de jar komt. De voice-mod staat los van onze mod: als
-   jar in `run/mods/` voor de dev-server en in `mods/` op de echte server.
+   `core`-project zodat de kernlogica in de jar komt. De voice-mod staat los van onze mod.
 4. Dev-loop: `./gradlew build` maakt de jar in `fabric/build/libs/`; die kopieer je naar `mods/`
-   van je eigen testserver en je herstart. `./gradlew runServer` kan ook, voor snel lokaal
-   testen. Fixen tijdens het event betekent jar vervangen en herstarten, dus test vooraf.
+   van je eigen testserver en je herstart. Fixen tijdens het event betekent jar vervangen en
+   herstarten, dus test vooraf.
 5. De mod staat in deze repo onder `mod/`, in twee Gradle-projecten: `core` (pure Java, alle
    rekenwerk, JUnit-tests, geen Minecraft) en `fabric` (de lijm naar Minecraft, Fabric Loom).
    Met `-PcoreOnly` bouw en test je `core` zonder Loom. `mod/check.sh` draait de vaste
@@ -56,51 +58,118 @@ Geen Skript, geen datapack, geen plugins.
 
 ## Serverinstellingen
 
-Gamerules die de mod bij het opstarten en bij `/bc reset` zet: `keepInventory` en
-`doImmediateRespawn` doen er niet toe (spelers gaan nooit echt dood), `naturalRegeneration` aan,
-`pvp` aan (in 26.2 een gamerule; tot ronde 4 houdt team `spelers` PvP tegen),
-`doMobSpawning` uit (de horde spawnen we zelf), `mobGriefing` uit (creepers in de ruïne-arena),
-`doDaylightCycle` uit, `announceAdvancements` uit, `locatorBar` uit (aan in ronde 4 t/m 6, zie
-Visuals). In 26.2 heten de gamerules in code anders (`GameRules.ADVANCE_TIME`, `SPAWN_MOBS`, ...)
-en zet je ze via `level.getGameRules().set(...)`.
+Gamerules die de mod bij het opstarten en bij `/bc reset` zet: `naturalRegeneration` aan, `pvp`
+aan (de mod beslist zelf wie wie mag raken, zie PvP hieronder), `doMobSpawning` uit (mobs spawnen
+we zelf), `mobGriefing` uit (creepers in de mob arena), `doDaylightCycle` uit,
+`announceAdvancements` uit, `locatorBar` uit (aan in ronde 5). In 26.2 heten de gamerules in code
+anders (`GameRules.ADVANCE_TIME`, `SPAWN_MOBS`, ...) en zet je ze via
+`level.getGameRules().set(...)`.
 
-Gamemode zet `/bc start` per ronde: survival alleen in ronde 3 (minen), adventure in alle andere
-rondes; kijkers altijd adventure. Wie inlogt terwijl er geen ronde loopt gaat ook naar adventure.
+Gamemode zet `/bc start` per ronde: survival alleen in ronde 2 (het Ei), adventure in alle andere
+rondes; kijkers altijd adventure.
 
-**Staff is wie in creative of spectator staat.** De mod zet deelnemers zelf in adventure of
-survival, dus wie in creative of spectator staat is host, camera of admin: geen teleport, geen
-kit, telt niet mee, en gaat gewoon dood als hij doodgaat. Er is geen apart command voor.
+**Staff is wie in creative of spectator staat.** Geen teleport, geen kit, telt niet mee, zit in
+geen team. Er is geen apart command voor.
 
-Op de server: difficulty niet op peaceful (de horde) en `spawn-protection=0`.
+Op de server: difficulty niet op peaceful (de mob arena) en `spawn-protection=0`. Voor het
+resource pack in `server.properties`:
 
-Teams zijn er voor de kleur van naam, Glowing-outline en locator-stip, en voor PvP tot ronde 4:
+```
+resource-pack=<url van bootcamp-pack.zip>
+resource-pack-sha1=<sha1 van dat bestand>
+require-resource-pack=true
+resource-pack-prompt=Nodig voor de bootcamp
+```
 
-| Team | Kleur | Friendly fire | Wie |
-|---|---|---|---|
-| `spelers` | wit | uit | Iedereen in ronde 0 t/m 3: geen PvP. |
-| `hunters` | aqua | **aan** | Ronde 4. Hunters kunnen elkaar raken; het team is er voor de kleur. |
-| `king` | goud | aan | De koning(en). In de finale raken de twee koningen elkaar gewoon. |
-| `out` | grijs | – | Kijkers. |
+## PvP
 
-In ronde 5 gaat iedereen uit zijn team behalve de koningen, dus daar is alles PvP.
+Eén regel in `ALLOW_DAMAGE`, niet via teams, want spelers zitten in verschillende teamkleuren en
+mogen elkaar toch niet raken. Bron is de speler, ook via een pijl of andere projectile.
+
+| Ronde | Speler raakt speler |
+|---|---|
+| 0 t/m 4 | nooit |
+| 5 Clown vs All | alleen als aanvaller of slachtoffer de kroonhouder is |
+| 6 FFA | altijd |
+| Tussen twee rondes, en tijdens elke opstelling of countdown | nooit |
+
+## Teams
+
+Teams zijn er voor de kleur van naam, Glowing-outline en locator-stip, en in ronde 3 en 4 om
+te weten wie bij wie hoort. Friendly fire staat overal uit; de PvP-regel hierboven beslist.
+
+| Team | Kleur | Wie |
+|---|---|---|
+| `spelers` | wit | Iedereen in het basiskamp en het doolhof, tot je een kleur kiest. |
+| `rood`, `blauw`, `groen`, `geel` | rood, blauw, groen, geel | De vier teams van ronde 1 t/m 4, gekozen bij de uitgang van het doolhof. |
+| `jagers` | aqua | Ronde 5, iedereen behalve de kroonhouder. |
+| `kroon` | goud | De kroonhouder in ronde 5, de winnaar bij de kroning. |
+| `out` | grijs | Kijkers. |
+
+De teamkeuze wordt bewaard per speler (naam) in het geheugen van de mod en in `bootcamp.json`,
+zodat een herstart tussen ronde 1 en 5 de teams niet kwijtraakt. `/bc team <speler> <kleur>`
+zet iemand met de hand in een team; `/bc team <speler> weg` haalt de keuze weg. Bij ronde 5 gaat
+iedereen uit zijn teamkleur naar `jagers`; de keuze blijft bewaard, maar wordt niet meer
+gebruikt. In ronde 6 zit iedereen zonder team.
+
+**Maximum per team**: 5, of meer als er meer dan 20 spelers zijn: `max(5, ceil(spelers / 4))`,
+met spelers = iedereen die meedoet op het moment dat de eerste kiest.
+
+**Het teammenu** is een vanilla kistmenu (`ChestMenu`, 1 rij, `MenuType.GENERIC_9x1`) met een
+`SimpleContainer`: op vier plekken een gekleurd wolblok met de teamnaam en het aantal
+(`Rood · 3/5`). Een vol team is grijze wol. Items verplaatsen kan niet (het menu annuleert elke
+klik en handelt hem zelf af); klik op een kleur zet je in het team, sluit het menu en teleporteert
+je naar `v2`. Sluit je het menu zonder keuze terwijl je in regio `doolhof_uit` staat, dan opent
+het na 2 seconden opnieuw. Allemaal server-side, geen client-mod nodig.
+
+## Resource pack en de jumpscare
+
+Het pack staat in `pack/` in deze repo. `pack/bouw.sh` zipt het naar `bootcamp-pack.zip` en
+print de SHA-1 voor `server.properties`. Online zetten als bijlage van een GitHub-release (de repo
+is public), en die URL in `resource-pack=`.
+
+```
+pack/
+  pack.mcmeta
+  assets/bootcamp/font/schrik.json            bitmap-provider: één glyph U+E000 → clown.png
+  assets/bootcamp/textures/font/clown.png     de foto van Clown (vierkant, 256 x 256)
+  assets/bootcamp/sounds.json                 bootcamp:clown_lach → sounds/clown_lach.ogg
+  assets/bootcamp/sounds/clown_lach.ogg       het lachje (mono, ogg vorbis)
+```
+
+De foto en het lachje levert Pudding aan. Tot die er zijn zit er een placeholder in.
+
+**De jumpscare** (`Schrik.op(speler)`): een title met de glyph `` in font
+`bootcamp:schrik`, fade-in 0, blijven 30 ticks, fade-out 10, plus `bootcamp:clown_lach` op volle
+sterkte, alleen voor die speler. De `height` en `ascent` in `schrik.json` bepalen hoe groot de
+foto op het scherm staat; afstemmen in de eerste test tot hij het beeld vult. Heeft een speler het
+pack niet (weigerde of downloadfout), dan ziet die een leeg vierkantje en hoort niks; met
+`require-resource-pack=true` kan dat niet. `/bc schrik <speler>` doet een jumpscare met de hand,
+voor het testen en voor de lol.
+
+Waar een jumpscare vandaan komt:
+- Doolhof: in een regio `schrik_1` t/m `schrik_n`, één keer per regio per speler.
+- Het Ei: een emerald block, bij een willekeurige andere levende deelnemer.
 
 ## Modules
 
 | Package | Doet | Belangrijkste API |
 |---|---|---|
-| `config` | Regio's en punten opslaan en laden, JSON in `<wereld>/bootcamp.json`. | Gson, `ServerLifecycleEvents` |
-| `kits` | Kits uit JSON-bestanden lezen en op spelers zetten. | `ItemParser` (dezelfde syntax als `/give`) |
+| `config` | Regio's, punten, teamkeuzes, grapjes opslaan en laden, JSON in `<wereld>/bootcamp.json`. | Gson, `ServerLifecycleEvents` |
+| `kits` | Kits uit JSON-bestanden lezen en op spelers zetten; de loot-tabel van het doolhof. | `ItemParser` (dezelfde syntax als `/give`) |
 | `commands` | Het hele `/bc`-commandboompje. | Brigadier, `CommandRegistrationCallback` |
 | `setup` | De wand, `region show` met particles. | `AttackBlockCallback`, `UseBlockCallback` |
-| `game` | Spelstatus, timer, de zes rondes als klassen met `start/tick/onDeath/end`. | `ServerTickEvents.END_SERVER_TICK` |
-| `crown` | Koning, laatste hit, kroonwissel, opstelling, bevriezing. | `ServerLivingEntityEvents.ALLOW_DEATH`, `ALLOW_DAMAGE` |
-| `rad` | Het Rad: lampjes, ritme, landing op de uitverkorene. | tick-gestuurd, geen threads |
-| `horde` | Waves spawnen en tellen. | `EntityType.spawn`, entity-tags |
-| `tribune` | Wie dood is naar de tribune, daar houden, geen schade, locator bar uit. | `ALLOW_DAMAGE`, tick-check op regio `vloer` en `arena` |
-| `visuals` | Bossbar, titles, geluid, particles, vuurwerk, zweefkroon, labels, locator bar. | `ServerBossEvent`, packets, `Display`-entities |
+| `game` | Spelstatus, timer, de zes rondes als klassen met `start/tick/onDeath/end`, de PvP-regel. | `ServerTickEvents.END_SERVER_TICK`, `ALLOW_DAMAGE` |
+| `teams` | Vier teamkleuren, het teammenu, de maximumregel. | `ChestMenu`, `SimpleContainer` |
+| `crown` | Kroonhouder, laatste hit, kroonwissel, opstelling, bevriezing. | `ServerLivingEntityEvents.ALLOW_DEATH`, `ALLOW_DAMAGE` |
+| `rad` | Het Rad (20 lampen, rigged) en de quiz-randomizer (4 lampen, echt toeval): dezelfde code. | tick-gestuurd, geen threads |
+| `mobs` | Waves spawnen en tellen, per arena. | `EntityType.spawn`, entity-tags |
+| `schrik` | De jumpscare en de nep-uitgang. | title-packets, `playNotifySound` |
+| `tribune` | Wie af is naar de tribune of de kooi, daar houden, geen schade, locator bar uit. | `ALLOW_DAMAGE`, tick-check op regio's |
+| `visuals` | Bossbar, sidebar, titles, geluid, particles, vuurwerk, zweefkroon, labels. | `ServerBossEvent`, packets, `Display`-entities |
 
-Vuistregel voor het model: alles draait op de server-tick. Geen `Thread.sleep`, geen eigen
-threads; een wachttijd is een tick-teller in een state-object.
+Vuistregel: alles draait op de server-tick. Geen `Thread.sleep`, geen eigen threads; een
+wachttijd is een tick-teller in een state-object.
 
 ## Commands
 
@@ -111,81 +180,88 @@ Allemaal onder `/bc`, op-level 2.
 | `/bc wand` | Geeft de regio-wand (een stick met een custom data component). |
 | `/bc region save\|show\|list\|del <naam>` | Regio uit de wand-selectie opslaan; `show` tekent tien seconden particles op de randen. |
 | `/bc point set\|block\|tp\|list\|del <naam>` | Punt op je positie (met kijkrichting) of op het blok waar je naar kijkt (tot 32 blokken). |
-| `/bc label zet <tekst>` / `/bc label weg` | Een text display boven je hoofd plaatsen; het dichtstbijzijnde label binnen zes blokken weghalen. |
-| `/bc start <ronde>` | Teleport naar het startpunt, border, kits, countdown, poort open, timer. Breekt een lopende ronde eerst af. Weigert met één regel en verandert dan niets als er een regio, punt of kit mist of niet klopt. |
-| `/bc kit <naam> [<speler>]` | Zet de kit uit `kits/<naam>.json` op iedereen die meedoet, of op één speler. De start van een ronde doet dit zelf. |
-| `/bc stop` / `/bc timer <sec>` | `stop` breekt de ronde af: timer stil, mobs en border weg, bevriezing eraf, bossbar terug. `timer` stelt de resterende tijd bij. |
-| `/bc status` | Rollen en vlaggen van alle spelers, huidige ronde en timer. |
+| `/bc label zet <tekst>` / `/bc label weg` | Een text display boven je hoofd plaatsen of het dichtstbijzijnde weghalen. |
+| `/bc start <1-6>` | Teleport naar het startpunt, border, kits, countdown, timer. Breekt een lopende ronde eerst af. Weigert met één regel en verandert niets als er een regio, punt of kit mist. |
+| `/bc kit <naam> [<speler>]` | Zet een kit op iedereen die meedoet, of op één speler. |
+| `/bc stop` / `/bc timer <sec>` | `stop` breekt de ronde af; `timer` stelt de resterende tijd bij (ronde 1, 2, 6). |
+| `/bc status` | Rollen, teams en vlaggen van alle spelers, huidige ronde en timer. |
 | `/bc poort <naam> open\|dicht` | Handmatig een poort bedienen. |
-| `/bc kroon <speler>` | Kroonwissel forceren (de ref z'n noodknop). Alleen in ronde 4; mag ook naar iemand op de tribune. Haalt de kroon weg bij iedereen die hem ten onrechte draagt. |
-| `/bc finalist <1\|2> <speler>` | Noodknop: wijst een finalist aan en zet hem met zijn kroon op de tribune. De finalisten staan alleen in het geheugen, dus nodig na een crash of als een finalist wegblijft. |
-| `/bc uitverkoren [<speler>]` / `/bc slot <speler> <0-19>` | De verborgen rol en de pilaar van elke kop in De Kring. Op naam, dus ook voor wie nog niet online is. Het antwoord ziet alleen wie het typt: het rad blijft geheim. |
-| `/bc rad` | Het Rad. Weigert zonder uitverkorene met een pilaar, zonder de twintig lampen, en als ronde 4 daarna niet zou kunnen starten. |
+| `/bc team <speler> <rood\|blauw\|groen\|geel\|weg>` | Noodknop: iemand in een team zetten of de keuze weghalen. Mag boven het maximum. |
+| `/bc schrik <speler>` | Een jumpscare, met de hand. |
+| `/bc wave volgende` | Mob arena: de huidige wave telt als klaar in beide arena's (overgebleven mobs weg). |
+| `/bc quiz draai` | Quiz: de randomizer draaien. |
+| `/bc quiz punt <kleur> [<aantal>]` | Quiz: punten erbij (standaard 1, negatief mag) in de sidebar. Optioneel: de host mag ook zelf tellen. |
+| `/bc quiz winnaar <kleur>` | Quiz: winnend team aanwijzen, titles en vuurwerk, einde ronde. |
+| `/bc uitverkoren [<speler>]` / `/bc slot <speler> <0-19>` | De verborgen rol en de pilaar van elke kop in De Kring. Het antwoord ziet alleen wie het typt: het rad blijft geheim. |
+| `/bc rad` | Het Rad, en daarna start ronde 5. Weigert zonder uitverkorene met een pilaar, zonder de twintig lampen, en als ronde 5 daarna niet zou kunnen starten. |
+| `/bc kroon <speler>` | Ronde 5: kroonwissel forceren (de noodknop van de ref). |
+| `/bc krimp <grootte> [<seconden>]` | Ronde 5: de border laten krimpen als het stilvalt. Standaard in 60 seconden. |
 | `/bc kijker <speler> aan\|uit` | Noodknop: iemand met de hand op de tribune zetten of eraf halen. |
-| `/bc reset` | Alles terug naar de basiskamp-staat via een register waar elk onderdeel zijn eigen opruimstap in zet: vlaggen, teams, gamemode, gamerules, effecten, attributes, pearl-blokkade, locator-attribute, zweefkroon, sidebar, horde-mobs, inventory, tp, border, bossbar, kijkers weg. Weigert niks, ruimt alles op. |
+| `/bc reset` | Alles terug naar de basiskamp-staat via het reset-register; ook alle teamkeuzes weg. |
 
 ## Regio's en punten
 
-Eén keer zetten na het bouwen. Alles wordt opgeslagen in `<wereld>/bootcamp.json` en de mod
-leest het bij het opstarten. Geen coördinaten in code.
+Eén keer zetten na het bouwen. Alles wordt opgeslagen in `<wereld>/bootcamp.json`. Geen
+coördinaten in code.
 
-**Regio's** met de wand: linksklik op een blok is hoek 1, rechtsklik hoek 2 (exacte blokposities
-uit de events), dan `/bc region save <naam>`. De mod bewaart `min` en `max` en berekent zelf
-center en grootte voor de worldborder. Eerst bouwen, dan selecteren: voor de Arena die jullie
-zelf bouwen selecteer je na het bouwen `vloer` en `finale` en zet je de tribunepunten. Een regio
-opnieuw opslaan overschrijft de oude.
-
-**Voor spelers is een regio een kolom**: alleen x en z tellen, dus twee hoeken op de grond is
-genoeg, ook bij een vloer met hoogteverschil. Een poort gebruikt wel de hele doos. De vloer waar
-kijkers af moeten blijven (`vloer`, `arena`) telt als de **cirkel die in de selectie past**:
-selecteer het vierkant om de ronde vloer heen, dan zijn de hoeken en de ring achter de rand
-tribune. Startpunten horen binnen de border-regio van hun ronde te liggen en tribunepunten buiten
-de vloer; anders weigert `/bc start`.
+**Regio's** met de wand: linksklik op een blok is hoek 1, rechtsklik hoek 2, dan
+`/bc region save <naam>`. **Voor spelers is een regio een kolom**: alleen x en z tellen. Een
+poort gebruikt wel de hele doos, en de kistenscan van het doolhof ook. Een veld waar kijkers af
+moeten blijven (`vloer`) telt als de **cirkel die in de selectie past**; `veld_a` en `veld_b`
+tellen als rechthoek. Startpunten horen binnen de border-regio van hun ronde te liggen; anders
+weigert `/bc start`.
 
 | Regio's | Waarvoor |
 |---|---|
-| `doolhof`, `arena`, `eibos`, `vloer`, `finale` | Worldborder per ronde. `arena` is de horde-arena, `vloer` de vloer van de Arena (ronde 4 en 5), `finale` het midden (ronde 6). |
-| `doolhof_uit` | Het vak achter de uitgang van het doolhof: wie erin staat is eruit en gaat naar `v2`. |
-| `poort_doolhof`, `poort_arena`, `poort_bos` | *Optioneel.* De muur die open en dicht gaat. Open is lucht; dicht zet terug wat er stond, en alleen als de mod dat niet meer weet (herstart met open poort) iron bars. |
-| `colosseum` | *Optioneel.* De hele Arena inclusief tribunes. Bestaat hij, dan is dit de border van ronde 4 en 5 (zoals [01-map-en-flow.md](01-map-en-flow.md) zegt); anders `vloer`. |
-| `eiplaat` | Het vak bij de uitgang van het bos waar je ticket wordt ingenomen. |
+| `doolhof`, `eibos`, `mobarena`, `quiz`, `vloer` | Worldborder per ronde. `mobarena` omvat beide arena's met tribune en kooien, `vloer` is de vloer van de Arena. |
+| `colosseum` | *Optioneel.* De hele Arena inclusief tribunes: border van ronde 5 en 6. Anders `vloer`. |
+| `doolhof_uit` | Het vak achter de echte uitgang: wie erin staat krijgt het teammenu. |
+| `nep_1` t/m `nep_3` | De vakken aan het eind van de nep-gangen. |
+| `schrik_1` t/m `schrik_n` | Schrikplekken in het doolhof. Zoveel als je wilt, genummerd vanaf 1. |
+| `poort_doolhof` | De poort voor de echte uitgang, opent na 4 minuten. |
+| `veld_a`, `veld_b` | De twee mob-arenavelden. Een kijker die erin komt wordt teruggezet; een levende speler die eruit komt ook. |
 
-**Punten** met `/bc point set <naam>` (positie plus kijkrichting) of `/bc point block <naam>`
-(het blok waar je naar kijkt).
+**Punten** met `/bc point set <naam>` of `/bc point block <naam>`.
 
 | Punten | Waarvoor |
 |---|---|
-| `basiskamp`, `v2`, `v3`, `kring` | Verzamelpunten. |
-| `doolhof_start` | Ingang van het doolhof. |
-| `mob_1` t/m `mob_4`, `arena_spawn` | Horde-spawns en waar spelers de arena binnenkomen. |
-| `ei_start`, `ei_beacon` (blok) | Bosrand-ingang en het ontbrekende blok in de beaconpiramide onder het Ei. |
-| `troon`, `hunter_1` t/m `hunter_4` | Het midden van de Arena en de startpunten aan de rand van de vloer; bij elke kroonwissel gaat iedereen hierheen terug. |
-| `tribune_1` t/m `tribune_4`, `tribune_horde_1` en `tribune_horde_2` | Waar doden neerkomen: op de tribune van de Arena (verdeeld over de ringen) en op die van de ruïne-arena. |
-| `finale_1`, `finale_2`, `kroning` | Startpunten van de finale en de plek van de kroning, in het midden van de Arena. |
-| `lamp_0` t/m `lamp_19` (blokken) | De lichtblokken van De Kring: de 20 pilaren rond de arenavloer, met de klok mee. Aan is een brandende redstone lamp, uit is wat er stond; zet er dus een gedoofde redstone lamp neer, zonder redstone ernaast. |
+| `basiskamp` | Spawn en reset. |
+| `doolhof_start` | De startruimte in het midden van het doolhof; ook waar een nep-uitgang je neerzet. |
+| `v2` | Bosrand van het Ei: na de teamkeuze. |
+| `ei_start`, `ei_beacon` (blok) | Waar het Ei begint (en waar je na een dood terugkomt), en het ontbrekende blok in de beaconpiramide. |
+| `v3` | Verzamelpunt bij de mob arena. |
+| `start_a`, `start_b` | Waar een team het veld van arena A of B op komt. |
+| `mob_a_1` t/m `mob_a_4`, `mob_b_1` t/m `mob_b_4` | Mob-spawns per arena. Zelfde volgorde in beide arena's, zodat de waves gelijk zijn. |
+| `kooi_a`, `kooi_b` | De kooi naast elk veld. |
+| `tribune_mob_1`, `tribune_mob_2` | De tribune tussen de arena's. |
+| `quiz_rood`, `quiz_blauw`, `quiz_groen`, `quiz_geel` | De vier vakken van het podium. |
+| `quizlamp_0` t/m `quizlamp_3` (blokken) | De lampen voor de vakken, in de volgorde rood, blauw, groen, geel. Gedoofde redstone lamp, geen redstone ernaast. |
+| `troon`, `jager_1` t/m `jager_4` | Het verhoogde midden van de Arena en de startpunten aan de rand. |
+| `tribune_1` t/m `tribune_4` | De tribune van de Arena. |
+| `kroning` | De plek van de kroning. |
+| `lamp_0` t/m `lamp_19` (blokken) | De lichtblokken van De Kring, met de klok mee. Gedoofde redstone lamp, geen redstone ernaast. |
 
-Worldborder per ronde: `ServerLevel.getWorldBorder()`, center en grootte uit de regio, krimpen met
+Worldborder: `ServerLevel.getWorldBorder()`, center en grootte uit de regio, krimpen met
 `lerpSizeBetween`. Altijd eerst teleporteren, dan de border zetten.
 
 ## Kits (JSON)
 
-Elke kit is een JSON-bestand in `config/bootcamp/kits/`, zodat iedereen exact hetzelfde aanheeft
-als een ronde begint en je de inhoud kunt aanpassen zonder te compileren. De basiskit komt van
-Pudding als JSON; de andere kits vul je op dezelfde manier in met de inhoud uit
-[02-rondes.md](02-rondes.md).
+Elke kit is een JSON-bestand in `config/bootcamp/kits/`. De bestanden worden bij elk gebruik
+opnieuw gelezen; een ronde weigert te starten als een kit die ze nodig heeft ontbreekt of een fout
+bevat.
 
-| Bestand | Wanneer |
-|---|---|
-| `basis.json` | Wie zonder ticket uit het Ei-bos komt; hunters zonder loot in ronde 4. Inhoud volgt van Pudding. |
-| `horde.json` | Start ronde 2, iedereen. |
-| `ei.json` | Start ronde 3: alleen de pickaxe erbij, inventory blijft. |
-| `boss.json` | Clown bij de start van ronde 4. |
-| `kroonpakket.json` | Bij elke kroonwissel erbij: 2 gapples, 2 pearls. |
-| `arena.json` | Start ronde 5, iedereen. |
-| `finale.json` | Elk potje van ronde 6, beide finalisten. |
+| Bestand | Wanneer | `clear` |
+|---|---|---|
+| `basis.json` | Start ronde 1, iedereen: iron armor, iron sword, 32 steak. | true |
+| `ei.json` | Start ronde 2: diamond pickaxe met Efficiency II erbij. | false |
+| `mobarena.json` | Start ronde 3: boog, 32 pijlen, schild, 16 steak erbij. | false |
+| `boss.json` | Clown bij de start van ronde 5. Geen helm: de kroon. | true |
+| `jager.json` | Iedereen anders bij de start van ronde 5. Zelfde voor iedereen. | true |
+| `kroonpakket.json` | Bij elke kroonwissel erbij: 2 gapples, 2 pearls. | false |
+| `arena.json` | Start ronde 6, iedereen. | true |
 
 Formaat: per slot een item in dezelfde syntax als `/give`, zodat enchantments en andere
-components gewoon werken. De mod parst dat met de vanilla item-parser.
+components gewoon werken. Een getal achter het item is het aantal.
 
 ```json
 {
@@ -199,211 +275,228 @@ components gewoon werken. De mod parst dat met de vanilla item-parser.
   "offhand": "minecraft:shield",
   "hotbar": [
     "minecraft:iron_sword",
-    "minecraft:bow[minecraft:enchantments={\"minecraft:power\":1}]",
-    "minecraft:arrow 16",
-    "minecraft:cooked_beef 8"
+    "minecraft:cooked_beef 32"
   ],
   "inventory": []
 }
 ```
 
-Een kit schrijft nooit over de head-slot van een koning of finalist: de kroon blijft op.
-`boss.json` en `finale.json` hebben daarom geen helm.
+Een kit schrijft nooit over de head-slot van de kroonhouder. Bij `clear: false` komt een item op
+zijn slot als dat leeg is en anders ergens in de inventory. De mod herkent de kroon aan het item
+zelf (`custom_data={bootcamp_kroon:1b}`).
 
-`clear: false` voor kits die iets toevoegen (`ei`, `kroonpakket`, en ook `horde`: wat je in het
-doolhof vond mag je houden). Een item komt dan op zijn slot als dat leeg is en anders ergens in de
-inventory. De mod herkent de kroon aan het item zelf (`custom_data={bootcamp_kroon:1b}`): zit hij
-in de head-slot, dan blijft elke kit ervan af. De bestanden worden bij elk gebruik opnieuw
-gelezen, en een ronde weigert te starten als een kit die ze nodig heeft ontbreekt of een fout
-bevat. De waves van de horde staan op dezelfde manier in `config/bootcamp/waves.json`. Een getal achter het item is
-het aantal. `/bc kit <naam>` zet hem op iedereen die meedoet, `/bc kit <naam> <speler>` op één
-speler; de rondes roepen hetzelfde aan bij de start. Een fout in een bestand komt als één
-duidelijke regel in de console met bestandsnaam en slot, niet als een crash.
+**Loot-tabel van het doolhof**: `config/bootcamp/doolhof_loot.json`. Bij de start van ronde 1
+zoekt de mod alle kisten in regio `doolhof` (de hele doos), maakt ze leeg en vult ze met
+willekeurig gekozen items uit de tabel. Gewicht bepaalt hoe vaak een item valt.
+
+```json
+{
+  "perKist": [2, 4],
+  "items": [
+    { "item": "minecraft:diamond_chestplate", "gewicht": 2 },
+    { "item": "minecraft:diamond_helmet", "gewicht": 3 },
+    { "item": "minecraft:iron_sword[minecraft:enchantments={\"minecraft:sharpness\":2}]", "gewicht": 4 },
+    { "item": "minecraft:bow", "gewicht": 4 },
+    { "item": "minecraft:arrow 16", "gewicht": 6 },
+    { "item": "minecraft:golden_apple", "gewicht": 3 },
+    { "item": "minecraft:cooked_beef 8", "gewicht": 6 }
+  ]
+}
+```
+
+**Waves** staan in `config/bootcamp/waves.json`: per wave een lijst mobs met type, aantal (voor
+een team van 5), gear en spawnpunt 1 t/m 4. Het aantal schaalt met het aantal levende spelers in
+het team met de meeste spelers, zodat beide arena's precies dezelfde wave krijgen. Na de laatste
+wave uit het bestand komt die wave opnieuw met `extraPerWave` (standaard 1) extra per mobtype,
+elke keer weer.
 
 ## Spellogica
 
-**Status.** Eén `GameState`: huidige ronde, timer in seconden, vlaggen (`bevroren`),
-per speler een rol (`SPELER`, `HUNTER`, `KING`, `FFA`, `FINALIST`, `KIJKER`, `STAFF`) en
-vlaggen (`dood`, `ticket`, `uitverkoren`, slotnummer). De mod is de bron van waarheid;
-scoreboard-tags (`king`, `hunter`, `kijker`, `uitverkoren`, `ticket`) zijn read-only spiegels die
-elke seconde worden bijgezet, zodat je met `@a[tag=...]` kunt kijken. `/bc status` toont alles.
+**Status.** Eén `GameState`: huidige ronde, timer, vlaggen, en per speler een rol (`SPELER`,
+`JAGER`, `KROON`, `FFA`, `KIJKER`, `STAFF`), een team, en vlaggen (`dood`, `klaar`, `uitverkoren`,
+slot, punten, schrikplekken gehad). De mod is de bron van waarheid; scoreboard-tags zijn read-only
+spiegels die elke seconde worden bijgezet. `/bc status` toont alles.
 
-**Ontbrekende config.** Elke ronde declareert welke regio's en punten ze nodig heeft. `/bc start`
-weigert met één regel ("ontbreekt: troon, hunter_3, ...") als er iets mist en verandert dan
-niets. `/bc rad` weigert zonder precies één uitverkorene.
+**Ontbrekende config.** Elke ronde declareert welke regio's, punten en kits ze nodig heeft.
+`/bc start` weigert met één regel ("ontbreekt: kooi_b, mob_a_3, ...") en verandert niets. Ronde 3
+en 4 weigeren ook als niet iedereen een team heeft: `/bc team` lost dat op.
 
-**Uitloggen en terugkomen.** Join en quit gaan naar de actieve ronde. Een hunter die uitlogt telt
-als dood. Logt de koning uit, dan telt de mod 30 seconden af (bossbar); komt hij niet terug, dan
-volgt dezelfde kroonwissel als bij een val-dood. Wie terugkomt in ronde 4 t/m 6 wordt kijker op
-de tribune; in ronde 1 t/m 3 gaat hij naar het verzamelpunt of de tribune van dat moment.
-
-**Tussen twee rondes in** is er geen border en geen PvP (iedereen in team `spelers`). Wie dan
-inlogt krijgt alsnog wat het einde van de gemiste ronde met iedereen deed: adventure, een
-doorgegeven kroon eraf, na ronde 3 zonder ticket de basiskit-straf, naar het verzamelpunt, of na
-ronde 4 t/m 6 als kijker de tribune op.
+**Uitloggen en terugkomen.** In ronde 1 t/m 4 kom je terug waar je hoort: in het doolhof bij de
+start, in het Ei bij `ei_start` met je punten, in de mob arena in de kooi (een uitlogger telt als
+dood), in de quiz in je vak. In ronde 5: een jager die uitlogt is af; de kroonhouder krijgt 30
+seconden. Wie terugkomt in ronde 5 of 6 wordt kijker op de tribune.
 
 **Fouten.** Een fout in de tick van een ronde stopt de server niet: de mod logt hem, breekt de
 ronde af en meldt het in de chat.
 
-**Tick.** `END_SERVER_TICK`; elke 20 ticks één seconde: timer omlaag, bossbar bijwerken, de
-actieve ronde z'n `tick()`. Ronde-specifieke momenten (Ei-hint op 5:00, einde op 0:00, "hunters
-op" in ronde 4) zitten in die ronde.
-
-**Dood.** `ServerLivingEntityEvents.ALLOW_DEATH`: de mod laat spelers nooit echt doodgaan. Bij
-een dodelijke klap wordt de dood geannuleerd, de speler geheald en afgehandeld volgens de ronde:
+**Dood.** `ALLOW_DEATH`: de mod laat spelers nooit echt doodgaan. Bij een dodelijke klap wordt de
+dood geannuleerd, de speler geheald en afgehandeld volgens de ronde:
 
 | Ronde | Wat er gebeurt |
 |---|---|
-| 2 | Kijker tot het einde van de ronde. Doodtekst als title voor de dode, verder niks. Inventory wordt bewaard en bij `v3` teruggegeven. |
-| 4, koning | Kroonwissel naar de killer; anders de laatste hit; anders een willekeurige levende hunter. Ex-koning wordt kijker op de tribune. |
-| 4, hunter | Kijker op de tribune, uit de ronde, geen respawn. Is er geen levende hunter meer, dan eindigt de ronde en is de koning finalist 1. |
-| 5 | Kijker op de tribune; laatste over wordt finalist 2. |
-| 6 | Potje voor de tegenstander. |
+| 1 | Geheald terug naar `doolhof_start`. |
+| 2 | Geheald terug naar `ei_start`, punten en spullen blijven. |
+| 3 | Kijker in de kooi van zijn arena. Inventory wordt bewaard en aan het eind van ronde 3 teruggegeven. Doodtekst. Is het team leeg, dan is de wedstrijd voorbij. |
+| 4 | Kan niet: geen schade. |
+| 5, kroonhouder | Kroonwissel naar de killer, anders de laatste hit, anders een willekeurige levende jager. Ex-kroonhouder wordt kijker op de tribune. |
+| 5, jager | Kijker op de tribune, af. Is er nog maar één speler over, dan is die de winnaar. |
+| 6 | Kijker op de tribune; laatste over is King of the SMP. |
 
-Geen death-screen, geen respawn, geen keepInventory-gedoe. De laatste hit komt uit
-`ALLOW_DAMAGE`: is het slachtoffer de koning en de bron een speler (ook via een pijl), onthoud hem.
+Geen death-screen, geen respawn. De laatste hit komt uit `ALLOW_DAMAGE`.
 
-**Kroonwissel** (`Crown.transfer(oude, nieuwe)`): oude wordt kijker op de tribune; nieuwe naar
-`troon`,
-heal, honger vol, alle items in inventory en armor op volle durability (`setDamageValue(0)`),
-gouden helm met Curse of Binding, 2 gapples en 2 pearls, 15 seconden Resistance II, Glowing
-(teamkleur goud), zweefkroon; dan `Opstelling(10)`.
+**Ronde 1, doolhof.** Start: iedereen naar `doolhof_start`, basiskit, poort dicht, kisten vullen,
+border `doolhof`. Countdown, dan de timer van 10 minuten. Op 6:00 resterend (na 4 minuten) gaat
+`poort_doolhof` open met horn en title `DE UITGANG IS OPEN`. Elke 5 ticks: wie in `nep_n` staat
+krijgt explosie-particles (`explosion_emitter`), `entity.creeper.primed` plus
+`entity.generic.explode`, een willekeurig grapje als title (lijst in `bootcamp.json`) en gaat naar
+`doolhof_start`; wie in `schrik_n` staat en die nog niet had krijgt de jumpscare; wie in
+`doolhof_uit` staat zonder team krijgt het teammenu. Hint-title op 3:00 resterend. Timer op: wie
+nog geen team heeft gaat naar het kleinste team (bij gelijk: willekeurig), iedereen naar `v2`.
 
-**Opstelling(seconden)**: alle levende hunters heal en naar `hunter_1..4` aan de rand van de
-vloer, bevriezen, countdown in actionbar met de laatste vijf seconden als title plus pling, dan
-los met een groene GO en de raid horn. Bevriezen is `MOVEMENT_SPEED` en `JUMP_STRENGTH` op
-basiswaarde 0 (terug naar 0.1 en 0.42) plus een `UseItemCallback` die pearls blokkeert zolang de
-vlag staat (ook wind charges en chorus fruit; pearls die al in de lucht hangen worden opgeruimd).
-Bij de start van ronde 4 dezelfde functie met 30 seconden, waarin alleen de hunters bevroren
-staan; na een wisel staat ook de koning stil. Zolang een opstelling loopt doet niemand elkaar
-schade. Doden blijven dood: een reset geeft geen levens terug.
+**Ronde 2, het Ei.** Start: `ei_start`, survival, `ei.json`, border `eibos`, timer 10 minuten.
+`PlayerBlockBreakEvents.BEFORE` in regio `eibos`: netherite, diamond, gold, redstone en emerald
+block breken zonder drop (`level.removeBlock`, event geannuleerd), met punten of effect:
 
-**Einde van ronde 4**: bij timer 0, of zodra er geen levende hunter meer is (elke seconde
-gecontroleerd). De koning is finalist 1; is hij op dat moment uitgelogd, dan gaat de kroon eerst
-door. De commander start daarna zelf ronde 5 (besluit 14); alleen de finale start vanzelf. Geen sudden death en geen border-krimp: de vloer is klein genoeg en iedereen heeft
-één leven. Daarna `start(5)`: iedereen behalve Clown en finalist 1 de vloer op, ook de doden van
-ronde 4.
+- netherite +50, diamond +10, gold +5: `entity.experience_orb.pickup`, actionbar `+10 · 85 punten`.
+- redstone: 50/50. Haste II 10 seconden voor de breker, of iedereen behalve de breker 15 seconden
+  bevroren: dezelfde bevriezing als de opstelling, plus Mining Fatigue zodat ze ook niet minen.
+  Title voor iedereen: `BEVROREN door <naam>`. Een nieuwe bevriezing vervangt een lopende.
+- emerald: jumpscare bij een willekeurige andere deelnemer in het Ei.
 
-**Ei-drukplaat**: elke halve seconde: spelers in regio `eiplaat` zonder ticket met een diamond
-block in hun inventory, block eruit, ticket, tp naar `kring`, levelup-geluid. Na de timer: wie
-geen ticket heeft krijgt inventory leeg plus basiskit en gaat alsnog naar De Kring.
+Sidebar: de top 10 op punten. Beacon-hint op 5:00, vuurpijl op 3:00. Timer op: de meeste punten
+wint (gelijk: wie die score het eerst had), title en vuurpijl, iedereen naar `v3`, adventure.
 
-**Horde**: mobs spawnen op `mob_1..4` met een entity-tag `horde` en `setPersistenceRequired()`
-zodat ze niet despawnen; gear via `setItemSlot`. Elke mob zonder helm krijgt een stenen knoop op
-zijn hoofd (anders branden zombies en skeletons overdag weg in de open arena) en volgbereik 64.
-Aantallen schalen mee met het aantal spelers; de boss wave staat vast. Volgende wave als de teller 0 is of na 120
-seconden. Ronde stopt bij wave 5 dood, iedereen dood, of de timer; de doden worden weer levend
-bij `v3` en overlevers krijgen een pearl.
+**Ronde 3, mob arena.** Start bij `v3`: `mobarena.json`, border `mobarena`, loting van de
+wedstrijden (`core`: vier teams → twee paren, willekeurig), title met het schema. Een wedstrijd:
+team 1 naar `start_a`, team 2 naar `start_b`, de andere teams naar `tribune_mob_n`, countdown 5.
+Waves spawnen op `mob_a_n` en `mob_b_n` met tag `bootcamp_mob` en `arena_a` of `arena_b`,
+`setPersistenceRequired()`, stenen knoop op het hoofd tegen zonlicht. Een arena is klaar met een
+wave als haar teller 0 is; zijn beide klaar, dan na 10 seconden de volgende wave. Na 120 seconden
+telt een wave altijd als klaar. Een team zonder levende speler op het veld verliest; vallen
+beide teams in dezelfde seconde, dan wint het team waarvan de laatste het laatst viel, en bij
+exact gelijk de arena met de minste mobs over. Na de wedstrijd: mobs weg, beide teams naar de
+tribune. Na de halve finales de finale, met alleen de levenden op het veld en de doden van die
+teams in hun kooi. Winnaar: titles en vuurpijlen. Einde: iedereen weer speler, bewaarde
+inventory terug, geheald, naar de quiz.
 
-**Het Rad**: state-object met `pos`, `rest` en `volgendeStapTick`. Start: `rest` =
-`(doelslot - pos + 20) mod 20 + 20 * (2 of 3)`, `pos` willekeurig. Per stap: lamp uit, pos + 1,
-lamp aan, `rest` - 1, hat-geluid, en de wachttijd tot de volgende stap loopt op van 2 naar 30
-ticks naarmate `rest` kleiner wordt. Bij 0: dragon growl, totem-particles op de uitverkorene,
-title `DE KONING` met naam, drie seconden later `start(4)`.
+**Ronde 4, quiz.** Start: iedereen naar `quiz_<kleur>` van zijn team, border `quiz`, geen timer.
+`/bc quiz draai` draait de randomizer over `quizlamp_0..3`: dezelfde code als het Rad, met 4
+lampen, een echt willekeurig doel en 2 of 3 rondes. Einde: title `<KLEUR> IS AAN DE BEURT` in de
+teamkleur, `entity.player.levelup`. De sidebar toont de punten als de host `/bc quiz punt`
+gebruikt. `/bc quiz winnaar <kleur>` sluit af.
 
-**FFA en finale**: levende `FFA`-spelers tellen; bij één over kroon en finalist-visual, dan
-twee minuten rust (beide finalisten op de tribune, timer in de bossbar) en `start(6)`. Finale:
-potjes tellen, heal en kit-reset per potje, na twee gewonnen potjes de kroning in het midden.
+**Het Rad (start van ronde 5).** State-object met `pos`, `rest` en `volgendeStapTick`. Start:
+`rest` = `(doelslot - pos + n) mod n + n * (2 of 3)`, `pos` willekeurig, n = 20. Per stap: lamp
+uit, pos + 1, lamp aan, `rest` - 1, hat-geluid, en de wachttijd loopt op van 2 naar 30 ticks
+naarmate `rest` kleiner wordt. Bij 0: dragon growl, totem-particles, title `DE KROON` met naam,
+drie seconden later `start(5)`. Bij de quiz is n = 4 en het doel willekeurig.
 
-## Kijkers: wie dood of klaar is
+**Ronde 5, Clown vs All.** Iedereen uit zijn teamkleur. Clown naar `troon`, `boss.json`, de kroon,
+Glowing, team `kroon`. De rest `jager.json`, team `jagers`, verdeeld over `jager_1..4`.
+Opstelling van 30 seconden. Border `colosseum` (of `vloer`), geen timer, locator bar aan met
+alleen de kroonhouder zichtbaar. Elke seconde: is er nog maar één levende deelnemer, dan einde.
 
-Geen spectator mode, geen tp-items, geen vliegen. Wie dood is wordt naar de tribune
-geteleporteerd en blijft daar bij de andere doden tot de ronde voorbij is; wie klaar is met een
-ronde staat bij het volgende verzamelpunt. De mod hoeft maar weinig te doen:
+**Kroonwissel** (`Kroon.wissel(oude, nieuwe)`): oude wordt kijker op de tribune; nieuwe naar
+`troon`, heal, honger vol, alles op volle durability, de kroon als helm (oude helm naar de
+inventory), `kroonpakket.json`, 15 seconden Resistance II, Glowing, zweefkroon; dan
+`Opstelling(10)`.
 
-- Adventure mode, team `out` (grijs in de tab-list), inventory leeg (in ronde 2 bewaard en bij
-  `v3` teruggegeven).
-- Geen schade (`ALLOW_DAMAGE` annuleren voor kijkers), ook niet van de border als die in de FFA of
-  de finale krimpt. Een kijker ziet de border ook niet: hij krijgt een eigen border-pakket zo
-  groot als de wereld, want wie buiten de border staat krijgt van de client anders een volledig
-  rood scherm, en dat zou tijdens de finale op de hele tribune tegelijk zijn.
-- Blijft op zijn plek: glas tussen tribune en vloer, en een tick-check die een kijker die toch in
-  regio `vloer` (Arena) of `arena` (horde) komt terug op zijn tribunepunt zet.
-- Niet op de locator bar (`WAYPOINT_TRANSMIT_RANGE` op 0), geen Glowing.
-- Bij de dood een title met een willekeurige doodtekst, alleen voor de dode zelf, geen chatregel
-  en geen geluid: `Grote L gepakt!`, `Had je nou maar beter je best gedaan`, `Gelukkig is dit niet
-  de CSMP`. De lijst staat in `bootcamp.json`, zodat je er meer bij kunt zetten.
-- Zichtbaar en hoorbaar: op de tribune zijn de doden het publiek. Voice is gewoon proximity, dus
-  de vloer hoort de tribune en andersom.
+**Opstelling(seconden)**: alle levende jagers heal en naar `jager_1..4`, bevriezen, countdown in
+de actionbar met de laatste vijf seconden als title plus pling, dan los met een groene GO en de
+raid horn. Bevriezen is `MOVEMENT_SPEED` en `JUMP_STRENGTH` op basiswaarde 0 plus een
+`UseItemCallback` die pearls, wind charges en chorus fruit blokkeert zolang de vlag staat. Na een
+wissel staat ook de kroonhouder stil. Tijdens een opstelling doet niemand elkaar schade.
 
-Waar kijkers heen gaan: ronde 2 naar `tribune_horde_n`, ronde 4 t/m 6 naar `tribune_n`. Finalist
-1 en Clown zitten tijdens de FFA ook op de tribune, met dezelfde regels. Aan het eind van ronde 2
-worden de doden weer gewoon speler bij verzamelpunt 3.
+**Ronde 6, FFA en kroning.** Iedereen behalve Clown, ook wie af was, naar `jager_1..4` om en om,
+`arena.json`, geen team, countdown 10. Border krimpt na 5 minuten in 2 minuten naar 10. Laatste
+levende wint; na 10 minuten beslist het aantal kills. Dan de kroning: iedereen naar de tribune,
+de winnaar naar `kroning` met de kroon, twintig seconden vuurpijlen, title `KING OF THE SMP`.
 
-**Staff** (host, camera's, admins) gebruikt spectator of creative voor de camera; de mod dwingt
-daar niks af. `/bc kijker <naam> aan|uit` is de noodknop om iemand met de hand op de tribune te
-zetten of eraf te halen.
+## Kijkers: wie af of dood is
+
+Geen spectator mode, geen tp-items, geen vliegen.
+
+- Adventure mode, team `out` (grijs in de tab-list), inventory leeg (in ronde 3 bewaard en aan het
+  eind teruggegeven).
+- Geen schade, ook niet van de border. Een kijker ziet de border niet: hij krijgt een eigen
+  border-pakket zo groot als de wereld, anders geeft de client een rood scherm.
+- Blijft op zijn plek: glas, en een tick-check die een kijker die toch in `vloer`, `veld_a` of
+  `veld_b` komt terugzet op zijn tribunepunt of in zijn kooi.
+- Niet op de locator bar, geen Glowing.
+- Bij de dood een title met een willekeurige doodtekst, alleen voor de dode zelf. De lijst staat
+  in `bootcamp.json`.
+
+Waar kijkers heen gaan: ronde 3 naar `kooi_a` of `kooi_b` tijdens de wedstrijd van hun team en
+anders naar `tribune_mob_n`; ronde 5 en 6 naar `tribune_n`. Clown zit tijdens de FFA ook op de
+tribune.
+
+**Staff** gebruikt spectator of creative voor de camera; de mod dwingt daar niks af.
 
 ## Voice
 
-Niks te doen in de mod. Simple Voice Chat draait ernaast op puur proximity, groepen staan in de
-voice-config uit, en de tribune is publiek: de vloer hoort de doden en andersom. Details in
+Niks te doen in de mod. Simple Voice Chat draait ernaast op puur proximity. Details in
 [07-voice.md](07-voice.md).
 
 ## Bossbar en visuals
 
-Eén bossbar, kort, altijd hetzelfde formaat (`ServerBossEvent`, alle spelers toegevoegd).
-Persoonlijke info via de actionbar. De sidebar toont in ronde 2 de sneuvelvolgorde en in ronde 4
-de regeerperiodes.
+Eén bossbar, kort, altijd hetzelfde formaat. Persoonlijke info via de actionbar.
 
 | Ronde | Tekst | Kleur | Vulling |
 |---|---|---|---|
 | Basiskamp | `Pudding Bootcamp` | wit | vol |
-| 1 | `Doolhof · 09:41` | groen | tijd |
-| 2 | `Wave 3 · 12 mobs` | rood | mobs over |
-| 3 | `Het Ei · 07:12` | groen, geel na de hint | tijd |
-| 4 | `Koning: Clown · 12:34` | geel | tijd |
-| Rust | `Finale over 01:59` | wit | tijd |
-| 5 | `FFA · 7 over · 04:59` | paars | tijd |
-| 6 | `Finale · 1 - 0` | geel | vol |
+| 1, poort dicht | `Doolhof · uitgang open over 02:13` | rood | tijd tot open |
+| 1, poort open | `Doolhof · 04:41` | groen | tijd |
+| 2 | `Het Ei · 07:12` | groen, geel na de hint | tijd |
+| 3 | `Rood vs Blauw · Wave 4` | rood | mobs over |
+| 4 | `Quiz · aan de beurt: Groen` | teamkleur | vol |
+| 5 | `Clown vs All · Kroon: Clown · 12 over` | geel | spelers over |
+| 6 | `FFA · 7 over · 04:59` | paars | tijd |
 
-**Locator bar**: gamerule uit in alle rondes, aan in ronde 4 t/m 6 met alleen de koningen
-zichtbaar (hunters en kijkers zenden niet, attribute `WAYPOINT_TRANSMIT_RANGE` op 0). De stip
-heeft de teamkleur, dus goud.
+**Sidebar**: ronde 1 de teams met aantallen (`Rood 3/5`), ronde 2 de top 10 op punten, ronde 3
+per team hoeveel er nog staan, ronde 4 de quizpunten, ronde 5 de regeerperiodes.
 
-**Zweefkroon**: een `Display.ItemDisplay` met een gouden helm, schaal 0.5, `teleport_duration`
-2, elke twee ticks boven het hoofd van de koning gezet en zes graden gedraaid. Wordt opgeruimd
-als de koning kijker wordt. Twee koningen in de finale hebben elk hun eigen.
+**Zweefkroon**: een `Display.ItemDisplay` met een gouden helm boven het hoofd van de kroonhouder,
+langzaam draaiend. Opgeruimd als de kroonhouder kijker wordt.
 
-**Labels**: een `Display.TextDisplay` boven elk verzamelpunt en boven De Kring, één keer
-geplaatst bij het bouwen met `/bc label zet <tekst>`. Ze overleven `/bc reset`.
+**Labels**: een `Display.TextDisplay` boven elk verzamelpunt, één keer geplaatst met
+`/bc label zet <tekst>`. Ze overleven `/bc reset`.
 
 **Per moment**
 
 | Moment | Wat je ziet en hoort |
 |---|---|
 | Countdown | Titles 5 t/m 1 met een stijgende `note_block.pling`, dan `GO` met `event.raid.horn`. |
-| Poort open | `event.raid.horn` en cloud-particles in de poortopening. |
-| Nieuwe wave | Title `WAVE 3` in rood, `event.raid.horn`, bossbar rood met mob-teller. |
-| Speler sneuvelt | Alleen de dode ziet groot een willekeurige doodtekst als title: `Grote L gepakt!`, `Had je nou maar beter je best gedaan`, `Gelukkig is dit niet de CSMP`. Geen geluid, geen chatregel. Lijst in de config. |
-| Ei-hint op 5 min | Het ontbrekende blok in de beaconpiramide erin: lichtstraal aan, `block.beacon.activate` voor iedereen, bossbar geel. Op 3 min een vuurpijl boven het Ei. |
-| Ticket ingeleverd | `entity.player.levelup` voor de speler, happy-villager-particles. |
-| Het Rad | Lampjes rond met `note_block.hat` per stap. Aan het eind `entity.ender_dragon.growl`, totem-particles op de uitverkorene, title `DE KONING` met naam. |
-| Kroonwissel | `entity.lightning_bolt.thunder` voor iedereen (geen echte bliksem, die zet dingen in de fik), flash-particle op de nieuwe koning, title `NIEUWE KONING` met naam, de zweefkroon springt over. |
-| Hunters op | Title `DE KONING STAAT` met naam, `ui.toast.challenge_complete`; ronde 4 is voorbij. |
-| Finalist | `ui.toast.challenge_complete` voor iedereen, vuurpijl boven de speler, title `FINALIST` met naam. |
-| Kroning | Twintig seconden vuurpijlen boven de Arena, title `KING OF THE SMP` met naam, tribunes vol. |
-
-Vuurpijlen: een `FireworkRocketEntity` met een `Fireworks`-component (grote gouden bol met
-staart, vluchtduur 1). Titles en actionbar gaan via de title-packets, geluid via
-`playNotifySound`, particles via `ServerLevel.sendParticles`.
+| Poort doolhof open | `event.raid.horn`, cloud-particles in de poort, title `DE UITGANG IS OPEN`. |
+| Nep-uitgang | Explosie-particles, creeper-sis en knal, grapje als title, terug in de startruimte. |
+| Jumpscare | Foto van Clown schermvullend, `bootcamp:clown_lach`. |
+| Team gekozen | `entity.player.levelup`, je naam in de teamkleur, chatregel voor iedereen: `<naam> zit in Rood (3/5)`. |
+| Ei: punten | `entity.experience_orb.pickup`, actionbar met je score. |
+| Ei: redstone | Haste: `block.beacon.power_select`. Bevriezing: title `BEVROREN door <naam>`, `block.glass.break`. |
+| Ei-hint op 5 min | Beacon aan, `block.beacon.activate`, bossbar geel. Op 3 min een vuurpijl boven het Ei. |
+| Loting mob arena | Titles met het schema, `ui.toast.challenge_complete`. |
+| Nieuwe wave | Title `WAVE 3` in rood, `event.raid.horn`, in beide arena's tegelijk. |
+| Speler sneuvelt | Alleen de dode ziet een willekeurige doodtekst als title. Geen geluid, geen chatregel. |
+| Wedstrijd gewonnen | Title `ROOD WINT` in de teamkleur, vuurpijlen boven het veld. |
+| Quiz-randomizer | Lampjes rond met `note_block.hat`, aan het eind `entity.player.levelup` en de teamtitle. |
+| Het Rad | Lampjes rond met `note_block.hat`. Aan het eind `entity.ender_dragon.growl`, totem-particles, title `DE KROON` met naam. |
+| Kroonwissel | `entity.lightning_bolt.thunder` (geen echte bliksem), flash-particle, title `NIEUWE KROON` met naam. |
+| Winnaar ronde | `ui.toast.challenge_complete`, vuurpijl, title met naam of team. |
+| Kroning | Twintig seconden vuurpijlen, title `KING OF THE SMP` met naam. |
 
 ## Zo is dit gevibecode
 
-1. **Volgorde.** Config en commands met de wand, dan de tribune (kijkers), dan ronde 1
-   t/m 3, dan de kroon en ronde 4, dan het rad, dan visuals. Na elke stap iets
-   testbaars, met een tweede account op de dev-server.
-2. **Context.** Geef Claude Code deze repo. Deze doc plus [02-rondes.md](02-rondes.md) en
-   [03-kroon-regels.md](03-kroon-regels.md) zijn de spec; laat hem één module per keer doen.
+1. **Volgorde.** Zie [08-taakplan.md](08-taakplan.md). Na elke stap iets testbaars.
+2. **Context.** Deze doc plus [02-rondes.md](02-rondes.md) en
+   [03-kroon-regels.md](03-kroon-regels.md) zijn de spec.
 3. **Compileren.** `./gradlew build` groen voordat je verder gaat. Een naam die niet bestaat is
-   een 1.21-gok: `./gradlew genSources` en de echte naam opzoeken in de gegenereerde bronnen.
+   een 1.21-gok: `./gradlew :fabric:genSources` en de echte naam opzoeken.
 4. **Geen magie.** Alles tick-gestuurd, alles via `/bc reset` terug te draaien, alle
-   coördinaten uit `bootcamp.json`. Als iets een wachttijd nodig heeft, is dat een teller.
+   coördinaten uit `bootcamp.json`.
 5. **Testrun** met de checklist uit [05-draaiboek.md](05-draaiboek.md), en de jar van de vorige
-   werkende versie bewaren voor het geval een fix misgaat.
+   werkende versie bewaren.
 
 ## Oude versies
 
-De Paper + Skript-schets staat in de git-geschiedenis (commit `d351fd1`), de datapack-versie in
-`e51e143`. Allebei bruikbaar als je toch geen mod wilt bouwen, met de omwegen die daar
-beschreven staan.
+Het oude rondeplan (horde, Ei met ticket, King of the SMP, finale) staat in de git-geschiedenis
+tot commit `b93727a`. De Paper + Skript-schets staat in `d351fd1`, de datapack-versie in
+`e51e143`.
