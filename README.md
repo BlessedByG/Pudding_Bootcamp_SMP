@@ -2,7 +2,7 @@
 
 Concept voor een Minecraft-bootcamp met zo'n 20 spelers (streamers) als opwarmer voor de SMP.
 Zes rondes in één open wereld: solo en in teams, met ClownPierce als eindbaas in Clown vs All en
-een FFA waarvan de winnaar **King of the SMP** wordt. Wie in Clown vs All de kroon krijgt,
+een FFA waarvan de winnaar **King of the SMP Bootcamp** wordt. Wie in Clown vs All de kroon krijgt,
 beslist zogenaamd **Het Rad**. Dat rad is rigged en landt altijd op Clown.
 
 Dit is het complete concept: wat elke ronde is, hoe de teams en de kroon werken, hoe de map in
@@ -17,7 +17,7 @@ elkaar zit, hoe je het technisch bouwt en hoe de avond zelf verloopt.
 | **Server** | Fabric-server op Minecraft 26.2 (Java 25) met een eigen server-side mod, een server resource pack en Simple Voice Chat. Spelers hebben alleen de voice-mod nodig. |
 | **Voice** | Simple Voice Chat, verplicht. Alles proximity, ook de tribune. |
 | **Teams** | Kies je bij de uitgang van het doolhof: rood, blauw, groen of geel, max 5. Wie het eerst buiten is, kiest het eerst. Ze tellen in de mob arena en de quiz. |
-| **Winnaar** | Per ronde, geen totaalstand. De winnaar van de FFA is King of the SMP. |
+| **Winnaar** | Per ronde, geen totaalstand. De winnaar van de FFA is King of the SMP Bootcamp. |
 
 ## De flow
 
@@ -35,12 +35,12 @@ elkaar zit, hoe je het technisch bouwt en hoe de avond zelf verloopt.
 
 | # | Ronde | Wat doe je | Winnaar | Duur |
 |---|---|---|---|---|
-| 1 | **De Doolhof** | Solo de uitgang vinden: 4 gangen, 3 nep. Uitgang open na 4 minuten. Kisten met betere gear, een jumpscare. Buiten kies je je team. | – | 10 min |
-| 2 | **Het Ei** | Solo punten hakken uit het Grote Ei: netherite 50, diamond 10, gold 5. Redstone is een gok, emerald een jumpscare voor een ander. | meeste punten | 10 min |
-| 3 | **De Mob Arena** | Twee teams tegelijk in twee arena's, dezelfde waves. Welk team houdt het langst vol? Knock-out. | 1 team | ± 25 min |
-| 4 | **De Quiz** | Een randomizer wijst een team aan, de host stelt vragen tot het fout gaat. | 1 team | ± 15 min |
+| 1 | **De Doolhof** | Solo de uitgang vinden: 4 gangen, 3 nep. Uitgang open na 4 minuten. Kisten met betere gear, een jumpscare. Buiten kies je je team. | – | 15 min |
+| 2 | **Het Ei** | Solo punten hakken uit een zwevend Ei: netherite 50, diamond 10, gold 5. Redstone is een gok, emerald een jumpscare voor een ander. | meeste punten | 15 min |
+| 3 | **De Mob Arena** | Per beurt van elk team één speler in elk van twee arena's, 5 waves. Punten per mob-kill; iedereen speelt twee beurten, tenzij je doodgaat. | meeste punten, 1 team | ± 25 min |
+| 4 | **De Quiz** | Pudding presenteert. Een rad in beeld wijst een team aan, dat krijgt vragen tot het fout gaat. Meeste goede antwoorden wint. | 1 team | ± 15 min |
 | 5 | **Clown vs All** | Het Rad kiest Clown. Friendly fire uit: alleen de kroonhouder kan doden. Kill de kroonhouder en de kroon is van jou. | laatste over | geen timer |
-| 6 | **De FFA** | Iedereen behalve Clown, gelijke kit, iedereen tegen iedereen. | King of the SMP | max 10 min |
+| 6 | **De FFA** | Iedereen behalve Clown, gelijke kit, iedereen tegen iedereen. | King of the SMP Bootcamp | geen timer |
 
 ## Waar staat wat
 

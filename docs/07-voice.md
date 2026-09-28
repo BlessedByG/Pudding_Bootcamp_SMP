@@ -20,8 +20,8 @@ Per ronde:
 | Ronde | Levend | Af / kijkers |
 |---|---|---|
 | Basiskamp, Doolhof, Het Ei | Proximity. | – |
-| Mob Arena | Proximity. Je team staat bij elkaar in de arena. | Kooi naast het veld, of de tribune tussen de arena's: hoorbaar voor beide velden. |
-| Quiz | Proximity. Het podium is klein: iedereen hoort de host en elkaar. Overleggen met je team kan, de rest hoort mee. | – |
+| Mob Arena | Proximity. Je staat met één speler van elk ander team in de arena. | De kooi in het midden van je arena, of de tribune: hoorbaar voor wie in de buurt is. |
+| Quiz | Proximity. De hal is klein: iedereen hoort Pudding op het podium en elkaar. Overleggen met je team kan, de rest hoort mee. | – |
 | Clown vs All | Proximity, jagers en kroonhouder. | Tribune van de Arena: publiek. |
 | FFA | Proximity. | Tribune, ook Clown. |
 | Kroning | Proximity in de Arena, tribunes vol. | – |
@@ -52,9 +52,9 @@ force_voice_chat=true
 
 - **Voice-test om 19:40** in het basiskamp: iedereen zegt wat, loopt een stuk weg en terug.
 - **Streams:** de mod is gewoon game-audio, dus proximity komt vanzelf op de stream.
-- **Host:** praat op de eigen stream en zit meestal niet in de spelersvoice. **Bij de quiz wel**:
-  de host staat dan in-game bij het podium en leest de vragen voor via proximity. Daarvoor moet
-  het host-account de voice-mod hebben; test in de testrun of de host vanuit spectator gehoord
-  wordt, en anders in creative bij het podium. Of gebruik de addon *Voice Chat
-  Broadcast* (ops kunnen met een toets naar iedereen omroepen) als die er is voor 26.2.
+- **Host:** praat op de eigen stream en zit meestal niet in de spelersvoice.
+- **Quiz:** Pudding presenteert als gewone speler vanaf het podium en leest de vragen voor via
+  proximity. Test in de testrun of Pudding bij alle vier de banken goed te horen is. Anders de
+  addon *Voice Chat Broadcast* (ops kunnen met een toets naar iedereen omroepen) als die er is
+  voor 26.2.
 - **Tribune:** de doden mogen alles roepen. Niet streamsnipen blijft de regel.
