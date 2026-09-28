@@ -1,0 +1,9 @@
+# Gemaakt door BouwPack
+bootcamp-pack.zip
+bootcamp-pack.zip.tmp
+assets/bootcamp/textures/
+assets/bootcamp/sounds/
+assets/bootcamp/sounds.json
+# De aangeleverde foto en het lachje horen niet in de publieke repo
+aanleveren/clown.*
+aanleveren/clown_lach.*

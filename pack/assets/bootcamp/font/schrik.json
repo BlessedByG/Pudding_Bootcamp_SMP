@@ -1,0 +1,5 @@
+{
+  "providers": [
+    {"type": "bitmap", "file": "bootcamp:font/clown.png", "height": 68, "ascent": 31, "chars": ["\uE000"]}
+  ]
+}
