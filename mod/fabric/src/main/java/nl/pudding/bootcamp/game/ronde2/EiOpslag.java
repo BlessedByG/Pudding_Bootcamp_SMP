@@ -63,6 +63,8 @@ public final class EiOpslag {
 	private static int index;
 	private static Map<Integer, BlockState> strooi = Map.of();
 	private static Runnable naKlaar;
+	/** Sinds de laatste {@code /ei start} is het Ei uitgehakt; {@code /bc reset} zet het terug. */
+	private static boolean uitgehakt;
 
 	private EiOpslag() {
 	}
@@ -100,6 +102,12 @@ public final class EiOpslag {
 	 * @return de melding voor wie het typt; begint met "!" als het niet gelukt is
 	 */
 	public static String vastleggen(MinecraftServer server) {
+		if (bezig != null) {
+			return "!het Ei wordt nog teruggezet; probeer het over een paar seconden";
+		}
+		if (uitgehakt) {
+			return "!het Ei is uitgehakt sinds de laatste /ei start. Zet het eerst terug met /bc reset, dan pas vastleggen";
+		}
 		Regio ei = Spel.regio("ei");
 		if (ei == null) {
 			return "!regio ei bestaat niet: selecteer de onderhoek en de bovenhoek van het Ei en doe /bc region save ei";
@@ -208,6 +216,8 @@ public final class EiOpslag {
 		if (v == null) {
 			return;
 		}
+		// Met puntenblokken is het de start van ronde 2: daarna wordt er gehakt.
+		uitgehakt = !extra.isEmpty();
 		bezig = v;
 		index = 0;
 		strooi = extra;

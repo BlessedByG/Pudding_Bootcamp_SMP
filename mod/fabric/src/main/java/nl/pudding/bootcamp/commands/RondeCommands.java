@@ -119,7 +119,7 @@ final class RondeCommands {
 		return Commands.literal(naam)
 				.executes(ctx -> {
 					String t = huidig.get();
-					return BcCommand.info(ctx, wat + ": " + (t == null ? "(geen)" : "'" + t + "'"));
+					return BcCommand.info(ctx, wat + ": " + (t == null ? "(geen: de mod noemt dan de windrichting)" : "'" + t + "'"));
 				})
 				.then(Commands.argument("tekst", StringArgumentType.greedyString()).executes(ctx -> {
 					String tekst = StringArgumentType.getString(ctx, "tekst");
@@ -133,7 +133,7 @@ final class RondeCommands {
 						return BcCommand.fout(ctx, e.getMessage() + ".");
 					}
 					String t = huidig.get();
-					return BcCommand.bewaard(ctx, wat + ": " + (t == null ? "(geen)" : "'" + t + "'"));
+					return BcCommand.bewaard(ctx, wat + ": " + (t == null ? "(geen: de mod noemt dan de windrichting)" : "'" + t + "'"));
 				}));
 	}
 }

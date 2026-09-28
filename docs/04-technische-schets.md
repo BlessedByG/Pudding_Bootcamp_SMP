@@ -11,10 +11,11 @@ staat in [mod/README.md](../mod/README.md); wat er gebouwd en geverifieerd is, e
 getest moet worden, in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
 
 > **Versie en status.** Minecraft 26.2; Fabric Loader, Fabric API en de Fabric-versie van Simple
-> Voice Chat zijn er voor. **Deze doc beschrijft het nieuwe rondeplan van 25 september 2026**
-> (doolhof, Ei, mob arena, quiz, Clown vs All, FFA). De code in `mod/` implementeert nog het oude
-> plan (doolhof, horde, Ei met ticket, King of the SMP, FFA, finale) en is nog nooit in-game
-> gedraaid. De ombouw staat in [08-taakplan.md](08-taakplan.md). Een naam uit 26.2 opzoeken:
+> Voice Chat zijn er voor. **Deze doc beschrijft het rondeplan van 25 september 2026** (doolhof,
+> Ei, mob arena, quiz, Clown vs All, FFA). De code in `mod/` is op 28 en 29 september 2026 naar dit
+> plan omgebouwd (taakplan 2, [08-taakplan.md](08-taakplan.md)): hij bouwt, alle tests zijn groen,
+> maar hij is nog niet in-game gedraaid. Wat er afwijkt van deze doc, staat hieronder bij het
+> onderwerp en in [mod/BOUWLOG.md](../mod/BOUWLOG.md). Een naam uit 26.2 opzoeken:
 > `./gradlew :fabric:genSources`.
 
 ## Stack
@@ -164,8 +165,10 @@ pack/
   assets/bootcamp/sounds/clown_lach.ogg       gekopieerd uit aanleveren/
 ```
 
-De foto en het lachje levert Pudding aan, wanneer het uitkomt. Tot die er zijn zit er een
-placeholder in. Een foto die niet vierkant is, blijft in de jumpscare in zijn eigen verhouding:
+De foto en het lachje levert Pudding aan, wanneer het uitkomt. Tot de foto er is tekent BouwPack
+een placeholder (een clownsgezicht met "foto volgt"); zonder lachje is de jumpscare stil, want
+een stil ogg-bestand kan BouwPack niet maken. Wat BouwPack maakt (`assets/bootcamp/textures/`, de
+zip) staat niet in git; de fonts en `pack.mcmeta` wel. Een foto die niet vierkant is, blijft in de jumpscare in zijn eigen verhouding:
 de breedte volgt de hoogte.
 
 **De jumpscare** (`Schrik.op(speler)`): een title met de glyph `` in font
@@ -263,7 +266,7 @@ hele avond geldt (setup, spelers, noodknoppen) staat onder `/bc`.
 | `/clown vloer <diameter>` | Maakt regio `vloer`: een cirkel met jou als midden, die doorsnede in blokken, 5 hoog vanaf je voeten. Tekent meteen tien seconden de rand in particles. Kijkers die erin komen, gaan terug naar de tribune. |
 | `/clown tribune [<nummer>]` | Zet een tribuneplek (`tribune_n`) op de plek waar je staat, met je kijkrichting; nummert zelf door zoals `jagerplek`. Alleen op de onderste ring. |
 | `/clown wachttekst [<tekst>]` | De tekst in de actionbar terwijl iedereen stil staat en wacht op `/clown go`, standaard `Wacht op het startsein`. Zonder tekst: de huidige laten zien. Bewaard in `bootcamp.json`. |
-| `/clown kroon <speler>` | Kroonwissel forceren (de noodknop van de ref). |
+| `/clown kroon <speler>` | Kroonwissel forceren (de noodknop van de ref). Voor `/clown go` (het rad landde op de verkeerde naam) zonder reset: de oude kroonhouder wordt jager op de plek van de nieuwe en iedereen blijft wachten op `/clown go`. Daarna een gewone kroonwissel met reset. |
 | `/clown krimp <grootte> [<seconden>]` | De border laten krimpen als het stilvalt. Standaard in 60 seconden. Iedereen ziet `DE BORDER KRIMPT`. |
 | `/ffa start\|stop` | Ronde 6, met de kroning aan het eind. `start` zet iedereen bevroren klaar. Geen timer. |
 | `/ffa go` | Start de countdown van 10 seconden; daarna is iedereen los. |
@@ -339,13 +342,13 @@ hij de doos om alle delen heen; bij de cirkel van `vloer` is dat het vierkant er
 | Regio's | Waarvoor |
 |---|---|
 | `doolhof`, `eigebied`, `mobarena`, `quiz`, `vloer` | Worldborder per ronde. `quiz` is de quizhal. `eigebied` omvat het Ei, de kettingen en hun startplekken, `mobarena` beide arena's met de tribune. `vloer` is de vloer van de Arena: een cilinder van 5 hoog, gezet met `/clown vloer <diameter>`; kijkers die erin komen gaan terug naar de tribune. |
-| `ei` | Het Ei zelf, als doos: onderhoek en bovenhoek. Alleen hierbinnen kun je in ronde 2 breken; `/ei vastleggen` legt deze doos vast en de mod strooit de puntenblokken op de gewone deepslate erin. Liggen er stukken ketting binnen de doos, dan zijn die ook te breken. |
+| `ei` | Het Ei zelf, als doos: onderhoek en bovenhoek. Alleen hierbinnen kun je in ronde 2 breken; `/ei vastleggen` legt deze doos vast en de mod strooit de puntenblokken op de gewone deepslate erin. Kettingen (iron en copper) blijven ook binnen de doos heel: daar klim je over. |
 | `colosseum` | *Optioneel.* De hele Arena inclusief tribunes: border van ronde 5 en 6. Anders `vloer`. |
 | `doolhof_uit` | Het vak achter de echte uitgang: wie erin staat krijgt het teammenu. |
 | `nep_1` t/m `nep_3` | De vakken aan het eind van de nep-gangen. |
 | `schrik_1` t/m `schrik_n` | Schrikplekken in het doolhof. Zoveel als je wilt, genummerd vanaf 1. |
 | `poort_doolhof` | De poort voor de echte uitgang, opent na `/doolhof poort` minuten. |
-| `veld_1`, `veld_2` | De twee mob-arenavelden, elk uit meerdere delen (de T-vorm: `save` voor de balk, `add` voor de poot). Een kijker die erin komt wordt teruggezet, behalve wie in de kooi van dat veld zit (de tralies houden die binnen); een speler die aan de beurt is en eruit komt ook. |
+| `veld_1`, `veld_2` | De twee mob-arenavelden, elk uit meerdere delen (de T-vorm: `save` voor de balk, `add` voor de poot). Een kijker die erin komt wordt teruggezet, behalve wie in de kooi van dat veld zit (de tralies houden die binnen); een speler die aan de beurt is en eruit komt ook. Voor kijkers telt een veld tot drie blokken boven de selectie, zodat het balkon erboven geen veld is; voor wie aan de beurt is telt alleen de kolom. |
 
 **Punten** met `/bc point set <naam>` of `/bc point block <naam>`.
 
@@ -434,7 +437,8 @@ willekeurig gekozen items uit de tabel. Gewicht bepaalt hoe vaak een item valt.
 }
 ```
 
-**Waves** staan in `config/bootcamp/waves.json`: precies 5 waves, per wave een lijst mobs met
+**Waves** staan in `config/bootcamp/waves.json`: standaard 5 waves (de mod leest er ook meer of
+minder, voor een test), per wave een lijst mobs met
 type, aantal en eventueel gear. Het aantal geldt per arena (voor 4 spelers) en schaalt niet mee:
 een lege startplek maakt de wave niet kleiner, zodat beide arena's altijd precies dezelfde mobs
 krijgen. De mobs gaan om en om over de spawns van hun arena (`mob_1_n` of `mob_2_n`).
@@ -454,7 +458,8 @@ niets. Ronde 3 en 4 weigeren ook als niet iedereen een team heeft: `/bc team` lo
 start, in het Ei op je startplek met je punten, in de mob arena op de tribune (wie tijdens zijn
 beurt uitlogt telt als dood en speelt geen beurt meer), in de quiz bij je bank (de presentator op
 het podium, met zijn items). In ronde 5: een jager die uitlogt is af; de kroonhouder krijgt 30
-seconden. Wie terugkomt in ronde 5 of 6 wordt kijker op de tribune.
+seconden (voor `/clown go` telt dat niet af: dan weigert `/clown go` tot hij terug is of de commander de
+kroon met `/clown kroon` geeft). Wie terugkomt in ronde 5 of 6 wordt kijker op de tribune.
 
 **Fouten.** Een fout in de tick van een ronde stopt de server niet: de mod logt hem, breekt de
 ronde af en meldt het in de chat.
@@ -485,7 +490,9 @@ teammenu. Na `/doolhof hint` minuten (standaard 10) voor wie nog binnen is de ti
 als subtitle `/doolhof hinttekst` (of de windrichting). Timer op: wie nog geen team heeft gaat
 naar het kleinste team (bij gelijk: willekeurig) en ziet in de actionbar `Je zit in Groen`;
 iedereen ziet de title `DOOLHOF VOORBIJ` met als subtitle `14 van de 20 vonden de uitgang`, en
-iedereen naar `v2`.
+iedereen naar `v2`. Heeft iedereen al een team voordat de timer op is, dan is het doolhof meteen
+voorbij. `/doolhof start` begint zonder teams: het doolhof is de teamkeuze, dus oude keuzes
+gaan weg. Wie klaar is staat bij `v2`, buiten de border, en krijgt daar geen schade.
 
 **Welkom.** Wie joint terwijl er geen ronde loopt, krijgt de title `PUDDING BOOTCAMP` met als
 subtitle `Welkom, <naam>` en `block.note_block.chime`, alleen voor hem. Tijdens een ronde niet,
@@ -594,6 +601,9 @@ de tekst van `/mobarena aftekst` (standaard `Af · je speelt geen beurt meer`), 
 of een speler buiten zijn eigen arena als doel heeft `setTarget(null)`; daarna kiest hij zelf de
 dichtstbijzijnde speler die aan de beurt is in zijn arena. Dat kijkers geen schade krijgen is
 niet genoeg: zonder deze check kiezen mobs ze nog steeds als doel en blijven ze om de kooi hangen.
+Wie op zijn beurt wacht, kan vanaf de tribune ook geen mob raken: een klap of pijl van een speler die
+niet in een arena staat, doet een `bootcamp_mob` niks, en een kill telt alleen voor wie aan de
+beurt is.
 
 **Einde**, na de laatste beurt en haar 10 seconden: het team met de meeste punten wint (gelijk:
 meeste kills, dan samen), titles en vuurpijlen boven de tribune. Weer 10 seconden om te vieren,

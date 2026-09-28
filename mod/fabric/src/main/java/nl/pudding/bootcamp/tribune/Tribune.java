@@ -5,6 +5,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.GameType;
@@ -107,9 +108,33 @@ public final class Tribune {
 	}
 
 	private static boolean magSchade(ServerPlayer slachtoffer, DamageSource bron) {
+		boolean mag = magSchadeZonderVoid(slachtoffer, bron);
+		if (!mag && bron.is(DamageTypes.FELL_OUT_OF_WORLD)) {
+			// Wie geen schade krijgt, gaat ook in de void niet dood: dan terug naar zijn plek.
+			terugUitDeVoid(slachtoffer);
+		}
+		return mag;
+	}
+
+	private static void terugUitDeVoid(ServerPlayer speler) {
+		SpelerStatus st = Spel.status(speler);
+		if (st.tribunepunt != null) {
+			Spel.naarPunt(speler, st.tribunepunt);
+		} else if (Spel.actief() != null && Spel.actief().ronde() == Ronde.QUIZ) {
+			naarVerzamelpuntQuiz(speler);
+		} else {
+			naarVerzamelpunt(speler);
+		}
+	}
+
+	private static boolean magSchadeZonderVoid(ServerPlayer slachtoffer, DamageSource bron) {
 		Rol rol = Spel.rol(slachtoffer);
 		// Kijkers krijgen geen schade, ook niet van de border.
 		if (rol == Rol.KIJKER) {
+			return false;
+		}
+		// Wie in een opstelling bevroren staat, kan niks doen en krijgt dus ook niks (ook niet van een gekrompen border).
+		if (Opstelling.actief() && Spel.status(slachtoffer).bevroren) {
 			return false;
 		}
 		RondeLogica ronde = Spel.actief();

@@ -47,7 +47,7 @@ public final class Spel {
 	private static Ronde ronde = Ronde.BASISKAMP;
 	private static RondeLogica actief;
 	private static int timer;
-	private static int gespeeld;
+	private static int totaal;
 	private static boolean timerLoopt;
 
 	private Spel() {
@@ -235,9 +235,12 @@ public final class Spel {
 		return timer;
 	}
 
-	/** Hoeveel seconden er van de lopende timer al gespeeld zijn. */
+	/**
+	 * Hoeveel seconden er van de lopende timer al gespeeld zijn: de duur min wat er op de klok staat.
+	 * {@code /<ronde> resterend} schuift dus ook de poort en de hint mee.
+	 */
 	public static int gespeeld() {
-		return gespeeld;
+		return Math.max(0, totaal - timer);
 	}
 
 	public static boolean timerLoopt() {
@@ -246,7 +249,7 @@ public final class Spel {
 
 	public static void startTimer(int seconden) {
 		timer = seconden;
-		gespeeld = 0;
+		totaal = seconden;
 		timerLoopt = true;
 	}
 
@@ -257,7 +260,9 @@ public final class Spel {
 
 	/** Een nieuwe {@code /<ronde> timer} terwijl de ronde loopt: wat al gespeeld is blijft gespeeld. */
 	public static void zetTotaal(int seconden) {
-		timer = Math.max(0, seconden - gespeeld);
+		int al = gespeeld();
+		totaal = seconden;
+		timer = Math.max(0, seconden - al);
 	}
 
 	public static void stopTimer() {
@@ -266,8 +271,7 @@ public final class Spel {
 
 	/** Hoeveel van de tijd er nog over is, van 1 naar 0, voor de vulling van de bossbar. */
 	public static float timerDeel() {
-		int totaal = timer + gespeeld;
-		return totaal <= 0 ? 0f : (float) timer / totaal;
+		return totaal <= 0 ? 0f : Math.min(1f, (float) timer / totaal);
 	}
 
 	// Rondes starten en stoppen
@@ -290,6 +294,8 @@ public final class Spel {
 		if (actief != null) {
 			stop(server);
 		}
+		// Een draaiend Rad mag de nieuwe ronde straks niet onderuit halen.
+		KroonRad.stop(server);
 		Planner.wisAlles();
 		Aftelling.stop();
 		ronde = logica.ronde();
@@ -406,7 +412,6 @@ public final class Spel {
 	private static void seconde(MinecraftServer server) {
 		if (actief != null && timerLoopt) {
 			timer = Math.max(0, timer - 1);
-			gespeeld++;
 			if (timer == 0) {
 				timerLoopt = false;
 				actief.timerOp(server);
@@ -479,21 +484,19 @@ public final class Spel {
 			case BASISKAMP -> zetRol(server, speler, Rol.SPELER);
 			case DOOLHOF -> {
 				// Het doolhof is zonder hem afgelopen: dan het kleinste team, zoals iedereen zonder team.
-				if (Teams.keuze(speler) == null) {
-					Kleur k = TeamKeuze.kleinste(Teams.aantallen(), RANDOM);
-					Teams.kies(server, speler, k);
-					Mc.actionbar(speler, Mc.tekst("Je zit in " + k.naam(), Mc.kleur(k)));
-				}
+				Teams.zorgVoorTeam(server, speler);
 				zetRol(server, speler, Rol.SPELER);
 				naarPunt(speler, "v2");
 			}
 			case EI -> {
+				Teams.zorgVoorTeam(server, speler);
 				zetRol(server, speler, Rol.SPELER);
 				naarPunt(speler, "v3");
 			}
 			case MOBARENA -> {
 				// Na de mob arena levert iedereen alles in.
 				speler.getInventory().clearContent();
+				Teams.zorgVoorTeam(server, speler);
 				zetRol(server, speler, Rol.SPELER);
 				Tribune.naarVerzamelpunt(speler);
 			}
@@ -525,7 +528,7 @@ public final class Spel {
 		sb.append("Ronde ").append(ronde.nummer()).append(" (").append(ronde.naam()).append(")")
 				.append(actief != null ? ", loopt" : ", loopt niet");
 		if (timerLoopt) {
-			sb.append(", timer ").append(Tijd.mmss(timer)).append(" (gespeeld ").append(Tijd.mmss(gespeeld)).append(")");
+			sb.append(", timer ").append(Tijd.mmss(timer)).append(" (gespeeld ").append(Tijd.mmss(gespeeld())).append(")");
 		}
 		if (actief != null) {
 			String extra = actief.statusRegel(server);
@@ -570,7 +573,8 @@ public final class Spel {
 		for (EiBlok b : EiBlok.values()) {
 			sb.append(" ").append(b.id()).append(" ").append(i.eiBlokken(b));
 		}
-		sb.append("\n  mob arena: aftekst '").append(i.aftekst()).append("'");
+		sb.append("\n  mob arena: aftekst '").append(i.aftekst()).append("', punten ").append(i.mobPunten())
+				.append(", elk ander type ").append(Instellingen.MOB_PUNTEN_ANDER);
 		sb.append("\n  wachttekst: clown '").append(i.clownWachttekst()).append("', ffa '").append(i.ffaWachttekst()).append("'");
 		return sb.toString();
 	}

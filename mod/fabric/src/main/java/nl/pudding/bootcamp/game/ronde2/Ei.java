@@ -19,6 +19,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.block.ChainBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import nl.pudding.bootcamp.Mc;
 import nl.pudding.bootcamp.core.BossbarTekst;
@@ -172,6 +173,10 @@ public final class Ei extends RondeLogica {
 		Regio ei = Spel.regio("ei");
 		if (!timerGestart || !Spel.timerLoopt() || st.rol != Rol.SPELER || ei == null
 				|| !ei.omhullende().bevatDoos(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5)) {
+			return false;
+		}
+		// De kettingen zijn om naar het Ei te klimmen, ook waar ze in de doos van het Ei liggen.
+		if (state.getBlock() instanceof ChainBlock) {
 			return false;
 		}
 		// Alles zonder drop: er is niks om mee te nemen en je inventory loopt niet vol.
@@ -393,6 +398,7 @@ public final class Ei extends RondeLogica {
 	@Override
 	public void onJoin(MinecraftServer server, ServerPlayer speler) {
 		SpelerStatus st = Spel.status(speler);
+		Teams.zorgVoorTeam(server, speler);
 		Spel.zetRol(server, speler, Rol.SPELER);
 		speler.setGameMode(GameType.SURVIVAL);
 		if (st.eiSpawn == null) {
@@ -402,6 +408,14 @@ public final class Ei extends RondeLogica {
 			Kits.geefAan(server, "ei", List.of(speler), stack -> Items26.markeer(stack, Items26.EI_TAG, null));
 		}
 		Spel.naarPunt(speler, st.eiSpawn);
+		// Een bevriezing die nog loopt geldt ook voor hem; een die voorbij is niet meer.
+		int nu = server.getTickCount();
+		if (bevriezingLoopt && nu < bevrorenTot && !speler.getUUID().equals(bevriezer)) {
+			Opstelling.bevries(speler);
+			Mc.effect(speler, MobEffects.MINING_FATIGUE, Math.max(1, (bevrorenTot - nu) / 20), 4);
+		} else {
+			speler.removeEffect(MobEffects.MINING_FATIGUE);
+		}
 	}
 
 	@Override

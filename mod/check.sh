@@ -71,9 +71,9 @@ if [ -d "$CMD_DIR" ]; then
 		volgende schema wave startplek punten aftekst \
 		presentator bank podium lamp draai goed fout punt einde winnaar \
 		rad go uitverkoren troon jagerplek vloer tribune wachttekst kroon krimp; do
-		grep -rq "\"$c\"" "$CMD_DIR" || fout "command-literal \"$c\" ontbreekt"
+		grep -rq "\"$c\"" "$CMD_DIR" || { fout "command-literal \"$c\" ontbreekt"; MIST=1; }
 	done
-	[ $FAIL -eq 0 ] && ok "alle literals aanwezig"
+	[ "${MIST:-0}" -eq 0 ] && ok "alle literals aanwezig"
 else
 	echo "  --    commands-package bestaat nog niet"
 fi

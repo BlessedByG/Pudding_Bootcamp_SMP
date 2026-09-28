@@ -15,6 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import nl.pudding.bootcamp.Mc;
 import nl.pudding.bootcamp.core.BossbarTekst;
+import nl.pudding.bootcamp.core.Punt;
 import nl.pudding.bootcamp.core.Regeerperiodes;
 import nl.pudding.bootcamp.core.Regels;
 import nl.pudding.bootcamp.core.Rol;
@@ -111,7 +112,7 @@ public final class ClownVsAll extends RondeLogica {
 		Arena.verdeel(jagers);
 		bijStart = jagers.size() + 1;
 
-		Border.zet(server, Arena.borderRegio());
+		Arena.zetBorder(server);
 		toonSidebar(server);
 		// Iedereen bevroren, ook Clown, tot de commander /clown go doet.
 		List<ServerPlayer> iedereen = new ArrayList<>(jagers);
@@ -123,6 +124,9 @@ public final class ClownVsAll extends RondeLogica {
 	public String go(MinecraftServer server) {
 		if (!Opstelling.wachtOpGo()) {
 			return "er staat niemand klaar";
+		}
+		if (kroonWeg >= 0) {
+			return "de kroonhouder is uitgelogd: wacht tot hij terug is, of geef de kroon met /clown kroon <speler>";
 		}
 		Opstelling.go(server, Regels.OPSTELLING, "De jacht begint over", null);
 		return null;
@@ -210,6 +214,8 @@ public final class ClownVsAll extends RondeLogica {
 			}
 			Zweefkroon.uit(kroon);
 		}
+		// Elke wissel is een reset, ook van een gekrompen border.
+		Arena.zetBorder(server);
 		Kroon.wisHits();
 
 		SpelerStatus st = Spel.status(nieuw);
@@ -272,11 +278,56 @@ public final class ClownVsAll extends RondeLogica {
 		}
 		if (Spel.status(nieuw).rol != Rol.JAGER && Spel.status(nieuw).rol != Rol.KROON) {
 			// Een kijker terughalen mag: hij doet weer mee, met de jagerskit.
+			Spel.status(nieuw).dood = false;
+			Spel.status(nieuw).tribunepunt = null;
+			nieuw.setGameMode(GameType.ADVENTURE);
 			Spel.zetRol(server, nieuw, Rol.JAGER);
 			Kits.geefAan(server, "jager", List.of(nieuw));
 		}
+		if (Opstelling.wachtOpGo()) {
+			wisselVoorDeStart(server, nieuw);
+			return null;
+		}
 		wissel(server, nieuw, null, false);
 		return null;
+	}
+
+	/**
+	 * Voor {@code /clown go} (het rad landde op de verkeerde naam): de kroon gaat over zonder dat
+	 * iemand af is. De oude kroonhouder wordt jager op de plek van de nieuwe, en iedereen blijft
+	 * wachten op {@code /clown go}.
+	 */
+	private void wisselVoorDeStart(MinecraftServer server, ServerPlayer nieuw) {
+		Punt plek = Punt.positie(nieuw.getX(), nieuw.getY(), nieuw.getZ(), nieuw.getYRot(), nieuw.getXRot());
+		if (kroon != null && server.getPlayerList().getPlayer(kroon) == null) {
+			// De oude kroonhouder is uitgelogd: komt hij terug, dan als jager.
+			SpelerStatus weg = Spel.status(kroon);
+			if (weg != null) {
+				weg.rol = Rol.JAGER;
+				weg.dood = false;
+			}
+			Zweefkroon.uit(kroon);
+		}
+		for (ServerPlayer s : Mc.deelnemers(server)) {
+			if (s != nieuw && Spel.status(s).rol == Rol.KROON) {
+				Kroon.neemAf(s);
+				Spel.zetRol(server, s, Rol.JAGER);
+				Kits.geefAan(server, "jager", List.of(s));
+				Mc.teleport(s, plek);
+				Opstelling.bevries(s);
+			}
+		}
+		Kroon.wisHits();
+		regeerperiodes.wis();
+		Kroon.zetKroonOp(server, nieuw);
+		Kits.geefAan(server, "boss", List.of(nieuw));
+		wordKroonhouder(server, nieuw);
+		Spel.naarPunt(nieuw, "troon");
+		Mc.heal(nieuw);
+		Opstelling.bevries(nieuw);
+		toonSidebar(server);
+		Mc.titleAllen(server, Mc.tekst("DE KROON", ChatFormatting.GOLD, ChatFormatting.BOLD),
+				Mc.kopEnNaam(nieuw, ChatFormatting.YELLOW, ChatFormatting.BOLD));
 	}
 
 	// Uitloggen en terugkomen
@@ -291,7 +342,7 @@ public final class ClownVsAll extends RondeLogica {
 		}
 		if (st.rol == Rol.JAGER && !st.dood) {
 			st.dood = true;
-			Arena.afMelding(server, Mc.naam(speler), ChatFormatting.AQUA, null, ChatFormatting.GOLD, over(server) - 1);
+			Arena.afMelding(server, Mc.naam(speler), ChatFormatting.AQUA, null, ChatFormatting.GOLD, over(server));
 		}
 	}
 
@@ -301,6 +352,15 @@ public final class ClownVsAll extends RondeLogica {
 		if (kroonWeg >= 0 && speler.getUUID().equals(kroon)) {
 			kroonWeg = -1;
 			Kroon.geef(server, speler);
+			return;
+		}
+		if (st.rol == Rol.JAGER && !st.dood && Opstelling.wachtOpGo()) {
+			// De kroon ging voor de start naar een ander: hij doet mee als jager.
+			Kroon.neemAf(speler);
+			Spel.zetRol(server, speler, Rol.JAGER);
+			Kits.geefAan(server, "jager", List.of(speler));
+			Arena.verdeel(List.of(speler));
+			Opstelling.bevries(speler);
 			return;
 		}
 		st.dood = true;
@@ -316,7 +376,10 @@ public final class ClownVsAll extends RondeLogica {
 		}
 		String naam = kroon == null ? "?" : Spel.naamVan(kroon);
 		int over = over(server);
-		if (kroonWeg >= 0) {
+		if (kroonWeg >= 0 && Opstelling.wachtOpGo()) {
+			// Voor de start telt de wacht niet af: de commander wacht op hem of geeft de kroon met de hand.
+			Bossbar.zet(BossbarTekst.CLOWN_WACHT + " · " + naam + " is weg", BossEvent.BossBarColor.RED, 1f);
+		} else if (kroonWeg >= 0) {
 			Bossbar.zet(BossbarTekst.kroonWeg(naam, kroonWeg), BossEvent.BossBarColor.RED, (float) kroonWeg / Regels.KROON_UITLOG_WACHT);
 			if (kroonWeg == 0) {
 				kroonWeg = -1;

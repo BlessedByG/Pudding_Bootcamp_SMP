@@ -66,9 +66,13 @@ public final class Doolhof extends RondeLogica {
 	private static final int MENU_OPNIEUW_NA = 40;
 
 	private boolean poortOpen;
+	/** Het ingestelde moment van de poort is geweest (dan opent hij niet nog eens vanzelf). */
+	private boolean poortMoment;
 	private boolean hintGegeven;
 	private boolean timerGestart;
 	private int spelersBijStart;
+	/** Wie de basiskit al kreeg; wie later binnenkomt krijgt hem bij het inloggen. */
+	private final java.util.Set<java.util.UUID> gestart = new java.util.HashSet<>();
 
 	@Override
 	public Ronde ronde() {
@@ -115,6 +119,7 @@ public final class Doolhof extends RondeLogica {
 		Spel.maakSpelers(server, false);
 		List<ServerPlayer> spelers = Mc.deelnemers(server);
 		spelersBijStart = spelers.size();
+		spelers.forEach(s -> gestart.add(s.getUUID()));
 		for (ServerPlayer s : spelers) {
 			Spel.naarPunt(s, "doolhof_start");
 		}
@@ -127,6 +132,7 @@ public final class Doolhof extends RondeLogica {
 			timerGestart = true;
 			Spel.startTimer(Spel.instellingen().doolhofTimer() * 60);
 			if (Spel.instellingen().doolhofPoort() == 0) {
+				poortMoment = true;
 				poortOpen(server);
 			}
 		});
@@ -232,6 +238,12 @@ public final class Doolhof extends RondeLogica {
 		if (Spel.actief() != this || Spel.status(speler).klaar) {
 			return;
 		}
+		// Opnieuw kijken: twee spelers kunnen in dezelfde tick de laatste plek kiezen.
+		if (Teams.vol(server, kleur)) {
+			Mc.actionbar(speler, Mc.tekst(kleur.naam() + " is net vol", ChatFormatting.RED));
+			Spel.status(speler).menuDicht = -1000;
+			return;
+		}
 		Teams.kies(server, speler, kleur);
 		Spel.zetRol(server, speler, Rol.SPELER);
 		Mc.chatAllen(server, Component.empty()
@@ -274,14 +286,17 @@ public final class Doolhof extends RondeLogica {
 		}
 		Instellingen i = Spel.instellingen();
 		int gespeeld = Spel.gespeeld();
-		if (!poortOpen && gespeeld >= i.doolhofPoort() * 60) {
-			poortOpen(server);
+		if (!poortMoment && gespeeld >= i.doolhofPoort() * 60) {
+			poortMoment = true;
+			if (!poortOpen) {
+				poortOpen(server);
+			}
 		}
 		if (!hintGegeven && gespeeld >= i.doolhofHint() * 60) {
 			hint(server);
 		}
 		int timer = Spel.timer();
-		if (!poortOpen) {
+		if (!poortOpen && !poortMoment) {
 			int totOpen = Math.max(0, i.doolhofPoort() * 60 - gespeeld);
 			Bossbar.zet(BossbarTekst.doolhofPoortDicht(totOpen), BossEvent.BossBarColor.RED,
 					i.doolhofPoort() <= 0 ? 0f : (float) totOpen / (i.doolhofPoort() * 60));
@@ -309,9 +324,9 @@ public final class Doolhof extends RondeLogica {
 		Mc.titleAllen(server, Mc.tekst("DE UITGANG IS OPEN", ChatFormatting.GREEN, ChatFormatting.BOLD), null);
 	}
 
-	/** {@code /doolhof poort dicht}. */
+	/** {@code /doolhof poort dicht}. Voor het ingestelde moment gaat hij dan alsnog vanzelf open. */
 	public void poortDicht(MinecraftServer server) {
-		poortOpen = true;
+		poortOpen = false;
 		Poorten.dichtAlsHijBestaat(server, POORT);
 	}
 
@@ -362,6 +377,9 @@ public final class Doolhof extends RondeLogica {
 			Border.verberg(speler);
 		} else {
 			Spel.naarPunt(speler, "doolhof_start");
+		}
+		if (gestart.add(speler.getUUID())) {
+			Kits.geefAan(server, "basis", List.of(speler));
 		}
 	}
 

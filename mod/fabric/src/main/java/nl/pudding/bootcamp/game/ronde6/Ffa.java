@@ -111,7 +111,7 @@ public final class Ffa extends RondeLogica {
 		// Dezelfde kit voor iedereen; eigen spullen gaan weg (clear: true).
 		Kits.geefAan(server, "arena", vechters);
 		bijStart = vechters.size();
-		Border.zet(server, Arena.borderRegio());
+		Arena.zetBorder(server);
 		toonSidebar(server);
 		// Iedereen bevroren tot de commander /ffa go doet.
 		Opstelling.wacht(server, vechters);
@@ -158,7 +158,8 @@ public final class Ffa extends RondeLogica {
 	@Override
 	protected void naQuitDood(MinecraftServer server, ServerPlayer speler) {
 		if (fase == Fase.VECHTEN) {
-			int over = Spel.levend(server, Rol.FFA).size() - 1;
+			// Hij telt al als dood, dus hij zit niet meer in de telling.
+			int over = Spel.levend(server, Rol.FFA).size();
 			Arena.afMelding(server, Mc.naam(speler), ChatFormatting.WHITE, null, ChatFormatting.WHITE, over);
 			laatsten(server, over);
 		}

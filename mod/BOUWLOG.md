@@ -1,9 +1,240 @@
 # Bouwlog
 
-Status: modus=A; klaar=T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17; bezig=-
+Status: plan=2; klaar=N1,N2,N3,N4,N5,N6,N7,N8,N9,N10,N11,N12,N13; open=N0 (jouw rooktest)
 
 Per taak: wat er gedaan is, wat geverifieerd is en wat open staat (in-game test, aanname,
-afwijking van de docs). Het plan staat in [../docs/08-taakplan.md](../docs/08-taakplan.md).
+afwijking van de docs). Taakplan 2 staat in [../docs/08-taakplan.md](../docs/08-taakplan.md); het
+bouwlog van taakplan 1 (het oude rondeplan) staat hieronder vanaf *Taakplan 1*.
+
+# Taakplan 2: het rondeplan van 25 september
+
+Gebouwd op 28 en 29 september 2026, lokaal op Windows met JDK 25.0.4.1, Modus A (elke stap
+compileert tegen de echte 26.2-jar). Branch `mod/rondeplan-2`, niet `main`, zodat het via een PR
+gaat. Drie commits in plaats van één per taak: N1 samen met N2 en N4 t/m N10 (de nieuwe kern alleen
+laat het fabric-project niet meer bouwen, en elke commit hoort te bouwen), N3 apart, en N11 t/m N13
+met de fixes uit de review.
+
+**N0 (jouw rooktest) is overgeslagen**, op jouw keuze: je test morgen alles in één keer. Daarom is
+het raamwerk van plan 1 (dood afvangen, bevriezen, border voor kijkers, zweefkroon) nog steeds
+nooit in-game gedraaid; zie *Wat niet geverifieerd is* onderaan.
+
+## N1. Kern: de nieuwe regels met tests
+
+**Gedaan**
+- `Ronde` opnieuw: BASISKAMP, DOOLHOF(1), EI(2), MOBARENA(3), QUIZ(4), CLOWN(5), FFA(6), elk met
+  zijn commando en de vereiste regio's en punten. Van een genummerde reeks (`jager_1..n`) moet er
+  minstens één zijn. De duur staat niet meer in `Ronde` maar in de instellingen.
+- `Rol`: SPELER, JAGER, KROON, FFA, KIJKER, STAFF.
+- Nieuw: `Kleur`, `TeamKeuze`, `Instellingen` (met de grenzen uit docs/04), `EiBlok`,
+  `EiVerdeling`, `Klassement` (Ei-punten en FFA-kills, gelijk = wie het eerst), `MobSchema`,
+  `MobVerloop`, `MobPunten`, `QuizStand`, `QuizRad`, `LootTabel`, `PvpRegel`.
+- `Regio` is nu één of meer dozen of een cilinder; `bootcamp.json` leest de oude vorm met één
+  doos nog in.
+- `Rad` kreeg een `Ritme`: het Rad van ronde 5 (2 naar 30 ticks) en het quiz-rad (1 naar 6 ticks).
+- `Regels`: kroonopvolging, verdelen over startplekken, redstone-gok, FFA-deelnemers,
+  LAATSTE DRIE/TWEE, uitlog- en terugkomregels per ronde.
+- Weg: `FinaleStand`, `HordeVerloop`, voorsprong, ticket, finale, rust, mobs schalen.
+- [core/REGELS.md](core/REGELS.md) herschreven.
+
+**Geverifieerd**: 107 core-tests groen (`./gradlew -PcoreOnly :core:test`).
+
+## N2. Raamwerk: rondes, teams, PvP, commando's
+
+**Gedaan**
+- `Spel`, `RondeLogica`, `Tribune` naar de nieuwe nummering. `Spel.einde` naast `Spel.stop`: het
+  gewone einde laat de geplande tien seconden vieren staan.
+- De timer rekent gespeeld = duur min klok, zodat `/<ronde> resterend` ook de poort en de hint
+  meeschuift, en `/<ronde> timer` tijdens de ronde de gespeelde tijd laat staan.
+- Teams in `teams/Teams`: spelers, rood, blauw, groen, geel, jagers, kroon, out. Friendly fire
+  overal uit. De teamkeuze staat per naam in `bootcamp.json`.
+- De PvP-regel in `Tribune.magSchade` (`ALLOW_DAMAGE`), met de aanvaller ook via een projectile.
+  Tijdens elke opstelling of countdown nooit.
+- Commando's per ronde: `/doolhof`, `/ei`, `/mobarena`, `/quiz`, `/clown`, `/ffa`, plus `/bc` voor
+  de algemene dingen. `/bc region add`, `/bc team`, `/bc schrik`. Instellingen met de grenzen uit
+  `core`, bewaard in `bootcamp.json`.
+- Kits: `jager.json` erbij, `horde.json` en `finale.json` weg, `ei.json` met een diamond pickaxe,
+  `boss.json` en `arena.json` volgens docs/04. `waves.json` naar 5 waves voor 4 spelers per arena,
+  `doolhof_loot.json` nieuw.
+- Staan er bij de eerste start nog bestanden van het oude plan (`kits/horde.json`), dan gaan die
+  opzij als `.oud`.
+- `check.sh` met de nieuwe command-literals.
+
+**Geverifieerd**: build groen, `check.sh` groen.
+
+## N3. Resource pack en de jumpscare
+
+**Gedaan**
+- `pack/BouwPack.java` (`java pack/BouwPack.java`, alleen de JDK): de foto (jpg of png, elk
+  formaat) naar png met de langste kant hooguit 1024, het lachje erbij, 64 plaatjes van het quiz-rad
+  met Java2D, fonts `bootcamp:schrik` (U+E000) en `bootcamp:rad` (U+E100 t/m U+E13F),
+  `pack.mcmeta` voor formaat 88 (uit `version.json` van de 26.2-jar), zip en SHA-1. De zip is
+  deterministisch.
+- `schrik/Schrik` (title met de glyph, fade 0/30/10, plus `bootcamp:clown_lach`) en
+  `/bc schrik <speler>`.
+
+**Geverifieerd**
+- Het pack bouwt; met een testfoto van 3000 x 2000 wordt het 1024 x 683.
+- Stand 0 van het rad heeft vak 0 (rood) onder het pijltje, stand 4 vak 15 (blauw): dezelfde
+  richting als `QuizRad` in de mod.
+
+**Afwijking**
+- Geen placeholder-geluid: een geldig stil ogg-bestand kan BouwPack niet maken. Zonder
+  `clown_lach.ogg` laat BouwPack `sounds.json` weg en is de jumpscare stil.
+- Wat BouwPack maakt staat niet in git (textures, zip, je foto en lachje); de fonts en
+  `pack.mcmeta` wel.
+
+**Open: in-game**
+- Hoe groot de foto en het rad in beeld staan. De knoppen zijn `SCHRIK_HOOGTE` (68) en
+  `RAD_HOOGTE` (44) bovenin `BouwPack.java`, gerekend voor de automatische GUI-schaal op 1080p.
+
+## N4. Het teammenu
+
+**Gedaan**: `teams/Teammenu`, een `ChestMenu` van één rij met vier wolblokken (`Rood · 3/5`),
+grijs als vol. Elke klik wordt afgevangen (geen `super.clicked`); de keuze wordt één tick later
+afgehandeld, niet midden in het klik-pakket. Sluiten zonder keuze: na twee seconden opent het
+doolhof hem opnieuw zolang je in `doolhof_uit` staat. Het maximum wordt vastgezet bij de eerste
+keuze.
+
+**Open: in-game**: shift-klik, slepen en nummertoetsen mogen niets verplaatsen.
+
+## N5. Ronde 1: De Doolhof
+
+**Gedaan**: startruimte, basiskit, kisten in de doos van `doolhof` leeg en gevuld uit
+`doolhof_loot.json`, poort na `/doolhof poort` minuten met horn en title, nep-uitgangen, schrikplekken
+(één keer per regio per speler), teammenu, hint met je eigen tekst of de windrichting, laatste
+minuut rood en de laatste tien seconden groot, `DOOLHOF VOORBIJ` met de uitkomst, het kleinste
+team voor wie niet koos, sidebar met de teams, welkomsttitle buiten een ronde.
+
+**Afwijking** (ook in docs/04)
+- `/doolhof start` wist de teamkeuzes: het doolhof is de teamkeuze.
+- Heeft iedereen een team voordat de timer op is, dan is het doolhof meteen voorbij.
+- Wie klaar is staat bij `v2`, buiten de border: die krijgt daar geen schade en ziet de border niet.
+
+## N6. Ronde 2: Het Ei
+
+**Gedaan**: `/ei vastleggen` naar `bootcamp_ei.nbt` (eigen formaat: palet plus blokken, zodat het
+terugzetten over ticks kan), terugzetten met 5.000 blokken per tick (250.000 in 50 ticks, binnen de
+countdown), puntenblokken op gewone deepslate (elke as), ook `/bc reset` zet het Ei terug. Breken
+alleen binnen `ei` en pas na GO, alles zonder drop; neerzetten nergens (blokken en emmers). Punten,
+redstone-gok met aftellen, emerald-jumpscare met `Jumpscare naar` en `Met dank aan`, netherite in
+de chat, top-10-sidebar, actionbar elke seconde, winnaar met kop, de pickaxe weg aan het eind (ook
+bij stop, reset en inloggen buiten ronde 2).
+
+## N7. Ronde 3: De Mob Arena
+
+**Gedaan**: geheim schema, `/mobarena schema` alleen voor wie het typt, per beurt de spelers naar
+hun gekleurde vlak, Glowing, BEURT n, countdown, 5 waves in beide arena's met rook en geluid op de
+spawns, volgende wave 5 seconden na beide klaar of na 120 seconden, `/mobarena wave volgende`,
+punten per kill naar het team, ravager en evoker in de chat, dood = kooi met doodtekst en
+`/mobarena aftekst`, BEURT n KLAAR met de stand, tien seconden aftellen, dan alleen arena's en kooien
+naar de tribune. Mobs richten zich elke 2 ticks alleen op wie aan de beurt is in hun arena, ook de
+vexes van een evoker. Einde: winnaar (gelijk: kills, dan samen), vuurwerk in de teamkleur, tien
+seconden, iedereen levert alles in en gaat naar zijn quizbank.
+
+**Afwijking** (ook in docs/04)
+- Wie op zijn beurt wacht kan vanaf de tribune geen mob raken, en een kill telt alleen voor wie aan
+  de beurt is.
+- Voor kijkers telt een veld tot drie blokken boven de selectie (het balkon is geen veld); wie aan
+  de beurt is, gaat terug naar zijn vlak zodra hij de kolom van zijn veld uit loopt.
+- `waves.json` mag meer of minder dan 5 waves hebben, voor een test.
+
+## N8. Ronde 4: De Quiz
+
+**Gedaan**: presentator op naam, banken, podium, lampen (redstone lamp, `LIT` zonder buren bij te
+werken), iedereen zonder spullen, de presentator met groene wol, rode wol en een nether star
+(`custom_data={bootcamp_quiz:"..."}`), rechtsklik afgevangen in `UseItemCallback` en
+`UseBlockCallback`, kwijtgeraakte items komen elke seconde terug en gedropte verdwijnen. Het ronde
+rad als title met de glyph van de stand, tik per vakgrens, twee seconden stil, dan het team en de
+lamp. GOED met de reeks, FOUT, `/quiz punt`, GELIJKSPEL, winnaar met vuurwerk bij de bank, tien
+seconden, dan iedereen naar de tribune van de Arena.
+
+## N9. Ronde 5: Clown vs All
+
+**Gedaan**: het Rad als rij spelerskoppen met namen (tekstcomponent `object` met een
+`PlayerSprite`), landt op de uitverkorene, DE KROON met kop, drie seconden later de vloer op.
+Kroon (diamond helm met Curse of Binding) en bosskit voor Clown, jagerskit voor de rest, jagers
+willekeurig over `jager_1..n`. Iedereen bevroren tot `/clown go`, dan tien seconden; na een
+kroonwissel loopt de countdown vanzelf. PvP alleen met de kroonhouder, kroonwissel als reset (geen
+Resistance), dertig seconden wachten op een uitgelogde kroonhouder, af-meldingen in de chat,
+`Jij hebt de kroon · n jagers`, regeerperiodes in de sidebar, DE EINDBAAS WINT, `/clown krimp`,
+`/clown vloer <diameter>` als cilinder van 5 hoog met de rand in particles.
+
+## N10. Ronde 6: De FFA en de kroning
+
+**Gedaan**: iedereen behalve de uitverkorene, arenakit, geen team, bevroren tot `/ffa go`, geen
+timer, `/ffa krimp`, sidebar `Kills`, af-meldingen, LAATSTE DRIE en LAATSTE TWEE. Kroning op
+`troon`: KING OF THE SMP BOOTCAMP met kop, twintig seconden vuurwerk, en daarna blijven de bossbar
+`Pudding Bootcamp · King: <naam>` en de zweefkroon tot `/bc reset`.
+
+## N11. Visuals
+
+Zit in de rondes zelf (N5 t/m N10): alle regels uit de tabel *Per moment* in docs/04, de countdown
+in goud, de laatste minuut van het doolhof en het Ei.
+
+## N12. Reviewronde
+
+Drie agents, zoals in het taakplan: code naast docs/02 en 03, code naast docs/04, en een bug-jacht
+(ronde-overgangen, uitloggen, PvP-lekken). Alles wat hoog of midden was is gefixt, plus de lage
+die klein waren. Na de fixes: build groen, `check.sh` groen.
+
+**Gefixt**
+- *Hoog*: één klik met de groene wol kon twee punten geven (de client stuurt een klik op een blok
+  ook als klik in de lucht). Een tweede klik binnen 5 ticks telt niet meer.
+- Een speler die bevroren uitlogde, bleef na terugkomen bevroren. Nu blijft alleen bevroren wie in
+  een opstelling staat die nog loopt; in het Ei geldt een lopende bevriezing ook voor wie terugkomt.
+- Na een `/clown krimp` stonden jagers na een kroonwissel bevroren buiten de border. Een
+  kroonwissel zet nu ook de border terug, en wie in een opstelling bevroren staat krijgt geen
+  schade.
+- Logde Clown uit terwijl iedereen op `/clown go` wachtte, dan startte de jacht na 30 seconden
+  vanzelf. Voor de start telt die wacht niet af en weigert `/clown go` zolang de kroonhouder weg is;
+  `/clown kroon` kan de kroon dan zonder reset overzetten (de oude kroonhouder wordt jager op de
+  plek van de nieuwe, iedereen blijft wachten op `/clown go`).
+- `/doolhof poort dicht` voor het ingestelde moment hield de poort voorgoed dicht. Nu gaat hij
+  alsnog vanzelf open op het moment zelf.
+- Een start tijdens een draaiend Rad liet het Rad doorlopen, dat daarna ronde 5 opnieuw startte.
+  `Spel.start` stopt nu het Rad, en `/clown stop` stopt het altijd.
+- De border van ronde 5 en 6 staat nu om het midden van de vloer (ook met een `colosseum`), zodat
+  krimpen naar het midden gaat.
+- `/ei vastleggen` weigert terwijl het Ei wordt teruggezet en zolang het sinds `/ei start`
+  uitgehakt is.
+- "N over" was één te laag na uitloggen; daardoor kon LAATSTE TWEE met drie namen komen.
+- Kijkers en wachtenden die geen schade krijgen, vielen eindeloos door de void; nu terug naar hun
+  plek.
+- Wie na het doolhof binnenkomt zonder team (weggevallen of te laat) gaat naar het kleinste team;
+  wie tijdens het doolhof pas binnenkomt, krijgt de basiskit.
+- `/clown kroon` op een kijker liet hem als dood staan.
+- Kleiner: uitloggen tijdens de tien seconden na een beurt telt niet meer als dood; de vol-check
+  van een team wordt bij de keuze opnieuw gedaan; wie tijdens de quiz terugkomt heeft een lege
+  inventory; vexes zijn 1 punt; kettingen in de doos van het Ei zijn niet te breken; armor uit een
+  kit met `clear: false` vervangt niet wat je al draagt; de sidebar gaat weg bij het opstarten;
+  `/bc status` noemt de mobpunten; `check.sh` meldt de literals ook na een eerdere fout.
+
+**Blijft staan** (laag, bewuste keuze of voor na de test)
+- `/doolhof start` wist de teamkeuzes, ook een `/bc team` van tevoren (docs/04 zegt het nu).
+- `waves.json` mag meer of minder dan 5 waves hebben.
+- `check.sh` zoekt de command-literals in de hele map `commands/`, niet per commandoboom.
+- `/mobarena punten` neemt elke naam aan, ook een typfout; weghalen kan niet (zet hem op 1).
+
+## N13. Documentatie
+
+`mod/README.md` herschreven, dit bouwlog, docs/04 bijgewerkt waar de code afwijkt (status,
+resource pack, veld, doolhof, mob arena, waves). De checklist in docs/05 nagelopen: hij past bij de
+code.
+
+## Wat niet geverifieerd is
+
+**Er is nog niets in-game gedraaid.** De grootste onzekerheden, op volgorde:
+1. Het raamwerk van plan 1, dat nooit gedraaid heeft: de dood afvangen (`ALLOW_DEATH` annuleren en
+   zelf healen), bevriezen via attributes, de border voor kijkers, de zweefkroon.
+2. Het teammenu (een server-side kistmenu).
+3. Spelerskoppen in tekst (`Component.object` met een `PlayerSprite`): zie je echte skins in het
+   Rad, bij DE KROON en de winnaars?
+4. De grootte van het quiz-rad en de jumpscare in beeld.
+5. Het Ei vastleggen en terugzetten met jouw echte Ei (hoeveel blokken, hoe snel).
+6. Mobs in de mob arena: laten ze de tribune en de kooi echt met rust?
+
+# Taakplan 1
+
 
 ## T0. Omgevingscheck en gereedschap
 

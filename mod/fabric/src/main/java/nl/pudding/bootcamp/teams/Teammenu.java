@@ -16,6 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import nl.pudding.bootcamp.Mc;
 import nl.pudding.bootcamp.core.Kleur;
+import nl.pudding.bootcamp.game.Planner;
 import nl.pudding.bootcamp.game.Spel;
 
 import java.util.function.BiConsumer;
@@ -96,8 +97,15 @@ public final class Teammenu extends ChestMenu {
 				if (Teams.vol(speler.level().getServer(), k)) {
 					Mc.actionbar(speler, Mc.tekst(k.naam() + " is vol", ChatFormatting.RED));
 				} else {
-					speler.closeContainer();
-					gekozen.accept(speler, k);
+					// Eén tick later, niet midden in het klik-pakket: menu dicht, dan de keuze.
+					Planner.na(1, () -> {
+						if (speler.containerMenu == this) {
+							speler.closeContainer();
+						}
+						gekozen.accept(speler, k);
+					});
+					setCarried(ItemStack.EMPTY);
+					sendAllDataToRemote();
 					return;
 				}
 			}

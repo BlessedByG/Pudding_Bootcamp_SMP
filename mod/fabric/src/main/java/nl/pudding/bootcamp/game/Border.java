@@ -64,6 +64,16 @@ public final class Border {
 		naWijziging(server);
 	}
 
+	/** Om een eigen midden met een eigen grootte. */
+	public static void zet(MinecraftServer server, double x, double z, double grootte) {
+		WorldBorder border = Mc.wereld(server).getWorldBorder();
+		border.setCenter(x, z);
+		border.setSize(grootte);
+		border.setWarningBlocks(0);
+		border.setWarningTime(0);
+		naWijziging(server);
+	}
+
 	/** Krimpt vanaf de huidige grootte. */
 	public static void krimp(MinecraftServer server, double naar, int seconden) {
 		ServerLevel wereld = Mc.wereld(server);

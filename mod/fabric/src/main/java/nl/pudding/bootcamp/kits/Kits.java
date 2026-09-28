@@ -82,8 +82,7 @@ public final class Kits {
 	 *
 	 * <p>De kroon blijft altijd op: een kit schrijft nooit over de head-slot van wie de kroon
 	 * draagt, en {@code clear} haalt hem niet weg. Bij {@code clear: false} komt een item op zijn
-	 * slot als dat leeg is en anders ergens in de inventory; armor dat er al zat gaat naar de
-	 * inventory.
+	 * slot als dat leeg is en anders ergens in de inventory; wat je al draagt blijft aan.
 	 */
 	public static void geef(ServerPlayer speler, Kit kit) {
 		geef(speler, kit, null);
@@ -125,11 +124,12 @@ public final class Kits {
 		speler.inventoryMenu.broadcastChanges();
 	}
 
+	/** Op zijn slot als dat leeg is, anders ergens in de inventory: wat je al draagt blijft aan. */
 	private static void zetUitrusting(ServerPlayer speler, EquipmentSlot slot, ItemStack stack) {
-		ItemStack oud = speler.getItemBySlot(slot);
-		speler.setItemSlot(slot, stack);
-		if (!oud.isEmpty()) {
-			geefOfDrop(speler, oud);
+		if (speler.getItemBySlot(slot).isEmpty()) {
+			speler.setItemSlot(slot, stack);
+		} else {
+			geefOfDrop(speler, stack);
 		}
 	}
 

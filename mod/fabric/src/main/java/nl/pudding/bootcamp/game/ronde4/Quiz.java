@@ -65,6 +65,9 @@ public final class Quiz extends RondeLogica {
 	public static final Identifier RAD_FONT = Identifier.fromNamespaceAndPath("bootcamp", "rad");
 	/** Zo lang blijft het rad stil op het gekozen vak voordat het team in beeld komt. */
 	private static final int STIL_NA_LANDING = 40;
+	/** Binnen zoveel ticks na een klik met een quiz-item telt een volgende klik niet. */
+	private static final int KLIK_PAUZE = 5;
+	private static int laatsteKlik = -1000;
 
 	private enum Fase {
 		SPELEN, VIEREN
@@ -106,6 +109,12 @@ public final class Quiz extends RondeLogica {
 			return;
 		}
 		MinecraftServer server = speler.level().getServer();
+		// Eén klik op een blok stuurt de client ook als klik in de lucht: die tweede telt niet.
+		int nu = server.getTickCount();
+		if (nu - laatsteKlik < KLIK_PAUZE) {
+			return;
+		}
+		laatsteKlik = nu;
 		String fout = switch (String.valueOf(Items26.tagWaarde(stack, Items26.QUIZ_TAG))) {
 			case "goed" -> quiz.goed(server);
 			case "fout" -> quiz.fout(server);
@@ -470,6 +479,12 @@ public final class Quiz extends RondeLogica {
 
 	@Override
 	public void onJoin(MinecraftServer server, ServerPlayer speler) {
+		// De quiz doe je zonder spullen, ook wie in de mob arena wegviel.
+		speler.getInventory().clearContent();
+		speler.inventoryMenu.broadcastChanges();
+		if (!Spel.isPresentator(speler)) {
+			Teams.zorgVoorTeam(server, speler);
+		}
 		Spel.zetRol(server, speler, Rol.SPELER);
 		speler.setGameMode(GameType.ADVENTURE);
 		naarPlek(speler);

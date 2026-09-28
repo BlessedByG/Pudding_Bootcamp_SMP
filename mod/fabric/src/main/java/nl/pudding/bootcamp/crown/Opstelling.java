@@ -18,7 +18,10 @@ import nl.pudding.bootcamp.game.SpelerStatus;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * Opstelling: spelers staan bevroren op hun startplek tot de countdown op nul staat. Bevriezen is
@@ -35,7 +38,8 @@ public final class Opstelling {
 
 	private static boolean actief;
 	private static boolean wachtOpGo;
-	private static final List<ServerPlayer> BEVROREN = new ArrayList<>();
+	/** Wie in de lopende opstelling staat, ook als hij net is uitgelogd. */
+	private static final Set<UUID> BEVROREN = new HashSet<>();
 
 	private Opstelling() {
 	}
@@ -93,7 +97,7 @@ public final class Opstelling {
 		BEVROREN.clear();
 		for (ServerPlayer s : bevriezen) {
 			bevries(s);
-			BEVROREN.add(s);
+			BEVROREN.add(s.getUUID());
 		}
 	}
 
@@ -142,9 +146,12 @@ public final class Opstelling {
 		Mc.zetAttribute(speler, Attributes.JUMP_STRENGTH, SPRINGKRACHT);
 	}
 
-	/** Wie inlogt en niet bevroren hoort te zijn, loopt weer normaal (attributes overleven een relog). */
+	/**
+	 * Wie inlogt en niet bevroren hoort te zijn, loopt weer normaal (attributes overleven een relog).
+	 * Bevroren blijft alleen wie in een opstelling staat die nog loopt.
+	 */
 	public static void herstelBijJoin(ServerPlayer speler) {
-		if (Spel.status(speler).bevroren && (actief || Spel.loopt())) {
+		if (actief && BEVROREN.contains(speler.getUUID())) {
 			bevries(speler);
 		} else {
 			ontdooi(speler);

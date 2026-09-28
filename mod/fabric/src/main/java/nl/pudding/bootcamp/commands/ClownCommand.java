@@ -82,7 +82,7 @@ final class ClownCommand {
 
 	private static int stop(CommandContext<CommandSourceStack> ctx) {
 		MinecraftServer server = ctx.getSource().getServer();
-		if (!Spel.loopt() && (KroonRad.draait() || Planner.heeftWerk())) {
+		if (KroonRad.draait() || (!Spel.loopt() && Planner.heeftWerk())) {
 			// Het rad draait, of Clown vs All staat klaar om te starten.
 			KroonRad.stop(server);
 			Planner.wisAlles();

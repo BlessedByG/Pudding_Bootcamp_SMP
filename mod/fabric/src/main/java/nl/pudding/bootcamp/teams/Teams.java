@@ -158,6 +158,19 @@ public final class Teams {
 		return uit;
 	}
 
+	/**
+	 * Wie na het doolhof binnenkomt zonder team (weggevallen, of later gekomen), gaat naar het
+	 * kleinste team, net als bij het einde van het doolhof.
+	 */
+	public static void zorgVoorTeam(MinecraftServer server, ServerPlayer speler) {
+		if (keuze(speler) != null) {
+			return;
+		}
+		Kleur k = TeamKeuze.kleinste(aantallen(), nl.pudding.bootcamp.game.Spel.RANDOM);
+		kies(server, speler, k);
+		Mc.actionbar(speler, Mc.tekst("Je zit in " + k.naam(), Mc.kleur(k), net.minecraft.ChatFormatting.BOLD));
+	}
+
 	/** Het scoreboard-team dat past bij een speler zonder bijzondere rol: zijn kleur, of wit. */
 	public static String teamVoorSpeler(ServerPlayer speler, boolean metKleuren) {
 		Kleur k = metKleuren ? keuze(speler) : null;

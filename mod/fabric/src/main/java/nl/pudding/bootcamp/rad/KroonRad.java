@@ -100,10 +100,7 @@ public final class KroonRad {
 				float toon = 0.8f + 0.8f * Math.min(1f, rad.rest() / (float) Rad.VERTRAAG_VANAF);
 				Mc.geluidAllen(server, SoundEvents.NOTE_BLOCK_HAT, 1f, toon);
 			}
-			case GELAND -> {
-				toon(server);
-				geland(server);
-			}
+			case GELAND -> geland(server);
 		}
 	}
 
@@ -126,7 +123,7 @@ public final class KroonRad {
 				rij.append(kopEnNaam(server, id, ChatFormatting.GRAY));
 			}
 		}
-		Mc.titleAllen(server, titel, rij, 0, rad.geland() ? 80 : rad.wacht() + 5, rad.geland() ? 20 : 0);
+		Mc.titleAllen(server, titel, rij, 0, rad.wacht() + 5, 0);
 	}
 
 	private static MutableComponent kopEnNaam(MinecraftServer server, UUID id, ChatFormatting kleur) {
@@ -147,8 +144,8 @@ public final class KroonRad {
 		if (kroon != null) {
 			Mc.particles(Mc.wereld(server), ParticleTypes.TOTEM_OF_UNDYING, kroon.getX(), kroon.getY() + 1, kroon.getZ(), 200, 0.6, 0.5);
 		}
-		Planner.na(30, () -> Mc.titleAllen(server, Mc.tekst("DE KROON", ChatFormatting.GOLD, ChatFormatting.BOLD), wie, 5, 60, 20));
-		Planner.naSeconden(Regels.NA_HET_RAD + 1, () -> {
+		Mc.titleAllen(server, Mc.tekst("DE KROON", ChatFormatting.GOLD, ChatFormatting.BOLD), wie, 0, 70, 20);
+		Planner.naSeconden(Regels.NA_HET_RAD, () -> {
 			String fout = Spel.start(server, Ronde.CLOWN);
 			if (fout != null) {
 				Mc.chatAllen(server, Mc.tekst("[bootcamp] Clown vs All start niet, " + fout, ChatFormatting.RED));

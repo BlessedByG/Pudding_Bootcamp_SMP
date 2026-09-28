@@ -19,10 +19,24 @@ public final class Arena {
 	private Arena() {
 	}
 
-	/** De border om de hele Arena ({@code colosseum}) als die er is, anders om de vloer. */
-	public static Regio borderRegio() {
+	/**
+	 * De border van ronde 5 en 6: altijd om het midden van de vloer, zodat {@code /clown krimp} en
+	 * {@code /ffa krimp} naar het midden krimpen. Is er een {@code colosseum}, dan zo groot dat de hele
+	 * Arena erin past; anders zo groot als de vloer.
+	 */
+	public static void zetBorder(MinecraftServer server) {
+		Regio vloer = Spel.regio("vloer");
 		Regio c = Spel.regio("colosseum");
-		return c != null ? c : Spel.regio("vloer");
+		double x = vloer.centerX();
+		double z = vloer.centerZ();
+		double grootte = vloer.grootte();
+		if (c != null) {
+			Regio.Doos d = c.omhullende();
+			double half = Math.max(Math.max(Math.abs(d.min().x() - x), Math.abs(d.max().x() + 1 - x)),
+					Math.max(Math.abs(d.min().z() - z), Math.abs(d.max().z() + 1 - z)));
+			grootte = Math.max(grootte, 2 * half);
+		}
+		Border.zet(server, x, z, grootte);
 	}
 
 	/**

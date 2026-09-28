@@ -63,6 +63,8 @@ public final class Bootcamp implements ModInitializer {
 			Spelregels.zet(server);
 			Teams.zorgDatZeBestaan(server);
 			Zweefkroon.ruimAllesOp(server);
+			// De sidebar staat in het scoreboard van de wereld; na een herstart weet de mod niet meer hoeveel regels er stonden.
+			Sidebar.weg(server);
 		});
 		ServerLifecycleEvents.SERVER_STOPPING.register(server -> ConfigStore.bewaar());
 

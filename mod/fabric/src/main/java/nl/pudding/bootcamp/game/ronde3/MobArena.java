@@ -122,7 +122,8 @@ public final class MobArena extends RondeLogica {
 		ServerEntityEvents.ALLOW_LOAD.register((entity, level, reden, vanSchijf) ->
 				!(vanSchijf && entity.entityTags().contains(TAG) && !(Spel.actief() instanceof MobArena)));
 		ServerLivingEntityEvents.AFTER_DEATH.register((entity, bron) -> {
-			if (entity.entityTags().contains(TAG) && Spel.actief() instanceof MobArena ronde) {
+			// Ook de vexes van een evoker: elk ander type is 1 punt.
+			if ((entity.entityTags().contains(TAG) || entity instanceof Vex) && Spel.actief() instanceof MobArena ronde) {
 				ronde.kill(entity, bron);
 			}
 		});
@@ -606,6 +607,19 @@ public final class MobArena extends RondeLogica {
 		return Spel.status(slachtoffer).arena > 0 && (fase == Fase.WAVES || fase == Fase.COUNTDOWN);
 	}
 
+	/** Uitloggen telt alleen als dood zolang de beurt loopt, niet tijdens de tien seconden erna. */
+	@Override
+	public void onQuit(MinecraftServer server, ServerPlayer speler) {
+		if (fase == Fase.WAVES || fase == Fase.COUNTDOWN) {
+			super.onQuit(server, speler);
+			return;
+		}
+		SpelerStatus st = Spel.status(speler);
+		st.arena = 0;
+		st.kooi = 0;
+		speler.removeEffect(MobEffects.GLOWING);
+	}
+
 	@Override
 	protected void naQuitDood(MinecraftServer server, ServerPlayer speler) {
 		// Uitgelogd tijdens zijn beurt: telt als dood, zijn arena telt hem niet meer.
@@ -620,6 +634,7 @@ public final class MobArena extends RondeLogica {
 			st.kooi = 0;
 			Tribune.maakKijker(server, speler, Tribune.Spullen.LEGEN, false);
 		} else {
+			Teams.zorgVoorTeam(server, speler);
 			Spel.zetRol(server, speler, Rol.SPELER);
 			Tribune.naarTribune(speler, Ronde.MOBARENA);
 		}

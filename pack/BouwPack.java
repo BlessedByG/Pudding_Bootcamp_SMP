@@ -134,7 +134,7 @@ public class BouwPack {
 				""".formatted(SCHRIK_HOOGTE, SCHRIK_HOOGTE / 2 - 3, escape(SCHRIK_GLYPH)));
 		StringBuilder rad = new StringBuilder("{\n  \"providers\": [\n");
 		for (int s = 0; s < STANDEN; s++) {
-			rad.append(String.format("    {\"type\": \"bitmap\", \"file\": \"bootcamp:font/rad_%02d.png\", \"height\": %d, \"ascent\": %d, \"chars\": [\"%s\"]}%s%n",
+			rad.append(String.format("    {\"type\": \"bitmap\", \"file\": \"bootcamp:font/rad_%02d.png\", \"height\": %d, \"ascent\": %d, \"chars\": [\"%s\"]}%s\n",
 					s, RAD_HOOGTE, RAD_HOOGTE / 2 - 3, escape((char) (RAD_GLYPH + s)), s < STANDEN - 1 ? "," : ""));
 		}
 		rad.append("  ]\n}\n");
