@@ -21,7 +21,10 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.level.GameType;
+import net.minecraft.network.chat.contents.objects.PlayerSprite;
+import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.phys.Vec3;
+import nl.pudding.bootcamp.core.Kleur;
 import nl.pudding.bootcamp.core.Punt;
 
 import java.util.List;
@@ -43,6 +46,43 @@ public final class Mc {
 
 	public static MutableComponent tekst(String s, ChatFormatting... stijl) {
 		return Component.literal(s).withStyle(stijl);
+	}
+
+	/** De kleur van een teamkleur in tekst. */
+	public static ChatFormatting kleur(Kleur k) {
+		if (k == null) {
+			return ChatFormatting.WHITE;
+		}
+		return switch (k) {
+			case ROOD -> ChatFormatting.RED;
+			case BLAUW -> ChatFormatting.BLUE;
+			case GROEN -> ChatFormatting.GREEN;
+			case GEEL -> ChatFormatting.YELLOW;
+		};
+	}
+
+	/**
+	 * De kop van een speler in tekst: een tekstcomponent van het type {@code object} met een
+	 * spelerskop (sinds 1.21.9). De client tekent de echte skin; zonder pack. Kan de client hem niet
+	 * tekenen, dan staat er niks: de naam komt er altijd naast.
+	 */
+	public static MutableComponent kop(ServerPlayer speler) {
+		try {
+			return Component.object(new PlayerSprite(ResolvableProfile.createResolved(speler.getGameProfile()), true),
+					Component.empty());
+		} catch (RuntimeException e) {
+			return Component.empty();
+		}
+	}
+
+	/** Kop, spatie, naam: {@code [kop] Speler7}. */
+	public static MutableComponent kopEnNaam(ServerPlayer speler, ChatFormatting... stijl) {
+		return Component.empty().append(kop(speler)).append(Component.literal(" " + naam(speler)).withStyle(stijl));
+	}
+
+	/** Een chatregel voor iedereen. */
+	public static void chatAllen(MinecraftServer server, Component tekst) {
+		server.getPlayerList().broadcastSystemMessage(tekst, false);
 	}
 
 	// Spelers
@@ -114,11 +154,26 @@ public final class Mc {
 		}
 	}
 
+	public static void titleAllen(MinecraftServer server, Component titel, Component ondertitel, int in, int blijf, int uit) {
+		for (ServerPlayer s : spelers(server)) {
+			title(s, titel, ondertitel, in, blijf, uit);
+		}
+	}
+
 	/** Voor iedereen behalve deze spelers: wie net doodging houdt zijn doodtekst in beeld. */
 	public static void titleAllenBehalve(MinecraftServer server, java.util.Collection<java.util.UUID> niet, Component titel, Component ondertitel) {
 		for (ServerPlayer s : spelers(server)) {
 			if (!niet.contains(s.getUUID())) {
 				title(s, titel, ondertitel);
+			}
+		}
+	}
+
+	public static void titleAllenBehalve(MinecraftServer server, java.util.Collection<java.util.UUID> niet, Component titel, Component ondertitel,
+			int in, int blijf, int uit) {
+		for (ServerPlayer s : spelers(server)) {
+			if (!niet.contains(s.getUUID())) {
+				title(s, titel, ondertitel, in, blijf, uit);
 			}
 		}
 	}

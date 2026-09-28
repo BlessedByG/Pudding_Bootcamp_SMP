@@ -1,19 +1,19 @@
 {
   "clear": true,
   "armor": {
-    "head":  "minecraft:diamond_helmet[minecraft:enchantments={\"minecraft:protection\":1}]",
-    "chest": "minecraft:diamond_chestplate[minecraft:enchantments={\"minecraft:protection\":1}]",
-    "legs":  "minecraft:diamond_leggings[minecraft:enchantments={\"minecraft:protection\":1}]",
-    "feet":  "minecraft:diamond_boots[minecraft:enchantments={\"minecraft:protection\":1}]"
+    "head":  "minecraft:diamond_helmet[minecraft:enchantments={\"minecraft:protection\":4,\"minecraft:unbreaking\":3}]",
+    "chest": "minecraft:diamond_chestplate[minecraft:enchantments={\"minecraft:protection\":4,\"minecraft:unbreaking\":3}]",
+    "legs":  "minecraft:diamond_leggings[minecraft:enchantments={\"minecraft:protection\":4,\"minecraft:unbreaking\":3}]",
+    "feet":  "minecraft:diamond_boots[minecraft:enchantments={\"minecraft:protection\":4,\"minecraft:unbreaking\":3}]"
   },
-  "offhand": "minecraft:shield",
+  "offhand": "minecraft:shield[minecraft:enchantments={\"minecraft:unbreaking\":3}]",
   "hotbar": [
-    "minecraft:diamond_sword[minecraft:enchantments={\"minecraft:sharpness\":1}]",
-    "minecraft:bow[minecraft:enchantments={\"minecraft:power\":1}]",
-    "minecraft:golden_apple 2",
-    "minecraft:cooked_beef 8"
+    "minecraft:diamond_sword[minecraft:enchantments={\"minecraft:sharpness\":5,\"minecraft:unbreaking\":3}]",
+    "minecraft:diamond_axe[minecraft:enchantments={\"minecraft:sharpness\":5,\"minecraft:unbreaking\":3}]",
+    "minecraft:bow[minecraft:enchantments={\"minecraft:power\":5,\"minecraft:unbreaking\":3}]",
+    "minecraft:golden_apple 32"
   ],
   "inventory": [
-    "minecraft:arrow 16"
+    "minecraft:arrow 32"
   ]
 }

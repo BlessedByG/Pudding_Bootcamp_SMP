@@ -1,0 +1,19 @@
+{
+  "clear": true,
+  "armor": {
+    "head":  "minecraft:diamond_helmet[minecraft:enchantments={\"minecraft:protection\":4,\"minecraft:unbreaking\":3}]",
+    "chest": "minecraft:diamond_chestplate[minecraft:enchantments={\"minecraft:protection\":4,\"minecraft:unbreaking\":3}]",
+    "legs":  "minecraft:diamond_leggings[minecraft:enchantments={\"minecraft:protection\":4,\"minecraft:unbreaking\":3}]",
+    "feet":  "minecraft:diamond_boots[minecraft:enchantments={\"minecraft:protection\":4,\"minecraft:unbreaking\":3}]"
+  },
+  "offhand": "minecraft:shield[minecraft:enchantments={\"minecraft:unbreaking\":3}]",
+  "hotbar": [
+    "minecraft:diamond_sword[minecraft:enchantments={\"minecraft:sharpness\":5,\"minecraft:unbreaking\":3}]",
+    "minecraft:diamond_axe[minecraft:enchantments={\"minecraft:sharpness\":5,\"minecraft:unbreaking\":3}]",
+    "minecraft:bow[minecraft:enchantments={\"minecraft:power\":5,\"minecraft:unbreaking\":3}]",
+    "minecraft:golden_apple 16"
+  ],
+  "inventory": [
+    "minecraft:arrow 32"
+  ]
+}

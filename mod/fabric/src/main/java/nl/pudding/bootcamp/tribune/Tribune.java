@@ -6,44 +6,49 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.GameType;
 import nl.pudding.bootcamp.Bootcamp;
 import nl.pudding.bootcamp.Mc;
 import nl.pudding.bootcamp.config.ConfigStore;
 import nl.pudding.bootcamp.core.Doodteksten;
+import nl.pudding.bootcamp.core.Kleur;
+import nl.pudding.bootcamp.core.PvpRegel;
 import nl.pudding.bootcamp.core.Regio;
 import nl.pudding.bootcamp.core.Rol;
 import nl.pudding.bootcamp.core.Ronde;
 import nl.pudding.bootcamp.crown.Kroon;
 import nl.pudding.bootcamp.crown.Opstelling;
+import nl.pudding.bootcamp.game.Aftelling;
 import nl.pudding.bootcamp.game.Reset;
 import nl.pudding.bootcamp.game.RondeLogica;
 import nl.pudding.bootcamp.game.Spel;
 import nl.pudding.bootcamp.game.SpelerStatus;
+import nl.pudding.bootcamp.rad.KroonRad;
+import nl.pudding.bootcamp.teams.Teams;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Kijkers: wie dood of klaar is. Geen spectator mode, geen tp-items, geen vliegen. De mod laat
- * spelers nooit echt doodgaan: een dodelijke klap wordt geannuleerd en de ronde beslist wat er
- * gebeurt. Een kijker staat in adventure op de tribune, krijgt geen schade, komt de vloer niet op
- * en staat niet op de locator bar.
+ * Kijkers: wie af is. Geen spectator mode, geen tp-items, geen vliegen. De mod laat spelers nooit
+ * echt doodgaan: een dodelijke klap wordt geannuleerd en de ronde beslist wat er gebeurt. Een
+ * kijker staat in adventure op de tribune (of in de kooi), krijgt geen schade, komt het veld of de
+ * vloer niet op en staat niet op de locator bar.
+ *
+ * <p>Hier zit ook de PvP-regel: één check in {@code ALLOW_DAMAGE}, niet via teams.
  */
 public final class Tribune {
 	/** Wat er met de inventory gebeurt van wie kijker wordt. */
 	public enum Spullen {
-		/** Klaar met de ronde (uit het doolhof): je houdt wat je hebt. */
+		/** Je houdt wat je hebt. */
 		HOUDEN,
-		/** Ronde 2: bewaard en bij v3 teruggegeven. */
-		BEWAREN,
-		/** In de Arena: leeg. */
+		/** Leeg: wie af is speelt niet meer. */
 		LEGEN
 	}
 
 	private static final int TERUGZET_ELKE_TICKS = 10;
+	/** Een veld van de mob arena telt tot zoveel blokken boven de selectie: het balkon is geen veld. */
+	private static final int VELD_HOOGTE = 3;
 	private static int volgendeTribune;
 
 	private Tribune() {
@@ -67,6 +72,7 @@ public final class Tribune {
 			// De rollen en vlaggen zijn al gewist; hier alleen wat aan de speler zelf hangt.
 			for (ServerPlayer s : Mc.deelnemers(server)) {
 				Kroon.toonOpLocator(s, true);
+				s.removeEffect(MobEffects.GLOWING);
 			}
 		});
 	}
@@ -83,18 +89,11 @@ public final class Tribune {
 		try {
 			if (ronde != null && !Spel.status(speler).dood && Spel.rol(speler) != Rol.KIJKER) {
 				ronde.onDeath(server, speler, bron);
-			} else if (ronde != null) {
+			} else if (Spel.status(speler).tribunepunt != null) {
 				// Een kijker die toch "doodgaat" (de void in): terug naar zijn plek.
-				String plek = Spel.status(speler).tribunepunt;
-				if (plek != null) {
-					Spel.naarPunt(speler, plek);
-				}
+				Spel.naarPunt(speler, Spel.status(speler).tribunepunt);
 			} else {
-				// Tussen twee rondes in of in het basiskamp: terug naar waar iedereen staat.
-				String punt = verzamelpuntNa(Spel.ronde());
-				if (Spel.punt(punt) != null) {
-					Spel.naarPunt(speler, punt);
-				}
+				naarVerzamelpunt(speler);
 			}
 		} catch (RuntimeException e) {
 			Bootcamp.LOG.error("De dood van {} afhandelen faalde", Mc.naam(speler), e);
@@ -102,38 +101,73 @@ public final class Tribune {
 		return true;
 	}
 
+	/** Loopt er een opstelling of countdown? Dan doet niemand elkaar iets. */
+	public static boolean stil() {
+		return Opstelling.actief() || Aftelling.loopt();
+	}
+
 	private static boolean magSchade(ServerPlayer slachtoffer, DamageSource bron) {
 		Rol rol = Spel.rol(slachtoffer);
-		// Kijkers en wachtende finalisten krijgen geen schade, ook niet van de border.
-		if (rol == Rol.KIJKER || rol == Rol.FINALIST) {
+		// Kijkers krijgen geen schade, ook niet van de border.
+		if (rol == Rol.KIJKER) {
 			return false;
 		}
-		// Zolang een opstelling loopt doet niemand elkaar iets.
-		if (Opstelling.actief()) {
+		RondeLogica ronde = Spel.actief();
+		if (ronde != null && !ronde.magSchade(slachtoffer, bron)) {
 			return false;
 		}
-		if (bron.getEntity() instanceof ServerPlayer aanvaller && aanvaller != slachtoffer) {
+		ServerPlayer aanvaller = aanvaller(bron);
+		if (aanvaller != null && aanvaller != slachtoffer) {
 			Rol aanvalRol = Spel.rol(aanvaller);
-			if (aanvalRol == Rol.KIJKER || aanvalRol == Rol.FINALIST) {
+			if (!PvpRegel.mag(Spel.lopendeRonde(), stil(), aanvalRol, rol)) {
 				return false;
 			}
-			// De laatste hit: ook via een pijl, want getEntity() is de schutter.
-			if (rol == Rol.KING && Spel.ronde() == Ronde.KING && !Spel.status(aanvaller).dood) {
+			// De laatste hit: ook via een pijl, want de aanvaller is de schutter.
+			if (rol == Rol.KROON && aanvalRol == Rol.JAGER && !Spel.status(aanvaller).dood) {
 				Kroon.onthoudHit(slachtoffer, aanvaller);
 			}
 		}
 		return true;
 	}
 
-	/** Waar iedereen staat nadat deze ronde is afgelopen. */
-	public static String verzamelpuntNa(Ronde ronde) {
-		return switch (ronde) {
+	/** De speler achter een klap: de slaander, of de schutter van een pijl of andere projectile. */
+	public static ServerPlayer aanvaller(DamageSource bron) {
+		if (bron.getEntity() instanceof ServerPlayer p) {
+			return p;
+		}
+		if (bron.getDirectEntity() instanceof Projectile pr && pr.getOwner() instanceof ServerPlayer p) {
+			return p;
+		}
+		return null;
+	}
+
+	// Waar iedereen staat
+
+	/** Waar iemand heen gaat tussen twee rondes, na het einde van de laatste ronde. */
+	public static String verzamelpunt(ServerPlayer speler) {
+		return switch (Spel.ronde()) {
 			case BASISKAMP -> "basiskamp";
 			case DOOLHOF -> "v2";
-			case HORDE -> "v3";
-			case EI -> "kring";
-			case KING, FFA, FINALE -> "tribune_1";
+			case EI -> "v3";
+			case MOBARENA -> {
+				// Na de mob arena naar de quiz: bij de bank van je team, de presentator op het podium.
+				if (Spel.isPresentator(speler) && Spel.punt("quiz_podium") != null) {
+					yield "quiz_podium";
+				}
+				Kleur k = Teams.keuze(speler);
+				yield k != null && Spel.punt("quiz_" + k.id()) != null ? "quiz_" + k.id() : "v3";
+			}
+			case QUIZ, CLOWN, FFA -> volgendTribunepunt(Ronde.CLOWN);
 		};
+	}
+
+	public static void naarVerzamelpunt(ServerPlayer speler) {
+		String punt = verzamelpunt(speler);
+		if (punt.startsWith("tribune_")) {
+			naarTribune(speler, Ronde.CLOWN);
+		} else if (Spel.punt(punt) != null) {
+			Spel.naarPunt(speler, punt);
+		}
 	}
 
 	// Kijker worden
@@ -149,23 +183,19 @@ public final class Tribune {
 		Spel.status(speler).tribunepunt = punt;
 	}
 
-	/**
-	 * Kijker op een verzamelpunt in plaats van de tribune (uit het doolhof naar v2). Hij wordt
-	 * daar niet vastgehouden: er is geen vloer waar hij af moet blijven.
-	 */
+	/** Kijker op een bepaalde plek: de tribune, of de kooi van een arena. */
 	public static void maakKijkerOp(MinecraftServer server, ServerPlayer speler, String puntNaam, Spullen spullen, boolean doodtekst) {
 		SpelerStatus st = Spel.status(speler);
 		if (Kroon.draagtKroon(speler)) {
 			Kroon.neemAf(speler);
 		}
-		switch (spullen) {
-			case HOUDEN -> {
-			}
-			case BEWAREN -> bewaarInventory(speler, st);
-			case LEGEN -> speler.getInventory().clearContent();
+		if (spullen == Spullen.LEGEN) {
+			speler.getInventory().clearContent();
+			speler.inventoryMenu.broadcastChanges();
 		}
 		Spel.zetRol(server, speler, Rol.KIJKER);
-		st.tribunepunt = null;
+		st.tribunepunt = puntNaam;
+		st.arena = 0;
 		speler.setGameMode(GameType.ADVENTURE);
 		speler.removeEffect(MobEffects.GLOWING);
 		Kroon.toonOpLocator(speler, false);
@@ -173,89 +203,91 @@ public final class Tribune {
 		Mc.heal(speler);
 		Spel.naarPunt(speler, puntNaam);
 		if (doodtekst) {
-			String tekst = Doodteksten.kies(ConfigStore.get().doodteksten(), Spel.RANDOM);
-			Mc.title(speler, Mc.tekst(tekst, ChatFormatting.RED, ChatFormatting.BOLD), null, 5, 70, 20);
+			doodtekst(speler);
 		}
 	}
 
-	/**
-	 * Zet iemand op de tribune zonder er een kijker van te maken: een finalist die op de finale
-	 * wacht. Ook hij wordt teruggezet als hij de vloer op komt.
-	 */
-	public static void naarTribune(ServerPlayer speler) {
-		String punt = volgendTribunepunt(Spel.ronde());
+	/** Groot in beeld een willekeurige doodtekst, alleen voor de dode. */
+	public static void doodtekst(ServerPlayer speler) {
+		String tekst = Doodteksten.kies(ConfigStore.get().doodteksten(), Spel.RANDOM);
+		Mc.title(speler, Mc.tekst(tekst, ChatFormatting.RED, ChatFormatting.BOLD), null, 5, 70, 20);
+	}
+
+	/** Zet iemand op de tribune zonder er een kijker van te maken (voor het Rad, of in de mob arena). */
+	public static void naarTribune(ServerPlayer speler, Ronde ronde) {
+		String punt = volgendTribunepunt(ronde);
 		Spel.status(speler).tribunepunt = punt;
 		Spel.naarPunt(speler, punt);
 	}
 
-	/** Verdeelt kijkers om en om over de tribunepunten. */
-	private static String volgendTribunepunt(Ronde ronde) {
-		String prefix = ronde == Ronde.HORDE ? "tribune_horde_" : "tribune_";
-		int aantal = ronde == Ronde.HORDE ? 2 : 4;
-		List<String> bestaand = new ArrayList<>();
-		for (int i = 1; i <= aantal; i++) {
-			if (Spel.punt(prefix + i) != null) {
-				bestaand.add(prefix + i);
-			}
-		}
+	/** Verdeelt mensen om en om over de tribunepunten van die ronde. */
+	public static String volgendTribunepunt(Ronde ronde) {
+		String prefix = ronde == Ronde.MOBARENA ? "tribune_mob_" : "tribune_";
+		List<String> bestaand = Spel.reeks(prefix);
 		if (bestaand.isEmpty()) {
 			return prefix + 1;
 		}
 		return bestaand.get(Math.floorMod(volgendeTribune++, bestaand.size()));
 	}
 
-	// Inventory bewaren (ronde 2)
-
-	private static void bewaarInventory(ServerPlayer speler, SpelerStatus st) {
-		Inventory inv = speler.getInventory();
-		if (st.bewaard == null) {
-			List<ItemStack> kopie = new ArrayList<>(inv.getContainerSize());
-			for (int i = 0; i < inv.getContainerSize(); i++) {
-				kopie.add(inv.getItem(i).copy());
-			}
-			st.bewaard = kopie;
-		}
-		inv.clearContent();
-		speler.inventoryMenu.broadcastChanges();
-	}
-
-	/** Geeft terug wat {@link Spullen#BEWAREN} heeft weggezet. Wie niks bewaard had houdt wat hij heeft. */
-	public static void geefBewaardTerug(ServerPlayer speler) {
-		SpelerStatus st = Spel.status(speler);
-		if (st.bewaard == null) {
-			return;
-		}
-		Inventory inv = speler.getInventory();
-		inv.clearContent();
-		for (int i = 0; i < st.bewaard.size() && i < inv.getContainerSize(); i++) {
-			inv.setItem(i, st.bewaard.get(i));
-		}
-		st.bewaard = null;
-		speler.inventoryMenu.broadcastChanges();
-	}
-
 	// Op de tribune houden
 
-	/** Elke servertick: een kijker die toch op de vloer komt gaat terug naar zijn tribunepunt. */
+	/**
+	 * Elke servertick: een kijker die toch het veld of de vloer op komt, gaat terug naar zijn
+	 * tribunepunt (of zijn kooi).
+	 */
 	public static void tick(MinecraftServer server) {
 		if (server.getTickCount() % TERUGZET_ELKE_TICKS != 0) {
 			return;
 		}
-		Regio verboden = switch (Spel.ronde()) {
-			case HORDE -> Spel.regio("arena");
-			case KING, FFA, FINALE -> Spel.regio("vloer");
-			default -> null;
-		};
-		if (verboden == null) {
-			return;
+		Ronde ronde = Spel.ronde();
+		if (ronde == Ronde.MOBARENA && Spel.loopt()) {
+			houdVanDeVelden(server);
+		} else if (ronde.inArena() || KroonRad.draait()) {
+			houdVanDeVloer(server);
 		}
-		for (ServerPlayer s : Mc.deelnemers(server)) {
-			SpelerStatus st = Spel.status(s);
-			boolean hoortOpTribune = st.rol == Rol.KIJKER || st.rol == Rol.FINALIST;
-			if (hoortOpTribune && st.tribunepunt != null && verboden.bevatRond(s.getX(), s.getZ())) {
-				Spel.naarPunt(s, st.tribunepunt);
+	}
+
+	private static void houdVanDeVelden(MinecraftServer server) {
+		for (int arena = 1; arena <= 2; arena++) {
+			Regio veld = Spel.regio("veld_" + arena);
+			if (veld == null) {
+				continue;
+			}
+			for (ServerPlayer s : Mc.deelnemers(server)) {
+				SpelerStatus st = Spel.status(s);
+				// Wie aan de beurt is hoort erin; wie in de kooi van dit veld zit ook (de tralies houden hem binnen).
+				if (st.arena > 0 || st.kooi == arena) {
+					continue;
+				}
+				if (veld.bevatSpelerTot(s.getX(), s.getY(), s.getZ(), VELD_HOOGTE)) {
+					terug(s, st, Ronde.MOBARENA);
+				}
 			}
 		}
+	}
+
+	private static void houdVanDeVloer(MinecraftServer server) {
+		Regio vloer = Spel.regio("vloer");
+		if (vloer == null) {
+			return;
+		}
+		boolean radDraait = KroonRad.draait();
+		for (ServerPlayer s : Mc.deelnemers(server)) {
+			SpelerStatus st = Spel.status(s);
+			boolean hoortOpTribune = st.rol == Rol.KIJKER || (radDraait && st.tribunepunt != null);
+			if (hoortOpTribune && vloer.bevatSpeler(s.getX(), s.getY(), s.getZ())) {
+				terug(s, st, Ronde.CLOWN);
+			}
+		}
+	}
+
+	private static void terug(ServerPlayer s, SpelerStatus st, Ronde ronde) {
+		if (st.tribunepunt == null) {
+			st.tribunepunt = volgendTribunepunt(ronde);
+		}
+		Spel.naarPunt(s, st.tribunepunt);
+		Mc.title(s, Mc.tekst("Terug naar de tribune", ChatFormatting.GRAY), null, 0, 30, 10);
 	}
 
 	// /bc kijker
@@ -265,9 +297,8 @@ public final class Tribune {
 		if (Mc.isStaff(speler)) {
 			return Mc.naam(speler) + " staat in creative of spectator; de mod blijft van staff af";
 		}
-		Spullen spullen = Spel.ronde() == Ronde.HORDE ? Spullen.BEWAREN : Spel.ronde().inArena() ? Spullen.LEGEN : Spullen.HOUDEN;
 		Spel.status(speler).dood = true;
-		maakKijker(server, speler, spullen, false);
+		maakKijker(server, speler, Spel.ronde() == Ronde.DOOLHOF || Spel.ronde() == Ronde.EI ? Spullen.HOUDEN : Spullen.LEGEN, false);
 		return null;
 	}
 
@@ -278,24 +309,57 @@ public final class Tribune {
 			return Mc.naam(speler) + " is geen kijker";
 		}
 		st.dood = false;
-		st.tribunepunt = null;
+		st.kooi = 0;
 		Ronde ronde = Spel.ronde();
-		Rol rol = !Spel.loopt() ? Rol.SPELER : switch (ronde) {
-			case KING -> Rol.HUNTER;
+		boolean loopt = Spel.loopt();
+		Rol rol = !loopt ? Rol.SPELER : switch (ronde) {
+			case CLOWN -> Rol.JAGER;
 			case FFA -> Rol.FFA;
 			default -> Rol.SPELER;
 		};
 		Spel.zetRol(server, speler, rol);
-		speler.setGameMode(ronde.survival() && Spel.loopt() ? GameType.SURVIVAL : GameType.ADVENTURE);
-		geefBewaardTerug(speler);
-		String terug = switch (ronde) {
-			case HORDE -> "arena_spawn";
-			case KING, FFA -> "hunter_1";
-			default -> null;
-		};
-		if (Spel.loopt() && terug != null) {
-			Spel.naarPunt(speler, terug);
+		speler.setGameMode(ronde.survival() && loopt ? GameType.SURVIVAL : GameType.ADVENTURE);
+		if (!loopt) {
+			st.tribunepunt = null;
+			return null;
+		}
+		switch (ronde) {
+			case DOOLHOF -> {
+				st.tribunepunt = null;
+				Spel.naarPunt(speler, "doolhof_start");
+			}
+			case EI -> {
+				st.tribunepunt = null;
+				Spel.naarPunt(speler, st.eiSpawn != null ? st.eiSpawn : "ei_spawn_1");
+			}
+			case MOBARENA -> {
+				// Weer wachtend op de tribune: hij mag een volgende beurt spelen.
+				naarTribune(speler, Ronde.MOBARENA);
+			}
+			case QUIZ -> {
+				st.tribunepunt = null;
+				Tribune.naarVerzamelpuntQuiz(speler);
+			}
+			case CLOWN, FFA -> {
+				st.tribunepunt = null;
+				List<String> plekken = Spel.reeks("jager_");
+				Spel.naarPunt(speler, plekken.isEmpty() ? "jager_1" : plekken.get(Spel.RANDOM.nextInt(plekken.size())));
+			}
+			case BASISKAMP -> {
+			}
 		}
 		return null;
+	}
+
+	/** Naar de bank van zijn team, of het podium voor de presentator. */
+	public static void naarVerzamelpuntQuiz(ServerPlayer speler) {
+		if (Spel.isPresentator(speler)) {
+			Spel.naarPunt(speler, "quiz_podium");
+			return;
+		}
+		Kleur k = Teams.keuze(speler);
+		if (k != null) {
+			Spel.naarPunt(speler, "quiz_" + k.id());
+		}
 	}
 }

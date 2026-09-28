@@ -2,13 +2,13 @@ package nl.pudding.bootcamp.game;
 
 import nl.pudding.bootcamp.core.Ronde;
 import nl.pudding.bootcamp.game.ronde1.Doolhof;
-import nl.pudding.bootcamp.game.ronde2.Horde;
-import nl.pudding.bootcamp.game.ronde3.Ei;
-import nl.pudding.bootcamp.game.ronde4.King;
-import nl.pudding.bootcamp.game.ronde5.Ffa;
-import nl.pudding.bootcamp.game.ronde6.Finale;
+import nl.pudding.bootcamp.game.ronde2.Ei;
+import nl.pudding.bootcamp.game.ronde3.MobArena;
+import nl.pudding.bootcamp.game.ronde4.Quiz;
+import nl.pudding.bootcamp.game.ronde5.ClownVsAll;
+import nl.pudding.bootcamp.game.ronde6.Ffa;
 
-/** Welke klasse bij welke ronde hoort. Elke ronde zet hier haar eigen regel in. */
+/** Welke klasse bij welke ronde hoort. */
 public final class Rondes {
 	private Rondes() {
 	}
@@ -16,11 +16,11 @@ public final class Rondes {
 	public static RondeLogica maak(Ronde ronde) {
 		return switch (ronde) {
 			case DOOLHOF -> new Doolhof();
-			case HORDE -> new Horde();
 			case EI -> new Ei();
-			case KING -> new King();
+			case MOBARENA -> new MobArena();
+			case QUIZ -> new Quiz();
+			case CLOWN -> new ClownVsAll();
 			case FFA -> new Ffa();
-			case FINALE -> new Finale();
 			case BASISKAMP -> throw new IllegalArgumentException("het basiskamp is geen ronde; gebruik /bc reset");
 		};
 	}

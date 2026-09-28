@@ -3,52 +3,51 @@
     {
       "naam": "Zombies",
       "mobs": [
-        { "type": "minecraft:zombie", "aantal": 20 }
+        { "type": "minecraft:zombie", "aantal": 4 }
       ]
     },
     {
       "naam": "Skeletons en spiders",
       "mobs": [
-        { "type": "minecraft:skeleton", "aantal": 15, "gear": { "mainhand": "minecraft:bow" } },
-        { "type": "minecraft:spider", "aantal": 10 }
+        { "type": "minecraft:skeleton", "aantal": 4, "gear": { "mainhand": "minecraft:bow" } },
+        { "type": "minecraft:spider", "aantal": 3 }
       ]
     },
     {
       "naam": "Zombies met iron gear en creepers",
       "mobs": [
         {
-          "type": "minecraft:zombie", "aantal": 15,
+          "type": "minecraft:zombie", "aantal": 4,
           "gear": {
             "head": "minecraft:iron_helmet", "chest": "minecraft:iron_chestplate",
             "legs": "minecraft:iron_leggings", "feet": "minecraft:iron_boots",
             "mainhand": "minecraft:iron_sword"
           }
         },
-        { "type": "minecraft:creeper", "aantal": 8 }
+        { "type": "minecraft:creeper", "aantal": 2 }
       ]
     },
     {
       "naam": "Zombies, witches en cave spiders",
       "mobs": [
         {
-          "type": "minecraft:zombie", "aantal": 15,
+          "type": "minecraft:zombie", "aantal": 4,
           "gear": {
             "head": "minecraft:iron_helmet", "chest": "minecraft:iron_chestplate",
             "legs": "minecraft:iron_leggings", "feet": "minecraft:iron_boots",
             "mainhand": "minecraft:iron_sword"
           }
         },
-        { "type": "minecraft:witch", "aantal": 6 },
-        { "type": "minecraft:cave_spider", "aantal": 8 }
+        { "type": "minecraft:witch", "aantal": 2 },
+        { "type": "minecraft:cave_spider", "aantal": 3 }
       ]
     },
     {
-      "naam": "Boss wave",
-      "schaal": false,
+      "naam": "Ravager, vindicators en evoker",
       "mobs": [
-        { "type": "minecraft:ravager", "aantal": 2 },
-        { "type": "minecraft:evoker", "aantal": 4 },
-        { "type": "minecraft:vindicator", "aantal": 10, "gear": { "mainhand": "minecraft:iron_axe" } }
+        { "type": "minecraft:ravager", "aantal": 1 },
+        { "type": "minecraft:vindicator", "aantal": 3, "gear": { "mainhand": "minecraft:iron_axe" } },
+        { "type": "minecraft:evoker", "aantal": 1 }
       ]
     }
   ]

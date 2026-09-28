@@ -11,9 +11,9 @@ import net.minecraft.world.item.component.Fireworks;
 
 import java.util.List;
 
-/** Vuurpijlen: een grote gouden bol met staart, vluchtduur 1. */
+/** Vuurpijlen: een grote bol met staart, vluchtduur 1. */
 public final class Vuurwerk {
-	private static final int GOUD = 0xFFD700;
+	public static final int GOUD = 0xFFD700;
 	private static final int WIT = 0xFFFFFF;
 
 	private Vuurwerk() {
@@ -21,8 +21,13 @@ public final class Vuurwerk {
 
 	/** Schiet een gouden vuurpijl af vanaf dit punt; hij ontploft een stuk hoger. */
 	public static void goud(ServerLevel wereld, double x, double y, double z) {
+		kleur(wereld, x, y, z, GOUD);
+	}
+
+	/** Een vuurpijl in een eigen kleur (de teamkleur), met een witte fade. */
+	public static void kleur(ServerLevel wereld, double x, double y, double z, int rgb) {
 		ItemStack pijl = new ItemStack(Items.FIREWORK_ROCKET);
-		FireworkExplosion bol = new FireworkExplosion(FireworkExplosion.Shape.LARGE_BALL, IntList.of(GOUD), IntList.of(WIT), true, false);
+		FireworkExplosion bol = new FireworkExplosion(FireworkExplosion.Shape.LARGE_BALL, IntList.of(rgb), IntList.of(WIT), true, false);
 		pijl.set(DataComponents.FIREWORKS, new Fireworks(1, List.of(bol)));
 		wereld.addFreshEntity(new FireworkRocketEntity(wereld, x, y, z, pijl));
 	}

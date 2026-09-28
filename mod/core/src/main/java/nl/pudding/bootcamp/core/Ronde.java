@@ -4,46 +4,48 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-/** De rondes van de avond, met wat elke ronde aan regio's en punten nodig heeft. */
+/**
+ * De rondes van de avond, met hun commando en wat elke ronde aan regio's en punten nodig heeft.
+ * Van een genummerde reeks ({@code ei_spawn_1} t/m {@code ei_spawn_n}) moet er minstens één zijn:
+ * daarom staat alleen {@code _1} in de lijst. Hoe lang een ronde duurt staat in de
+ * {@link Instellingen}, niet hier.
+ */
 public enum Ronde {
-	BASISKAMP(0, "Basiskamp", 0, false, List.of(), List.of()),
-	DOOLHOF(1, "Doolhof", 10 * 60, false,
-			List.of("doolhof", "doolhof_uit"),
+	BASISKAMP(0, "Basiskamp", null, false, List.of(), List.of()),
+	DOOLHOF(1, "De Doolhof", "doolhof", false,
+			List.of("doolhof", "doolhof_uit", "poort_doolhof"),
 			List.of("doolhof_start", "v2")),
-	HORDE(2, "De Horde", 10 * 60, false,
-			List.of("arena"),
-			List.of("arena_spawn", "mob_1", "mob_2", "mob_3", "mob_4",
-					"tribune_horde_1", "tribune_horde_2", "v3")),
-	EI(3, "Het Ei", 10 * 60, true,
-			List.of("eibos", "eiplaat"),
-			List.of("ei_start", "ei_beacon", "kring")),
-	KING(4, "King of the SMP", 15 * 60, false,
+	EI(2, "Het Ei", "ei", true,
+			List.of("ei", "eigebied"),
+			List.of("ei_spawn_1", "v3")),
+	MOBARENA(3, "De Mob Arena", "mobarena", false,
+			List.of("mobarena", "veld_1", "veld_2"),
+			List.of("kooi_1", "kooi_2", "tribune_mob_1", "mob_1_1", "mob_2_1",
+					"start_1_rood", "start_1_blauw", "start_1_groen", "start_1_geel",
+					"start_2_rood", "start_2_blauw", "start_2_groen", "start_2_geel")),
+	QUIZ(4, "De Quiz", "quiz", false,
+			List.of("quiz"),
+			List.of("quiz_rood", "quiz_blauw", "quiz_groen", "quiz_geel", "quiz_podium",
+					"quizlamp_rood", "quizlamp_blauw", "quizlamp_groen", "quizlamp_geel", "tribune_1")),
+	CLOWN(5, "Clown vs All", "clown", false,
 			List.of("vloer"),
-			List.of("troon", "hunter_1", "hunter_2", "hunter_3", "hunter_4",
-					"tribune_1", "tribune_2", "tribune_3", "tribune_4")),
-	FFA(5, "Arena FFA", 10 * 60, false,
+			List.of("troon", "jager_1", "tribune_1")),
+	FFA(6, "De FFA", "ffa", false,
 			List.of("vloer"),
-			List.of("hunter_1", "hunter_2", "hunter_3", "hunter_4",
-					"tribune_1", "tribune_2", "tribune_3", "tribune_4")),
-	FINALE(6, "De Finale", 0, false,
-			List.of("finale"),
-			List.of("finale_1", "finale_2", "kroning",
-					"tribune_1", "tribune_2", "tribune_3", "tribune_4"));
-
-	public static final int AANTAL_LAMPEN = 20;
+			List.of("troon", "jager_1", "tribune_1"));
 
 	private final int nummer;
 	private final String naam;
-	private final int duurSeconden;
+	private final String commando;
 	private final boolean survival;
 	private final List<String> vereisteRegios;
 	private final List<String> vereistePunten;
 
-	Ronde(int nummer, String naam, int duurSeconden, boolean survival,
+	Ronde(int nummer, String naam, String commando, boolean survival,
 			List<String> vereisteRegios, List<String> vereistePunten) {
 		this.nummer = nummer;
 		this.naam = naam;
-		this.duurSeconden = duurSeconden;
+		this.commando = commando;
 		this.survival = survival;
 		this.vereisteRegios = vereisteRegios;
 		this.vereistePunten = vereistePunten;
@@ -57,12 +59,12 @@ public enum Ronde {
 		return naam;
 	}
 
-	/** Duur van de timer in seconden; 0 als de ronde geen timer heeft. */
-	public int duurSeconden() {
-		return duurSeconden;
+	/** Het commando van deze ronde zonder slash ({@code mobarena}), {@code null} voor het basiskamp. */
+	public String commando() {
+		return commando;
 	}
 
-	/** Alleen in het Ei-bos moet je minen; overal elders is het adventure. */
+	/** Alleen in het Ei moet je minen; overal elders is het adventure. */
 	public boolean survival() {
 		return survival;
 	}
@@ -77,7 +79,12 @@ public enum Ronde {
 
 	/** Speelt deze ronde in de Arena (tribune = {@code tribune_n}, terugkomers worden kijker)? */
 	public boolean inArena() {
-		return this == KING || this == FFA || this == FINALE;
+		return this == CLOWN || this == FFA;
+	}
+
+	/** Spelen de vier teamkleuren mee (ronde 1 t/m 4)? */
+	public boolean metTeams() {
+		return nummer >= 1 && nummer <= 4;
 	}
 
 	public static Ronde vanNummer(int nummer) {
@@ -87,15 +94,6 @@ public enum Ronde {
 			}
 		}
 		return null;
-	}
-
-	/** Wat Het Rad nodig heeft: de twintig lampen van De Kring. */
-	public static List<String> vereistePuntenRad() {
-		List<String> uit = new ArrayList<>();
-		for (int i = 0; i < AANTAL_LAMPEN; i++) {
-			uit.add("lamp_" + i);
-		}
-		return uit;
 	}
 
 	/** Alles wat ontbreekt voor deze ronde, regio's eerst. Leeg betekent: starten mag. */
@@ -117,5 +115,26 @@ public enum Ronde {
 			}
 		}
 		return uit;
+	}
+
+	/**
+	 * De punten van een genummerde reeks die er zijn, op volgorde: {@code prefix + 1},
+	 * {@code prefix + 2}, ... tot het eerste gat.
+	 */
+	public static List<String> reeks(String prefix, Set<String> punten) {
+		List<String> uit = new ArrayList<>();
+		for (int i = 1; punten.contains(prefix + i); i++) {
+			uit.add(prefix + i);
+		}
+		return uit;
+	}
+
+	/** Het eerste nummer in een reeks dat nog vrij is ({@code /clown jagerplek} zonder nummer). */
+	public static int volgendVrij(String prefix, Set<String> punten) {
+		int i = 1;
+		while (punten.contains(prefix + i)) {
+			i++;
+		}
+		return i;
 	}
 }

@@ -144,8 +144,30 @@ public final class Wand {
 		}
 	}
 
-	/** Particles op de twaalf randen van de doos. */
+	/** Particles op de randen: van elk deel de twaalf randen, of de rand van de cirkel. */
 	private static void teken(ServerLevel wereld, Regio r) {
+		if (r.isCilinder()) {
+			tekenCirkel(wereld, r.cilinder());
+			return;
+		}
+		for (Regio.Doos d : r.delen()) {
+			tekenDoos(wereld, d);
+		}
+	}
+
+	private static void tekenCirkel(ServerLevel wereld, Regio.Cilinder c) {
+		double omtrek = Math.PI * c.diameter();
+		int stappen = (int) Math.min(MAX_PARTICLES / 2, Math.max(16, omtrek));
+		for (int i = 0; i < stappen; i++) {
+			double hoek = 2 * Math.PI * i / stappen;
+			double x = c.x() + Math.cos(hoek) * c.straal();
+			double z = c.z() + Math.sin(hoek) * c.straal();
+			punt(wereld, x, c.y() + 0.1, z);
+			punt(wereld, x, c.y() + c.hoogte(), z);
+		}
+	}
+
+	private static void tekenDoos(ServerLevel wereld, Regio.Doos r) {
 		double x0 = r.min().x();
 		double y0 = r.min().y();
 		double z0 = r.min().z();

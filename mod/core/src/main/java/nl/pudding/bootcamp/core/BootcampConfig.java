@@ -9,26 +9,36 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * De inhoud van {@code <wereld>/bootcamp.json}: regio's, punten, doodteksten, de pilaar van elke
- * kop in De Kring en de uitverkorene. Geen coördinaten in code.
+ * De inhoud van {@code <wereld>/bootcamp.json}: regio's, punten, doodteksten, de grapjes van de
+ * nep-uitgangen, de teamkeuzes, de uitverkorene, de presentator en de instellingen per ronde.
+ * Geen coördinaten in code.
  *
  * <p>Spelers staan hier op naam, zodat de staff alles kan klaarzetten voordat iemand online is.
  * Namen worden in kleine letters bewaard en vergeleken.
  */
 public final class BootcampConfig {
+	public static final List<String> GRAPJES = List.of(
+			"BOEM. Verkeerde deur.",
+			"Haha, nep!",
+			"Dit is niet de uitgang, sukkel");
+
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
 	private final Map<String, Regio> regios = new TreeMap<>();
 	private final Map<String, Punt> punten = new TreeMap<>();
 	private final List<String> doodteksten = new ArrayList<>(Doodteksten.STANDAARD);
-	private final Map<String, Integer> slots = new TreeMap<>();
+	private final List<String> grapjes = new ArrayList<>(GRAPJES);
+	private final Map<String, Kleur> teams = new TreeMap<>();
 	private String uitverkoren;
+	private String presentator;
+	private Instellingen instellingen = new Instellingen();
 
 	public Map<String, Regio> regios() {
 		return regios;
@@ -42,10 +52,40 @@ public final class BootcampConfig {
 		return doodteksten;
 	}
 
-	/** Spelernaam (kleine letters) naar pilaar 0 t/m 19. */
-	public Map<String, Integer> slots() {
-		return slots;
+	/** De grapjes die je in beeld krijgt bij een nep-uitgang. */
+	public List<String> grapjes() {
+		return grapjes;
 	}
+
+	public Instellingen instellingen() {
+		return instellingen;
+	}
+
+	// Teams
+
+	/** Spelernaam (kleine letters) naar teamkleur. */
+	public Map<String, Kleur> teams() {
+		return teams;
+	}
+
+	public Kleur teamVan(String naam) {
+		return naam == null ? null : teams.get(sleutel(naam));
+	}
+
+	/** {@code null} haalt de keuze weg. */
+	public void zetTeam(String naam, Kleur kleur) {
+		if (kleur == null) {
+			teams.remove(sleutel(naam));
+		} else {
+			teams.put(sleutel(naam), kleur);
+		}
+	}
+
+	public int aantalInTeam(Kleur kleur) {
+		return (int) teams.values().stream().filter(k -> k == kleur).count();
+	}
+
+	// Rollen op naam
 
 	/** Naam van de uitverkorene in kleine letters, of {@code null}. */
 	public String uitverkoren() {
@@ -60,22 +100,17 @@ public final class BootcampConfig {
 		return uitverkoren != null && naam != null && uitverkoren.equals(sleutel(naam));
 	}
 
-	/**
-	 * Zet de pilaar van een speler. Een pilaar heeft maar één kop: wie er al stond raakt zijn slot
-	 * kwijt.
-	 */
-	public void zetSlot(String naam, int slot) {
-		if (slot < 0 || slot >= Ronde.AANTAL_LAMPEN) {
-			throw new IllegalArgumentException("slot moet 0 t/m " + (Ronde.AANTAL_LAMPEN - 1) + " zijn");
-		}
-		slots.values().removeIf(s -> s == slot);
-		slots.put(sleutel(naam), slot);
+	/** Naam van de presentator van de quiz in kleine letters, of {@code null}. */
+	public String presentator() {
+		return presentator;
 	}
 
-	/** De pilaar van deze speler, of -1 als hij er geen heeft. */
-	public int slotVan(String naam) {
-		Integer s = naam == null ? null : slots.get(sleutel(naam));
-		return s == null ? -1 : s;
+	public void zetPresentator(String naam) {
+		this.presentator = naam == null ? null : sleutel(naam);
+	}
+
+	public boolean isPresentator(String naam) {
+		return presentator != null && naam != null && presentator.equals(sleutel(naam));
 	}
 
 	public static String sleutel(String naam) {
@@ -88,12 +123,7 @@ public final class BootcampConfig {
 		JsonObject root = new JsonObject();
 
 		JsonObject r = new JsonObject();
-		regios.forEach((naam, regio) -> {
-			JsonObject o = new JsonObject();
-			o.add("min", pos(regio.min()));
-			o.add("max", pos(regio.max()));
-			r.add(naam, o);
-		});
+		regios.forEach((naam, regio) -> r.add(naam, regioNaarJson(regio)));
 		root.add("regios", r);
 
 		JsonObject p = new JsonObject();
@@ -116,18 +146,27 @@ public final class BootcampConfig {
 		doodteksten.forEach(d::add);
 		root.add("doodteksten", d);
 
-		JsonObject s = new JsonObject();
-		slots.forEach(s::addProperty);
-		root.add("slots", s);
+		JsonArray g = new JsonArray();
+		grapjes.forEach(g::add);
+		root.add("grapjes", g);
+
+		JsonObject t = new JsonObject();
+		teams.forEach((naam, kleur) -> t.addProperty(naam, kleur.id()));
+		root.add("teams", t);
 
 		if (uitverkoren != null) {
 			root.addProperty("uitverkoren", uitverkoren);
 		}
+		if (presentator != null) {
+			root.addProperty("presentator", presentator);
+		}
+		root.add("instellingen", instellingenNaarJson(instellingen));
 		return GSON.toJson(root);
 	}
 
 	/**
-	 * Leest een config. Ontbrekende onderdelen zijn leeg (doodteksten: de standaardlijst).
+	 * Leest een config. Ontbrekende onderdelen zijn leeg of standaard. Een regio in de oude vorm
+	 * met één doos ({@code min} en {@code max}) wordt nog gelezen.
 	 *
 	 * @throws IllegalArgumentException met een leesbare melding als de JSON niet klopt
 	 */
@@ -147,8 +186,7 @@ public final class BootcampConfig {
 		try {
 			if (root.has("regios")) {
 				for (Map.Entry<String, JsonElement> e : root.getAsJsonObject("regios").entrySet()) {
-					JsonObject o = e.getValue().getAsJsonObject();
-					c.regios.put(e.getKey(), Regio.van(pos(o.getAsJsonArray("min")), pos(o.getAsJsonArray("max"))));
+					c.regios.put(e.getKey(), regioUitJson(e.getKey(), e.getValue().getAsJsonObject()));
 				}
 			}
 			if (root.has("punten")) {
@@ -162,34 +200,188 @@ public final class BootcampConfig {
 							blok));
 				}
 			}
-			if (root.has("doodteksten")) {
-				List<String> teksten = new ArrayList<>();
-				for (JsonElement e : root.getAsJsonArray("doodteksten")) {
-					String t = e.getAsString().strip();
-					if (!t.isEmpty()) {
-						teksten.add(t);
+			leesTeksten(root, "doodteksten", c.doodteksten);
+			leesTeksten(root, "grapjes", c.grapjes);
+			if (root.has("teams")) {
+				for (Map.Entry<String, JsonElement> e : root.getAsJsonObject("teams").entrySet()) {
+					Kleur k = Kleur.vanId(e.getValue().getAsString());
+					if (k == null) {
+						throw new IllegalArgumentException("teams." + e.getKey() + ": onbekende kleur '" + e.getValue().getAsString() + "'");
 					}
-				}
-				if (!teksten.isEmpty()) {
-					c.doodteksten.clear();
-					c.doodteksten.addAll(teksten);
-				}
-			}
-			if (root.has("slots")) {
-				for (Map.Entry<String, JsonElement> e : root.getAsJsonObject("slots").entrySet()) {
-					c.zetSlot(e.getKey(), e.getValue().getAsInt());
+					c.zetTeam(e.getKey(), k);
 				}
 			}
 			if (root.has("uitverkoren") && !root.get("uitverkoren").isJsonNull()) {
 				c.zetUitverkoren(root.get("uitverkoren").getAsString());
 			}
+			if (root.has("presentator") && !root.get("presentator").isJsonNull()) {
+				c.zetPresentator(root.get("presentator").getAsString());
+			}
+			if (root.has("instellingen")) {
+				c.instellingen = instellingenUitJson(root.getAsJsonObject("instellingen"));
+			}
 		} catch (IllegalArgumentException e) {
-			throw new IllegalArgumentException("bootcamp.json: " + e.getMessage());
+			throw new IllegalArgumentException(e.getMessage().startsWith("bootcamp.json") ? e.getMessage() : "bootcamp.json: " + e.getMessage());
 		} catch (RuntimeException e) {
 			// ClassCast, IllegalState, NullPointer uit Gson: een veld heeft de verkeerde vorm.
 			throw new IllegalArgumentException("bootcamp.json: een veld heeft de verkeerde vorm (" + e + ")");
 		}
 		return c;
+	}
+
+	private static void leesTeksten(JsonObject root, String veld, List<String> doel) {
+		if (!root.has(veld)) {
+			return;
+		}
+		List<String> teksten = new ArrayList<>();
+		for (JsonElement e : root.getAsJsonArray(veld)) {
+			String t = e.getAsString().strip();
+			if (!t.isEmpty()) {
+				teksten.add(t);
+			}
+		}
+		if (!teksten.isEmpty()) {
+			doel.clear();
+			doel.addAll(teksten);
+		}
+	}
+
+	private static JsonObject regioNaarJson(Regio regio) {
+		JsonObject o = new JsonObject();
+		if (regio.isCilinder()) {
+			Regio.Cilinder c = regio.cilinder();
+			JsonObject ci = new JsonObject();
+			ci.addProperty("x", c.x());
+			ci.addProperty("z", c.z());
+			ci.addProperty("y", c.y());
+			ci.addProperty("diameter", c.diameter());
+			ci.addProperty("hoogte", c.hoogte());
+			o.add("cilinder", ci);
+		} else if (regio.delen().size() == 1) {
+			o.add("min", pos(regio.delen().get(0).min()));
+			o.add("max", pos(regio.delen().get(0).max()));
+		} else {
+			JsonArray delen = new JsonArray();
+			for (Regio.Doos d : regio.delen()) {
+				JsonObject deel = new JsonObject();
+				deel.add("min", pos(d.min()));
+				deel.add("max", pos(d.max()));
+				delen.add(deel);
+			}
+			o.add("delen", delen);
+		}
+		return o;
+	}
+
+	private static Regio regioUitJson(String naam, JsonObject o) {
+		if (o.has("cilinder")) {
+			JsonObject c = o.getAsJsonObject("cilinder");
+			return Regio.cilinder(c.get("x").getAsDouble(), c.get("z").getAsDouble(), c.get("y").getAsInt(),
+					c.get("diameter").getAsInt(), c.has("hoogte") ? c.get("hoogte").getAsInt() : 5);
+		}
+		if (o.has("delen")) {
+			List<Regio.Doos> delen = new ArrayList<>();
+			for (JsonElement e : o.getAsJsonArray("delen")) {
+				JsonObject d = e.getAsJsonObject();
+				delen.add(Regio.Doos.van(pos(d.getAsJsonArray("min")), pos(d.getAsJsonArray("max"))));
+			}
+			if (delen.isEmpty()) {
+				throw new IllegalArgumentException("regio " + naam + " heeft geen delen");
+			}
+			return Regio.uitDelen(delen);
+		}
+		return Regio.van(pos(o.getAsJsonArray("min")), pos(o.getAsJsonArray("max")));
+	}
+
+	private static JsonObject instellingenNaarJson(Instellingen i) {
+		JsonObject o = new JsonObject();
+		JsonObject doolhof = new JsonObject();
+		doolhof.addProperty("timer", i.doolhofTimer());
+		doolhof.addProperty("poort", i.doolhofPoort());
+		doolhof.addProperty("hint", i.doolhofHint());
+		if (i.hinttekst() != null) {
+			doolhof.addProperty("hinttekst", i.hinttekst());
+		}
+		o.add("doolhof", doolhof);
+
+		JsonObject ei = new JsonObject();
+		ei.addProperty("timer", i.eiTimer());
+		JsonObject blokken = new JsonObject();
+		i.eiBlokken().forEach((b, n) -> blokken.addProperty(b.id(), n));
+		ei.add("blokken", blokken);
+		o.add("ei", ei);
+
+		JsonObject mob = new JsonObject();
+		JsonObject punten = new JsonObject();
+		i.mobPunten().forEach(punten::addProperty);
+		mob.add("punten", punten);
+		mob.addProperty("aftekst", i.aftekst());
+		o.add("mobarena", mob);
+
+		JsonObject clown = new JsonObject();
+		clown.addProperty("wachttekst", i.clownWachttekst());
+		o.add("clown", clown);
+		JsonObject ffa = new JsonObject();
+		ffa.addProperty("wachttekst", i.ffaWachttekst());
+		o.add("ffa", ffa);
+		return o;
+	}
+
+	private static Instellingen instellingenUitJson(JsonObject o) {
+		Instellingen i = new Instellingen();
+		if (o.has("doolhof")) {
+			JsonObject d = o.getAsJsonObject("doolhof");
+			int timer = d.has("timer") ? d.get("timer").getAsInt() : i.doolhofTimer();
+			int poort = d.has("poort") ? d.get("poort").getAsInt() : i.doolhofPoort();
+			int hint = d.has("hint") ? d.get("hint").getAsInt() : i.doolhofHint();
+			wrap("instellingen.doolhof", () -> i.zetDoolhof(timer, poort, hint));
+			if (d.has("hinttekst") && !d.get("hinttekst").isJsonNull()) {
+				wrap("instellingen.doolhof.hinttekst", () -> i.zetHinttekst(d.get("hinttekst").getAsString()));
+			}
+		}
+		if (o.has("ei")) {
+			JsonObject e = o.getAsJsonObject("ei");
+			if (e.has("timer")) {
+				wrap("instellingen.ei.timer", () -> i.zetEiTimer(e.get("timer").getAsInt()));
+			}
+			if (e.has("blokken")) {
+				Map<EiBlok, Integer> nieuw = new EnumMap<>(EiBlok.class);
+				for (Map.Entry<String, JsonElement> b : e.getAsJsonObject("blokken").entrySet()) {
+					EiBlok blok = EiBlok.vanId(b.getKey());
+					if (blok == null) {
+						throw new IllegalArgumentException("instellingen.ei.blokken: onbekende soort '" + b.getKey() + "'");
+					}
+					nieuw.put(blok, b.getValue().getAsInt());
+				}
+				nieuw.forEach((blok, n) -> wrap("instellingen.ei.blokken." + blok.id(), () -> i.zetEiBlokken(blok, n)));
+			}
+		}
+		if (o.has("mobarena")) {
+			JsonObject m = o.getAsJsonObject("mobarena");
+			if (m.has("punten")) {
+				for (Map.Entry<String, JsonElement> p : m.getAsJsonObject("punten").entrySet()) {
+					wrap("instellingen.mobarena.punten." + p.getKey(), () -> i.zetMobPunten(p.getKey(), p.getValue().getAsInt()));
+				}
+			}
+			if (m.has("aftekst")) {
+				wrap("instellingen.mobarena.aftekst", () -> i.zetAftekst(m.get("aftekst").getAsString()));
+			}
+		}
+		if (o.has("clown") && o.getAsJsonObject("clown").has("wachttekst")) {
+			wrap("instellingen.clown.wachttekst", () -> i.zetClownWachttekst(o.getAsJsonObject("clown").get("wachttekst").getAsString()));
+		}
+		if (o.has("ffa") && o.getAsJsonObject("ffa").has("wachttekst")) {
+			wrap("instellingen.ffa.wachttekst", () -> i.zetFfaWachttekst(o.getAsJsonObject("ffa").get("wachttekst").getAsString()));
+		}
+		return i;
+	}
+
+	private static void wrap(String waar, Runnable r) {
+		try {
+			r.run();
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException(waar + ": " + e.getMessage());
+		}
 	}
 
 	private static JsonArray pos(BlokPos p) {
