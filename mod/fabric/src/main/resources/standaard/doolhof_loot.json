@@ -1,0 +1,16 @@
+{
+  "perKist": [2, 4],
+  "items": [
+    { "item": "minecraft:diamond_helmet", "gewicht": 3 },
+    { "item": "minecraft:diamond_chestplate", "gewicht": 2 },
+    { "item": "minecraft:diamond_leggings", "gewicht": 2 },
+    { "item": "minecraft:diamond_boots", "gewicht": 3 },
+    { "item": "minecraft:iron_sword[minecraft:enchantments={\"minecraft:sharpness\":2}]", "gewicht": 4 },
+    { "item": "minecraft:diamond_sword", "gewicht": 2 },
+    { "item": "minecraft:shield", "gewicht": 3 },
+    { "item": "minecraft:bow", "gewicht": 4 },
+    { "item": "minecraft:arrow 16", "gewicht": 6 },
+    { "item": "minecraft:golden_apple", "gewicht": 3 },
+    { "item": "minecraft:cooked_beef 8", "gewicht": 6 }
+  ]
+}

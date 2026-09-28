@@ -12,7 +12,7 @@ import nl.pudding.bootcamp.core.Rol;
 /**
  * De worldborder per ronde. Altijd eerst teleporteren, dan de border zetten.
  *
- * <p>Kijkers staan vaak buiten de border (de tribune tijdens de finale, {@code v2} tijdens het
+ * <p>Kijkers staan vaak buiten de border (de tribune van de Arena, {@code v2} tijdens het
  * doolhof). Schade krijgen ze daar niet, maar de client kleurt het hele scherm rood voor wie
  * buiten de border staat, en dat wil je niet op zeventien streams tegelijk. Daarom krijgt een
  * kijker een eigen border-pakket met een border zo groot als de wereld. De server stuurt bij elke
@@ -38,7 +38,7 @@ public final class Border {
 	private static void naWijziging(MinecraftServer server) {
 		for (ServerPlayer s : Mc.spelers(server)) {
 			Rol rol = Spel.rol(s);
-			if (rol == Rol.KIJKER || rol == Rol.FINALIST) {
+			if (rol == Rol.KIJKER) {
 				verberg(s);
 			}
 		}
@@ -59,6 +59,16 @@ public final class Border {
 		border.setCenter(regio.centerX(), regio.centerZ());
 		border.setSize(grootte);
 		// Geen rood scherm voor wie dicht bij de rand staat; de schade blijft.
+		border.setWarningBlocks(0);
+		border.setWarningTime(0);
+		naWijziging(server);
+	}
+
+	/** Om een eigen midden met een eigen grootte. */
+	public static void zet(MinecraftServer server, double x, double z, double grootte) {
+		WorldBorder border = Mc.wereld(server).getWorldBorder();
+		border.setCenter(x, z);
+		border.setSize(grootte);
 		border.setWarningBlocks(0);
 		border.setWarningTime(0);
 		naWijziging(server);

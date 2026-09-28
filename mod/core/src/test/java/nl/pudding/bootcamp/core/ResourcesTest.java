@@ -52,13 +52,14 @@ class ResourcesTest {
 				KitDef.uitJson(p.getFileName().toString(), lees(p));
 			}
 			List<String> namen = bestanden.stream().map(p -> p.getFileName().toString()).toList();
-			for (String verwacht : List.of("basis.json", "horde.json", "ei.json", "boss.json", "kroonpakket.json", "arena.json", "finale.json")) {
+			for (String verwacht : List.of("basis.json", "ei.json", "jager.json", "boss.json", "kroonpakket.json", "arena.json")) {
 				assertTrue(namen.contains(verwacht), verwacht + " ontbreekt");
 			}
 		}
-		// De kroon blijft op: deze kits hebben geen helm.
+		// De kroon blijft op: de bosskit heeft geen helm; de jagers en de FFA wel.
 		assertFalse(KitDef.uitJson("boss.json", lees(kits.resolve("boss.json"))).heeftHelm());
-		assertFalse(KitDef.uitJson("finale.json", lees(kits.resolve("finale.json"))).heeftHelm());
+		assertTrue(KitDef.uitJson("jager.json", lees(kits.resolve("jager.json"))).heeftHelm());
+		assertTrue(KitDef.uitJson("arena.json", lees(kits.resolve("arena.json"))).heeftHelm());
 		// Deze kits voegen toe en wissen dus niks.
 		assertFalse(KitDef.uitJson("ei.json", lees(kits.resolve("ei.json"))).clear());
 		assertFalse(KitDef.uitJson("kroonpakket.json", lees(kits.resolve("kroonpakket.json"))).clear());
@@ -69,12 +70,20 @@ class ResourcesTest {
 		Path waves = STANDAARD.resolve(WavesDef.BESTAND);
 		assumeTrue(Files.exists(waves), "waves.json komt in T5");
 		WavesDef def = WavesDef.uitJson(lees(waves));
+		// De tabel uit docs/02, per arena voor 4 spelers.
 		assertEquals(5, def.waves().size());
-		assertEquals(20, def.waves().get(0).totaal(20));
-		assertEquals(25, def.waves().get(1).totaal(20));
-		assertEquals(23, def.waves().get(2).totaal(20));
-		assertEquals(29, def.waves().get(3).totaal(20));
-		assertEquals(16, def.waves().get(4).totaal(20));
-		assertFalse(def.waves().get(4).schaal(), "de boss wave staat vast");
+		assertEquals(4, def.waves().get(0).totaal());
+		assertEquals(7, def.waves().get(1).totaal());
+		assertEquals(6, def.waves().get(2).totaal());
+		assertEquals(9, def.waves().get(3).totaal());
+		assertEquals(5, def.waves().get(4).totaal());
+	}
+
+	@Test
+	void lootIsGeldig() throws IOException {
+		LootTabel t = LootTabel.uitJson(lees(STANDAARD.resolve(LootTabel.BESTAND)));
+		assertEquals(2, t.min());
+		assertEquals(4, t.max());
+		assertTrue(t.items().stream().noneMatch(i -> i.item().spec().contains("ender_pearl")), "geen pearls in het doolhof");
 	}
 }

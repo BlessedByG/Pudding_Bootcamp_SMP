@@ -1,49 +1,62 @@
 # Regels die rekenen of beslissen
 
-Elke regel uit [docs/02](../../docs/02-rondes.md) en [docs/03](../../docs/03-kroon-regels.md)
-waar de mod iets voor uitrekent of beslist, met de test die hem vastlegt. Regels die alleen
-Minecraft aansturen (teleport, heal, geluid) staan hier niet; die zitten in het fabric-project en
-worden in-game getest.
+Elke regel uit [docs/02](../../docs/02-rondes.md), [docs/03](../../docs/03-kroon-regels.md) en
+[docs/04](../../docs/04-technische-schets.md) waar de mod iets voor uitrekent of beslist, met de
+test die hem vastlegt. Regels die alleen Minecraft aansturen (teleport, heal, geluid) staan hier
+niet; die zitten in het fabric-project en worden in-game getest.
+
+Dit is de lijst van het rondeplan van 25 september 2026 (taakplan 2). De regels van het oude plan
+(voorsprong, ticket, horde, finale, rust) zijn eruit.
 
 | # | Regel | Code | Test |
 |---|---|---|---|
-| R0.1 | Een regio is twee hoeken, genormaliseerd; center en grootte voor de worldborder komen eruit. De border is vierkant: de langste zijde telt. | `Regio` | `RegioTest.normaliseertHoeken`, `RegioTest.centerEnGrootte` |
-| R0.2 | Voor spelers is een regio een kolom (alleen x en z); poorten gebruiken de hele doos. | `Regio.bevat`, `Regio.bevatDoos` | `RegioTest.kolomNegeertHoogte`, `RegioTest.randenHorenErbij` |
-| R0.2b | De vloer waar kijkers af moeten blijven is rond: de ellips die in de selectie past. De hoeken van het vierkant en de ring vlak achter de rand zijn tribune. | `Regio.bevatRond` | `RegioTest.rondeVloerLaatDeHoekenVrij` |
-| R0.3 | Regio's, punten, doodteksten, slots en de uitverkorene gaan heen en terug door `bootcamp.json`. | `BootcampConfig` | `ConfigTest.heenEnTerug`, `ConfigTest.kapotteJsonGeeftLeesbareFout` |
-| R0.4 | Een pilaar heeft één kop: een slot opnieuw uitdelen haalt het bij de vorige weg. Slots lopen van 0 t/m 19. | `BootcampConfig.zetSlot` | `ConfigTest.slotIsUniek`, `ConfigTest.slotBuitenBereik` |
-| R0.5 | `/bc start` weigert met de lijst van wat ontbreekt en verandert dan niets. | `Ronde.ontbreekt` | `RondeTest.ontbreektNoemtAlles`, `RondeTest.compleetIsLeeg` |
-| R0.6 | Survival alleen in ronde 3; ronde 4, 5 en 6 spelen in de Arena. | `Ronde` | `RondeTest.alleenEiIsSurvival`, `RondeTest.arenaRondes` |
-| R0.7 | De doodtekst is willekeurig uit de lijst in de config; een lege lijst valt terug op de drie standaardteksten. | `Doodteksten.kies` | `DoodtekstenTest` |
-| R0.8 | `/bc reset` weigert niks: een stap die faalt houdt de rest niet tegen. | `ResetRegister` | `ResetRegisterTest` |
-| R1.1 | Timer tien minuten. | `Ronde.DOOLHOF` | `RondeTest.duur` |
-| R1.2 | De eerste vijf uit het doolhof krijgen het voorsprongkistje. | `Regels.krijgtVoorsprong` | `RegelsTest.eersteVijfKrijgenVoorsprong` |
-| R1.3 | Hint na zeven minuten. | `Regels.DOOLHOF_HINT_BIJ` | `RegelsTest.momenten` |
-| R2.1 | Grofweg één mob per speler per wave; de boss wave staat vast. | `Regels.schaalMobs`, `WavesDef` | `RegelsTest.mobsSchalenMee`, `WavesDefTest.totaalSchaalt` |
-| R2.2 | De volgende wave start als de vorige dood is, of na twee minuten. | `HordeVerloop` | `HordeVerloopTest.volgendeWaveBijNulMobs`, `HordeVerloopTest.volgendeWaveNaTweeMinuten` |
-| R2.3 | De laatste wave wacht niet op de klok: die moet dood. | `HordeVerloop` | `HordeVerloopTest.laatsteWaveWachtOpDeMobs` |
-| R2.4 | De ronde stopt bij wave 5 dood of iedereen dood (de timer zit in de ronde). | `HordeVerloop` | `HordeVerloopTest.gewonnen`, `HordeVerloopTest.iedereenDood` |
-| R3.3 | Beacon met vijf minuten op de klok, vuurpijl met drie. | `Regels.EI_BEACON_BIJ`, `EI_VUURPIJL_BIJ` | `RegelsTest.momenten` |
-| R4.0 | Het rad landt altijd op het doelslot; start en aantal rondes (2 of 3) zijn willekeurig. | `Rad` | `RadTest.landtAltijdOpHetDoel`, `RadTest.tweeOfDrieRondes` |
-| R4.0b | Het rad loopt van 2 ticks per stap op naar 30 en wordt nooit sneller. | `Rad.wachttijd` | `RadTest.ritmeLooptOp` |
-| R4.1 | Hunters worden om en om over de vier startpunten verdeeld. | `Regels.startpunt` | `RegelsTest.startpuntenOmEnOm` |
-| R4.2 | 30 seconden voorsprong bij de start, 10 seconden opstelling na een kroonwissel. | `Regels.OPSTELLING_*`, `Countdown` | `RegelsTest.momenten`, `CountdownTest` |
-| R4.3 | Kill de koning en je krijgt de kroon. | `Regels.kroonOpvolger` | `RegelsTest.kroonNaarDeKiller` |
-| R4.4 | Zonder killer: de laatste hit; anders een willekeurige levende hunter. Doden krijgen de kroon niet. | `Regels.kroonOpvolger` | `RegelsTest.kroonNaarLaatsteHit`, `RegelsTest.kroonNaarWillekeurigeHunter`, `RegelsTest.dodeKillerTeltNiet` |
-| R4.7 | Ronde 4 eindigt bij timer nul of zonder levende hunter. | `Regels.ronde4Voorbij` | `RegelsTest.ronde4Einde` |
-| R4.8 | Geen hunter meer als de koning valt: geen opvolger, de ronde is voorbij. | `Regels.kroonOpvolger` | `RegelsTest.geenOpvolgerZonderHunters` |
-| R4.10 | Regeerperiodes: elke kroonwissel een nieuwe periode, de langste is de eretitel. | `Regeerperiodes` | `RegeerperiodesTest` |
-| R5.1 | Iedereen behalve Clown en finalist 1 doet mee aan de FFA, ook de doden van ronde 4. Clown nooit. | `Regels.ffaDeelnemers` | `RegelsTest.ffaZonderClownEnFinalist`, `RegelsTest.ffaAlsClownFinalistIs` |
-| R5.3 | Na vijf minuten krimpt de border in twee minuten naar 10. | `Regels.FFA_KRIMP_*` | `RegelsTest.momenten` |
-| R5.5 | Bij tien minuten beslist het aantal kills. Aanname bij gelijke stand: meeste hp, dan het lot. | `Regels.ffaTiebreak` | `RegelsTest.tiebreakOpKills`, `RegelsTest.tiebreakGelijkOpHp` |
-| R5.6 | Twee minuten rust voor de finale. | `Regels.RUST` | `RegelsTest.momenten` |
-| R6.1 | Border 20, na drie minuten in dertig seconden naar 6. | `Regels.FINALE_*` | `RegelsTest.momenten` |
-| R6.2 | Best of 3: wie er twee wint, wint. | `FinaleStand` | `FinaleStandTest` |
-| R7.1 | Een hunter die uitlogt telt als dood; net zo voor een FFA-speler en voor wie in de horde staat. | `Regels.bijQuit` | `RegelsTest.quitHunterIsDood` |
-| R7.2 | Logt de koning uit, dan dertig seconden wachten; daarna dezelfde kroonwissel als bij een val-dood. | `Regels.bijQuit`, `KONING_UITLOG_WACHT` | `RegelsTest.quitKoningWacht` |
-| R7.3 | Logt een finalist uit tijdens de finale, dan gaat het potje naar de tegenstander. (Aanname, zie bouwlog.) | `Regels.bijQuit` | `RegelsTest.quitFinalist` |
-| R7.4 | Wie terugkomt in ronde 4 t/m 6 wordt kijker op de tribune. Uitzonderingen: de koning binnen zijn dertig seconden, en een finalist. | `Regels.bijJoin` | `RegelsTest.joinInArena` |
-| R7.5 | Wie terugkomt in ronde 1 t/m 3 gaat naar het verzamelpunt of de tribune van dat moment. | `Regels.bijJoin` | `RegelsTest.joinInRondeEenTotDrie` |
+| R0.1 | Een regio is één of meer dozen, genormaliseerd; center en grootte voor de worldborder komen uit de doos om alles heen. De border is vierkant: de langste zijde telt. | `Regio` | `RegioTest.normaliseertHoeken`, `RegioTest.centerEnGrootte` |
+| R0.2 | Voor spelers is een doos een kolom (alleen x en z); poorten, kistenscan en het Ei gebruiken de hele doos. | `Regio.bevat`, `Regio.bevatDoos` | `RegioTest.kolomNegeertHoogte`, `RegioTest.randenHorenErbij` |
+| R0.3 | Een regio mag uit meerdere delen bestaan (de T van een veld); een plek hoort erbij als hij in één deel ligt, delen mogen overlappen. | `Regio.metDeel` | `RegioTest.tVormUitTweeDelen`, `RegioTest.overlappendeDelenMogen` |
+| R0.4 | De vloer is een cilinder: binnen de cirkel én binnen 5 blokken hoogte vanaf de voeten. De border gebruikt de doorsnede. | `Regio.cilinder` | `RegioTest.cilinderTeltOokDeHoogte` |
+| R0.5 | Een veld telt tot 3 blokken boven de selectie, zodat het balkon erboven geen veld is. | `Regio.bevatSpelerTot` | `RegioTest.veldTeltTotEenPaarBlokkenBovenDeSelectie` |
+| R0.6 | Regio's (ook met delen en de cilinder), punten, doodteksten, grapjes, teamkeuzes, uitverkorene, presentator en instellingen gaan heen en terug door `bootcamp.json`; de oude vorm met één doos wordt nog gelezen. | `BootcampConfig` | `ConfigTest.heenEnTerug`, `ConfigTest.oudeVormMetEenDoosEnSlotsWordtGelezen`, `ConfigTest.kapotteJsonGeeftLeesbareFout` |
+| R0.7 | `/<ronde> start` weigert met de lijst van wat ontbreekt en verandert dan niets. Van een genummerde reeks moet er minstens één zijn. | `Ronde.ontbreekt`, `Ronde.reeks` | `RondeTest.ontbreektNoemtAlles`, `RondeTest.compleetIsLeeg`, `RondeTest.reeksTotHetEersteGat` |
+| R0.8 | Zes rondes met elk een eigen commando; survival alleen in het Ei; ronde 5 en 6 spelen in de Arena, ronde 1 t/m 4 met de teamkleuren. | `Ronde` | `RondeTest.nummersEnCommandos`, `RondeTest.alleenEiIsSurvival`, `RondeTest.arenaEnTeams` |
+| R0.9 | De doodtekst is willekeurig uit de lijst in de config; een lege lijst valt terug op de drie standaardteksten. | `Doodteksten.kies` | `DoodtekstenTest` |
+| R0.10 | PvP: ronde 0 t/m 4 nooit, ronde 5 alleen met de kroonhouder, ronde 6 altijd; nooit tijdens een opstelling of countdown, nooit met een kijker of staff. | `PvpRegel.mag` | `PvpTest.deTabelUitDocs04`, `PvpTest.nooitTijdensEenOpstellingOfMetEenKijker` |
+| R0.11 | `/bc reset` weigert niks: een stap die faalt houdt de rest niet tegen. | `ResetRegister` | `ResetRegisterTest` |
+| R0.12 | De instellingen hebben standaarden en grenzen: doolhof-timer 5 t/m 60 en later dan poort en hint, poort 0 tot de timer, hint 1 tot de timer, Ei-timer 5 t/m 60, mobpunten 0 t/m 100, teksten tot 60 tekens. Een lopende timer kan niet korter dan wat er al gespeeld is. | `Instellingen` | `InstellingenTest` |
+| R1.1 | Het maximum per team is `max(5, ceil(spelers / 4))`; een vol team kun je niet kiezen. | `TeamKeuze.maximum`, `TeamKeuze.vol` | `TeamKeuzeTest.maximumIsVijfOfMeer`, `TeamKeuzeTest.volBijHetMaximum` |
+| R1.2 | Wie bij het einde van het doolhof geen team heeft, gaat naar het kleinste team; bij gelijk het lot. | `TeamKeuze.kleinste` | `TeamKeuzeTest.kleinsteTeamBijGelijkHetLot` |
+| R1.3 | Kisten krijgen 2 t/m 4 items uit de loot-tabel, gewogen getrokken. Geen pearls. | `LootTabel` | `LootTest`, `ResourcesTest.lootIsGeldig` |
+| R2.1 | Puntenblokken: netherite 50, diamond 10, gold 5; redstone en emerald geven een effect. Standaard 6, 90, 120, 10, 10. | `EiBlok`, `Instellingen` | `EiVerdelingTest.blokkenEnPunten`, `InstellingenTest.standaarden` |
+| R2.2 | Strooien trekt zonder dubbele uit de deepslate-plekken; samen meer dan er plekken zijn weigert hij. | `EiVerdeling` | `EiVerdelingTest` |
+| R2.3 | `/ei blokken` weigert een totaal boven de deepslate van de vastlegging. | `Instellingen.checkEiBlokken` | `InstellingenTest.eiBlokkenPassenOpDeDeepslate` |
+| R2.4 | De stand van het Ei: meeste punten boven, bij gelijk wie de score het eerst had; wie 0 heeft staat er niet in. Dezelfde regel voor de kills in de FFA. | `Klassement` | `KlassementTest` |
+| R2.5 | Redstone is 50/50: Haste 10 seconden voor de hakker, of 15 seconden bevriezing voor de rest. | `Regels.redstoneGok` | `RegelsTest.redstoneGokIsVijftigVijftig`, `RegelsTest.momenten` |
+| R3.1 | Aantal beurten = het grootste team; per team een gelote volgorde; arena 2 verschoven met ⌊n/2⌋. Iedereen speelt één keer in elke arena, niemand twee beurten achter elkaar bij 5 beurten. | `MobSchema` | `MobSchemaTest.vijfBeurtenIedereenEenKeerInElkeArena`, `MobSchemaTest.hetVoorbeeldUitDeDocs` |
+| R3.2 | Een kleiner team heeft extra beurten; die krijgen bij de start van de beurt een willekeurige speler die nog niet af is en niet al in deze beurt staat, of blijven leeg. | `MobSchema.opstelling` | `MobSchemaTest.kleinerTeamHeeftExtraBeurten`, `MobSchemaTest.extraBeurtPaktIemandDieNogMagEnNietAlSpeelt`, `MobSchemaTest.extraBeurtZonderKandidaatBlijftLeeg` |
+| R3.3 | Wie af is speelt geen beurt meer: zijn geplande plek blijft leeg. | `MobSchema.opstelling` | `MobSchemaTest.wieAfIsLaatZijnPlekLeeg` |
+| R3.4 | De volgende wave 5 seconden nadat beide arena's klaar zijn; na 120 seconden (of `/mobarena wave volgende`) telt een wave altijd als klaar. | `MobVerloop` | `MobVerloopTest.volgendeWaveVijfSecondenNaBeideKlaar`, `MobVerloopTest.naTweeMinutenAltijdKlaar`, `MobVerloopTest.forcerenMetHetCommando` |
+| R3.5 | Een arena is klaar na de laatste wave of zodra al haar spelers af zijn; de beurt is klaar als beide klaar zijn. | `MobVerloop` | `MobVerloopTest.beurtKlaarNaDeLaatsteWave`, `MobVerloopTest.arenaKlaarAlsIedereenAfIs`, `MobVerloopTest.legeArenaIsMeteenKlaar` |
+| R3.6 | Na elke beurt tien seconden vieren, dan pas naar de tribune. | `Regels.BEURT_VIEREN` | `RegelsTest.momenten` |
+| R3.7 | Punten per mobtype (zombie 1 ... ravager 10, elk ander type 1), naar het team van de killer, plus een kill. | `MobPunten`, `Instellingen.mobPunten` | `MobPuntenTest.standaardTabel` |
+| R3.8 | Winnaar: meeste punten, dan meeste kills, dan samen. | `MobPunten.winnaars` | `MobPuntenTest.puntenPerTypeEnTiebreakOpKills`, `MobPuntenTest.helemaalGelijkIsSamen` |
+| R4.1 | Het quiz-rad: 16 vakken, elk team 4 keer, buren (ook rondom) nooit gelijk. | `QuizRad.VAKKEN` | `QuizTest.hetRadHeeftElkTeamVierKeerZonderGelijkeBuren` |
+| R4.2 | 64 standen, vier per vak; elk vierde plaatje heeft een vak onder het pijltje; een tik bij elke vakgrens. | `QuizRad` | `QuizTest.standenEnVakken` |
+| R4.3 | Een draai landt op het midden van een willekeurig vak, elk team 25%, na 2 of 3 rondes, en remt af van 1 naar 6 ticks per stand. | `QuizRad.draai`, `Rad` | `QuizTest.draaiLandtOpEenVakmiddenElkTeamEvenVaak`, `QuizTest.quizRadRemtAfVanEenNaarZes` |
+| R4.4 | Goed: +1 en het team blijft aan de beurt; de reeks staat erbij vanaf twee op rij. Fout of een nieuwe draai: niemand aan de beurt, reeks nul. Zonder team aan de beurt doen goed en fout niets. | `QuizStand` | `QuizTest.goedFoutEnDeReeks` |
+| R4.5 | Einde: het team met de meeste punten; bij gelijke stand kiest de commander. | `QuizStand.leiders` | `QuizTest.winnaarOfGelijkspel` |
+| R5.1 | Het Rad landt altijd op het doelslot (de uitverkorene); start en aantal rondes (2 of 3) zijn willekeurig. | `Rad` | `RadTest.landtAltijdOpHetDoel`, `RadTest.tweeOfDrieRondes` |
+| R5.1b | Het Rad loopt van 2 ticks per stap op naar 30 en wordt nooit sneller. | `Rad.wachttijd` | `RadTest.ritmeLooptOp` |
+| R5.2 | Jagers willekeurig over de startplekken, één per plek; meer jagers dan plekken: om en om. | `Regels.verdeelWillekeurig` | `RegelsTest.jagersWillekeurigEenPerPlek` |
+| R5.3 | Ei-spawns om en om. | `Regels.startpunt` | `RegelsTest.startpuntenOmEnOm` |
+| R5.4 | Na `/clown go` en na elke kroonwissel 10 seconden countdown. | `Regels.OPSTELLING` | `RegelsTest.momenten` |
+| R5.5 | Kill de kroonhouder en je krijgt de kroon. | `Regels.kroonOpvolger` | `RegelsTest.kroonNaarDeKiller` |
+| R5.6 | Zonder killer: de laatste hit; anders een willekeurige levende jager. Wie af is krijgt de kroon niet; zonder jagers geen opvolger. | `Regels.kroonOpvolger` | `RegelsTest.kroonNaarLaatsteHit`, `RegelsTest.kroonNaarWillekeurigeJager`, `RegelsTest.dodeKillerTeltNiet`, `RegelsTest.geenOpvolgerZonderJagers` |
+| R5.7 | Logt de kroonhouder uit, dan dertig seconden wachten; daarna dezelfde kroonwissel. | `Regels.bijQuit`, `KROON_UITLOG_WACHT` | `RegelsTest.quitRegels` |
+| R5.8 | Geen timer: de ronde is voorbij zodra er één over is. | `Regels.laatsteOver` | `RegelsTest.eindeBijEenOver` |
+| R5.10 | Regeerperiodes: elke kroonwissel een nieuwe periode. | `Regeerperiodes` | `RegeerperiodesTest` |
+| R6.1 | Iedereen behalve de uitverkorene doet mee aan de FFA, ook wie in ronde 5 af was. | `Regels.ffaDeelnemers` | `RegelsTest.ffaZonderDeUitverkorene` |
+| R6.5 | Bij drie over `LAATSTE DRIE`, bij twee `LAATSTE TWEE`. | `Regels.aftelTitle` | `RegelsTest.laatsteDrieEnTwee` |
+| R7.1 | Uitloggen: een jager in ronde 5 en een FFA-speler zijn af; wie in de mob arena aan de beurt is telt als dood; in de andere rondes gebeurt er niks. | `Regels.bijQuit` | `RegelsTest.quitRegels` |
+| R7.2 | Terugkomen: doolhof naar de start (of `v2` met een team), Ei naar je eigen startplek, mob arena de tribune, quiz je bank, ronde 5 en 6 kijker (de kroonhouder binnen zijn dertig seconden blijft kroonhouder). | `Regels.bijJoin` | `RegelsTest.joinRegels` |
 | R8.1 | Een kit is per slot een item in `/give`-syntax, met optioneel een aantal. Fouten noemen bestand en slot. | `KitDef` | `KitDefTest` |
 | R8.2 | De bossbar heeft per ronde een vast formaat. | `BossbarTekst`, `Tijd` | `BossbarTekstTest` |
-| R8.3 | De standaardbestanden in de jar (`fabric.mod.json`, kits, `waves.json`) zijn geldig. | | `ResourcesTest` |
+| R8.3 | De standaardbestanden in de jar (`fabric.mod.json`, kits, `waves.json`, `doolhof_loot.json`) zijn geldig; de waves volgen de tabel uit docs/02. | | `ResourcesTest` |

@@ -15,10 +15,13 @@ import nl.pudding.bootcamp.game.Poorten;
 import nl.pudding.bootcamp.game.Spel;
 import nl.pudding.bootcamp.game.SpelerReset;
 import nl.pudding.bootcamp.game.Spelregels;
-import nl.pudding.bootcamp.game.Teams;
-import nl.pudding.bootcamp.game.ronde2.Horde;
-import nl.pudding.bootcamp.rad.RadSpel;
+import nl.pudding.bootcamp.game.ronde2.Ei;
+import nl.pudding.bootcamp.game.ronde2.EiOpslag;
+import nl.pudding.bootcamp.game.ronde3.MobArena;
+import nl.pudding.bootcamp.game.ronde4.Quiz;
+import nl.pudding.bootcamp.rad.KroonRad;
 import nl.pudding.bootcamp.setup.Wand;
+import nl.pudding.bootcamp.teams.Teams;
 import nl.pudding.bootcamp.tribune.Tribune;
 import nl.pudding.bootcamp.visuals.Bossbar;
 import nl.pudding.bootcamp.visuals.Sidebar;
@@ -34,13 +37,16 @@ public final class Bootcamp implements ModInitializer {
 	public void onInitialize() {
 		// De volgorde hier is de volgorde waarin /bc reset opruimt.
 		Spel.init();
-		RadSpel.init();
+		KroonRad.init();
 		Tribune.init();
 		Kroon.init();
 		Opstelling.init();
 		Zweefkroon.init();
 		Sidebar.init();
-		Horde.init();
+		MobArena.init();
+		Ei.init();
+		EiOpslag.init();
+		Quiz.init();
 		Poorten.init();
 		SpelerReset.init();
 		Teams.init();
@@ -57,11 +63,14 @@ public final class Bootcamp implements ModInitializer {
 			Spelregels.zet(server);
 			Teams.zorgDatZeBestaan(server);
 			Zweefkroon.ruimAllesOp(server);
+			// De sidebar staat in het scoreboard van de wereld; na een herstart weet de mod niet meer hoeveel regels er stonden.
+			Sidebar.weg(server);
 		});
 		ServerLifecycleEvents.SERVER_STOPPING.register(server -> ConfigStore.bewaar());
 
 		ServerTickEvents.END_SERVER_TICK.register(server -> {
 			Wand.tick(server);
+			EiOpslag.tick(server);
 			Spel.tick(server);
 			Tribune.tick(server);
 			Zweefkroon.tick(server);

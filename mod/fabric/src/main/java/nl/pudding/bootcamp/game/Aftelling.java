@@ -69,7 +69,7 @@ public final class Aftelling {
 		}
 		for (ServerPlayer speler : Mc.spelers(server)) {
 			if (s <= TITLES_VANAF) {
-				Mc.title(speler, Mc.tekst(String.valueOf(s), ChatFormatting.YELLOW, ChatFormatting.BOLD), null, 0, 25, 5);
+				Mc.title(speler, Mc.tekst(String.valueOf(s), ChatFormatting.GOLD, ChatFormatting.BOLD), null, 0, 25, 5);
 				// Van laag naar hoog: 5 is de laagste toon, 1 de hoogste.
 				Mc.geluid(speler, SoundEvents.NOTE_BLOCK_PLING, 1f, 0.6f + (TITLES_VANAF - s) * 0.2f);
 			} else {

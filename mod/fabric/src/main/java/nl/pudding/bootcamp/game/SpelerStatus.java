@@ -1,9 +1,10 @@
 package nl.pudding.bootcamp.game;
 
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.chat.Component;
 import nl.pudding.bootcamp.core.Rol;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 /** Wat de mod van één speler weet. De mod is de bron van waarheid; scoreboard-tags zijn spiegels. */
@@ -11,19 +12,29 @@ public final class SpelerStatus {
 	public final UUID id;
 	public String naam;
 	public Rol rol = Rol.SPELER;
-	/** Uit de lopende ronde: gesneuveld of uitgelogd. */
+	/** Uit de lopende ronde: gesneuveld of uitgelogd. In de mob arena: af voor de rest van de ronde. */
 	public boolean dood;
-	/** Klaar met de lopende ronde: uit het doolhof, of het ticket ingeleverd. */
+	/** Klaar met de lopende ronde: uit het doolhof (team gekozen). */
 	public boolean klaar;
-	public boolean ticket;
-	/** Staat in een Opstelling: niet lopen, niet springen, niet pearlen. */
+	/** Staat bevroren: niet lopen, niet springen, niet schieten, niet pearlen. */
 	public boolean bevroren;
-	/** Kills in de FFA, voor de tiebreak. */
+	/** Kills in de FFA. */
 	public int kills;
-	/** Het tribunepunt waar deze kijker staat; daar zet de mod hem terug als hij de vloer op komt. */
+	/** Het tribunepunt (of de kooi) waar deze kijker staat; daar zet de mod hem terug. */
 	public String tribunepunt;
-	/** Ronde 2: de inventory van een dode, terug te geven bij v3. Index = slot. */
-	public List<ItemStack> bewaard;
+	/** Ronde 1: de schrikplekken die hij al had. */
+	public final Set<String> schrikGehad = new HashSet<>();
+	/** Ronde 1: de servertick waarop hij het teammenu sloot zonder te kiezen. */
+	public int menuDicht = -1000;
+	/** Ronde 2: zijn eigen startplek. */
+	public String eiSpawn;
+	/** Ronde 3: de arena waar hij deze beurt in staat (1 of 2), of 0. */
+	public int arena;
+	/** Ronde 3: de kooi waar hij als kijker in zit (1 of 2), of 0. */
+	public int kooi;
+	/** Een tijdelijke regel vooraan in de actionbar, tot servertick {@link #meldingTot}. */
+	public Component melding;
+	public int meldingTot;
 
 	SpelerStatus(UUID id, String naam) {
 		this.id = id;
@@ -34,8 +45,6 @@ public final class SpelerStatus {
 	void wis() {
 		rol = Rol.SPELER;
 		nieuweRonde();
-		ticket = false;
-		bewaard = null;
 	}
 
 	/** Bij de start van elke ronde. */
@@ -45,5 +54,12 @@ public final class SpelerStatus {
 		bevroren = false;
 		kills = 0;
 		tribunepunt = null;
+		schrikGehad.clear();
+		menuDicht = -1000;
+		eiSpawn = null;
+		arena = 0;
+		kooi = 0;
+		melding = null;
+		meldingTot = 0;
 	}
 }

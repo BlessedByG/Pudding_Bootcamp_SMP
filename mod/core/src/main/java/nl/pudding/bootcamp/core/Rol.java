@@ -2,28 +2,32 @@ package nl.pudding.bootcamp.core;
 
 /** De rol van een speler. De mod is de bron van waarheid; scoreboard-tags zijn spiegels. */
 public enum Rol {
-	/** Ronde 0 t/m 3: iedereen, geen PvP. */
+	/** Ronde 0 t/m 4: iedereen, geen PvP. */
 	SPELER,
-	/** Ronde 4: jaagt op de koning. */
-	HUNTER,
-	/** Draagt de kroon (ronde 4), of is finalist in de finale. */
-	KING,
-	/** Ronde 5: iedereen tegen iedereen. */
+	/** Ronde 5: jaagt op de kroonhouder. */
+	JAGER,
+	/** Ronde 5: draagt de kroon. */
+	KROON,
+	/** Ronde 6: iedereen tegen iedereen. */
 	FFA,
-	/** Heeft een kroon en wacht op de finale. */
-	FINALIST,
-	/** Dood of klaar: op de tribune of bij het verzamelpunt, geen schade. */
+	/** Af: op de tribune of in de kooi, geen schade, inventory leeg. */
 	KIJKER,
-	/** Host, camera, admins: de mod blijft van ze af. */
+	/** Host, camera, admins (creative of spectator): de mod blijft van ze af. */
 	STAFF;
 
 	/** De scoreboard-tag die deze rol spiegelt, of {@code null} als er geen is. */
 	public String tag() {
 		return switch (this) {
-			case KING, FINALIST -> "king";
-			case HUNTER -> "hunter";
+			case KROON -> "kroon";
+			case JAGER -> "jager";
+			case FFA -> "ffa";
 			case KIJKER -> "kijker";
 			default -> null;
 		};
+	}
+
+	/** Doet deze speler nog mee in de lopende ronde (geen kijker, geen staff)? */
+	public boolean doetMee() {
+		return this == SPELER || this == JAGER || this == KROON || this == FFA;
 	}
 }

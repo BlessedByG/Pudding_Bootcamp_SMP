@@ -43,6 +43,8 @@ final class SetupCommands {
 		bc.then(Commands.literal("region")
 				.then(Commands.literal("save").then(Commands.argument("naam", StringArgumentType.word()).suggests(REGIOS)
 						.executes(SetupCommands::regionSave)))
+				.then(Commands.literal("add").then(Commands.argument("naam", StringArgumentType.word()).suggests(REGIOS)
+						.executes(SetupCommands::regionAdd)))
 				.then(Commands.literal("show").then(Commands.argument("naam", StringArgumentType.word()).suggests(REGIOS)
 						.executes(SetupCommands::regionShow)))
 				.then(Commands.literal("list").executes(SetupCommands::regionList))
@@ -75,10 +77,7 @@ final class SetupCommands {
 	}
 
 	private static int bewaard(CommandContext<CommandSourceStack> ctx, String tekst) {
-		if (!ConfigStore.bewaar()) {
-			return BcCommand.fout(ctx, tekst + " Maar bootcamp.json kon niet worden opgeslagen, kijk in de console.");
-		}
-		return BcCommand.ok(ctx, tekst);
+		return BcCommand.bewaard(ctx, tekst);
 	}
 
 	// wand
@@ -103,6 +102,29 @@ final class SetupCommands {
 		}
 		boolean bestond = ConfigStore.get().regios().put(naam, regio) != null;
 		return bewaard(ctx, "Regio " + naam + (bestond ? " overschreven: " : " opgeslagen: ") + beschrijf(regio));
+	}
+
+	private static int regionAdd(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+		ServerPlayer speler = ctx.getSource().getPlayerOrException();
+		String naam = naam(ctx);
+		if (!geldig(naam)) {
+			return BcCommand.fout(ctx, "Een naam is kleine letters, cijfers en _ (max 32).");
+		}
+		Regio deel = Wand.selectie(speler);
+		if (deel == null) {
+			return BcCommand.fout(ctx, "Selecteer eerst twee hoeken met de wand (/bc wand).");
+		}
+		Regio oud = ConfigStore.get().regios().get(naam);
+		if (oud == null) {
+			ConfigStore.get().regios().put(naam, deel);
+			return bewaard(ctx, "Regio " + naam + " bestond nog niet en is gemaakt met dit deel: " + beschrijf(deel));
+		}
+		if (oud.isCilinder()) {
+			return BcCommand.fout(ctx, "Regio " + naam + " is een cirkel; die krijgt geen extra delen.");
+		}
+		Regio nieuw = oud.metDeel(deel.min(), deel.max());
+		ConfigStore.get().regios().put(naam, nieuw);
+		return bewaard(ctx, "Deel " + nieuw.aantalDelen() + " toegevoegd aan regio " + naam + ": " + beschrijf(deel));
 	}
 
 	private static int regionShow(CommandContext<CommandSourceStack> ctx) {
@@ -134,7 +156,12 @@ final class SetupCommands {
 	}
 
 	private static String beschrijf(Regio r) {
-		return r.min().x() + " " + r.min().y() + " " + r.min().z() + " t/m " + r.max().x() + " " + r.max().y() + " " + r.max().z()
+		if (r.isCilinder()) {
+			Regio.Cilinder c = r.cilinder();
+			return "cirkel om " + rond(c.x()) + " " + c.y() + " " + rond(c.z()) + ", doorsnede " + c.diameter() + ", " + c.hoogte() + " hoog";
+		}
+		String delen = r.aantalDelen() > 1 ? r.aantalDelen() + " delen, samen " : "";
+		return delen + r.min().x() + " " + r.min().y() + " " + r.min().z() + " t/m " + r.max().x() + " " + r.max().y() + " " + r.max().z()
 				+ " (" + r.breedteX() + " x " + r.hoogte() + " x " + r.breedteZ() + ", border " + r.grootte() + ")";
 	}
 
@@ -166,10 +193,31 @@ final class SetupCommands {
 		if (!geldig(naam)) {
 			return BcCommand.fout(ctx, "Een naam is kleine letters, cijfers en _ (max 32).");
 		}
+		return bewaard(ctx, "Punt " + naam + " gezet op " + beschrijf(zetPunt(speler, naam)));
+	}
+
+	/** Een punt op de plek van de speler, met zijn kijkrichting. Ook voor de commando's per ronde. */
+	static Punt zetPunt(ServerPlayer speler, String naam) {
 		Punt punt = Punt.positie(rond(speler.getX()), rond(speler.getY()), rond(speler.getZ()),
 				rond(speler.getYRot()), rond(speler.getXRot()));
 		ConfigStore.get().punten().put(naam, punt);
-		return bewaard(ctx, "Punt " + naam + " gezet op " + beschrijf(punt));
+		return punt;
+	}
+
+	/** Een punt op het blok waar de speler naar kijkt (tot 32 blokken), of {@code null}. */
+	static Punt zetBlokPunt(ServerPlayer speler, String naam) {
+		HitResult hit = speler.pick(KIJKAFSTAND, 0f, false);
+		if (hit.getType() != HitResult.Type.BLOCK) {
+			return null;
+		}
+		BlockPos pos = ((BlockHitResult) hit).getBlockPos();
+		Punt punt = Punt.blok(new BlokPos(pos.getX(), pos.getY(), pos.getZ()));
+		ConfigStore.get().punten().put(naam, punt);
+		return punt;
+	}
+
+	static String beschrijfPunt(Punt p) {
+		return beschrijf(p);
 	}
 
 	private static int pointBlock(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
@@ -178,13 +226,10 @@ final class SetupCommands {
 		if (!geldig(naam)) {
 			return BcCommand.fout(ctx, "Een naam is kleine letters, cijfers en _ (max 32).");
 		}
-		HitResult hit = speler.pick(KIJKAFSTAND, 0f, false);
-		if (hit.getType() != HitResult.Type.BLOCK) {
+		Punt punt = zetBlokPunt(speler, naam);
+		if (punt == null) {
 			return BcCommand.fout(ctx, "Je kijkt niet naar een blok (binnen " + (int) KIJKAFSTAND + " blokken).");
 		}
-		BlockPos pos = ((BlockHitResult) hit).getBlockPos();
-		Punt punt = Punt.blok(new BlokPos(pos.getX(), pos.getY(), pos.getZ()));
-		ConfigStore.get().punten().put(naam, punt);
 		return bewaard(ctx, "Punt " + naam + " gezet op blok " + beschrijf(punt));
 	}
 

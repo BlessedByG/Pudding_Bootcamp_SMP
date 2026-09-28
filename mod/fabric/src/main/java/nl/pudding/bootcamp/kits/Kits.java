@@ -19,6 +19,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 /**
@@ -81,10 +82,14 @@ public final class Kits {
 	 *
 	 * <p>De kroon blijft altijd op: een kit schrijft nooit over de head-slot van wie de kroon
 	 * draagt, en {@code clear} haalt hem niet weg. Bij {@code clear: false} komt een item op zijn
-	 * slot als dat leeg is en anders ergens in de inventory; armor dat er al zat gaat naar de
-	 * inventory.
+	 * slot als dat leeg is en anders ergens in de inventory; wat je al draagt blijft aan.
 	 */
 	public static void geef(ServerPlayer speler, Kit kit) {
+		geef(speler, kit, null);
+	}
+
+	/** Als {@link #geef(ServerPlayer, Kit)}, en elk item gaat eerst door {@code markeer} (de Ei-vlag). */
+	public static void geef(ServerPlayer speler, Kit kit, Consumer<ItemStack> markeer) {
 		Inventory inv = speler.getInventory();
 		ItemStack hoofd = speler.getItemBySlot(EquipmentSlot.HEAD);
 		boolean kroonOp = Items26.isKroon(hoofd);
@@ -99,6 +104,9 @@ public final class Kits {
 
 		for (Gevuld g : kit.items()) {
 			ItemStack stack = g.stack().copy();
+			if (markeer != null) {
+				markeer.accept(stack);
+			}
 			switch (g.plek().doel()) {
 				case HEAD -> {
 					if (!kroonOp) {
@@ -116,11 +124,12 @@ public final class Kits {
 		speler.inventoryMenu.broadcastChanges();
 	}
 
+	/** Op zijn slot als dat leeg is, anders ergens in de inventory: wat je al draagt blijft aan. */
 	private static void zetUitrusting(ServerPlayer speler, EquipmentSlot slot, ItemStack stack) {
-		ItemStack oud = speler.getItemBySlot(slot);
-		speler.setItemSlot(slot, stack);
-		if (!oud.isEmpty()) {
-			geefOfDrop(speler, oud);
+		if (speler.getItemBySlot(slot).isEmpty()) {
+			speler.setItemSlot(slot, stack);
+		} else {
+			geefOfDrop(speler, stack);
 		}
 	}
 
@@ -163,6 +172,10 @@ public final class Kits {
 	 * @return {@code null} als het gelukt is, anders de foutregel
 	 */
 	public static String geefAan(MinecraftServer server, String naam, Collection<ServerPlayer> spelers) {
+		return geefAan(server, naam, spelers, null);
+	}
+
+	public static String geefAan(MinecraftServer server, String naam, Collection<ServerPlayer> spelers, Consumer<ItemStack> markeer) {
 		Kit kit;
 		try {
 			kit = laad(server, naam);
@@ -171,7 +184,7 @@ public final class Kits {
 			return e.getMessage();
 		}
 		for (ServerPlayer s : spelers) {
-			geef(s, kit);
+			geef(s, kit, markeer);
 		}
 		return null;
 	}

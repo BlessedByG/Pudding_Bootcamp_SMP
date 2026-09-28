@@ -13,12 +13,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RondeTest {
 	@Test
-	void duur() {
-		assertEquals(600, Ronde.DOOLHOF.duurSeconden());
-		assertEquals(600, Ronde.HORDE.duurSeconden());
-		assertEquals(600, Ronde.EI.duurSeconden());
-		assertEquals(900, Ronde.KING.duurSeconden());
-		assertEquals(600, Ronde.FFA.duurSeconden());
+	void nummersEnCommandos() {
+		assertEquals(List.of(Ronde.BASISKAMP, Ronde.DOOLHOF, Ronde.EI, Ronde.MOBARENA, Ronde.QUIZ, Ronde.CLOWN, Ronde.FFA),
+				List.of(Ronde.values()));
+		for (Ronde r : Ronde.values()) {
+			assertEquals(r.ordinal(), r.nummer());
+		}
+		assertEquals("doolhof", Ronde.DOOLHOF.commando());
+		assertEquals("ei", Ronde.EI.commando());
+		assertEquals("mobarena", Ronde.MOBARENA.commando());
+		assertEquals("quiz", Ronde.QUIZ.commando());
+		assertEquals("clown", Ronde.CLOWN.commando());
+		assertEquals("ffa", Ronde.FFA.commando());
+		assertNull(Ronde.BASISKAMP.commando());
 	}
 
 	@Test
@@ -29,11 +36,13 @@ class RondeTest {
 	}
 
 	@Test
-	void arenaRondes() {
-		assertTrue(Ronde.KING.inArena());
+	void arenaEnTeams() {
+		assertTrue(Ronde.CLOWN.inArena());
 		assertTrue(Ronde.FFA.inArena());
-		assertTrue(Ronde.FINALE.inArena());
-		assertFalse(Ronde.HORDE.inArena());
+		assertFalse(Ronde.MOBARENA.inArena());
+		for (Ronde r : Ronde.values()) {
+			assertEquals(r.nummer() >= 1 && r.nummer() <= 4, r.metTeams(), r.name());
+		}
 	}
 
 	@Test
@@ -46,10 +55,12 @@ class RondeTest {
 
 	@Test
 	void ontbreektNoemtAlles() {
-		Set<String> regios = Set.of("vloer");
-		Set<String> punten = Set.of("troon", "hunter_1", "hunter_2", "hunter_4", "tribune_1", "tribune_2", "tribune_3");
-		assertEquals(List.of("hunter_3", "tribune_4"), Ronde.KING.ontbreekt(regios, punten));
-		assertEquals(List.of("doolhof", "doolhof_uit", "doolhof_start", "v2"), Ronde.DOOLHOF.ontbreekt(Set.of(), Set.of()));
+		assertEquals(List.of("doolhof", "doolhof_uit", "poort_doolhof", "doolhof_start", "v2"),
+				Ronde.DOOLHOF.ontbreekt(Set.of(), Set.of()));
+		assertEquals(List.of("troon"), Ronde.CLOWN.ontbreekt(Set.of("vloer"), Set.of("jager_1", "tribune_1")));
+		List<String> mob = Ronde.MOBARENA.ontbreekt(Set.of("mobarena", "veld_1", "veld_2"), Set.of());
+		assertTrue(mob.contains("start_2_geel"));
+		assertTrue(mob.contains("kooi_1"));
 	}
 
 	@Test
@@ -60,10 +71,11 @@ class RondeTest {
 	}
 
 	@Test
-	void radWilTwintigLampen() {
-		List<String> lampen = Ronde.vereistePuntenRad();
-		assertEquals(20, lampen.size());
-		assertEquals("lamp_0", lampen.get(0));
-		assertEquals("lamp_19", lampen.get(19));
+	void reeksTotHetEersteGat() {
+		Set<String> punten = Set.of("jager_1", "jager_2", "jager_3", "jager_5");
+		assertEquals(List.of("jager_1", "jager_2", "jager_3"), Ronde.reeks("jager_", punten));
+		assertEquals(4, Ronde.volgendVrij("jager_", punten));
+		assertEquals(1, Ronde.volgendVrij("tribune_", punten));
+		assertTrue(Ronde.reeks("tribune_", punten).isEmpty());
 	}
 }

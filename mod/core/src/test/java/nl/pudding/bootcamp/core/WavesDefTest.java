@@ -3,17 +3,16 @@ package nl.pudding.bootcamp.core;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class WavesDefTest {
 	private static final String TWEE_WAVES = """
 			{"waves": [
-			  {"naam": "Zombies", "mobs": [{"type": "minecraft:zombie", "aantal": 20}]},
-			  {"naam": "Boss", "schaal": false, "mobs": [
-			    {"type": "minecraft:ravager", "aantal": 2},
-			    {"type": "minecraft:vindicator", "aantal": 10, "gear": {"mainhand": "minecraft:iron_axe"}}
+			  {"naam": "Zombies", "mobs": [{"type": "minecraft:zombie", "aantal": 4}]},
+			  {"naam": "Boss", "mobs": [
+			    {"type": "minecraft:ravager", "aantal": 1},
+			    {"type": "minecraft:vindicator", "aantal": 3, "gear": {"mainhand": "minecraft:iron_axe"}}
 			  ]}
 			]}
 			""";
@@ -22,17 +21,14 @@ class WavesDefTest {
 	void leestWaves() {
 		WavesDef def = WavesDef.uitJson(TWEE_WAVES);
 		assertEquals(2, def.waves().size());
-		assertTrue(def.waves().get(0).schaal());
-		assertFalse(def.waves().get(1).schaal());
 		assertEquals("minecraft:iron_axe", def.waves().get(1).mobs().get(1).gear().get("mainhand"));
 	}
 
 	@Test
-	void totaalSchaalt() {
+	void totaalPerArenaSchaaltNiet() {
 		WavesDef def = WavesDef.uitJson(TWEE_WAVES);
-		assertEquals(20, def.waves().get(0).totaal(20));
-		assertEquals(5, def.waves().get(0).totaal(5));
-		assertEquals(12, def.waves().get(1).totaal(5));
+		assertEquals(4, def.waves().get(0).totaal());
+		assertEquals(4, def.waves().get(1).totaal());
 	}
 
 	@Test

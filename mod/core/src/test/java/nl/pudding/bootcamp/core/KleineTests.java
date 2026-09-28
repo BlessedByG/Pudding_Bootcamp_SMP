@@ -133,62 +133,20 @@ class KleineTests {
 	}
 
 	@Nested
-	class FinaleStandTest {
-		@Test
-		void tweeGewonnenIsKlaar() {
-			UUID a = UUID.randomUUID();
-			UUID b = UUID.randomUUID();
-			FinaleStand s = new FinaleStand(a, b);
-			assertEquals(1, s.potje());
-			s.potjeVerlorenDoor(a);
-			assertNull(s.winnaar());
-			s.potjeVerlorenDoor(b);
-			assertNull(s.winnaar());
-			assertEquals(3, s.potje());
-			s.potjeVerlorenDoor(a);
-			assertEquals(b, s.winnaar());
-			assertEquals(1, s.winstEen());
-			assertEquals(2, s.winstTwee());
-		}
-
-		@Test
-		void naDeWinstTeltNiksMeer() {
-			UUID a = UUID.randomUUID();
-			UUID b = UUID.randomUUID();
-			FinaleStand s = new FinaleStand(a, b);
-			s.potjeVerlorenDoor(b);
-			s.potjeVerlorenDoor(b);
-			s.potjeVerlorenDoor(a);
-			s.potjeVerlorenDoor(a);
-			assertEquals(a, s.winnaar());
-			assertEquals(0, s.winstTwee());
-		}
-
-		@Test
-		void tegenstanderEnBuitenstaander() {
-			UUID a = UUID.randomUUID();
-			UUID b = UUID.randomUUID();
-			FinaleStand s = new FinaleStand(a, b);
-			assertEquals(b, s.tegenstander(a));
-			assertEquals(a, s.tegenstander(b));
-			assertFalse(s.isFinalist(UUID.randomUUID()));
-			s.potjeVerlorenDoor(UUID.randomUUID());
-			assertEquals(1, s.potje());
-		}
-	}
-
-	@Nested
 	class BossbarTekstTest {
 		@Test
 		void formatenUitDeDocs() {
 			assertEquals("Pudding Bootcamp", BossbarTekst.BASISKAMP);
-			assertEquals("Doolhof · 09:41", BossbarTekst.doolhof(581));
-			assertEquals("Wave 3 · 12 mobs", BossbarTekst.horde(3, 12));
+			assertEquals("Doolhof · uitgang open over 02:13", BossbarTekst.doolhofPoortDicht(133));
+			assertEquals("Doolhof · 04:41", BossbarTekst.doolhof(281));
 			assertEquals("Het Ei · 07:12", BossbarTekst.ei(432));
-			assertEquals("Koning: Clown · 12:34", BossbarTekst.king("Clown", 754));
-			assertEquals("Finale over 01:59", BossbarTekst.rust(119));
-			assertEquals("FFA · 7 over · 04:59", BossbarTekst.ffa(7, 299));
-			assertEquals("Finale · 1 - 0", BossbarTekst.finale(1, 0));
+			assertEquals("Mob Arena · beurt 3/5 · wave 2", BossbarTekst.mobarena(3, 5, 2));
+			assertEquals("Mob Arena · beurt 3/5", BossbarTekst.mobarena(3, 5, 0));
+			assertEquals("Quiz · aan de beurt: Groen", BossbarTekst.quiz("Groen"));
+			assertEquals("Quiz · draai het rad", BossbarTekst.quiz(null));
+			assertEquals("Clown vs All · Kroon: Clown · 12 over", BossbarTekst.clown("Clown", 12));
+			assertEquals("FFA · 7 over", BossbarTekst.ffa(7));
+			assertEquals("Pudding Bootcamp · King: Speler7", BossbarTekst.king("Speler7"));
 		}
 
 		@Test
@@ -198,6 +156,7 @@ class KleineTests {
 			assertEquals("0:38", Tijd.mss(38));
 		}
 	}
+
 
 	@Nested
 	class KompasTest {

@@ -12,6 +12,7 @@ import net.minecraft.world.item.Items;
 import nl.pudding.bootcamp.config.Standaardbestanden;
 import nl.pudding.bootcamp.core.KitDef;
 import nl.pudding.bootcamp.core.KitDef.KitFout;
+import nl.pudding.bootcamp.core.LootTabel;
 import nl.pudding.bootcamp.core.WavesDef;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -59,26 +60,36 @@ class KitsParseTest {
 			assertFalse(kit.items().isEmpty(), naam);
 			kits++;
 		}
-		assertEquals(7, kits);
+		assertEquals(6, kits);
 	}
 
 	@Test
 	void enchantmentsKomenErop() throws IOException {
 		Kits.Kit boss = Kits.parse(registries, KitDef.uitJson("boss.json", lees("kits/boss.json")));
 		ItemStack zwaard = boss.items().stream().map(Kits.Gevuld::stack).filter(s -> s.is(Items.DIAMOND_SWORD)).findFirst().orElseThrow();
-		assertTrue(zwaard.isEnchanted(), "het zwaard van de bosskit hoort Sharpness te hebben");
-		ItemStack pearls = boss.items().stream().map(Kits.Gevuld::stack).filter(s -> s.is(Items.ENDER_PEARL)).findFirst().orElseThrow();
-		assertEquals(8, pearls.getCount());
+		assertTrue(zwaard.isEnchanted(), "het zwaard van de bosskit hoort Sharpness V te hebben");
+		Kits.Kit arena = Kits.parse(registries, KitDef.uitJson("arena.json", lees("kits/arena.json")));
+		ItemStack gapples = arena.items().stream().map(Kits.Gevuld::stack).filter(s -> s.is(Items.GOLDEN_APPLE)).findFirst().orElseThrow();
+		assertEquals(32, gapples.getCount());
+		Kits.Kit jager = Kits.parse(registries, KitDef.uitJson("jager.json", lees("kits/jager.json")));
+		assertEquals(16, jager.items().stream().map(Kits.Gevuld::stack).filter(s -> s.is(Items.GOLDEN_APPLE)).findFirst().orElseThrow().getCount());
+		assertTrue(jager.items().stream().map(Kits.Gevuld::stack).anyMatch(s -> s.is(Items.DIAMOND_AXE) && s.isEnchanted()));
 	}
 
 	@Test
 	void deKroon() {
 		ItemStack kroon = Items26.kroon(registries);
-		assertTrue(kroon.is(Items.GOLDEN_HELMET));
+		assertTrue(kroon.is(Items.DIAMOND_HELMET));
 		assertTrue(Items26.isKroon(kroon));
 		assertTrue(kroon.isEnchanted());
-		assertTrue(kroon.has(DataComponents.UNBREAKABLE));
-		assertFalse(Items26.isKroon(new ItemStack(Items.GOLDEN_HELMET)));
+		assertTrue(kroon.has(DataComponents.ITEM_NAME));
+		assertFalse(Items26.isKroon(new ItemStack(Items.DIAMOND_HELMET)));
+		ItemStack pickaxe = new ItemStack(Items.DIAMOND_PICKAXE);
+		Items26.markeer(pickaxe, Items26.EI_TAG, null);
+		assertTrue(Items26.heeftTag(pickaxe, Items26.EI_TAG));
+		Items26.markeer(pickaxe, Items26.QUIZ_TAG, "goed");
+		assertEquals("goed", Items26.tagWaarde(pickaxe, Items26.QUIZ_TAG));
+		assertTrue(Items26.heeftTag(pickaxe, Items26.EI_TAG), "een tweede vlag laat de eerste staan");
 		assertFalse(Items26.isKroon(ItemStack.EMPTY));
 	}
 
@@ -87,6 +98,14 @@ class KitsParseTest {
 		KitDef def = KitDef.uitJson("test.json", "{\"hotbar\": [\"minecraft:iron_sword\", \"minecraft:bestaat_niet\"]}");
 		KitFout fout = assertThrows(KitFout.class, () -> Kits.parse(registries, def));
 		assertTrue(fout.getMessage().startsWith("test.json, hotbar[1]:"), fout.getMessage());
+	}
+
+	@Test
+	void lootVanHetDoolhofParst() throws Exception {
+		LootTabel loot = LootTabel.uitJson(lees(LootTabel.BESTAND));
+		for (LootTabel.Item i : loot.items()) {
+			assertFalse(Items26.parse(registries, i.item().spec(), i.item().aantal()).isEmpty(), i.item().spec());
+		}
 	}
 
 	@Test

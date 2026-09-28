@@ -1,0 +1,13 @@
+Hier komen de bestanden voor de jumpscare:
+
+  clown.jpg, clown.jpeg of clown.png   De foto van Clown. Elk formaat en elke verhouding.
+                                       Groter dan 1024 pixels wordt vanzelf verkleind.
+  clown_lach.ogg                       Het lachje, ogg vorbis (mono is het mooist).
+                                       Een mp3 of wav eerst omzetten, bijvoorbeeld met Audacity.
+
+Daarna vanuit de repo:
+
+  java pack/BouwPack.java
+
+Dat maakt pack/bootcamp-pack.zip en print de SHA-1 voor server.properties.
+Zonder foto komt er een placeholder in; zonder lachje is de jumpscare stil.

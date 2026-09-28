@@ -1,9 +1,10 @@
 # bootcamp-mod
 
 Server-side Fabric-mod voor de Pudding Bootcamp SMP op Minecraft 26.2. Spelers hebben alleen
-Simple Voice Chat nodig, verder een gewone client. De mod doet de zes rondes, de kroon, het rad, de
-tribune voor wie dood is, de bossbar en de visuals. Voice is puur proximity en gaat buiten de mod
-om.
+Simple Voice Chat nodig en krijgen bij het joinen vanzelf het resource pack. De mod doet de zes
+rondes (doolhof, Ei, mob arena, quiz, Clown vs All, FFA), de teams en het teammenu, de kroon, het
+Rad, het quiz-rad, de tribune voor wie af is, de jumpscare, de bossbar en de visuals. Voice is puur
+proximity en gaat buiten de mod om.
 
 - De spec: [../docs/04-technische-schets.md](../docs/04-technische-schets.md), met de spelregels in
   [../docs/02-rondes.md](../docs/02-rondes.md) en [../docs/03-kroon-regels.md](../docs/03-kroon-regels.md).
@@ -27,26 +28,42 @@ Twee Gradle-projecten:
 
 - `core`: pure Java, alle rekenwerk en spelregels, JUnit-tests, geen Minecraft.
 - `fabric`: de lijm naar Minecraft (Fabric Loom). Neemt `core` mee in de jar. Eén test,
-  `KitsParseTest`, draait met de echte 26.2-registries en haalt elk item uit de standaardkits door
-  de vanilla item-parser.
+  `KitsParseTest`, draait met de echte 26.2-registries en haalt elk item uit de standaardkits, de
+  loot-tabel, de waves en de kroon door de vanilla item-parser.
 
-Alleen de kernlogica bouwen en testen, zonder Loom en zonder Minecraft te downloaden:
-
-```
-./gradlew -PcoreOnly :core:test
-```
+Alleen de kernlogica bouwen en testen, zonder Loom: `./gradlew -PcoreOnly :core:test`.
 
 `./check.sh` draait de vaste verificatie: build, jar-inhoud, geen threads of sleeps, `core` zonder
 Minecraft-imports, en alle command-literals uit docs/04 aanwezig.
 
-Een naam uit 26.2 opzoeken: `./gradlew :fabric:genSources` en dan zoeken in de sources-jar onder
-`.gradle/loom-cache/`.
+## Het resource pack
+
+Het pack staat in [../pack/](../pack/). Foto van Clown (jpg of png, elk formaat) en het lachje
+(`clown_lach.ogg`) in `pack/aanleveren/`, dan vanuit de repo:
+
+```
+java pack/BouwPack.java
+```
+
+Dat maakt `pack/bootcamp-pack.zip` (foto, quiz-rad in 64 standen, fonts) en print de SHA-1. Zonder
+foto zit er een placeholder in, zonder lachje is de jumpscare stil. Zet de zip online, bijvoorbeeld
+als bijlage van een GitHub-release, en vul `server.properties` in:
+
+```
+resource-pack=<url van bootcamp-pack.zip>
+resource-pack-sha1=<de sha-1 die BouwPack print>
+require-resource-pack=true
+resource-pack-prompt=Nodig voor de bootcamp
+```
+
+Na een nieuwe foto: opnieuw bouwen, opnieuw uploaden, nieuwe SHA-1 invullen, server herstarten. Hoe
+groot de foto en het rad in beeld staan, stel je in met `SCHRIK_HOOGTE` en `RAD_HOOGTE` bovenin
+`BouwPack.java`.
 
 ## Installeren
 
-De server heeft ook **Java 25** nodig, mag niet op peaceful staan (de horde), en zet
-`spawn-protection=0` in `server.properties` (anders kunnen spelers bij de wereldspawn geen kisten
-openen). In `mods/` van de Fabric-server (26.2):
+De server heeft **Java 25** nodig, mag niet op peaceful staan (de mob arena), en zet
+`spawn-protection=0` in `server.properties`. In `mods/` van de Fabric-server (26.2):
 
 - `bootcamp-<versie>.jar`
 - Fabric API voor 26.2
@@ -57,23 +74,27 @@ Jar vervangen betekent server herstarten. Bewaar de jar van de vorige werkende v
 ### Wat er bij de eerste start gebeurt
 
 - In de console: `Pudding Bootcamp geladen`, `Gamerules gezet`.
-- `config/bootcamp/` wordt gevuld met wat ontbreekt: `waves.json` en in `kits/` de bestanden
-  `basis`, `horde`, `ei`, `boss`, `kroonpakket`, `arena` en `finale`. Wat er al staat
-  wordt nooit overschreven.
-- `<wereld>/bootcamp.json` bestaat nog niet; de mod begint met een lege config.
-- Gamerules: natural regeneration en PvP aan (PvP is in 26.2 een gamerule; tot ronde 4 houdt team
-  `spelers` het tegen); mob spawning, mob griefing, daglichtcyclus, weer,
-  advancement-meldingen en locator bar uit. De locator bar gaat aan in ronde 4 t/m 6.
-- De teams `spelers`, `hunters`, `king` en `out` worden aangemaakt.
+- `config/bootcamp/` wordt gevuld met wat ontbreekt: `waves.json`, `doolhof_loot.json` en in
+  `kits/` de bestanden `basis`, `ei`, `jager`, `boss`, `kroonpakket` en `arena`. Wat er al staat
+  wordt nooit overschreven. Staan er nog bestanden van het oude rondeplan (`kits/horde.json`), dan
+  gaan `waves.json`, `ei`, `boss`, `arena`, `horde` en `finale` opzij als `.oud` en komen de nieuwe
+  ervoor in de plaats.
+- `<wereld>/bootcamp.json` bestaat nog niet; de mod begint met een lege config en de standaard
+  instellingen.
+- Gamerules: natural regeneration en PvP aan (de mod beslist zelf wie wie mag raken); mob spawning,
+  mob griefing, daglichtcyclus, weer, advancement-meldingen en locator bar uit. De locator bar gaat
+  aan in Clown vs All.
+- De teams `spelers`, `rood`, `blauw`, `groen`, `geel`, `jagers`, `kroon` en `out`.
 
 ## Bestanden
 
 | Bestand | Wat |
 |---|---|
-| `<wereld>/bootcamp.json` | Regio's, punten, doodteksten, de pilaar van elke kop, de uitverkorene. Wordt na elke wijziging opgeslagen. Met de hand aanpassen mag, maar alleen als de server uit staat. Een onleesbaar bestand wordt opzij gezet als `bootcamp.json.kapot`. |
+| `<wereld>/bootcamp.json` | Regio's, punten, doodteksten, grapjes van de nep-uitgangen, teamkeuzes, uitverkorene, presentator en de instellingen per ronde. Wordt na elke wijziging opgeslagen. Met de hand aanpassen mag, maar alleen als de server uit staat. Een onleesbaar bestand wordt opzij gezet als `bootcamp.json.kapot`. |
+| `<wereld>/bootcamp_ei.nbt` | Het Ei zoals je het met `/ei vastleggen` hebt vastgelegd. |
 | `config/bootcamp/kits/<naam>.json` | Een kit. Wordt bij elk gebruik opnieuw gelezen: aanpassen zonder herstart. |
-| `config/bootcamp/kits/basis.json` | De basiskit van Pudding: iron armor, iron sword, 32 steak. Iedereen krijgt hem bij de start van het doolhof. Zonder dit bestand weigeren ronde 1, 3 en 4 te starten. |
-| `config/bootcamp/waves.json` | De waves van de horde. Wordt bij `/bc start 2` gelezen. |
+| `config/bootcamp/waves.json` | De waves van de mob arena, per arena voor 4 spelers. Wordt bij `/mobarena start` gelezen. |
+| `config/bootcamp/doolhof_loot.json` | De loot-tabel van de doolhofkisten. Wordt bij `/doolhof start` gelezen. |
 
 ### Kits
 
@@ -84,119 +105,104 @@ Per slot een item in dezelfde syntax als `/give`; een getal achter het item is h
   "clear": true,
   "armor": { "head": "minecraft:iron_helmet", "chest": "...", "legs": "...", "feet": "..." },
   "offhand": "minecraft:shield",
-  "hotbar": ["minecraft:iron_sword", "minecraft:bow[minecraft:enchantments={\"minecraft:power\":1}]", "minecraft:arrow 16"],
+  "hotbar": ["minecraft:iron_sword", "minecraft:cooked_beef 32"],
   "inventory": []
 }
 ```
 
 - `"clear": true` maakt de inventory eerst leeg. `false` voegt toe: een item komt op zijn slot als
-  dat leeg is en anders ergens in de inventory; armor dat er al zat gaat naar de inventory.
+  dat leeg is en anders ergens in de inventory; wat je al draagt blijft aan.
 - De kroon blijft altijd op: zit hij in de head-slot, dan schrijft geen kit eroverheen en haalt
-  `clear` hem niet weg. `boss.json` en `finale.json` hebben daarom geen helm.
+  `clear` hem niet weg. `boss.json` heeft daarom geen helm.
 - Een fout komt als één regel in de console en in de chat, met bestandsnaam en slot:
   `arena.json, hotbar[2]: 'minecraft:arow' is geen geldig item`.
 
 | Kit | Wanneer | clear |
 |---|---|---|
-| `basis` | Zonder ticket uit het Ei-bos; hunters met een lege inventory in ronde 4. | zelf kiezen |
-| `horde` | Start ronde 2. | nee: je houdt wat je in het doolhof vond |
-| `ei` | Start ronde 3: de pickaxe. | nee |
-| `boss` | Clown bij de start van ronde 4. | ja |
-| `kroonpakket` | Bij elke kroonwissel. | nee |
-| `arena` | Start ronde 5. | ja |
-| `finale` | Elk potje van ronde 6. | ja |
+| `basis` | Start doolhof: iron armor, iron sword, 32 steak. | ja |
+| `ei` | Start Ei: diamond pickaxe met Efficiency II. De mod markeert hem en haalt hem aan het eind weer weg. | nee |
+| `jager` | Iedereen behalve Clown bij de start van Clown vs All: full diamond (Protection IV, Unbreaking III), sword en axe (Sharpness V), bow (Power V), 32 pijlen, schild, 16 gapples. | ja |
+| `boss` | Clown bij de start van Clown vs All: de jagerskit zonder helm (de kroon zit al op). | ja |
+| `kroonpakket` | Bij elke kroonwissel: 2 gapples, 2 pearls. | nee |
+| `arena` | Start FFA: de jagerskit met gewone helm en 32 gapples. | ja |
 
-### Waves
+### Waves en loot
 
 ```json
 { "waves": [
-  { "naam": "Zombies", "mobs": [ { "type": "minecraft:zombie", "aantal": 20 } ] },
-  { "naam": "Boss wave", "schaal": false, "mobs": [
-    { "type": "minecraft:vindicator", "aantal": 10, "gear": { "mainhand": "minecraft:iron_axe" } } ] }
+  { "naam": "Zombies", "mobs": [ { "type": "minecraft:zombie", "aantal": 4 } ] },
+  { "naam": "Ravager, vindicators en evoker", "mobs": [
+    { "type": "minecraft:ravager", "aantal": 1 },
+    { "type": "minecraft:vindicator", "aantal": 3, "gear": { "mainhand": "minecraft:iron_axe" } } ] }
 ] }
 ```
 
-Aantallen gelden voor twintig spelers en schalen naar boven afgerond mee met het aantal spelers
-bij de start; `"schaal": false` houdt een wave vast. Gear-slots: `head`, `chest`, `legs`, `feet`,
-`mainhand`, `offhand`. **Voor een testrun met vijf man is de boss wave te zwaar**: zet de aantallen
-omlaag of `"schaal": true`.
+Het aantal geldt per arena en schaalt niet mee. Gear-slots: `head`, `chest`, `legs`, `feet`,
+`mainhand`, `offhand`. De standaard is de tabel uit docs/02 (5 waves).
+
+`doolhof_loot.json`: `"perKist": [2, 4]` en per item een `"gewicht"`. Geen ender pearls.
 
 ## Eén keer zetten na het bouwen
 
-Alles hieronder komt in `bootcamp.json`. Geen coördinaten in code.
+Alles komt in `bootcamp.json`. Geen coördinaten in code. Het volledige overzicht staat in docs/04
+onder *Regio's en punten*; hier per ronde wat je zet.
 
-**Regio's**: `/bc wand`, linksklik op een blok is hoek 1, rechtsklik hoek 2, dan
-`/bc region save <naam>`. Voor spelers telt een regio als kolom (alleen x en z), dus twee hoeken op
-de grond is genoeg. Een poort is de hele doos: selecteer de onderhoek en de bovenhoek van de muur.
-
-| Regio | Waarvoor |
-|---|---|
-| `doolhof` | Border van ronde 1. **Ruim selecteren**: het plein voor de poort (`doolhof_start`) en het vak achter de uitgang moeten erbinnen liggen. |
-| `doolhof_uit` | Het vak achter de uitgang: wie erin staat is eruit. |
-| `arena` | Border van ronde 2 en de vloer waar kijkers af moeten blijven. `arena_spawn` en `mob_1..4` liggen erbinnen, `tribune_horde_1..2` buiten de cirkel die in de selectie past. |
-| `eibos` | Border van ronde 3. `ei_start`, `ei_beacon` en `eiplaat` liggen erbinnen. |
-| `eiplaat` | Het vak waar je ticket wordt ingenomen. |
-| `vloer` | De vloer van de Arena: waar kijkers af moeten blijven, en de border van ronde 4 en 5 als `colosseum` er niet is. `troon` en `hunter_1..4` liggen erbinnen, `tribune_1..4` juist erbuiten. Selecteer het vierkant om de ronde vloer heen: voor kijkers telt de cirkel die erin past, dus de hoeken en de ring achter de rand zijn tribune. |
-| `colosseum` | *Optioneel.* De hele Arena inclusief tribunes; dan is dit de border van ronde 4 en 5. |
-| `finale` | Het midden van de Arena. De border van ronde 6 is 20 x 20 om het midden van deze regio. |
-| `poort_doolhof`, `poort_arena`, `poort_bos` | *Optioneel.* De muur die open en dicht gaat. |
+**Regio's** met de wand: `/bc wand`, linksklik op een blok is hoek 1, rechtsklik hoek 2, dan
+`/bc region save <naam>`. `/bc region add <naam>` voegt de selectie toe als extra deel (de T van een
+veld is twee selecties). Voor spelers telt een doos als kolom (alleen x en z). `/bc region show
+<naam>` tekent tien seconden alle delen.
 
 **Punten**: `/bc point set <naam>` (je positie plus kijkrichting) of `/bc point block <naam>` (het
-blok waar je naar kijkt, tot 32 blokken).
+blok waar je naar kijkt, tot 32 blokken). De commando's per ronde zetten de meeste punten ook.
 
-| Punt | Waarvoor |
-|---|---|
-| `basiskamp` | Waar `/bc reset` iedereen neerzet. Optioneel: zonder blijft iedereen staan. |
-| `doolhof_start`, `v2` | Ingang van het doolhof; verzamelpunt bij de horde-arena. |
-| `arena_spawn`, `mob_1..4`, `tribune_horde_1..2`, `v3` | Horde: binnenkomst, spawns, tribune, verzamelpunt aan de bosrand. |
-| `ei_start`, `ei_beacon` (blok), `kring` | Bosrand; het ontbrekende blok in de beaconpiramide; De Kring op de vloer van de Arena. |
-| `troon`, `hunter_1..4`, `tribune_1..4` | Het midden; de startpunten aan de rand (ook voor de FFA); de tribune. |
-| `lamp_0..19` (blokken) | De twintig lampen van De Kring, met de klok mee. Zet er bij voorkeur een gedoofde redstone lamp neer, zonder redstone ernaast. |
-| `finale_1`, `finale_2`, `kroning` | Startpunten van de finale (binnen 9 blokken van het midden van `finale`) en de plek van de kroning. |
+| Ronde | Regio's | Punten |
+|---|---|---|
+| Algemeen | | `basiskamp` (optioneel, voor `/bc reset`) |
+| Doolhof | `doolhof`, `doolhof_uit`, `poort_doolhof` (de muur, onder- en bovenhoek), `nep_1..3`, `schrik_1..n` | `doolhof_start`, `v2` |
+| Het Ei | `ei` (het Ei als doos), `eigebied` (Ei, kettingen, startplekken) | `ei_spawn_1..n`, `v3`; daarna `/ei vastleggen` |
+| Mob arena | `mobarena` (beide arena's met tribune), `veld_1`, `veld_2` (elk `save` + `add`) | `/mobarena startplek <1\|2> <kleur>` (8x), `mob_1_1..n`, `mob_2_1..n`, `kooi_1`, `kooi_2`, `tribune_mob_1..n` |
+| Quiz | `quiz` | `/quiz bank <kleur>` (4x), `/quiz podium`, `/quiz lamp <kleur>` (4x, kijk naar de lamp) |
+| Clown vs All, FFA | `/clown vloer <diameter>` (midden op de vloer staan), optioneel `colosseum` | `/clown troon`, `/clown jagerplek` (20x), `/clown tribune` (2 of meer, onderste ring) |
 
-Daarna: `/bc slot <speler> <0-19>` voor elke kop op De Kring, en `/bc uitverkoren <speler>`.
-Labels boven de verzamelpunten: `/bc label zet <tekst>`.
+Daarna: `/quiz presentator <speler>` en `/clown uitverkoren <speler>`. Labels boven de
+verzamelpunten: `/bc label zet <tekst>`.
 
-`/bc start <ronde>` weigert met één regel en verandert dan niets, als er een regio of punt mist
-("ontbreekt: troon, hunter_3"), een startpunt buiten de border van de ronde ligt, een tribunepunt
-binnen de vloer ligt, of een kit die de ronde nodig heeft ontbreekt of een fout bevat.
+`/<ronde> start` weigert met één regel en verandert dan niets als er een regio, punt of kit mist
+(`ontbreekt: kooi_2, start_1_geel`), een startpunt buiten de border ligt, een tribuneplek op de vloer
+ligt, of (mob arena, quiz) iemand geen team heeft.
 
 ## Commands
 
-Allemaal onder `/bc`, op-level 2.
+Alles op op-level 2. Het volledige overzicht met de grenzen van elke instelling staat in docs/04
+onder *Commands*.
 
-| Command | Doet |
+| Ronde | Commands |
 |---|---|
-| `/bc wand` | De regio-wand. |
-| `/bc region save\|show\|list\|del <naam>` | Regio uit de selectie opslaan; `show` tekent tien seconden particles op de randen. |
-| `/bc point set\|block\|tp\|list\|del <naam>` | Punten zetten, ernaartoe, lijst, weg. |
-| `/bc label zet <tekst>` / `/bc label weg` | Zwevende tekst boven je hoofd plaatsen; het dichtstbijzijnde label weghalen. |
-| `/bc start <1-6>` | Start een ronde: teleport, border, kits, countdown, poort open, timer. Een lopende ronde wordt eerst afgebroken. |
-| `/bc stop` | Breekt de ronde af (of stopt een draaiend rad): timer stil, mobs en border weg, bevriezing eraf, bossbar terug. Rollen blijven. |
-| `/bc timer <sec>` | Stelt de resterende tijd bij. |
-| `/bc status` | Ronde, timer, finalisten, en per speler rol en vlaggen. |
-| `/bc kit <naam> [<speler>]` | Zet een kit op iedereen die meedoet, of op één speler. |
-| `/bc poort <naam> open\|dicht` | `doolhof`, `arena`, `bos`. Dicht zet terug wat er stond; weet de mod dat niet meer, dan iron bars. |
-| `/bc uitverkoren [<speler>]` | De verborgen rol. Op naam, mag ook voor iemand die nog niet online is. Het antwoord ziet alleen wie het typt. |
-| `/bc slot <speler> <0-19>` | De pilaar van een kop. Een pilaar heeft één kop. |
-| `/bc rad` | Het Rad. Drie seconden na de landing start ronde 4. |
-| `/bc kroon <speler>` | Alleen in ronde 4: forceert een kroonwissel met reset, ook naar iemand op de tribune (geef die daarna een kit, zijn inventory was al leeg). |
-| `/bc finalist <1\|2> <speler>` | Noodknop: wijst een finalist aan en zet hem met zijn kroon op de tribune. De finalisten staan alleen in het geheugen, dus dit heb je nodig na een crash of als een finalist niet terugkomt. Niet tijdens ronde 4 of de finale. |
-| `/bc kijker <speler> aan\|uit` | Iemand op de tribune zetten, of er weer af halen en mee laten doen. |
-| `/bc reset` | Alles terug naar de basiskamp-staat. Weigert niks, ruimt alles op. |
+| Doolhof | `/doolhof start\|stop\|resterend <sec>`, `timer [<min>]` (15), `poort [<min>]` (4), `hint [<min>]` (10), `hinttekst [<tekst>\|-]`, `poort open\|dicht` |
+| Het Ei | `/ei start\|stop\|resterend <sec>`, `timer [<min>]` (15), `blokken [<soort> <aantal>]`, `vastleggen` |
+| Mob arena | `/mobarena start\|volgende\|schema\|stop`, `wave volgende`, `startplek <1\|2> <kleur>`, `punten [<mob> <punten>]`, `aftekst [<tekst>]` |
+| Quiz | `/quiz start\|stop`, `presentator [<speler>]`, `bank <kleur>`, `podium`, `lamp <kleur>`, `draai`, `goed`, `fout`, `punt <kleur> [<aantal>]`, `einde`, `winnaar <kleur>` |
+| Clown vs All | `/clown rad\|go\|start\|stop`, `uitverkoren [<speler>]`, `troon`, `jagerplek [<nr>]`, `vloer <diameter>`, `tribune [<nr>]`, `wachttekst [<tekst>]`, `kroon <speler>`, `krimp <grootte> [<sec>]` |
+| FFA | `/ffa start\|stop\|go`, `krimp <grootte> [<sec>]`, `wachttekst [<tekst>]` |
+| Algemeen | `/bc wand`, `region save\|add\|show\|list\|del`, `point set\|block\|tp\|list\|del`, `label zet\|weg`, `status`, `kit <naam> [<speler>]`, `team <speler> <kleur\|weg>`, `schrik <speler>`, `kijker <speler> aan\|uit`, `reset` |
 
 **Staff** is wie in creative of spectator staat: de mod blijft van ze af (geen teleport, geen kit,
-ze tellen niet mee). Zet host, camera's en admins dus in creative of spectator vóór `/bc start`.
+ze tellen niet mee). Zet host, camera's en admins dus in creative of spectator vóór een ronde.
 
-De scoreboard-tags `king`, `hunter`, `kijker`, `uitverkoren` en `ticket` zijn spiegels die elke
-seconde worden bijgezet, zodat je met `@a[tag=...]` kunt kijken. Zelf zetten heeft geen zin; de mod
-is de bron van waarheid. Een wave forceren: `/kill @e[tag=horde]`.
+De scoreboard-tags `kroon`, `jager`, `ffa`, `kijker` en `uitverkoren` zijn spiegels die elke
+seconde worden bijgezet, zodat je met `@a[tag=...]` kunt kijken. Zelf zetten heeft geen zin.
 
 ## De avond
 
-Elke ronde start de commander met `/bc start <n>`, behalve ronde 4 (`/bc rad`) en ronde 6 (start
-vanzelf na de twee minuten rust). Tussen twee rondes in is er geen border en geen PvP.
+| Ronde | Commander |
+|---|---|
+| 1 Doolhof | `/doolhof start`. Eindigt vanzelf na de timer, of eerder als iedereen een team heeft. |
+| 2 Het Ei | `/ei start`. Eindigt na de timer. |
+| 3 Mob arena | `/mobarena start` (beurt 1), daarna per beurt `/mobarena volgende`. Na de laatste beurt vanzelf de winnaar en, tien seconden later, iedereen zonder spullen naar zijn bank. |
+| 4 Quiz | `/quiz start`. Pudding draait met de nether star en keurt met de wol. `/quiz einde`, bij gelijkspel `/quiz winnaar <kleur>`. Tien seconden later iedereen naar de tribune van de Arena. |
+| 5 Clown vs All | `/clown rad` (of `/clown start` zonder rad), iedereen staat bevroren klaar, dan `/clown go`. |
+| 6 FFA | `/ffa start`, dan `/ffa go`. De kroning volgt vanzelf. |
 
-Gaat er in een ronde iets mis in de mod zelf, dan breekt die ronde zichzelf af met een melding in
-de chat en de fout in de console; de server blijft draaien. Start de ronde opnieuw met
-`/bc start <n>`.
+Tussen twee rondes in is er geen border en geen PvP. Gaat er in een ronde iets mis in de mod zelf,
+dan breekt die ronde zichzelf af met een melding in de chat en de fout in de console; de server
+blijft draaien. Start de ronde opnieuw met `/<ronde> start`.
