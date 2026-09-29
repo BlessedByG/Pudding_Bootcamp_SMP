@@ -26,6 +26,7 @@ Dit is de lijst van het rondeplan van 25 september 2026 (taakplan 2). De regels 
 | R1.1 | Het maximum per team is `max(5, ceil(spelers / 4))`; een vol team kun je niet kiezen. | `TeamKeuze.maximum`, `TeamKeuze.vol` | `TeamKeuzeTest.maximumIsVijfOfMeer`, `TeamKeuzeTest.volBijHetMaximum` |
 | R1.2 | Wie bij het einde van het doolhof geen team heeft, gaat naar het kleinste team; bij gelijk het lot. | `TeamKeuze.kleinste` | `TeamKeuzeTest.kleinsteTeamBijGelijkHetLot` |
 | R1.3 | Kisten krijgen 2 t/m 4 items uit de loot-tabel, gewogen getrokken. Geen pearls. | `LootTabel` | `LootTest`, `ResourcesTest.lootIsGeldig` |
+| R1.4 | Een valkist in het doolhof is 50/50: de jumpscare of de mobs (bij `/doolhof valmobs 0` altijd de jumpscare). | `Regels.valkistGok` | `RegelsTest.valkistGokIsVijftigVijftig` |
 | R2.1 | Blokken in het Ei: netherite 50, diamond 10, gold 5 punten; redstone, emerald, TNT, glowstone, slime en target geven een effect. Standaard 6, 90, 120, 10, 10, 10, 10, 10, 5. | `EiBlok`, `Instellingen` | `EiVerdelingTest.blokkenEnPunten`, `InstellingenTest.standaarden` |
 | R2.2 | Strooien trekt zonder dubbele uit de deepslate-plekken; samen meer dan er plekken zijn weigert hij. | `EiVerdeling` | `EiVerdelingTest` |
 | R2.3 | `/ei blokken` weigert een totaal boven de deepslate van de vastlegging. | `Instellingen.checkEiBlokken` | `InstellingenTest.eiBlokkenPassenOpDeDeepslate` |

@@ -76,6 +76,20 @@ public final class Regels {
 		return uit;
 	}
 
+	// Ronde 1
+
+	public enum Val {
+		/** De jumpscare voor wie hem opent. */
+		SCHRIK,
+		/** Husks en silverfish om hem heen. */
+		MOBS
+	}
+
+	/** R1.4: wat een valkist in het doolhof doet, 50/50. */
+	public static Val valkistGok(RandomGenerator random) {
+		return random.nextBoolean() ? Val.SCHRIK : Val.MOBS;
+	}
+
 	// Ronde 2
 
 	public enum Gok {

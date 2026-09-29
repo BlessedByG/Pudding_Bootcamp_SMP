@@ -203,7 +203,8 @@ voor het testen en voor de lol.
 
 Waar een jumpscare vandaan komt:
 - Doolhof: in een regio `schrik_1` t/m `schrik_n`, één keer per regio per speler.
-- Doolhof: een valkist (trapped chest) openen, één keer per kist per speler.
+- Doolhof: een valkist (trapped chest) openen, één keer per kist per speler; de helft van de keren
+  (de andere helft komen er mobs).
 - Het Ei: een emerald block, bij een willekeurige andere levende deelnemer; iedereen ziet groot
   wie naar wie.
 
@@ -521,13 +522,14 @@ willekeurig grapje als title (lijst in `bootcamp.json`) en gaat naar `doolhof_st
 `schrik_n` staat en die nog niet had krijgt de jumpscare; wie in `doolhof_uit` staat zonder team
 krijgt het teammenu. Na `/doolhof hint` minuten (standaard 10) voor wie nog binnen is de title
 `HINT` met als subtitle `/doolhof hinttekst` (of de windrichting). **Valkisten**: een trapped chest
-in regio `doolhof` heeft geen loot. Wie hem opent krijgt de jumpscare in plaats van de kist, en om
-zich heen (binnen twee blokken, op een vrije plek met grond eronder) willekeurig `/doolhof valmobs`
-mobs (standaard 3 t/m 10), husks en silverfish door elkaar, elk op een eigen plek als dat past, met
-een wolkje. Ze hebben de opener als doel en doen gewone schade; wie doodgaat, gaat terug naar
-`doolhof_start`. Per speler gaat een kist één keer af (een dubbele kist is één kist), daarna gaat
-hij voor die speler open als lege kist. Staff zet niets af. De mobs verdwijnen aan het einde van het
-doolhof en komen na een crash niet terug.
+in regio `doolhof` heeft geen loot en gaat niet open. Wie hem opent krijgt 50/50 (`core`:
+`Regels.valkistGok`) óf de jumpscare, óf om zich heen (binnen twee blokken, op een vrije plek met
+grond eronder) willekeurig `/doolhof valmobs` mobs (standaard 3 t/m 10), husks en silverfish door
+elkaar, elk op een eigen plek als dat past, met een wolkje en `entity.evoker.prepare_summon`. Staat
+`/doolhof valmobs` op 0, dan altijd de jumpscare. De mobs hebben de opener als doel en doen gewone
+schade; wie doodgaat, gaat terug naar `doolhof_start`. Per speler gaat een kist één keer af (een
+dubbele kist is één kist), daarna gaat hij voor die speler open als lege kist. Staff zet niets af.
+De mobs verdwijnen aan het einde van het doolhof en komen na een crash niet terug.
 
 Timer op: wie nog geen team heeft gaat naar het kleinste team (bij gelijk: willekeurig) en ziet
 in de actionbar `Je zit in Groen`; iedereen ziet de title `DOOLHOF VOORBIJ` met als subtitle
@@ -880,7 +882,7 @@ langzaam draaiend. Opgeruimd als de kroonhouder kijker wordt.
 | Joinen in het basiskamp | Title `PUDDING BOOTCAMP`, subtitle `Welkom, <naam>`, `block.note_block.chime`. Alleen voor wie joint, en niet tijdens een ronde. |
 | Countdown | Titles 5 t/m 1 in goud met een stijgende `note_block.pling`, dan `GO` met `event.raid.horn`. |
 | Poort doolhof open | Cloud-particles in de poort; met `/doolhof poortmelding aan` ook `event.raid.horn` voor iedereen en de title `DE UITGANG IS OPEN` in groen. |
-| Valkist | De jumpscare voor wie hem opent, `poof`-particles waar de mobs verschijnen. |
+| Valkist | 50/50: de jumpscare voor wie hem opent, of mobs met `poof`-particles en `entity.evoker.prepare_summon`. |
 | Nep-uitgang | Explosie-particles, creeper-sis en knal, grapje als title, terug in de startruimte. |
 | Hint doolhof | Title `HINT` in geel, subtitle de hinttekst, voor wie nog binnen is. |
 | Doolhof voorbij | Title `DOOLHOF VOORBIJ`, subtitle `14 van de 20 vonden de uitgang`; wie in een team is gezet ziet in de actionbar `Je zit in Groen`. |
