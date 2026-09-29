@@ -67,6 +67,9 @@ vergaan dan niet, gras en gewassen groeien niet door). In 26.2 heten de gamerule
 anders (`GameRules.ADVANCE_TIME`, `SPAWN_MOBS`, ...) en zet je ze via
 `level.getGameRules().set(...)`.
 
+Zolang er geen ronde loopt (in de lobby en tussen de rondes) houdt de mod de honger van iedereen
+die meedoet elke seconde vol.
+
 Gamemode zet `/<ronde> start` per ronde: survival alleen in ronde 2 (het Ei), adventure in alle andere
 rondes; kijkers altijd adventure.
 
