@@ -49,7 +49,7 @@ public final class Tribune {
 
 	private static final int TERUGZET_ELKE_TICKS = 10;
 	/** Een veld van de mob arena telt tot zoveel blokken boven de selectie: het balkon is geen veld. */
-	private static final int VELD_HOOGTE = 3;
+	public static final int VELD_HOOGTE = 3;
 	private static int volgendeTribune;
 
 	private Tribune() {

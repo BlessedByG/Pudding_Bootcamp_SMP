@@ -185,7 +185,31 @@ public final class MobArena extends RondeLogica {
 				punten.add("start_" + a + "_" + k.id());
 			}
 		}
-		return Spel.buitenRegio("mobarena", punten);
+		String fout = Spel.buitenRegio("mobarena", punten);
+		if (fout != null) {
+			return fout;
+		}
+		return tribuneInVeld();
+	}
+
+	/**
+	 * Een tribuneplek die binnen een veld valt, zet wie er staat elke halve seconde terug: dan kan
+	 * niemand op de tribune lopen. Meestal is het veld een blok te ruim geselecteerd, tot onder de
+	 * tribune.
+	 */
+	private static String tribuneInVeld() {
+		List<String> fout = new ArrayList<>();
+		for (int a = 1; a <= 2; a++) {
+			Regio veld = Spel.regio("veld_" + a);
+			for (String t : Spel.reeks("tribune_mob_")) {
+				Punt p = Spel.punt(t);
+				if (veld != null && veld.bevatSpelerTot(p.x(), p.y(), p.z(), Tribune.VELD_HOOGTE)) {
+					fout.add(t + " (in veld_" + a + ")");
+				}
+			}
+		}
+		return fout.isEmpty() ? null : "deze tribuneplekken liggen binnen een veld, waar wachtenden juist af moeten blijven: "
+				+ String.join(", ", fout) + ". Selecteer het veld krapper: alleen de vloer, niet tot onder de tribune";
 	}
 
 	private static WavesDef leesWaves() {
