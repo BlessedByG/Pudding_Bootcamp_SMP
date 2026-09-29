@@ -87,7 +87,8 @@ Jar vervangen betekent server herstarten. Bewaar de jar van de vorige werkende v
 - `<wereld>/bootcamp.json` bestaat nog niet; de mod begint met een lege config en de standaard
   instellingen.
 - Gamerules: natural regeneration en PvP aan (de mod beslist zelf wie wie mag raken); mob spawning,
-  mob griefing, daglichtcyclus, weer, advancement-meldingen en locator bar uit. De locator bar gaat
+  mob griefing, daglichtcyclus, weer, advancement-meldingen en locator bar uit, en `random_tick_speed`
+  op 0 (geplakte bladeren vergaan dan niet). De locator bar gaat
   aan in Clown vs All.
 - De teams `spelers`, `rood`, `blauw`, `groen`, `geel`, `jagers`, `kroon` en `out`.
 

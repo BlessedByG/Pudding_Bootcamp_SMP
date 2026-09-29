@@ -62,7 +62,8 @@ Geen Skript, geen datapack, geen plugins, geen client-mod behalve voice.
 Gamerules die de mod bij het opstarten en bij `/bc reset` zet: `naturalRegeneration` aan, `pvp`
 aan (de mod beslist zelf wie wie mag raken, zie PvP hieronder), `doMobSpawning` uit (mobs spawnen
 we zelf), `mobGriefing` uit (creepers in de mob arena), `doDaylightCycle` uit,
-`announceAdvancements` uit, `locatorBar` uit (aan in ronde 5). In 26.2 heten de gamerules in code
+`announceAdvancements` uit, `locatorBar` uit (aan in ronde 5), `randomTickSpeed` op 0 (geplakte bladeren
+vergaan dan niet, gras en gewassen groeien niet door). In 26.2 heten de gamerules in code
 anders (`GameRules.ADVANCE_TIME`, `SPAWN_MOBS`, ...) en zet je ze via
 `level.getGameRules().set(...)`.
 
