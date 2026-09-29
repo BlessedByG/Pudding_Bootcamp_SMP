@@ -143,6 +143,10 @@ public final class Ei extends RondeLogica {
 		}
 		// De pickaxe erbij, gemarkeerd: aan het eind gaat hij weer weg.
 		Kits.geefAan(server, "ei", spelers, stack -> Items26.markeer(stack, Items26.EI_TAG, null));
+		// Binnenin het Ei wordt het snel donker: Night Vision voor iedereen die meedoet.
+		for (ServerPlayer s : spelers) {
+			nachtzicht(s);
+		}
 		Border.zet(server, Spel.regio("eigebied"));
 		toonSidebar(server);
 		Aftelling.start(Regels.COUNTDOWN, "Het Ei opent over", () -> {
@@ -260,6 +264,11 @@ public final class Ei extends RondeLogica {
 				actionbar(server, a);
 			}
 		});
+	}
+
+	/** Night Vision zonder deeltjes, zolang het Ei duurt. */
+	private static void nachtzicht(ServerPlayer speler) {
+		Mc.effect(speler, MobEffects.NIGHT_VISION, -1, 0);
 	}
 
 	private static MutableComponent naam(ServerPlayer speler) {
@@ -389,6 +398,8 @@ public final class Ei extends RondeLogica {
 	public void onDeath(MinecraftServer server, ServerPlayer speler, DamageSource bron) {
 		String spawn = Spel.status(speler).eiSpawn;
 		Spel.naarPunt(speler, spawn != null ? spawn : "ei_spawn_1");
+		// De heal bij een dood haalt alle effecten weg.
+		nachtzicht(speler);
 		if (bevriezingLoopt && !speler.getUUID().equals(bevriezer)) {
 			// De heal haalt de effecten weg; de bevriezing blijft staan.
 			Mc.effect(speler, MobEffects.MINING_FATIGUE, Math.max(1, (bevrorenTot - server.getTickCount()) / 20), 4);
@@ -408,6 +419,7 @@ public final class Ei extends RondeLogica {
 			Kits.geefAan(server, "ei", List.of(speler), stack -> Items26.markeer(stack, Items26.EI_TAG, null));
 		}
 		Spel.naarPunt(speler, st.eiSpawn);
+		nachtzicht(speler);
 		// Een bevriezing die nog loopt geldt ook voor hem; een die voorbij is niet meer.
 		int nu = server.getTickCount();
 		if (bevriezingLoopt && nu < bevrorenTot && !speler.getUUID().equals(bevriezer)) {
@@ -432,6 +444,7 @@ public final class Ei extends RondeLogica {
 			Items26.haalWeg(s, Items26.EI_TAG);
 			s.setGameMode(GameType.ADVENTURE);
 			s.removeEffect(MobEffects.HASTE);
+			s.removeEffect(MobEffects.NIGHT_VISION);
 			s.removeEffect(MobEffects.MINING_FATIGUE);
 		}
 		Sidebar.weg(server);

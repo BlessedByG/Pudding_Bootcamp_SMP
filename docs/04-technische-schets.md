@@ -526,7 +526,8 @@ van `/ei blokken` samen meer zijn dan de deepslate-plekken. Start:
    willekeurig, zonder dubbele, zoveel plekken als `/ei blokken` zegt, en zet daar de puntenblokken
    (`core`: `EiVerdeling`). Varianten zoals cobbled deepslate of deepslate tiles tellen niet mee.
 3. Spelers om en om naar `ei_spawn_1..n` (die plek onthoudt de mod per speler), survival,
-   `ei.json`, border `eigebied`, countdown, timer (`/ei timer`, standaard 15 minuten).
+   `ei.json`, Night Vision zonder deeltjes zolang het Ei duurt (binnenin wordt het snel donker; ook
+   na een val en voor wie inlogt, eraf aan het einde), border `eigebied`, countdown, timer (`/ei timer`, standaard 15 minuten).
 
 `/ei vastleggen` bewaart alle blokken van de doos `ei` in de wereldmap (`bootcamp_ei.nbt`). Een
 doos van meer dan 250.000 blokken weigert hij: dat is een verkeerde selectie.
