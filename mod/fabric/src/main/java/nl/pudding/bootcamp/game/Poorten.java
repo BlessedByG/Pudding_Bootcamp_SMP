@@ -16,9 +16,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Poorten: een muur (regio {@code poort_<naam>}) die met één command weggaat. Open is lucht. Dicht
- * zet terug wat er stond toen hij openging; weet de mod dat niet meer (na een herstart), dan iron
- * bars.
+ * Poorten: een muur (regio {@code poort_<naam>}) die met één command weggaat. Een regio met meerdere
+ * delen ({@code /bc region add}) is meerdere poorten die samen open en dicht gaan; alleen de blokken
+ * in de delen zelf, nooit wat ertussen staat. Open is lucht. Dicht zet terug wat er stond toen hij
+ * openging; weet de mod dat niet meer (na een herstart), dan iron bars.
  */
 public final class Poorten {
 	public static final String PREFIX = "poort_";
@@ -54,8 +55,8 @@ public final class Poorten {
 		if (regio == null) {
 			return "regio " + regioNaam + " bestaat niet";
 		}
-		if (regio.aantalBlokken() > MAX_BLOKKEN) {
-			return "regio " + regioNaam + " is te groot voor een poort (" + regio.aantalBlokken() + " blokken)";
+		if (aantal(regio) > MAX_BLOKKEN) {
+			return "regio " + regioNaam + " is te groot voor een poort (" + aantal(regio) + " blokken)";
 		}
 		ServerLevel wereld = Mc.wereld(server);
 		Map<BlockPos, BlockState> stond = new HashMap<>();
@@ -71,8 +72,10 @@ public final class Poorten {
 			return null;
 		}
 		ONTHOUDEN.put(regioNaam, stond);
-		Mc.particles(wereld, ParticleTypes.CLOUD, regio.centerX(), (regio.min().y() + regio.max().y() + 1) / 2.0, regio.centerZ(),
-				60, Math.max(1.0, regio.grootte() / 4.0), 0.02);
+		for (Regio.Doos d : delen(regio)) {
+			Mc.particles(wereld, ParticleTypes.CLOUD, (d.min().x() + d.max().x() + 1) / 2.0, (d.min().y() + d.max().y() + 1) / 2.0,
+					(d.min().z() + d.max().z() + 1) / 2.0, 60, Math.max(1.0, Math.max(d.breedteX(), d.breedteZ()) / 4.0), 0.02);
+		}
 		Mc.geluidAllen(server, SoundEvents.RAID_HORN, 1f, 1f);
 		return null;
 	}
@@ -83,8 +86,8 @@ public final class Poorten {
 		if (regio == null) {
 			return "regio " + regioNaam + " bestaat niet";
 		}
-		if (regio.aantalBlokken() > MAX_BLOKKEN) {
-			return "regio " + regioNaam + " is te groot voor een poort (" + regio.aantalBlokken() + " blokken)";
+		if (aantal(regio) > MAX_BLOKKEN) {
+			return "regio " + regioNaam + " is te groot voor een poort (" + aantal(regio) + " blokken)";
 		}
 		ServerLevel wereld = Mc.wereld(server);
 		Map<BlockPos, BlockState> stond = ONTHOUDEN.remove(regioNaam);
@@ -122,7 +125,26 @@ public final class Poorten {
 		}
 	}
 
+	/**
+	 * De blokken van alle delen van de poort, elk blok één keer. Nooit de doos om de delen heen: bij
+	 * twee poorten aan verschillende kanten zou die alles daartussen weghalen.
+	 */
 	private static Iterable<BlockPos> blokken(Regio r) {
-		return BlockPos.betweenClosed(r.min().x(), r.min().y(), r.min().z(), r.max().x(), r.max().y(), r.max().z());
+		java.util.Set<BlockPos> uit = new java.util.LinkedHashSet<>();
+		for (Regio.Doos d : delen(r)) {
+			for (BlockPos p : BlockPos.betweenClosed(d.min().x(), d.min().y(), d.min().z(), d.max().x(), d.max().y(), d.max().z())) {
+				uit.add(p.immutable());
+			}
+		}
+		return uit;
+	}
+
+	private static java.util.List<Regio.Doos> delen(Regio r) {
+		return r.isCilinder() ? java.util.List.of(r.omhullende()) : r.delen();
+	}
+
+	/** Hoeveel blokken alle delen samen hebben. */
+	private static long aantal(Regio r) {
+		return delen(r).stream().mapToLong(Regio.Doos::aantalBlokken).sum();
 	}
 }
