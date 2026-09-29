@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,8 +36,9 @@ import java.util.UUID;
 
 /**
  * Valkisten: een trapped chest in regio {@code doolhof} heeft geen loot. Wie hem opent krijgt de
- * jumpscare en om zich heen {@code /doolhof valmobs} husks en silverfish, die gewoon schade doen.
- * Per speler gaat een kist één keer af; daarna gaat hij voor die speler open als lege kist.
+ * jumpscare en om zich heen willekeurig {@code /doolhof valmobs} husks en silverfish (standaard 3
+ * t/m 10), die gewoon schade doen. Per speler gaat een kist één keer af; daarna gaat hij voor die
+ * speler open als lege kist.
  */
 public final class Valkisten {
 	public static final String TAG = "bootcamp_valkist";
@@ -89,8 +91,11 @@ public final class Valkisten {
 
 	private static void spawn(ServerPlayer speler) {
 		ServerLevel wereld = (ServerLevel) speler.level();
-		List<BlockPos> plekken = plekkenRond(speler.blockPosition());
-		for (int i = 0; i < Spel.instellingen().valMobs(); i++) {
+		List<BlockPos> vrij = plekkenRond(speler.blockPosition());
+		List<BlockPos> gebruikt = new ArrayList<>();
+		int min = Spel.instellingen().valMobsMin();
+		int aantal = min + Spel.RANDOM.nextInt(Spel.instellingen().valMobsMax() - min + 1);
+		for (int i = 0; i < aantal; i++) {
 			EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(Identifier.parse(MOBS.get(Spel.RANDOM.nextInt(MOBS.size()))))
 					.map(Holder::value).orElse(null);
 			Entity entity = type == null ? null : type.create(wereld, EntitySpawnReason.EVENT);
@@ -100,7 +105,7 @@ public final class Valkisten {
 				}
 				continue;
 			}
-			zetNeer(wereld, mob, speler, plekken);
+			zetNeer(wereld, mob, speler, vrij, gebruikt);
 			mob.setPersistenceRequired();
 			mob.addTag(TAG);
 			mob.setTarget(speler);
@@ -125,14 +130,28 @@ public final class Valkisten {
 		return plekken;
 	}
 
-	/** Op een vrije plek met vaste grond eronder; is die er niet, dan waar de speler staat. */
-	private static void zetNeer(ServerLevel wereld, Mob mob, ServerPlayer speler, List<BlockPos> plekken) {
+	/**
+	 * Elke mob op een eigen vrije plek met vaste grond eronder. Zijn die op (een smalle gang), dan
+	 * samen op een plek die al gebruikt is; past hij nergens, dan waar de speler staat.
+	 */
+	private static void zetNeer(ServerLevel wereld, Mob mob, ServerPlayer speler, List<BlockPos> vrij, List<BlockPos> gebruikt) {
 		float draai = Spel.RANDOM.nextFloat() * 360f;
-		for (BlockPos p : plekken) {
+		for (Iterator<BlockPos> it = vrij.iterator(); it.hasNext(); ) {
+			BlockPos p = it.next();
 			BlockPos onder = p.below();
 			if (wereld.getBlockState(onder).getCollisionShape(wereld, onder).isEmpty()) {
+				it.remove();
 				continue;
 			}
+			mob.snapTo(p.getX() + 0.5, p.getY(), p.getZ() + 0.5, draai, 0f);
+			if (wereld.noCollision(mob)) {
+				it.remove();
+				gebruikt.add(p);
+				return;
+			}
+		}
+		Collections.shuffle(gebruikt, Spel.RANDOM);
+		for (BlockPos p : gebruikt) {
 			mob.snapTo(p.getX() + 0.5, p.getY(), p.getZ() + 0.5, draai, 0f);
 			if (wereld.noCollision(mob)) {
 				return;

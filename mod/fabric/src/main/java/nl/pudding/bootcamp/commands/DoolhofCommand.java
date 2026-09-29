@@ -52,8 +52,11 @@ final class DoolhofCommand {
 				.then(Commands.literal("uit").executes(ctx -> poortMelding(ctx, false))));
 		cmd.then(Commands.literal("valmobs")
 				.executes(DoolhofCommand::toonValMobs)
-				.then(Commands.argument("aantal", IntegerArgumentType.integer(0, Instellingen.MAX_VAL_MOBS))
-						.executes(DoolhofCommand::valMobs)));
+				// Eén getal: altijd zoveel. Twee: willekeurig van het ene t/m het andere.
+				.then(Commands.argument("min", IntegerArgumentType.integer(0, Instellingen.MAX_VAL_MOBS))
+						.executes(ctx -> valMobs(ctx, IntegerArgumentType.getInteger(ctx, "min"), IntegerArgumentType.getInteger(ctx, "min")))
+						.then(Commands.argument("max", IntegerArgumentType.integer(0, Instellingen.MAX_VAL_MOBS))
+								.executes(ctx -> valMobs(ctx, IntegerArgumentType.getInteger(ctx, "min"), IntegerArgumentType.getInteger(ctx, "max"))))));
 		return cmd;
 	}
 
@@ -69,16 +72,25 @@ final class DoolhofCommand {
 	}
 
 	private static int toonValMobs(CommandContext<CommandSourceStack> ctx) {
-		return BcCommand.info(ctx, "Uit een valkist komen " + Spel.instellingen().valMobs() + " mobs (husks en silverfish), standaard "
-				+ Instellingen.VAL_MOBS + ".");
+		Instellingen i = Spel.instellingen();
+		return BcCommand.info(ctx, "Uit een valkist komen " + aantal(i.valMobsMin(), i.valMobsMax()) + " mobs (husks en silverfish), standaard "
+				+ aantal(Instellingen.VAL_MOBS_MIN, Instellingen.VAL_MOBS_MAX) + ".");
 	}
 
-	private static int valMobs(CommandContext<CommandSourceStack> ctx) {
-		int aantal = IntegerArgumentType.getInteger(ctx, "aantal");
-		Spel.instellingen().zetValMobs(aantal);
-		return BcCommand.bewaard(ctx, aantal == 0
+	private static int valMobs(CommandContext<CommandSourceStack> ctx, int min, int max) {
+		String fout = Instellingen.checkValMobs(min, max);
+		if (fout != null) {
+			return BcCommand.fout(ctx, "Kan niet: " + fout + ".");
+		}
+		Spel.instellingen().zetValMobs(min, max);
+		return BcCommand.bewaard(ctx, max == 0
 				? "Een valkist geeft nu alleen de jumpscare, zonder mobs."
-				: "Uit een valkist komen nu " + aantal + " mobs.");
+				: "Uit een valkist komen nu " + aantal(min, max) + " mobs.");
+	}
+
+	/** {@code 5} of {@code willekeurig 3 t/m 10}. */
+	private static String aantal(int min, int max) {
+		return min == max ? String.valueOf(min) : "willekeurig " + min + " t/m " + max;
 	}
 
 	private static int poort(CommandContext<CommandSourceStack> ctx, boolean open) {

@@ -300,7 +300,10 @@ public final class BootcampConfig {
 		doolhof.addProperty("poort", i.doolhofPoort());
 		doolhof.addProperty("hint", i.doolhofHint());
 		doolhof.addProperty("poortmelding", i.poortMelding());
-		doolhof.addProperty("valmobs", i.valMobs());
+		JsonArray valmobs = new JsonArray();
+		valmobs.add(i.valMobsMin());
+		valmobs.add(i.valMobsMax());
+		doolhof.add("valmobs", valmobs);
 		if (i.hinttekst() != null) {
 			doolhof.addProperty("hinttekst", i.hinttekst());
 		}
@@ -345,7 +348,8 @@ public final class BootcampConfig {
 				wrap("instellingen.doolhof.poortmelding", () -> i.zetPoortMelding(d.get("poortmelding").getAsBoolean()));
 			}
 			if (d.has("valmobs")) {
-				wrap("instellingen.doolhof.valmobs", () -> i.zetValMobs(d.get("valmobs").getAsInt()));
+				JsonArray v = d.getAsJsonArray("valmobs");
+				wrap("instellingen.doolhof.valmobs", () -> i.zetValMobs(v.get(0).getAsInt(), v.get(1).getAsInt()));
 			}
 		}
 		if (o.has("ei")) {

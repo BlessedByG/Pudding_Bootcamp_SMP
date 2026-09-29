@@ -57,7 +57,7 @@ Vooraf instellen, in minuten (blijft bewaard):
 | `/doolhof hint` | 10 |
 | `/doolhof hinttekst` | geen: dan noemt de mod de windrichting. Zet je eigen hint, bijvoorbeeld "De echte gang begint bij de lantaarn". |
 | `/doolhof poortmelding` | aan: hoorn en title als de uitgang opengaat. `uit` voor een stille poort. |
-| `/doolhof valmobs` | 3 mobs per valkist |
+| `/doolhof valmobs` | willekeurig 3 t/m 10 mobs per valkist |
 | `/ei timer` | 15 |
 | `/ei blokken` | netherite 6, diamond 90, gold 120, redstone 10, emerald 10 (voorlopig) |
 | `/mobarena punten` | zombie 1; skeleton, spider, cave spider 2; creeper 3; witch 4; vindicator 5; evoker 8; ravager 10 |

@@ -259,7 +259,7 @@ hele avond geldt (setup, spelers, noodknoppen) staat onder `/bc`.
 | `/doolhof hinttekst [<tekst>]` | Wat er in de hint staat (subtitle onder `HINT`), bijvoorbeeld `De echte gang begint bij de lantaarn`. Bewaard in `bootcamp.json`. Zonder tekst: de huidige laten zien. Is er nooit een tekst gezet, dan rekent de mod een windrichting uit: `De uitgang ligt aan de noordkant`. `/doolhof hinttekst -` wist hem weer. |
 | `/doolhof poort open\|dicht` | De poort met de hand bedienen. |
 | `/doolhof poortmelding [aan\|uit]` | Of iedereen de raid-hoorn hoort en de title `DE UITGANG IS OPEN` ziet als de uitgang opengaat, standaard `aan`. Met `uit` gaat de poort stil open (de wolkjes in de poort komen er wel). Geldt ook voor `/doolhof poort open`. Zonder argument: de huidige stand. Bewaard in `bootcamp.json`. |
-| `/doolhof valmobs [<aantal>]` | Hoeveel mobs (willekeurig husks en silverfish) er uit een valkist komen, standaard 3. Bij `0` alleen de jumpscare. Bewaard in `bootcamp.json`. |
+| `/doolhof valmobs [<min> [<max>]]` | Hoeveel mobs (husks en silverfish door elkaar) er uit een valkist komen: elke keer willekeurig van `<min>` t/m `<max>`, standaard 3 t/m 10. Met één getal altijd zoveel; `0` is alleen de jumpscare. Bewaard in `bootcamp.json`. |
 | `/ei start\|stop\|resterend` | Ronde 2. |
 | `/ei timer [<minuten>]` | Hoe lang het Ei duurt, standaard 15. |
 | `/ei blokken [<soort> <aantal>]` | Hoeveel puntenblokken van een soort (`netherite`, `diamond`, `gold`, `redstone`, `emerald`) de mod in het Ei strooit. Zonder argumenten: het overzicht, met het aantal deepslate-plekken in het Ei. |
@@ -327,7 +327,7 @@ ronde. Een nieuw aantal puntenblokken geldt vanaf de volgende `/ei start`.
 | `/doolhof hint` | 10 | 1 tot de timer |
 | `/doolhof hinttekst` | geen (dan de windrichting) | tot 60 tekens, zodat hij op één regel past |
 | `/doolhof poortmelding` | aan | aan of uit |
-| `/doolhof valmobs` | 3 | 0 tot 10 |
+| `/doolhof valmobs` | 3 t/m 10 | 0 tot 20, min niet boven max |
 | `/ei timer` | 15 | 5 tot 60 |
 | `/ei blokken` | netherite 6, diamond 90, gold 120, redstone 10, emerald 10 (voorlopig) | 0 of meer; samen niet meer dan de deepslate-plekken in het Ei |
 | `/mobarena punten` | zombie 1; skeleton, spider, cave spider 2; creeper 3; witch 4; vindicator 5; evoker 8; ravager 10; elk ander type 1 | 0 tot 100 |
@@ -521,11 +521,12 @@ willekeurig grapje als title (lijst in `bootcamp.json`) en gaat naar `doolhof_st
 krijgt het teammenu. Na `/doolhof hint` minuten (standaard 10) voor wie nog binnen is de title
 `HINT` met als subtitle `/doolhof hinttekst` (of de windrichting). **Valkisten**: een trapped chest
 in regio `doolhof` heeft geen loot. Wie hem opent krijgt de jumpscare in plaats van de kist, en om
-zich heen (binnen twee blokken, op een vrije plek met grond eronder) `/doolhof valmobs` mobs,
-willekeurig husks en silverfish, met een wolkje. Ze hebben de opener als doel en doen gewone schade;
-wie doodgaat, gaat terug naar `doolhof_start`. Per speler gaat een kist één keer af (een dubbele
-kist is één kist), daarna gaat hij voor die speler open als lege kist. Staff zet niets af. De mobs
-verdwijnen aan het einde van het doolhof en komen na een crash niet terug.
+zich heen (binnen twee blokken, op een vrije plek met grond eronder) willekeurig `/doolhof valmobs`
+mobs (standaard 3 t/m 10), husks en silverfish door elkaar, elk op een eigen plek als dat past, met
+een wolkje. Ze hebben de opener als doel en doen gewone schade; wie doodgaat, gaat terug naar
+`doolhof_start`. Per speler gaat een kist één keer af (een dubbele kist is één kist), daarna gaat
+hij voor die speler open als lege kist. Staff zet niets af. De mobs verdwijnen aan het einde van het
+doolhof en komen na een crash niet terug.
 
 Timer op: wie nog geen team heeft gaat naar het kleinste team (bij gelijk: willekeurig) en ziet
 in de actionbar `Je zit in Groen`; iedereen ziet de title `DOOLHOF VOORBIJ` met als subtitle
