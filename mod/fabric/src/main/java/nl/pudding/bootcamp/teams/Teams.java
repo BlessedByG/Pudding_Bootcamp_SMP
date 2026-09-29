@@ -103,6 +103,16 @@ public final class Teams {
 		return ConfigStore.get().teamVan(Mc.naam(speler));
 	}
 
+	/** Per kleur wie hem gekozen heeft, ook wie offline is: namen in kleine letters, op alfabet. */
+	public static Map<Kleur, List<String>> namen() {
+		Map<Kleur, List<String>> uit = new EnumMap<>(Kleur.class);
+		for (Kleur k : Kleur.values()) {
+			uit.put(k, new ArrayList<>());
+		}
+		ConfigStore.get().teams().forEach((naam, k) -> uit.get(k).add(naam));
+		return uit;
+	}
+
 	/** Hoeveel spelers deze kleur gekozen hebben, ook wie offline is. */
 	public static int aantal(Kleur k) {
 		return ConfigStore.get().aantalInTeam(k);

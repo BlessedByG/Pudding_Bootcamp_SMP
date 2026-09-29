@@ -134,7 +134,8 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
 - [ ] `/doolhof start`: kisten gevuld, nep-uitgang zet je terug met knal en grapje, schrikplek
       werkt één keer, poort open na 4 minuten (`/doolhof resterend 665` om te versnellen), hint
       na 10 minuten met je eigen `/doolhof hinttekst` (`/doolhof resterend 305`), teammenu op de
-      finishlijn, vol team is grijs, na je keuze `GEFINISHT` en je kunt terug het doolhof in (mobs
+      finishlijn met de hoofden per team (alleen de wol kiest), vol team is grijs, de sidebar laat
+      de namen per team zien, na je keuze `GEFINISHT` en je kunt terug het doolhof in (mobs
       en vallen werken dan nog), bij de timer `DOOLHOF VOORBIJ` en iedereen naar `v2`. Opnieuw
       joinen buiten een ronde: welkomsttitle.
 - [ ] Valkist in het doolhof: de bossbar noemt alleen de totale tijd. Een trapped chest openen geeft

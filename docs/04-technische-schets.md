@@ -124,12 +124,21 @@ gebruikt. In ronde 6 zit iedereen zonder team.
 **Maximum per team**: 5, of meer als er meer dan 20 spelers zijn: `max(5, ceil(spelers / 4))`,
 met spelers = iedereen die meedoet op het moment dat de eerste kiest.
 
-**Het teammenu** is een vanilla kistmenu (`ChestMenu`, 1 rij, `MenuType.GENERIC_9x1`) met een
-`SimpleContainer`: op vier plekken een gekleurd wolblok met de teamnaam en het aantal
-(`Rood · 3/5`). Een vol team is grijze wol. Items verplaatsen kan niet (het menu annuleert elke
-klik en handelt hem zelf af); klik op een kleur zet je in het team en sluit het menu; je blijft waar je bent (zie ronde 1). Sluit
-je het menu zonder keuze terwijl je op de finishlijn (`doolhof_uit`) staat, dan opent het na 2
-seconden opnieuw. Allemaal server-side, geen client-mod nodig.
+**Het teammenu** is een vanilla kistmenu (`ChestMenu`, 4 rijen, `MenuType.GENERIC_9x4`) met een
+`SimpleContainer`, een rij per kleur. Vooraan een gekleurd wolblok met de teamnaam en het aantal
+(`Rood · 3/5`); een vol team is grijze wol. Daarachter de hoofden van wie er al in zit, met hun skin
+(online met hun eigen profiel, offline op naam) en hun naam in de teamkleur; zijn het er meer dan
+acht, dan zeven hoofden en `+3 meer`. Elke seconde bijgewerkt. Items verplaatsen kan niet (het menu
+annuleert elke klik en handelt hem zelf af). **Alleen een klik op de wol** zet je in het team en
+sluit het menu; een klik op een hoofd doet niets. Je blijft waar je bent (zie ronde 1). Sluit je het
+menu zonder keuze terwijl je op de finishlijn (`doolhof_uit`) staat, dan opent het na 2 seconden
+opnieuw. Allemaal server-side, geen client-mod nodig.
+
+**De sidebar in het doolhof** (`Teams`) laat per kleur `Rood 3/5` zien (vet, in de teamkleur) en
+daaronder wie erin zit, met het hoofd ervoor als hij online is. De sidebar heeft maar 15 regels
+(`core`: `TeamOverzicht`): past het niet met één naam per regel, dan komen er twee, drie of meer naast
+elkaar, zo weinig als kan. Elke seconde bekeken (ook `/bc team` en wie in- of uitlogt), alleen
+opnieuw gestuurd als er iets veranderde.
 
 ## Resource pack en de jumpscare
 
@@ -867,7 +876,7 @@ Eén bossbar, kort, altijd hetzelfde formaat. Persoonlijke info via de actionbar
 | 6 | `FFA · 7 over` | paars | spelers over |
 | Na de kroning | `Pudding Bootcamp · King: Speler7` | goud | vol |
 
-**Sidebar**: ronde 1 de teams met aantallen (`Rood 3/5`), ronde 2 de top 10 op punten, ronde 3
+**Sidebar**: ronde 1 de teams met aantallen en namen (`Rood 3/5` met de spelers eronder), ronde 2 de top 10 op punten, ronde 3
 de teamstand in punten (`Rood 47`), ronde 4 de quizpunten, ronde 5 de regeerperiodes, ronde 6 de
 kills.
 

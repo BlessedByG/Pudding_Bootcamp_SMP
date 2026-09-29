@@ -5,6 +5,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -33,6 +34,7 @@ import nl.pudding.bootcamp.core.Regio;
 import nl.pudding.bootcamp.core.Rol;
 import nl.pudding.bootcamp.core.Ronde;
 import nl.pudding.bootcamp.core.TeamKeuze;
+import nl.pudding.bootcamp.core.TeamOverzicht;
 import nl.pudding.bootcamp.game.Aftelling;
 import nl.pudding.bootcamp.game.Border;
 import nl.pudding.bootcamp.game.Poorten;
@@ -79,6 +81,8 @@ public final class Doolhof extends RondeLogica {
 	/** Wie de basiskit al kreeg; wie later binnenkomt krijgt hem bij het inloggen. */
 	private final java.util.Set<java.util.UUID> gestart = new java.util.HashSet<>();
 	private final Valkisten valkisten = new Valkisten();
+	/** Wat de sidebar nu laat zien, zodat hij alleen bij een verandering opnieuw gaat. */
+	private String sidebarNu;
 
 	@Override
 	public Ronde ronde() {
@@ -328,6 +332,8 @@ public final class Doolhof extends RondeLogica {
 	@Override
 	public void seconde(MinecraftServer server) {
 		Teammenu.ververs(server);
+		// Ook /bc team en wie in- of uitlogt (hoofd erbij of eraf).
+		toonSidebar(server);
 		if (!timerGestart || !Spel.timerLoopt()) {
 			return;
 		}
@@ -394,13 +400,33 @@ public final class Doolhof extends RondeLogica {
 		}
 	}
 
-	private static void toonSidebar(MinecraftServer server) {
+	/**
+	 * De teams rechts in beeld: per kleur {@code Rood 3/5} en daaronder wie erin zit, met zijn hoofd
+	 * als hij online is. Elke seconde bekeken, maar alleen opnieuw gestuurd als er iets veranderde.
+	 */
+	private void toonSidebar(MinecraftServer server) {
 		int max = Teams.maximum(server);
 		List<Component> regels = new ArrayList<>();
-		for (Kleur k : Kleur.values()) {
-			regels.add(Mc.tekst(k.naam() + " " + Teams.aantal(k) + "/" + max, Mc.kleur(k)));
+		StringBuilder sleutel = new StringBuilder().append(max);
+		for (TeamOverzicht.Regel r : TeamOverzicht.regels(Teams.namen())) {
+			Kleur k = r.kleur();
+			if (r.kop()) {
+				regels.add(Mc.tekst(k.naam() + " " + Teams.aantal(k) + "/" + max, Mc.kleur(k), ChatFormatting.BOLD));
+				sleutel.append('|').append(k.id());
+				continue;
+			}
+			MutableComponent regel = Component.literal(" ");
+			for (String naam : r.namen()) {
+				ServerPlayer p = server.getPlayerList().getPlayerByName(naam);
+				regel.append(" ").append(p != null ? Mc.kopEnNaam(p, Mc.kleur(k)) : Mc.tekst(naam, Mc.kleur(k)));
+				sleutel.append(',').append(naam).append(p != null ? '+' : '-');
+			}
+			regels.add(regel);
 		}
-		Sidebar.toonTekst(server, "Teams", regels);
+		if (!sleutel.toString().equals(sidebarNu)) {
+			sidebarNu = sleutel.toString();
+			Sidebar.toonTekst(server, "Teams", regels);
+		}
 	}
 
 	@Override
@@ -475,5 +501,7 @@ public final class Doolhof extends RondeLogica {
 			}
 		}
 		Sidebar.weg(server);
+		// Het einde tekent de eindstand daarna opnieuw; dat mag niet als "niets veranderd" wegvallen.
+		sidebarNu = null;
 	}
 }
