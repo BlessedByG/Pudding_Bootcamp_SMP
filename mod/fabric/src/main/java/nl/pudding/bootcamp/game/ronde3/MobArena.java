@@ -203,7 +203,7 @@ public final class MobArena extends RondeLogica {
 			Regio veld = Spel.regio("veld_" + a);
 			for (String t : Spel.reeks("tribune_mob_")) {
 				Punt p = Spel.punt(t);
-				if (veld != null && veld.bevatSpelerTot(p.x(), p.y(), p.z(), Tribune.VELD_HOOGTE)) {
+				if (veld != null && veld.bevatSpelerTot(p.x(), p.y(), p.z(), Spel.instellingen().veldHoogte())) {
 					fout.add(t + " (in veld_" + a + ")");
 				}
 			}

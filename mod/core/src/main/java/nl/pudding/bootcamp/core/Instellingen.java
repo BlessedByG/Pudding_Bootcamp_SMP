@@ -23,6 +23,9 @@ public final class Instellingen {
 	public static final int MAX_TEKST = 60;
 	public static final int MAX_MOB_PUNTEN = 100;
 	public static final String AFTEKST = "Af · je speelt geen beurt meer";
+	/** Tot hoeveel blokken boven de selectie een veld van de mob arena voor kijkers en wachtenden telt. */
+	public static final int VELD_HOOGTE = 3;
+	public static final int MAX_VELD_HOOGTE = 10;
 	public static final String WACHTTEKST = "Wacht op het startsein";
 	/** Punten voor een mobtype dat niet in de tabel staat. */
 	public static final int MOB_PUNTEN_ANDER = 1;
@@ -51,6 +54,7 @@ public final class Instellingen {
 	private final EnumMap<EiBlok, Integer> eiBlokken = new EnumMap<>(EiBlok.class);
 	private final Map<String, Integer> mobPunten = new LinkedHashMap<>(MOB_PUNTEN);
 	private String aftekst = AFTEKST;
+	private int veldHoogte = VELD_HOOGTE;
 	private String clownWachttekst = WACHTTEKST;
 	private String ffaWachttekst = WACHTTEKST;
 
@@ -231,6 +235,22 @@ public final class Instellingen {
 	public static String mobSleutel(String type) {
 		String s = type.toLowerCase(Locale.ROOT).strip();
 		return s.startsWith("minecraft:") ? s.substring("minecraft:".length()) : s;
+	}
+
+	public int veldHoogte() {
+		return veldHoogte;
+	}
+
+	public static String checkVeldHoogte(int blokken) {
+		if (blokken < 0 || blokken > MAX_VELD_HOOGTE) {
+			return "de veldhoogte moet 0 t/m " + MAX_VELD_HOOGTE + " blokken zijn, niet " + blokken;
+		}
+		return null;
+	}
+
+	public void zetVeldHoogte(int blokken) {
+		vereis(checkVeldHoogte(blokken));
+		veldHoogte = blokken;
 	}
 
 	public String aftekst() {

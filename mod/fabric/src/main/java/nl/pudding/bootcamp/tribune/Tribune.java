@@ -48,8 +48,6 @@ public final class Tribune {
 	}
 
 	private static final int TERUGZET_ELKE_TICKS = 10;
-	/** Een veld van de mob arena telt tot zoveel blokken boven de selectie: het balkon is geen veld. */
-	public static final int VELD_HOOGTE = 3;
 	private static int volgendeTribune;
 
 	private Tribune() {
@@ -285,7 +283,7 @@ public final class Tribune {
 				if (st.arena > 0 || st.kooi == arena) {
 					continue;
 				}
-				if (veld.bevatSpelerTot(s.getX(), s.getY(), s.getZ(), VELD_HOOGTE)) {
+				if (veld.bevatSpelerTot(s.getX(), s.getY(), s.getZ(), Spel.instellingen().veldHoogte())) {
 					terug(s, st, Ronde.MOBARENA);
 				}
 			}

@@ -186,7 +186,7 @@ onder *Commands*.
 |---|---|
 | Doolhof | `/doolhof start\|stop\|resterend <sec>`, `timer [<min>]` (15), `poort [<min>]` (4), `hint [<min>]` (10), `hinttekst [<tekst>\|-]`, `poort open\|dicht` |
 | Het Ei | `/ei start\|stop\|resterend <sec>`, `timer [<min>]` (15), `blokken [<soort> <aantal>]`, `vastleggen` |
-| Mob arena | `/mobarena start\|volgende\|schema\|stop`, `wave volgende`, `startplek <1\|2> <kleur>`, `punten [<mob> <punten>]`, `aftekst [<tekst>]` |
+| Mob arena | `/mobarena start\|volgende\|schema\|stop`, `wave volgende`, `startplek <1\|2> <kleur>`, `punten [<mob> <punten>]`, `veldhoogte [<blokken>]`, `aftekst [<tekst>]` |
 | Quiz | `/quiz start\|stop`, `presentator [<speler>]`, `bank <kleur>`, `podium`, `lamp <kleur>`, `draai`, `goed`, `fout`, `punt <kleur> [<aantal>]`, `einde`, `winnaar <kleur>` |
 | Clown vs All | `/clown rad\|go\|start\|stop`, `uitverkoren [<speler>]`, `troon`, `jagerplek [<nr>]`, `vloer <diameter>`, `tribune [<nr>]`, `wachttekst [<tekst>]`, `kroon <speler>`, `krimp <grootte> [<sec>]` |
 | FFA | `/ffa start\|stop\|go`, `krimp <grootte> [<sec>]`, `wachttekst [<tekst>]` |

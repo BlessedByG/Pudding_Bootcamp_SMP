@@ -269,6 +269,7 @@ hele avond geldt (setup, spelers, noodknoppen) staat onder `/bc`.
 | `/mobarena wave volgende` | De huidige wave telt als klaar in beide arena's (overgebleven mobs weg). |
 | `/mobarena punten [<mob> <punten>]` | Hoeveel punten een mobtype waard is. Zonder argumenten: de tabel. |
 | `/mobarena aftekst [<tekst>]` | De tekst die in de actionbar staat bij wie in de mob arena sneuvelt, standaard `Af · je speelt geen beurt meer`. Zonder tekst: de huidige laten zien. Bewaard in `bootcamp.json`. |
+| `/mobarena veldhoogte [<blokken>]` | Tot hoeveel blokken boven de selectie een veld telt voor kijkers en wachtenden, standaard 3. Staat de tribune lager dan drie blokken boven de veldvloer, zet dit dan op het verschil (tribune één blok hoger: `1`), anders worden mensen van de tribune teruggezet. Bij `0` telt alleen wie binnen de selectie zelf staat. Geldt meteen; bewaard in `bootcamp.json`. |
 | `/quiz start\|stop` | Ronde 4. Weigert zonder presentator. |
 | `/quiz presentator [<speler>]` | Wie presenteert (Pudding). Op naam, mag ook voor iemand die nog niet online is; bewaard in `bootcamp.json`. Die gaat bij de start naar het podium in plaats van naar zijn bank en krijgt de drie quiz-items. |
 | `/quiz bank <rood\|blauw\|groen\|geel>` / `/quiz podium` | Zet de bank van dat team, of het podium, op de plek waar je staat, met je kijkrichting. Hetzelfde als `/bc point set quiz_<kleur>` en `quiz_podium`. |
@@ -326,6 +327,7 @@ ronde. Een nieuw aantal puntenblokken geldt vanaf de volgende `/ei start`.
 | `/ei blokken` | netherite 6, diamond 90, gold 120, redstone 10, emerald 10 (voorlopig) | 0 of meer; samen niet meer dan de deepslate-plekken in het Ei |
 | `/mobarena punten` | zombie 1; skeleton, spider, cave spider 2; creeper 3; witch 4; vindicator 5; evoker 8; ravager 10; elk ander type 1 | 0 tot 100 |
 | `/mobarena aftekst` | `Af · je speelt geen beurt meer` | tot 60 tekens |
+| `/mobarena veldhoogte` | 3 blokken | 0 tot 10 |
 | `/clown wachttekst` | `Wacht op het startsein` | tot 60 tekens |
 | `/ffa wachttekst` | `Wacht op het startsein` | tot 60 tekens |
 
@@ -370,7 +372,7 @@ hij de doos om alle delen heen; bij de cirkel van `vloer` is dat het vierkant er
 | `nep_1` t/m `nep_3` | De vakken aan het eind van de nep-gangen. |
 | `schrik_1` t/m `schrik_n` | Schrikplekken in het doolhof. Zoveel als je wilt, genummerd vanaf 1. |
 | `poort_doolhof` | De poort voor de echte uitgang, opent na `/doolhof poort` minuten. |
-| `veld_1`, `veld_2` | De twee mob-arenavelden, elk uit meerdere delen (de T-vorm: `save` voor de balk, `add` voor de poot). Een kijker die erin komt wordt teruggezet, behalve wie in de kooi van dat veld zit (de tralies houden die binnen); een speler die aan de beurt is en eruit komt ook. Voor kijkers telt een veld tot drie blokken boven de selectie, zodat het balkon erboven geen veld is; voor wie aan de beurt is telt alleen de kolom. |
+| `veld_1`, `veld_2` | De twee mob-arenavelden, elk uit meerdere delen (de T-vorm: `save` voor de balk, `add` voor de poot). Een kijker die erin komt wordt teruggezet, behalve wie in de kooi van dat veld zit (de tralies houden die binnen); een speler die aan de beurt is en eruit komt ook. Voor kijkers telt een veld tot drie blokken boven de selectie (`/mobarena veldhoogte`), zodat het balkon erboven geen veld is; voor wie aan de beurt is telt alleen de kolom. |
 
 **Punten** met `/bc point set <naam>` of `/bc point block <naam>`.
 

@@ -29,6 +29,7 @@ class ConfigTest {
 		c.instellingen().zetEiBlokken(EiBlok.NETHERITE, 9);
 		c.instellingen().zetMobPunten("minecraft:ravager", 12);
 		c.instellingen().zetAftekst("Weg!");
+		c.instellingen().zetVeldHoogte(1);
 
 		BootcampConfig t = BootcampConfig.uitJson(c.naarJson());
 
@@ -51,6 +52,7 @@ class ConfigTest {
 		assertEquals(90, t.instellingen().eiBlokken(EiBlok.DIAMOND));
 		assertEquals(12, t.instellingen().mobPunten("ravager"));
 		assertEquals("Weg!", t.instellingen().aftekst());
+		assertEquals(1, t.instellingen().veldHoogte());
 	}
 
 	@Test

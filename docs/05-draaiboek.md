@@ -60,6 +60,7 @@ Vooraf instellen, in minuten (blijft bewaard):
 | `/ei blokken` | netherite 6, diamond 90, gold 120, redstone 10, emerald 10 (voorlopig) |
 | `/mobarena punten` | zombie 1; skeleton, spider, cave spider 2; creeper 3; witch 4; vindicator 5; evoker 8; ravager 10 |
 | `/mobarena aftekst` | "Af · je speelt geen beurt meer" |
+| `/mobarena veldhoogte` | 3 (tribune lager dan 3 blokken boven de veldvloer: het verschil) |
 | `/clown wachttekst` | "Wacht op het startsein" |
 | `/ffa wachttekst` | "Wacht op het startsein" |
 

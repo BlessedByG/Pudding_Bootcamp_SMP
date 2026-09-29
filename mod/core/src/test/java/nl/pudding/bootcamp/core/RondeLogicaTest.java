@@ -577,6 +577,7 @@ class RondeLogicaTest {
 			assertEquals("Af · je speelt geen beurt meer", i.aftekst());
 			assertEquals("Wacht op het startsein", i.clownWachttekst());
 			assertEquals("Wacht op het startsein", i.ffaWachttekst());
+			assertEquals(3, i.veldHoogte());
 		}
 
 		@Test
@@ -626,6 +627,9 @@ class RondeLogicaTest {
 			assertEquals(Instellingen.AFTEKST, i.aftekst());
 			assertNotNull(Instellingen.checkMobPunten(101));
 			assertNull(Instellingen.checkMobPunten(0));
+			assertNull(Instellingen.checkVeldHoogte(0));
+			assertNotNull(Instellingen.checkVeldHoogte(11));
+			assertNotNull(Instellingen.checkVeldHoogte(-1));
 		}
 	}
 }
