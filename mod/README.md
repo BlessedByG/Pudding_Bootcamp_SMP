@@ -53,12 +53,17 @@ als bijlage van een GitHub-release, en vul `server.properties` in:
 resource-pack=<url van bootcamp-pack.zip>
 resource-pack-sha1=<de sha-1 die BouwPack print>
 require-resource-pack=true
-resource-pack-prompt=Nodig voor de bootcamp
+resource-pack-prompt=
 ```
 
+De prompt is in 26.2 een JSON-tekst. Een host als Pterodactyl herschrijft `server.properties` bij
+elke start en slikt dan het afsluitende aanhalingsteken en de regelovergang van
+`"Nodig voor de bootcamp"` in; daarom leeg laten (dan toont Minecraft zijn eigen tekst).
+
 Na een nieuwe foto: opnieuw bouwen, opnieuw uploaden, nieuwe SHA-1 invullen, server herstarten. Hoe
-groot de foto en het rad in beeld staan, stel je in met `SCHRIK_HOOGTE` en `RAD_HOOGTE` bovenin
-`BouwPack.java`.
+groot de foto en het rad in beeld staan, stel je in met `SCHRIK_EENHEDEN` en `RAD_EENHEDEN` (en
+de pixels per eenheid) bovenin `BouwPack.java`. De plaatjes worden in tegels van hooguit 242 pixels
+geknipt, omdat Minecraft grotere font-plaatjes als leeg vierkantje toont; zie docs/04.
 
 ## Installeren
 

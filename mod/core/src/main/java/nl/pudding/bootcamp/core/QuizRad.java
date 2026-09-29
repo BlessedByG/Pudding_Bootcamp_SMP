@@ -14,8 +14,12 @@ import java.util.random.RandomGenerator;
 public final class QuizRad {
 	public static final int STANDEN = 64;
 	public static final int PER_VAK = 4;
-	/** De eerste glyph van font {@code bootcamp:rad}: stand s is U+E100 + s. */
+	/**
+	 * De eerste glyph van font {@code bootcamp:rad}. Elke stand is 2 x 2 tegels (zie {@link FontTegels}):
+	 * stand s heeft de codepoints U+E100 + 4s t/m U+E100 + 4s + 3.
+	 */
 	public static final int EERSTE_GLYPH = 0xE100;
+	public static final int TEGELS_PER_STAND = 4;
 
 	public static final List<Kleur> VAKKEN = List.of(
 			Kleur.ROOD, Kleur.BLAUW, Kleur.GROEN, Kleur.GEEL,
@@ -48,9 +52,9 @@ public final class QuizRad {
 		return Math.floorMod(stand, PER_VAK) == PER_VAK / 2;
 	}
 
-	/** De glyph van deze stand in font {@code bootcamp:rad}. */
+	/** De tekst die deze stand in font {@code bootcamp:rad} tekent: 2 x 2 tegels. */
 	public static String glyph(int stand) {
-		return new String(Character.toChars(EERSTE_GLYPH + Math.floorMod(stand, STANDEN)));
+		return FontTegels.tekst(EERSTE_GLYPH + Math.floorMod(stand, STANDEN) * TEGELS_PER_STAND, 2, 2);
 	}
 
 	/** Een draai: een willekeurig vak (elk team 25%), landend op het midden van dat vak. */

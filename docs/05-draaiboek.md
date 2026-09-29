@@ -153,7 +153,7 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
 - [ ] `/quiz presentator <naam>`, `/quiz start`: iedereen zonder spullen bij zijn bank, de
       presentator op het podium met alleen groene wol, rode wol en het rad-item. Rad een paar keer
       draaien: een rond rad groot in beeld dat afremt en met een vak onder het pijltje stopt (is
-      het groot genoeg en scherp? anders `height` in `rad.json` bijstellen), de lamp bij die bank
+      het groot genoeg en scherp? anders `RAD_EENHEDEN` in `BouwPack.java` bijstellen), de lamp bij die bank
       gaat aan, groene wol geeft een
       punt (vanaf twee op rij met "3 op rij"), rode wol niet en zet de lamp uit, wol wordt nooit
       neergezet, de presentator ziet onderin wie aan de beurt is. Maak het gelijk en typ

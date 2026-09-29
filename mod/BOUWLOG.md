@@ -221,6 +221,27 @@ die klein waren. Na de fixes: build groen, `check.sh` groen.
 resource pack, veld, doolhof, mob arena, waves). De checklist in docs/05 nagelopen: hij past bij de
 code.
 
+## Na de eerste start: font-plaatjes in tegels
+
+Bij de eerste test op de server (29 september) toonde `/bc schrik` een leeg vierkantje, hoewel
+het pack geladen was (de client-log noemt het pack, en er stond geen font-fout in). De oorzaak
+staat in de 26.2-code: `FontTexture` is 256 x 256 en `GlyphStitcher` geeft een glyph die niet past
+zonder melding de lege glyph. De foto (512 of groter) en het quiz-rad (512) pasten dus niet.
+
+**Gedaan**
+- BouwPack knipt de foto (nu 476 pixels hoog, tot 1428 breed) en elke stand van het rad (484 x
+  484) in twee rijen tegels van hooguit 242 pixels. Twee rijen, omdat de codec een ascent hoger
+  dan de height weigert. Elke tegel is een heel aantal font-eenheden breed en heeft een pixel in
+  zijn rechterkolom, zodat Minecraft de volle breedte rekent: advance =
+  `(int)(0.5 + breedte × schaal) + 1`, opgevangen met een spatie van -1.
+- `core`: `FontTegels` maakt de tekst; `QuizRad.glyph` en `Schrik.TEKST` gebruiken hem.
+- `PackFontTest` (fabric) haalt elke provider door de echte font-codec van 26.2, controleert de
+  maten van de tegels en of elk teken van de mod in de font staat; een tegenproef bevestigt dat de
+  codec een te hoge ascent weigert.
+
+**Open: in-game**: of de tegels naadloos aansluiten, en hoe groot de foto en het rad in beeld
+staan.
+
 ## Wat niet geverifieerd is
 
 **Er is nog niets in-game gedraaid.** De grootste onzekerheden, op volgorde:

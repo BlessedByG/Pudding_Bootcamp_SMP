@@ -1,7 +1,7 @@
 Hier komen de bestanden voor de jumpscare:
 
   clown.jpg, clown.jpeg of clown.png   De foto van Clown. Elk formaat en elke verhouding.
-                                       Groter dan 1024 pixels wordt vanzelf verkleind.
+                                       BouwPack schaalt hem vanzelf naar 476 pixels hoog.
   clown_lach.ogg                       Het lachje, ogg vorbis (mono is het mooist).
                                        Een mp3 of wav eerst omzetten, bijvoorbeeld met Audacity.
 

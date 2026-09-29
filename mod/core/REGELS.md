@@ -60,3 +60,4 @@ Dit is de lijst van het rondeplan van 25 september 2026 (taakplan 2). De regels 
 | R8.1 | Een kit is per slot een item in `/give`-syntax, met optioneel een aantal. Fouten noemen bestand en slot. | `KitDef` | `KitDefTest` |
 | R8.2 | De bossbar heeft per ronde een vast formaat. | `BossbarTekst`, `Tijd` | `BossbarTekstTest` |
 | R8.3 | De standaardbestanden in de jar (`fabric.mod.json`, kits, `waves.json`, `doolhof_loot.json`) zijn geldig; de waves volgen de tabel uit docs/02. | | `ResourcesTest` |
+| R8.4 | Een groot plaatje in een font is twee rijen tegels: na elke tegel een spatie van -1, na de bovenste rij een spatie terug; het quiz-rad is per stand 2 x 2 tegels. | `FontTegels`, `QuizRad.glyph` | `FontTegelsTest`, `QuizTest.standenEnVakken`, en in het fabric-project `PackFontTest` |

@@ -79,8 +79,12 @@ resource pack in `server.properties`:
 resource-pack=<url van bootcamp-pack.zip>
 resource-pack-sha1=<sha1 van dat bestand>
 require-resource-pack=true
-resource-pack-prompt=Nodig voor de bootcamp
+resource-pack-prompt=
 ```
+
+De prompt is in 26.2 een JSON-tekst. Een host als Pterodactyl herschrijft `server.properties` bij
+elke start en slikt dan het afsluitende aanhalingsteken en de regelovergang van
+`"Nodig voor de bootcamp"` in; daarom leeg laten (dan toont Minecraft zijn eigen tekst).
 
 ## PvP
 
@@ -135,16 +139,30 @@ Het pack staat in `pack/` in deze repo. **Aanleveren** gaat in `pack/aanleveren/
 **Bouwen:** `java pack/BouwPack.java`. Alleen de JDK 25 is nodig, die je voor de mod toch al hebt,
 en het werkt ook op Windows zonder Git Bash. Het programma:
 
-1. leest de foto (jpg of png) en zet hem om naar png;
-2. verkleint hem als de langste kant groter is dan 1024 pixels, met behoud van de verhouding (een
-   grotere foto maakt het pack alleen zwaarder om te downloaden en ziet er in beeld niet beter
-   uit); kleiner blijft zoals hij is;
-3. zet hem als `clown.png` in het pack, met het lachje;
-4. tekent **het quiz-rad** (Java2D, niets aan te leveren): 64 plaatjes van 512 × 512, elk 5,625°
+1. leest de foto (jpg of png) en schaalt hem naar 476 pixels hoog, met behoud van de verhouding
+   (een heel brede foto wordt kleiner, tot 1428 pixels breed);
+2. zet het lachje erbij;
+3. tekent **het quiz-rad** (Java2D, niets aan te leveren): 64 standen van 484 × 484, elk 5,625°
    verder gedraaid, met de 16 vakken in de vaste volgorde uit *Ronde 4* in alleen de
    teamkleuren (rood `#E24B4A`, blauw `#378ADD`, groen `#639922`, geel `#EF9F27`), een donkere
    rand en naad tussen de vakken, een dop in het midden, en het pijltje vast bovenin;
+4. knipt de foto en elke stand van het rad in **tegels** en schrijft de fonts (zie hieronder);
 5. zipt het pack naar `bootcamp-pack.zip` en print de SHA-1 voor `server.properties`.
+
+**Waarom tegels.** Minecraft 26.2 zet font-glyphs op vellen van 256 × 256 pixels; een glyph die
+groter is, wordt zonder foutmelding een leeg vierkantje. Daarom is elk plaatje geknipt in twee
+rijen tegels van hooguit 242 pixels, elk een eigen glyph. Twee rijen, omdat een glyph niet hoger
+boven de basislijn mag staan dan hij hoog is (`ascent` ≤ `height`): de bovenste rij hangt boven de
+basislijn, de onderste eronder, dus het plaatje staat in het midden van het scherm. De mod zet de
+tegels weer aan elkaar met één tekst (`core`: `FontTegels`): na elke tegel een spatie van -1
+(U+F801, want een bitmap-glyph schuift één eenheid meer op dan hij breed is), na de bovenste rij
+een spatie terug over de hele breedte (U+F802). Elke tegel is een heel aantal font-eenheden breed
+(7 pixels per eenheid voor de foto, 11 voor het rad), anders ontstaat er een naad.
+- Jumpscare: tegel (rij r, kolom c) is U+E000 + 16r + c, tot zes kolommen; 34 eenheden per rij,
+  dus 68 hoog. Kolommen die een smallere foto niet nodig heeft zijn spaties van +1.
+- Quiz-rad: stand s is 2 × 2 tegels, U+E100 + 4s + 2r + c; 22 eenheden per rij, dus 44 hoog.
+- `PackFontTest` in het fabric-project haalt elke provider door de echte font-codec van 26.2 en
+  controleert de maten van de tegels.
 
 Online zetten als bijlage van een GitHub-release (de repo is public), en die URL in
 `resource-pack=`. Na een nieuwe foto: opnieuw bouwen, opnieuw uploaden, nieuwe SHA-1 invullen,
@@ -156,11 +174,10 @@ pack/
   aanleveren/clown_lach.ogg
   BouwPack.java                               bouwt het pack en de zip
   pack.mcmeta
-  assets/bootcamp/font/schrik.json            bitmap-provider: één glyph U+E000 → clown.png
-  assets/bootcamp/textures/font/clown.png     gemaakt door BouwPack uit de aangeleverde foto
-  assets/bootcamp/font/rad.json               bitmap-provider: 64 glyphs U+E100 t/m U+E13F → rad_00..rad_63
-  assets/bootcamp/textures/font/rad_00.png    het quiz-rad in stand 0, gemaakt door BouwPack
-  ...                                         t/m rad_63.png
+  assets/bootcamp/font/schrik.json            per tegel een bitmap-provider, plus de spaties
+  assets/bootcamp/textures/font/clown_R_C.png de tegels van de foto (rij R, kolom C), gemaakt door BouwPack
+  assets/bootcamp/font/rad.json               per tegel een bitmap-provider (64 standen × 4), plus de spaties
+  assets/bootcamp/textures/font/rad_SS_R_C.png de tegels van stand SS van het quiz-rad
   assets/bootcamp/sounds.json                 bootcamp:clown_lach → sounds/clown_lach.ogg
   assets/bootcamp/sounds/clown_lach.ogg       gekopieerd uit aanleveren/
 ```
@@ -171,12 +188,13 @@ een stil ogg-bestand kan BouwPack niet maken. Wat BouwPack maakt (`assets/bootca
 zip) staat niet in git; de fonts en `pack.mcmeta` wel. Een foto die niet vierkant is, blijft in de jumpscare in zijn eigen verhouding:
 de breedte volgt de hoogte.
 
-**De jumpscare** (`Schrik.op(speler)`): een title met de glyph `` in font
+**De jumpscare** (`Schrik.op(speler)`): een title met de tegels van de foto in font
 `bootcamp:schrik`, fade-in 0, blijven 30 ticks, fade-out 10, plus `bootcamp:clown_lach` op volle
-sterkte, alleen voor die speler. De `height` en `ascent` in `schrik.json` bepalen hoe groot de
-foto op het scherm staat; afstemmen in de eerste test tot hij het beeld vult. Heeft een speler het
-pack niet (weigerde of downloadfout), dan ziet die een leeg vierkantje en hoort niks; met
-`require-resource-pack=true` kan dat niet. `/bc schrik <speler>` doet een jumpscare met de hand,
+sterkte, alleen voor die speler. Hoe groot hij op het scherm staat, bepalen `SCHRIK_EENHEDEN` en
+`SCHRIK_PX_PER_EENHEID` bovenin `BouwPack.java` (nu 68 eenheden hoog; een title tekent vier keer
+zo groot); afstemmen in de eerste test. Heeft een speler het pack niet (weigerde of
+downloadfout), dan ziet die lege vierkantjes en hoort niks; met `require-resource-pack=true` kan
+dat niet. `/bc schrik <speler>` doet een jumpscare met de hand,
 voor het testen en voor de lol.
 
 Waar een jumpscare vandaan komt:
@@ -632,10 +650,10 @@ met een vast pijltje bovenin. 16 vakken in alleen de teamkleuren, elk team 4 kee
 volgorde waarin twee buren (ook rondom) nooit dezelfde kleur hebben:
 `rood blauw groen geel blauw rood geel groen rood groen blauw geel groen geel rood blauw`.
 
-Het pack heeft 64 plaatjes van het rad (`rad_00` t/m `rad_63`), elk 5,625° verder gedraaid: vier
-per vak, en elk vierde plaatje heeft een vak precies onder het pijltje. Het draaien is
+Het pack heeft 64 standen van het rad (elk 2 × 2 tegels, zie *Resource pack*), elk 5,625° verder
+gedraaid: vier per vak, en elk vierde plaatje heeft een vak precies onder het pijltje. Het draaien is
 `core`-`Rad` over die 64 standen: doel = de middenstand van een willekeurig vak (dus elk team
-25%), `rest` = de standen tot het doel plus 64 × (2 of 3). Per stap een title met de glyph van
+25%), `rest` = de standen tot het doel plus 64 × (2 of 3). Per stap een title met de tegels van
 die stand, fade 0, lang genoeg blijven tot de volgende stap; de wachttijd loopt op van 1 naar 6
 ticks naarmate `rest` kleiner wordt, dus het rad remt echt af. Elke keer dat er een vakgrens
 onder het pijltje door gaat (om de vier standen): `note_block.hat` voor iedereen in de hal. Bij
