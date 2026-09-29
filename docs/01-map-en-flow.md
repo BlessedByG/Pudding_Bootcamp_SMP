@@ -48,12 +48,13 @@ Twee dingen houden het toch strak:
 2. Op het sein van Pudding start de commander de ronde: iedereen naar het startpunt, countdown
    (`title` 5..4..3..2..1), de mod zet de worldborder om de zone.
 3. Ronde klaar: iedereen wordt naar het volgende verzamelpunt geteleporteerd. Wie eerder klaar
-   is (uit het doolhof, af in de Arena) wacht daar of op de tribune.
+   is wacht op de tribune (af in de Arena), of loopt nog rond (over de finish van het doolhof: je
+   mag terug naar binnen).
 
 | Van | Naar |
 |---|---|
 | Basiskamp | Startruimte in het midden van het doolhof |
-| Doolhof, na de teamkeuze | V2 bij het Ei |
+| Doolhof, als iedereen een team heeft of de timer op is | V2 bij het Ei |
 | Het Ei | V3 bij de mob arena |
 | Mob arena | De quiz: iedereen bij de bank van zijn team, Pudding op het podium |
 | Quiz | De tribune van de Arena, voor het Rad; na het Rad de vloer op |
@@ -100,7 +101,8 @@ iets neerzetten; dat regelt de mod.
 Niemand gaat ooit in spectator mode en er zijn geen tp-items. Wie klaar is of af, gaat naar een
 plek waar de rest ook komt en hangt daar tot de ronde voorbij is:
 
-- Uit het doolhof, team gekozen: naar V2 bij het Ei.
+- Over de finish van het doolhof, team gekozen: je blijft in het doolhof en mag terug naar
+  binnen om te helpen of loot te zoeken. Pas als het doolhof voorbij is ga je naar V2.
 - Dood in de mob arena: de rest van die beurt in de kooi in het midden van je arena, daarna op de
   tribune. Wie niet aan de beurt is, staat ook op de tribune.
 - Af in Clown vs All of de FFA: naar de tribune van de Arena.

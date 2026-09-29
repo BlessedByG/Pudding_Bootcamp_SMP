@@ -150,7 +150,7 @@ class RegelsTest {
 	@Test
 	void joinRegels() {
 		assertEquals(Regels.JoinActie.DOOLHOF_START, Regels.bijJoin(Ronde.DOOLHOF, Rol.SPELER, false, false));
-		assertEquals(Regels.JoinActie.NAAR_V2, Regels.bijJoin(Ronde.DOOLHOF, Rol.SPELER, true, false));
+		assertEquals(Regels.JoinActie.NIKS, Regels.bijJoin(Ronde.DOOLHOF, Rol.SPELER, true, false));
 		assertEquals(Regels.JoinActie.EIGEN_EI_SPAWN, Regels.bijJoin(Ronde.EI, Rol.SPELER, true, false));
 		assertEquals(Regels.JoinActie.MOB_TRIBUNE, Regels.bijJoin(Ronde.MOBARENA, Rol.SPELER, true, false));
 		assertEquals(Regels.JoinActie.QUIZ_BANK, Regels.bijJoin(Ronde.QUIZ, Rol.SPELER, true, false));

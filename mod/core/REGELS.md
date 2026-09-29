@@ -62,7 +62,7 @@ Dit is de lijst van het rondeplan van 25 september 2026 (taakplan 2). De regels 
 | R6.1 | Iedereen behalve de uitverkorene doet mee aan de FFA, ook wie in ronde 5 af was. | `Regels.ffaDeelnemers` | `RegelsTest.ffaZonderDeUitverkorene` |
 | R6.5 | Bij drie over `LAATSTE DRIE`, bij twee `LAATSTE TWEE`. | `Regels.aftelTitle` | `RegelsTest.laatsteDrieEnTwee` |
 | R7.1 | Uitloggen: een jager in ronde 5 en een FFA-speler zijn af; wie in de mob arena aan de beurt is telt als dood; in de andere rondes gebeurt er niks. | `Regels.bijQuit` | `RegelsTest.quitRegels` |
-| R7.2 | Terugkomen: doolhof naar de start (of `v2` met een team), Ei naar je eigen startplek, mob arena de tribune, quiz je bank, ronde 5 en 6 kijker (de kroonhouder binnen zijn dertig seconden blijft kroonhouder). | `Regels.bijJoin` | `RegelsTest.joinRegels` |
+| R7.2 | Terugkomen: doolhof naar de start (met een team: verder waar je was), Ei naar je eigen startplek, mob arena de tribune, quiz je bank, ronde 5 en 6 kijker (de kroonhouder binnen zijn dertig seconden blijft kroonhouder). | `Regels.bijJoin` | `RegelsTest.joinRegels` |
 | R8.1 | Een kit is per slot een item in `/give`-syntax, met optioneel een aantal. Fouten noemen bestand en slot. | `KitDef` | `KitDefTest` |
 | R8.2 | De bossbar heeft per ronde een vast formaat. | `BossbarTekst`, `Tijd` | `BossbarTekstTest` |
 | R8.3 | De standaardbestanden in de jar (`fabric.mod.json`, kits, `waves.json`, `doolhof_loot.json`) zijn geldig; de waves volgen de tabel uit docs/02. | | `ResourcesTest` |
