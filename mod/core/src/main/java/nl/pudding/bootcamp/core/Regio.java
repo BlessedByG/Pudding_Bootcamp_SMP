@@ -241,6 +241,23 @@ public final class Regio {
 		return false;
 	}
 
+	/**
+	 * Staat een speler op deze regio, met de selectie als vloer? Zijn voeten zitten niet lager dan
+	 * de selectie en niet hoger dan {@code extra} blokken erboven. Voor een tribune die over een
+	 * veld hangt: wie eronder op het veld staat, staat er niet op.
+	 */
+	public boolean staatOp(double x, double y, double z, int extra) {
+		if (cilinder != null) {
+			return cilinder.bevatPlek(x, y, z);
+		}
+		for (Doos d : delen) {
+			if (d.bevat(x, z) && y >= d.min().y() && y < d.max().y() + 1 + extra) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	/** Staat dit punt binnen één van de dozen, dus ook op hoogte? */
 	public boolean bevatDoos(double x, double y, double z) {
 		if (cilinder != null) {

@@ -61,6 +61,7 @@ class RondeTest {
 		List<String> mob = Ronde.MOBARENA.ontbreekt(Set.of("mobarena", "veld_1", "veld_2"), Set.of());
 		assertTrue(mob.contains("start_2_geel"));
 		assertTrue(mob.contains("kooi_1"));
+		assertTrue(mob.contains("tribune_mob"));
 	}
 
 	@Test

@@ -269,7 +269,7 @@ hele avond geldt (setup, spelers, noodknoppen) staat onder `/bc`.
 | `/mobarena wave volgende` | De huidige wave telt als klaar in beide arena's (overgebleven mobs weg). |
 | `/mobarena punten [<mob> <punten>]` | Hoeveel punten een mobtype waard is. Zonder argumenten: de tabel. |
 | `/mobarena aftekst [<tekst>]` | De tekst die in de actionbar staat bij wie in de mob arena sneuvelt, standaard `Af · je speelt geen beurt meer`. Zonder tekst: de huidige laten zien. Bewaard in `bootcamp.json`. |
-| `/mobarena veldhoogte [<blokken>]` | Tot hoeveel blokken boven de selectie een veld telt voor kijkers en wachtenden, standaard 3. Staat de tribune lager dan drie blokken boven de veldvloer, zet dit dan op het verschil (tribune één blok hoger: `1`), anders worden mensen van de tribune teruggezet. Bij `0` telt alleen wie binnen de selectie zelf staat. Geldt meteen; bewaard in `bootcamp.json`. |
+| `/mobarena veldhoogte [<blokken>]` | Tot hoeveel blokken boven de selectie een veld telt voor kijkers en wachtenden, standaard 3. Op regio `tribune_mob` telt het veld nooit, dus meestal hoef je hier niets aan te doen. Bij `0` telt alleen wie binnen de selectie zelf staat. Geldt meteen; bewaard in `bootcamp.json`. |
 | `/quiz start\|stop` | Ronde 4. Weigert zonder presentator. |
 | `/quiz presentator [<speler>]` | Wie presenteert (Pudding). Op naam, mag ook voor iemand die nog niet online is; bewaard in `bootcamp.json`. Die gaat bij de start naar het podium in plaats van naar zijn bank en krijgt de drie quiz-items. |
 | `/quiz bank <rood\|blauw\|groen\|geel>` / `/quiz podium` | Zet de bank van dat team, of het podium, op de plek waar je staat, met je kijkrichting. Hetzelfde als `/bc point set quiz_<kleur>` en `quiz_podium`. |
@@ -373,6 +373,7 @@ hij de doos om alle delen heen; bij de cirkel van `vloer` is dat het vierkant er
 | `schrik_1` t/m `schrik_n` | Schrikplekken in het doolhof. Zoveel als je wilt, genummerd vanaf 1. |
 | `poort_doolhof` | De poort voor de echte uitgang, opent na `/doolhof poort` minuten. |
 | `veld_1`, `veld_2` | De twee mob-arenavelden, elk uit meerdere delen (de T-vorm: `save` voor de balk, `add` voor de poot). Een kijker die erin komt wordt teruggezet, behalve wie in de kooi van dat veld zit (de tralies houden die binnen); een speler die aan de beurt is en eruit komt ook. Voor kijkers telt een veld tot drie blokken boven de selectie (`/mobarena veldhoogte`), zodat het balkon erboven geen veld is; voor wie aan de beurt is telt alleen de kolom. |
+| `tribune_mob` | De tribune van de mob arena: selecteer de vloer waar de kijkers op staan, in delen als dat moet (`save` + `add`). Daarop telt niemand als in het veld, ook waar de selectie over een veld hangt of ermee overlapt: tot drie blokken boven de selectie (springen telt mee), niet eronder. Wie aan de beurt is en de tribune op loopt, gaat terug naar zijn startplek. `/mobarena start` weigert als een `tribune_mob_n` er niet op ligt of een startplek er wel op ligt. |
 
 **Punten** met `/bc point set <naam>` of `/bc point block <naam>`.
 
@@ -386,7 +387,7 @@ hij de doos om alle delen heen; bij de cirkel van `vloer` is dat het vierkant er
 | `start_1_rood`, `start_1_blauw`, `start_1_groen`, `start_1_geel`, en hetzelfde met `start_2_` | De vier gekleurde startplekken in arena 1 en in arena 2: de speler van een team start altijd op het vlak in zijn eigen kleur. Zetten met `/mobarena startplek <arena> <kleur>`. |
 | `mob_1_1` t/m `mob_1_n`, `mob_2_1` t/m `mob_2_n` | Mob-spawns per arena, op zelf gekozen plekken. Zoveel als je wilt per arena; arena 1 en 2 mogen iets verschillen. De mobs van een wave gaan om en om over de spawns van hun arena. |
 | `kooi_1`, `kooi_2` | De kooi in het midden van elke arena. |
-| `tribune_mob_1` t/m `tribune_mob_n` | De tribune (het balkon). Zoveel als je wilt. |
+| `tribune_mob_1` t/m `tribune_mob_n` | De tribune (het balkon). Zoveel als je wilt, allemaal op regio `tribune_mob`. |
 | `quiz_rood`, `quiz_blauw`, `quiz_groen`, `quiz_geel` | De vier banken in de quizhal. Zetten met `/quiz bank <kleur>`. |
 | `quiz_podium` | Het podium boven aan de trap, waar de presentator staat. Zetten met `/quiz podium`. |
 | `quizlamp_rood`, `quizlamp_blauw`, `quizlamp_groen`, `quizlamp_geel` (blokken) | De lamp bij elke bank. Gedoofde redstone lamp, geen redstone ernaast. Zetten met `/quiz lamp <kleur>`. |
@@ -780,7 +781,8 @@ Geen spectator mode, geen tp-items, geen vliegen.
 - Geen schade, ook niet van de border. Een kijker ziet de border niet: hij krijgt een eigen
   border-pakket zo groot als de wereld, anders geeft de client een rood scherm.
 - Blijft op zijn plek: glas of tralies, en een tick-check die een kijker die toch in `vloer`,
-  `veld_1` of `veld_2` komt terugzet op zijn tribunepunt of in zijn kooi. Bij `vloer` telt de
+  `veld_1` of `veld_2` komt terugzet op zijn tribunepunt of in zijn kooi (op regio `tribune_mob` telt
+  geen veld). Bij `vloer` telt de
   cilinder: binnen de cirkel én binnen de 5 blokken hoogte. Een kijker die van de tribune de
   arena in springt of loopt, staat dus meteen weer op de tribune, met title `Terug naar de
   tribune`.

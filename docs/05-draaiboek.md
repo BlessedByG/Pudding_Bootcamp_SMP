@@ -60,7 +60,7 @@ Vooraf instellen, in minuten (blijft bewaard):
 | `/ei blokken` | netherite 6, diamond 90, gold 120, redstone 10, emerald 10 (voorlopig) |
 | `/mobarena punten` | zombie 1; skeleton, spider, cave spider 2; creeper 3; witch 4; vindicator 5; evoker 8; ravager 10 |
 | `/mobarena aftekst` | "Af · je speelt geen beurt meer" |
-| `/mobarena veldhoogte` | 3 (tribune lager dan 3 blokken boven de veldvloer: het verschil) |
+| `/mobarena veldhoogte` | 3 |
 | `/clown wachttekst` | "Wacht op het startsein" |
 | `/ffa wachttekst` | "Wacht op het startsein" |
 
@@ -93,8 +93,8 @@ zit, maar de commander moet alleen commander zijn.
    `ei_spawn_n` en `/ei vastleggen` (gebouwd).
 5. De mob arena: twee gespiegelde arena's, elk met vier gekleurde startplekken en een kooi van
    tralies in het midden, en een tribune (balkon). Daarna de velden (`veld_1`, `veld_2`, in
-   delen), de startplekken (`/mobarena startplek <arena> <kleur>` midden op elk gekleurd vlak),
-   mob-spawns, kooien en tribunepunten zetten (gebouwd).
+   delen), de tribunevloer (`tribune_mob`), de startplekken (`/mobarena startplek <arena>
+   <kleur>` midden op elk gekleurd vlak), mob-spawns, kooien en tribunepunten zetten (gebouwd).
 6. De quizhal met 4 gekleurde banken, een redstone lamp bij elke bank (geen redstone ernaast) en
    een trap met podium. Daarna `/quiz bank <kleur>` bij elke bank, `/quiz lamp <kleur>` kijkend
    naar elke lamp en `/quiz podium` boven aan de trap (gebouwd).

@@ -95,6 +95,20 @@ class RegioTest {
 	}
 
 	@Test
+	void opDeTribuneTeltVanafDeVloer() {
+		// Tribunevloer op y 65, een blok boven het veld, twee delen.
+		Regio tribune = Regio.van(new BlokPos(10, 65, 0), new BlokPos(14, 65, 9)).metDeel(new BlokPos(8, 65, 0), new BlokPos(9, 65, 9));
+		assertTrue(tribune.staatOp(12, 66, 5, 3));
+		assertTrue(tribune.staatOp(8.5, 66, 5, 3));
+		// Springen telt nog.
+		assertTrue(tribune.staatOp(12, 68.9, 5, 3));
+		assertFalse(tribune.staatOp(12, 69, 5, 3));
+		// Onder de overhang, op het veld: niet op de tribune.
+		assertFalse(tribune.staatOp(8.5, 64, 5, 3));
+		assertFalse(tribune.staatOp(7.9, 66, 5, 3));
+	}
+
+	@Test
 	void cilinderTeltOokDeHoogte() {
 		// /clown vloer 60 op (100.5, 64, 200.5): straal 30, 5 hoog vanaf y 64.
 		Regio vloer = Regio.cilinder(100.5, 200.5, 64, 60, 5);

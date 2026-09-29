@@ -166,7 +166,7 @@ blok waar je naar kijkt, tot 32 blokken). De commando's per ronde zetten de mees
 | Algemeen | | `basiskamp` (optioneel, voor `/bc reset`) |
 | Doolhof | `doolhof`, `doolhof_uit`, `poort_doolhof` (de muur, onder- en bovenhoek), `nep_1..3`, `schrik_1..n` | `doolhof_start`, `v2` |
 | Het Ei | `ei` (het Ei als doos), `eigebied` (Ei, kettingen, startplekken) | `ei_spawn_1..n`, `v3`; daarna `/ei vastleggen` |
-| Mob arena | `mobarena` (beide arena's met tribune), `veld_1`, `veld_2` (elk `save` + `add`) | `/mobarena startplek <1\|2> <kleur>` (8x), `mob_1_1..n`, `mob_2_1..n`, `kooi_1`, `kooi_2`, `tribune_mob_1..n` |
+| Mob arena | `mobarena` (beide arena's met tribune), `veld_1`, `veld_2` (elk `save` + `add`), `tribune_mob` (de tribunevloer) | `/mobarena startplek <1\|2> <kleur>` (8x), `mob_1_1..n`, `mob_2_1..n`, `kooi_1`, `kooi_2`, `tribune_mob_1..n` |
 | Quiz | `quiz` | `/quiz bank <kleur>` (4x), `/quiz podium`, `/quiz lamp <kleur>` (4x, kijk naar de lamp) |
 | Clown vs All, FFA | `/clown vloer <diameter>` (midden op de vloer staan), optioneel `colosseum` | `/clown troon`, `/clown jagerplek` (20x), `/clown tribune` (2 of meer, onderste ring) |
 
@@ -175,7 +175,7 @@ verzamelpunten: `/bc label zet <tekst>`.
 
 `/<ronde> start` weigert met één regel en verandert dan niets als er een regio, punt of kit mist
 (`ontbreekt: kooi_2, start_1_geel`), een startpunt buiten de border ligt, een tribuneplek op de vloer
-ligt, of (mob arena, quiz) iemand geen team heeft.
+ligt, een `tribune_mob_n` niet op regio `tribune_mob` ligt, of (mob arena, quiz) iemand geen team heeft.
 
 ## Commands
 
