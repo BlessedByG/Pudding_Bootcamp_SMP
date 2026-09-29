@@ -32,7 +32,8 @@ public final class Schrik {
 	}
 
 	public static void op(ServerPlayer speler) {
-		Component foto = Component.literal(TEKST).withStyle(s -> s.withFont(new FontDescription.Resource(FONT)));
+		// Zonder schaduw: een title krijgt anders een donkere rand rechtsonder.
+		Component foto = Component.literal(TEKST).withStyle(s -> s.withFont(new FontDescription.Resource(FONT)).withoutShadow());
 		Mc.title(speler, foto, null, 0, 30, 10);
 		Mc.geluid(speler, GELUID, 1f, 1f);
 	}
