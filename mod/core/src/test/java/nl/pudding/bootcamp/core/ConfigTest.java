@@ -30,6 +30,8 @@ class ConfigTest {
 		c.instellingen().zetMobPunten("minecraft:ravager", 12);
 		c.instellingen().zetAftekst("Weg!");
 		c.instellingen().zetVeldHoogte(1);
+		c.instellingen().zetPoortMelding(false);
+		c.instellingen().zetValMobs(2, 6);
 
 		BootcampConfig t = BootcampConfig.uitJson(c.naarJson());
 
@@ -53,6 +55,9 @@ class ConfigTest {
 		assertEquals(12, t.instellingen().mobPunten("ravager"));
 		assertEquals("Weg!", t.instellingen().aftekst());
 		assertEquals(1, t.instellingen().veldHoogte());
+		assertFalse(t.instellingen().poortMelding());
+		assertEquals(2, t.instellingen().valMobsMin());
+		assertEquals(6, t.instellingen().valMobsMax());
 	}
 
 	@Test

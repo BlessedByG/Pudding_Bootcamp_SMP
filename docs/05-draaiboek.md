@@ -56,6 +56,8 @@ Vooraf instellen, in minuten (blijft bewaard):
 | `/doolhof poort` | 4 |
 | `/doolhof hint` | 10 |
 | `/doolhof hinttekst` | geen: dan noemt de mod de windrichting. Zet je eigen hint, bijvoorbeeld "De echte gang begint bij de lantaarn". |
+| `/doolhof poortmelding` | aan: hoorn en title als de uitgang opengaat. `uit` voor een stille poort. |
+| `/doolhof valmobs` | willekeurig 3 t/m 10 mobs per valkist |
 | `/ei timer` | 15 |
 | `/ei blokken` | netherite 6, diamond 90, gold 120, redstone 10, emerald 10 (voorlopig) |
 | `/mobarena punten` | zombie 1; skeleton, spider, cave spider 2; creeper 3; witch 4; vindicator 5; evoker 8; ravager 10 |
@@ -86,8 +88,8 @@ zit, maar de commander moet alleen commander zijn.
    komt (plattegrond in [01-map-en-flow.md](01-map-en-flow.md)) (1 avond).
 2. Basiskamp en de verzamelpunten (uurtje).
 3. Het doolhof: startruimte in het midden, 4 gangen, 1 echte uitgang met een poort, 3
-   nep-uitgangen, lege kisten, schrikplekken, het teamkeuzevak achter de uitgang (1 tot 2
-   avonden).
+   nep-uitgangen, lege kisten, valkisten (trapped chests), schrikplekken, het teamkeuzevak achter
+   de uitgang (1 tot 2 avonden).
 4. Het zwevende Ei met de kettingen: schil van andere blokken, binnenkant gewone deepslate, geen
    gewone deepslate in schil of kettingen. Daarna regio `ei`, `eigebied`, de startplekken
    `ei_spawn_n` en `/ei vastleggen` (gebouwd).
@@ -133,6 +135,10 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
       na 10 minuten met je eigen `/doolhof hinttekst` (`/doolhof resterend 305`), teammenu bij
       de uitgang, vol team is grijs, bij de timer `DOOLHOF VOORBIJ`. Opnieuw joinen buiten een
       ronde: welkomsttitle.
+- [ ] Valkist in het doolhof: de bossbar noemt alleen de totale tijd. Een trapped chest openen geeft
+      de jumpscare en `/doolhof valmobs` husks en silverfish om je heen; nog eens openen geeft een
+      lege kist, een tweede speler krijgt hem wel. `/doolhof poortmelding uit`: de poort gaat stil
+      open. Na `/doolhof stop` zijn de mobs weg.
 - [ ] `/ei vastleggen`, `/ei blokken`: het overzicht noemt het aantal deepslate-plekken.
 - [ ] `/ei start`: spelers verdeeld over de startplekken, punten per block, netherite in de
       chat, redstone (beide uitkomsten met aftellen onderin, een paar keer breken), emerald geeft

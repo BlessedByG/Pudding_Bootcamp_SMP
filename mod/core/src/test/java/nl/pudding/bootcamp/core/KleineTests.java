@@ -137,7 +137,6 @@ class KleineTests {
 		@Test
 		void formatenUitDeDocs() {
 			assertEquals("Pudding Bootcamp", BossbarTekst.BASISKAMP);
-			assertEquals("Doolhof · uitgang open over 02:13", BossbarTekst.doolhofPoortDicht(133));
 			assertEquals("Doolhof · 04:41", BossbarTekst.doolhof(281));
 			assertEquals("Het Ei · 07:12", BossbarTekst.ei(432));
 			assertEquals("Mob Arena · beurt 3/5 · wave 2", BossbarTekst.mobarena(3, 5, 2));

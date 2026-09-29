@@ -17,6 +17,10 @@ public final class Instellingen {
 	public static final int DOOLHOF_TIMER = 15;
 	public static final int DOOLHOF_POORT = 4;
 	public static final int DOOLHOF_HINT = 10;
+	/** Zoveel husks en silverfish komen er uit een valkist in het doolhof: willekeurig, min t/m max. */
+	public static final int VAL_MOBS_MIN = 3;
+	public static final int VAL_MOBS_MAX = 10;
+	public static final int MAX_VAL_MOBS = 20;
 	public static final int EI_TIMER = 15;
 	public static final int MIN_TIMER = 5;
 	public static final int MAX_TIMER = 60;
@@ -50,6 +54,9 @@ public final class Instellingen {
 	private int doolhofPoort = DOOLHOF_POORT;
 	private int doolhofHint = DOOLHOF_HINT;
 	private String hinttekst;
+	private boolean poortMelding = true;
+	private int valMobsMin = VAL_MOBS_MIN;
+	private int valMobsMax = VAL_MOBS_MAX;
 	private int eiTimer = EI_TIMER;
 	private final EnumMap<EiBlok, Integer> eiBlokken = new EnumMap<>(EiBlok.class);
 	private final Map<String, Integer> mobPunten = new LinkedHashMap<>(MOB_PUNTEN);
@@ -147,6 +154,39 @@ public final class Instellingen {
 	public void zetDoolhofHint(int minuten) {
 		vereis(checkDoolhofHint(minuten));
 		doolhofHint = minuten;
+	}
+
+	/** Hoorn en title als de uitgang van het doolhof opengaat. */
+	public boolean poortMelding() {
+		return poortMelding;
+	}
+
+	public void zetPoortMelding(boolean aan) {
+		poortMelding = aan;
+	}
+
+	public int valMobsMin() {
+		return valMobsMin;
+	}
+
+	public int valMobsMax() {
+		return valMobsMax;
+	}
+
+	public static String checkValMobs(int min, int max) {
+		if (min < 0 || max > MAX_VAL_MOBS) {
+			return "een valkist heeft 0 t/m " + MAX_VAL_MOBS + " mobs, niet " + min + " t/m " + max;
+		}
+		if (min > max) {
+			return "het minimum (" + min + ") is groter dan het maximum (" + max + ")";
+		}
+		return null;
+	}
+
+	public void zetValMobs(int min, int max) {
+		vereis(checkValMobs(min, max));
+		valMobsMin = min;
+		valMobsMax = max;
 	}
 
 	/** {@code null}, leeg of {@code -} wist de tekst. */

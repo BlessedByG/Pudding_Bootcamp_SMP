@@ -15,6 +15,7 @@ import nl.pudding.bootcamp.game.Poorten;
 import nl.pudding.bootcamp.game.Spel;
 import nl.pudding.bootcamp.game.SpelerReset;
 import nl.pudding.bootcamp.game.Spelregels;
+import nl.pudding.bootcamp.game.ronde1.Valkisten;
 import nl.pudding.bootcamp.game.ronde2.Ei;
 import nl.pudding.bootcamp.game.ronde2.EiOpslag;
 import nl.pudding.bootcamp.game.ronde3.MobArena;
@@ -44,6 +45,7 @@ public final class Bootcamp implements ModInitializer {
 		Zweefkroon.init();
 		Sidebar.init();
 		MobArena.init();
+		Valkisten.init();
 		Ei.init();
 		EiOpslag.init();
 		Quiz.init();

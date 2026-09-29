@@ -578,6 +578,9 @@ class RondeLogicaTest {
 			assertEquals("Wacht op het startsein", i.clownWachttekst());
 			assertEquals("Wacht op het startsein", i.ffaWachttekst());
 			assertEquals(3, i.veldHoogte());
+			assertTrue(i.poortMelding());
+			assertEquals(3, i.valMobsMin());
+			assertEquals(10, i.valMobsMax());
 		}
 
 		@Test
@@ -630,6 +633,12 @@ class RondeLogicaTest {
 			assertNull(Instellingen.checkVeldHoogte(0));
 			assertNotNull(Instellingen.checkVeldHoogte(11));
 			assertNotNull(Instellingen.checkVeldHoogte(-1));
+			assertNull(Instellingen.checkValMobs(0, 0));
+			assertNull(Instellingen.checkValMobs(3, 10));
+			assertNull(Instellingen.checkValMobs(20, 20));
+			assertNotNull(Instellingen.checkValMobs(-1, 3));
+			assertNotNull(Instellingen.checkValMobs(3, 21));
+			assertNotNull(Instellingen.checkValMobs(10, 3));
 		}
 	}
 }
