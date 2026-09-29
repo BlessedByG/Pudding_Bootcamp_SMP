@@ -2,7 +2,10 @@ package nl.pudding.bootcamp.core;
 
 import java.util.Locale;
 
-/** De puntenblokken van het Ei: wat ze waard zijn en hoeveel de mod er standaard strooit. */
+/**
+ * De blokken die de mod in het Ei strooit: wat ze waard zijn en hoeveel er standaard komen. Alleen
+ * netherite, diamond en gold geven punten; de rest doet iets.
+ */
 public enum EiBlok {
 	NETHERITE("netherite", "minecraft:netherite_block", 50, 6),
 	DIAMOND("diamond", "minecraft:diamond_block", 10, 90),
@@ -10,7 +13,15 @@ public enum EiBlok {
 	/** Geen punten: 50/50 Haste voor de hakker of een bevriezing voor de rest. */
 	REDSTONE("redstone", "minecraft:redstone_block", 0, 10),
 	/** Geen punten: een jumpscare bij een ander. */
-	EMERALD("emerald", "minecraft:emerald_block", 0, 10);
+	EMERALD("emerald", "minecraft:emerald_block", 0, 10),
+	/** Geen punten: een TNT in je inventory die meteen afgaat als je hem neerzet en deepslate wegblaast. */
+	TNT("tnt", "minecraft:tnt", 0, 10),
+	/** Geen punten: even Efficiency V op je pickaxe en Haste II. */
+	GLOWSTONE("glowstone", "minecraft:glowstone", 0, 10),
+	/** Geen punten: Nausea voor alle anderen. */
+	SLIME("slime", "minecraft:slime_block", 0, 10),
+	/** Geen punten: iedereen wisselt willekeurig van plek. */
+	TARGET("target", "minecraft:target", 0, 5);
 
 	/** Het blok waar de puntenblokken op komen: gewone deepslate, geen varianten. */
 	public static final String DEEPSLATE = "minecraft:deepslate";

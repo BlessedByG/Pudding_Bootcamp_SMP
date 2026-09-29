@@ -25,7 +25,7 @@ class RegelsTest {
 		assertEquals(5, Regels.COUNTDOWN);
 		assertEquals(10, Regels.OPSTELLING);
 		assertEquals(30, Regels.KROON_UITLOG_WACHT);
-		assertEquals(10, Regels.EI_HASTE);
+		assertEquals(15, Regels.EI_HASTE);
 		assertEquals(15, Regels.EI_BEVRIEZING);
 		assertEquals(10, Regels.BEURT_VIEREN);
 		assertEquals(20, Regels.KRONING_VUURWERK);

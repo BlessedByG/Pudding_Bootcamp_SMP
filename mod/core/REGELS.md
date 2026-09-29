@@ -26,11 +26,15 @@ Dit is de lijst van het rondeplan van 25 september 2026 (taakplan 2). De regels 
 | R1.1 | Het maximum per team is `max(5, ceil(spelers / 4))`; een vol team kun je niet kiezen. | `TeamKeuze.maximum`, `TeamKeuze.vol` | `TeamKeuzeTest.maximumIsVijfOfMeer`, `TeamKeuzeTest.volBijHetMaximum` |
 | R1.2 | Wie bij het einde van het doolhof geen team heeft, gaat naar het kleinste team; bij gelijk het lot. | `TeamKeuze.kleinste` | `TeamKeuzeTest.kleinsteTeamBijGelijkHetLot` |
 | R1.3 | Kisten krijgen 2 t/m 4 items uit de loot-tabel, gewogen getrokken. Geen pearls. | `LootTabel` | `LootTest`, `ResourcesTest.lootIsGeldig` |
-| R2.1 | Puntenblokken: netherite 50, diamond 10, gold 5; redstone en emerald geven een effect. Standaard 6, 90, 120, 10, 10. | `EiBlok`, `Instellingen` | `EiVerdelingTest.blokkenEnPunten`, `InstellingenTest.standaarden` |
+| R2.1 | Blokken in het Ei: netherite 50, diamond 10, gold 5 punten; redstone, emerald, TNT, glowstone, slime en target geven een effect. Standaard 6, 90, 120, 10, 10, 10, 10, 10, 5. | `EiBlok`, `Instellingen` | `EiVerdelingTest.blokkenEnPunten`, `InstellingenTest.standaarden` |
 | R2.2 | Strooien trekt zonder dubbele uit de deepslate-plekken; samen meer dan er plekken zijn weigert hij. | `EiVerdeling` | `EiVerdelingTest` |
 | R2.3 | `/ei blokken` weigert een totaal boven de deepslate van de vastlegging. | `Instellingen.checkEiBlokken` | `InstellingenTest.eiBlokkenPassenOpDeDeepslate` |
 | R2.4 | De stand van het Ei: meeste punten boven, bij gelijk wie de score het eerst had; wie 0 heeft staat er niet in. Dezelfde regel voor de kills in de FFA. | `Klassement` | `KlassementTest` |
-| R2.5 | Redstone is 50/50: Haste 10 seconden voor de hakker, of 15 seconden bevriezing voor de rest. | `Regels.redstoneGok` | `RegelsTest.redstoneGokIsVijftigVijftig`, `RegelsTest.momenten` |
+| R2.5 | Redstone is 50/50: Haste 15 seconden voor de hakker, of 15 seconden bevriezing voor de rest. | `Regels.redstoneGok` | `RegelsTest.redstoneGokIsVijftigVijftig`, `RegelsTest.momenten` |
+| R2.10 | TNT uit het Ei blaast alleen gewone deepslate weg, in een bol met straal 3. | `Regels.EI_TNT_STRAAL` | - (fabric) |
+| R2.11 | Glowstone: 10 seconden Efficiency V en Haste II. | `Regels.EI_GLOWSTONE` | - (fabric) |
+| R2.12 | Slime: 15 seconden Nausea voor alle anderen. | `Regels.EI_MISSELIJK` | - (fabric) |
+| R2.13 | Target: iedereen op de plek van een ander, niemand houdt zijn eigen plek; alleen staat blijft staan. | `Hussel.verdeel` | `HusselTest` |
 | R3.1 | Aantal beurten = het grootste team; per team een gelote volgorde; arena 2 verschoven met ⌊n/2⌋. Iedereen speelt één keer in elke arena, niemand twee beurten achter elkaar bij 5 beurten. | `MobSchema` | `MobSchemaTest.vijfBeurtenIedereenEenKeerInElkeArena`, `MobSchemaTest.hetVoorbeeldUitDeDocs` |
 | R3.2 | Een kleiner team heeft extra beurten; die krijgen bij de start van de beurt een willekeurige speler die nog niet af is en niet al in deze beurt staat, of blijven leeg. | `MobSchema.opstelling` | `MobSchemaTest.kleinerTeamHeeftExtraBeurten`, `MobSchemaTest.extraBeurtPaktIemandDieNogMagEnNietAlSpeelt`, `MobSchemaTest.extraBeurtZonderKandidaatBlijftLeeg` |
 | R3.3 | Wie af is speelt geen beurt meer: zijn geplande plek blijft leeg. | `MobSchema.opstelling` | `MobSchemaTest.wieAfIsLaatZijnPlekLeeg` |

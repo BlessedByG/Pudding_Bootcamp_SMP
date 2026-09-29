@@ -22,8 +22,14 @@ public final class Regels {
 	/** R1.6 en R2.9: de laatste tien seconden groot in beeld. */
 	public static final int LAATSTE_TELLEN = 10;
 	/** R2.5: redstone-gok. */
-	public static final int EI_HASTE = 10;
+	public static final int EI_HASTE = 15;
 	public static final int EI_BEVRIEZING = 15;
+	/** R2.10: zo groot is het gat van een TNT, in blokken vanaf het midden. */
+	public static final int EI_TNT_STRAAL = 3;
+	/** R2.11: zo lang Efficiency V en Haste II na glowstone. */
+	public static final int EI_GLOWSTONE = 10;
+	/** R2.12: zo lang Nausea voor de anderen na slime. */
+	public static final int EI_MISSELIJK = 15;
 	/** R3.6: na elke beurt tien seconden vieren, dan pas naar de tribune. */
 	public static final int BEURT_VIEREN = 10;
 	/** R3.8, R4.5: na de winnaar van de mob arena en de quiz tien seconden vieren. */

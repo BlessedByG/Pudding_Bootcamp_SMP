@@ -65,7 +65,7 @@ final class EiCommand {
 	private static int blokken(CommandContext<CommandSourceStack> ctx) {
 		EiBlok blok = EiBlok.vanId(StringArgumentType.getString(ctx, "soort"));
 		if (blok == null) {
-			return BcCommand.fout(ctx, "Kies netherite, diamond, gold, redstone of emerald.");
+			return BcCommand.fout(ctx, "Kies " + Arrays.stream(EiBlok.values()).map(EiBlok::id).collect(java.util.stream.Collectors.joining(", ")) + ".");
 		}
 		int aantal = IntegerArgumentType.getInteger(ctx, "aantal");
 		String fout = Spel.instellingen().checkEiBlokken(blok, aantal, EiOpslag.deepslate(ctx.getSource().getServer()));

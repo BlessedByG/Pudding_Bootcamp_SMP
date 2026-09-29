@@ -59,7 +59,7 @@ Vooraf instellen, in minuten (blijft bewaard):
 | `/doolhof poortmelding` | aan: hoorn en title als de uitgang opengaat. `uit` voor een stille poort. |
 | `/doolhof valmobs` | willekeurig 3 t/m 10 mobs per valkist |
 | `/ei timer` | 15 |
-| `/ei blokken` | netherite 6, diamond 90, gold 120, redstone 10, emerald 10 (voorlopig) |
+| `/ei blokken` | netherite 6, diamond 90, gold 120, redstone 10, emerald 10, tnt 10, glowstone 10, slime 10, target 5 (voorlopig; samen 271, dat moet op de deepslate passen) |
 | `/mobarena punten` | zombie 1; skeleton, spider, cave spider 2; creeper 3; witch 4; vindicator 5; evoker 8; ravager 10 |
 | `/mobarena aftekst` | "Af · je speelt geen beurt meer" |
 | `/mobarena veldhoogte` | 3 |
@@ -140,13 +140,18 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
       lege kist, een tweede speler krijgt hem wel. `/doolhof poortmelding uit`: de poort gaat stil
       open. Na `/doolhof stop` zijn de mobs weg.
 - [ ] `/ei vastleggen`, `/ei blokken`: het overzicht noemt het aantal deepslate-plekken.
-- [ ] `/ei start`: spelers verdeeld over de startplekken, punten per block, netherite in de
-      chat, redstone (beide uitkomsten met aftellen onderin, een paar keer breken), emerald geeft
-      de ander een jumpscare en beiden zien van/naar wie, laatste minuut rood met aftellen,
-      niets valt als
-      item, kettingen en wereld niet te breken, niets neer te zetten, dood = terug op je eigen
-      startplek, winnaar bij de timer, daarna is de pickaxe weg (ook na `/ei stop`). Dan nog een
-      keer `/ei start`: het Ei is weer heel en de blokken liggen ergens anders.
+- [ ] `/ei start`: spelers verdeeld over de startplekken, punten per block, alles wat je vindt in
+      de chat, redstone (beide uitkomsten met aftellen onderin, een paar keer breken), emerald geeft
+      de ander een jumpscare en iedereen ziet groot wie naar wie, laatste minuut rood met aftellen,
+      niets valt als item, kettingen en wereld niet te breken, niets neer te zetten behalve de TNT,
+      dood = terug op je eigen startplek, winnaar bij de timer, daarna is de pickaxe weg (ook na
+      `/ei stop`). Dan nog een keer `/ei start`: het Ei is weer heel en de blokken liggen ergens
+      anders.
+- [ ] Nieuwe blokken in het Ei (zet ze eventueel even hoog met `/ei blokken`): TNT komt in je
+      inventory, neerzetten ontsteekt hem meteen en hij blijft hangen, de knal doet schade en blaast
+      alleen deepslate weg; glowstone geeft `TURBO` en `Efficiency V · 10` onderin, daarna heeft de
+      pickaxe weer Efficiency II; slime maakt de anderen misselijk; target zet met twee accounts
+      iedereen op de plek van de ander.
 - [ ] `/mobarena punten`: de tabel klopt.
 - [ ] `/mobarena start` met twee accounts in twee teams: geen schema in de chat
       (`/mobarena schema` laat het alleen jou zien), beide op hun

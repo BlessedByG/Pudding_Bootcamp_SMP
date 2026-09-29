@@ -204,7 +204,8 @@ voor het testen en voor de lol.
 Waar een jumpscare vandaan komt:
 - Doolhof: in een regio `schrik_1` t/m `schrik_n`, één keer per regio per speler.
 - Doolhof: een valkist (trapped chest) openen, één keer per kist per speler.
-- Het Ei: een emerald block, bij een willekeurige andere levende deelnemer.
+- Het Ei: een emerald block, bij een willekeurige andere levende deelnemer; iedereen ziet groot
+  wie naar wie.
 
 ## Modules
 
@@ -262,7 +263,7 @@ hele avond geldt (setup, spelers, noodknoppen) staat onder `/bc`.
 | `/doolhof valmobs [<min> [<max>]]` | Hoeveel mobs (husks en silverfish door elkaar) er uit een valkist komen: elke keer willekeurig van `<min>` t/m `<max>`, standaard 3 t/m 10. Met één getal altijd zoveel; `0` is alleen de jumpscare. Bewaard in `bootcamp.json`. |
 | `/ei start\|stop\|resterend` | Ronde 2. |
 | `/ei timer [<minuten>]` | Hoe lang het Ei duurt, standaard 15. |
-| `/ei blokken [<soort> <aantal>]` | Hoeveel puntenblokken van een soort (`netherite`, `diamond`, `gold`, `redstone`, `emerald`) de mod in het Ei strooit. Zonder argumenten: het overzicht, met het aantal deepslate-plekken in het Ei. |
+| `/ei blokken [<soort> <aantal>]` | Hoeveel blokken van een soort (`netherite`, `diamond`, `gold`, `redstone`, `emerald`, `tnt`, `glowstone`, `slime`, `target`) de mod in het Ei strooit. Zonder argumenten: het overzicht, met het aantal deepslate-plekken in het Ei. |
 | `/ei vastleggen` | Legt het Ei vast zoals het nu gebouwd is: alle blokken in regio `ei`. Eén keer na het bouwen, en opnieuw na elke bouwwijziging. Niet tijdens ronde 2. Antwoord: `Ei vastgelegd: 54.000 blokken, waarvan 27.812 deepslate.` |
 | `/mobarena start` | Ronde 3: loot het schema (geheim, niet in de chat) en start beurt 1. |
 | `/mobarena volgende` | Start de volgende beurt. Weigert zolang de huidige beurt nog loopt, ook tijdens de 10 seconden na de beurt. |
@@ -329,7 +330,7 @@ ronde. Een nieuw aantal puntenblokken geldt vanaf de volgende `/ei start`.
 | `/doolhof poortmelding` | aan | aan of uit |
 | `/doolhof valmobs` | 3 t/m 10 | 0 tot 20, min niet boven max |
 | `/ei timer` | 15 | 5 tot 60 |
-| `/ei blokken` | netherite 6, diamond 90, gold 120, redstone 10, emerald 10 (voorlopig) | 0 of meer; samen niet meer dan de deepslate-plekken in het Ei |
+| `/ei blokken` | netherite 6, diamond 90, gold 120, redstone 10, emerald 10, tnt 10, glowstone 10, slime 10, target 5 (voorlopig; samen 271) | 0 of meer; samen niet meer dan de deepslate-plekken in het Ei |
 | `/mobarena punten` | zombie 1; skeleton, spider, cave spider 2; creeper 3; witch 4; vindicator 5; evoker 8; ravager 10; elk ander type 1 | 0 tot 100 |
 | `/mobarena aftekst` | `Af · je speelt geen beurt meer` | tot 60 tekens |
 | `/mobarena veldhoogte` | 3 blokken | 0 tot 10 |
@@ -556,31 +557,56 @@ van `/ei blokken` samen meer zijn dan de deepslate-plekken. Start:
 doos van meer dan 250.000 blokken weigert hij: dat is een verkeerde selectie.
 
 **Breken** (`PlayerBlockBreakEvents.BEFORE`): buiten regio `ei` geannuleerd. Binnen `ei` breekt
-elk blok zonder drop (`level.removeBlock`, event geannuleerd). De puntenblokken geven punten of
-een effect:
+elk blok zonder drop (`level.removeBlock`, event geannuleerd). De gestrooide blokken geven punten
+of een effect, alleen op de plekken waar de mod ze strooide: glowstone of slime als versiering in
+de schil doet niets. **Alles wat iemand vindt staat in de chat**, met de naam in de teamkleur
+(`Speler7 hakte diamond (+10)`, `Speler7 hakte redstone: iedereen bevroren`, `Speler7 liet
+Speler3 schrikken`).
 
 - netherite +50, diamond +10, gold +5: `entity.experience_orb.pickup`, en twee seconden lang
-  `+10 · 85 punten · #4` in de actionbar. Bij netherite staat de `+50` in paars en krijgt
-  iedereen een chatregel: `Speler7 hakte netherite (+50)`, met de naam in de teamkleur.
-- redstone: 50/50. **Haste**: Haste II 10 seconden voor de breker, `block.beacon.power_select`,
-  title `HASTE` met subtitle `10 seconden sneller hakken`, alleen voor hem. **Bevriezing**:
+  `+10 · 85 punten · #4` in de actionbar. Bij netherite staat de `+50` in paars.
+- redstone: 50/50. **Haste**: Haste II 15 seconden voor de breker, `block.beacon.power_select`,
+  title `HASTE` met subtitle `15 seconden sneller hakken`, alleen voor hem. **Bevriezing**:
   iedereen behalve de breker 15 seconden bevroren: dezelfde bevriezing als de opstelling, plus
   Mining Fatigue zodat ze ook niet minen. Title voor iedereen: `BEVROREN` met subtitle
   `door <naam>`, `block.glass.break`. Een nieuwe bevriezing vervangt een lopende. Bij beide
   telt de actionbar de resterende seconden af (`Haste · 7`, `Bevroren · 12`) en klinkt een pling
   als het voorbij is.
-- emerald: jumpscare bij een willekeurige andere deelnemer in het Ei. De breker ziet twee
-  seconden `Jumpscare naar Speler3` in de actionbar; de ander ziet na de schrik (als de foto
-  wegvaagt) drie seconden `Met dank aan Speler7` in de actionbar.
+- emerald: jumpscare bij een willekeurige andere deelnemer in het Ei. Groot in beeld voor
+  iedereen: title `Speler7 → Speler3` (namen in teamkleur) met subtitle `JUMPSCARE`. De ander
+  staat dan zelf in de foto; hij krijgt dezelfde title zodra de foto wegvaagt, plus drie
+  seconden `Met dank aan Speler7` in de actionbar. De breker ziet ook `Jumpscare naar Speler3`
+  in de actionbar.
+- TNT: een TNT in je inventory (gemarkeerd als Ei-item, dus aan het eind weer weg), title `TNT`
+  met `zet hem neer: hij gaat meteen af`. Neerzetten (rechtsklik op een blok) zet geen blok maar
+  een brandende TNT op die plek, zonder zwaartekracht zodat hij ook aan de zijkant van het Ei
+  blijft hangen; na de gewone 4 seconden knalt hij. Vanilla TNT ontploft nooit (gamerule
+  `tnt_explodes` uit): de mod doet de knal zelf. Spelers krijgen gewone TNT-schade en een duw
+  (ook de plaatser; wie doodgaat, gaat terug naar zijn startplek). Van de blokken gaat alleen
+  gewone deepslate in regio `ei` weg, in een bol met straal 3, zonder drop; speciale blokken, de
+  schil en de kettingen blijven staan. Brandt er nog een TNT als het Ei eindigt, dan verdwijnt
+  hij zonder knal.
+- glowstone: 10 seconden Efficiency V op de pickaxe uit het Ei en Haste II, title `TURBO`. Het
+  oude niveau staat in de custom data van de pickaxe; daarna gaat hij terug naar zijn eigen
+  Efficiency, met een pling. Nog een glowstone verlengt de 10 seconden.
+- slime: alle anderen 15 seconden Nausea, title `MISSELIJK` met `door <naam>`,
+  `entity.slime.squish`.
+- target: iedereen die meedoet (ook de breker) staat ineens op de plek van een ander, met diens
+  kijkrichting; niemand houdt zijn eigen plek (`core`: `Hussel`). Title `GEHUSSELD` met
+  `door <naam>` voor iedereen, `entity.enderman.teleport`. Alleen met twee of meer spelers.
+
+Haste, Nausea en Efficiency V lopen door na een val of dood (de heal haalt effecten weg, de mod
+zet ze terug voor de tijd die nog over is).
 
 **Actionbar**: elke seconde opnieuw gestuurd, anders verdwijnt hij na een paar tellen. Normaal
 `85 punten · #4`: je totaal en je plek in het klassement (dezelfde volgorde als de sidebar).
 Vlak na een puntenblok staat er twee seconden wat je erbij kreeg voor (`+10 · ...`). Met 0
-punten alleen `0 punten`. Loopt er Haste of een bevriezing, dan staat die vooraan:
-`Bevroren · 12 · 85 punten · #4`.
+punten alleen `0 punten`. Loopt er Haste, Efficiency V of een bevriezing, dan staat die vooraan:
+`Bevroren · 12 · 85 punten · #4`, `Efficiency V · 8 · 85 punten · #4`.
 
 **Neerzetten** kan in ronde 2 nergens: blokken (`UseBlockCallback` met een `BlockItem`) en
-emmers (`UseItemCallback`) worden geannuleerd.
+emmers (`UseItemCallback`) worden geannuleerd. De enige uitzondering is de TNT uit het Ei (zie
+boven).
 
 Sidebar: titel `Het Ei · top 10`, per regel de naam in de teamkleur met de punten rechts,
 bijgewerkt bij elk puntenblok. De volgorde is die van de mod, ook bij gelijke punten: wie de
@@ -862,8 +888,12 @@ langzaam draaiend. Opgeruimd als de kroonhouder kijker wordt.
 | Team gekozen | `entity.player.levelup`, je naam in de teamkleur, chatregel voor iedereen: `<naam> zit in Rood (3/5)`. |
 | Ei: punten | `entity.experience_orb.pickup`, actionbar met wat je erbij kreeg, je score en je plek. |
 | Ei: netherite | `+50` in paars in de actionbar, chatregel voor iedereen: `Speler7 hakte netherite (+50)`. |
-| Ei: redstone | Haste: `block.beacon.power_select`, title `HASTE` voor de hakker. Bevriezing: title `BEVROREN` met `door <naam>`, `block.glass.break`. Aftellen in de actionbar, pling als het voorbij is. |
-| Ei: emerald | De ander krijgt de jumpscare en daarna `Met dank aan Speler7`; de hakker ziet `Jumpscare naar Speler3`. |
+| Ei: redstone | Haste (15 seconden): `block.beacon.power_select`, title `HASTE` voor de hakker. Bevriezing: title `BEVROREN` met `door <naam>`, `block.glass.break`. Aftellen in de actionbar, pling als het voorbij is. |
+| Ei: emerald | Iedereen ziet de title `Speler7 → Speler3` met `JUMPSCARE`; de ander krijgt eerst de jumpscare, dan die title en `Met dank aan Speler7`; de hakker ziet ook `Jumpscare naar Speler3`. |
+| Ei: TNT | Title `TNT` voor de hakker; neergezet `entity.tnt.primed`, na 4 seconden de knal met `explosion_emitter`. |
+| Ei: glowstone | Title `TURBO`, `block.beacon.activate`, `Efficiency V · 8` in de actionbar, pling als het voorbij is. |
+| Ei: slime | Title `MISSELIJK` met `door <naam>` voor de anderen, `entity.slime.squish`. |
+| Ei: target | Title `GEHUSSELD` met `door <naam>` voor iedereen, `entity.enderman.teleport`. |
 | Laatste minuut (doolhof, Ei) | Bossbar wordt rood. De laatste 10 seconden staan groot in beeld in rood, met `block.note_block.hat` per tel. |
 | Winnaar Ei | Title met de kop van de winnaar en `SPELER4 WINT HET EI` in goud, subtitle `185 punten`, `ui.toast.challenge_complete`, vuurpijl boven de winnaar. |
 | Start mob arena | `ui.toast.challenge_complete`; het schema blijft geheim. Bij elke beurt de title `BEURT 3` voor iedereen, zonder subtitle. |
