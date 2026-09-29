@@ -453,8 +453,10 @@ class RondeLogicaTest {
 			assertTrue(QuizRad.isVakgrens(2));
 			assertTrue(QuizRad.isVakgrens(62));
 			assertFalse(QuizRad.isVakgrens(4));
-			assertEquals("", QuizRad.glyph(0));
-			assertEquals("", QuizRad.glyph(63));
+			// 2 x 2 tegels, met -1 na elke tegel en een spatie terug na de bovenste rij.
+			assertEquals("", QuizRad.glyph(0));
+			assertEquals("", QuizRad.glyph(63));
+			assertEquals(QuizRad.glyph(0), QuizRad.glyph(64));
 		}
 
 		@Test
@@ -485,6 +487,15 @@ class RondeLogicaTest {
 			}
 			assertEquals(0, rad.pos());
 			assertTrue(ticks > 5 * 20 && ticks < 20 * 20, "ticks " + ticks);
+		}
+	}
+
+	@Nested
+	class FontTegelsTest {
+		@Test
+		void tweeRijenMetSpatiesErtussen() {
+			assertEquals("",
+					FontTegels.tekst(0xE000, 16, 3));
 		}
 	}
 
@@ -566,6 +577,7 @@ class RondeLogicaTest {
 			assertEquals("Af · je speelt geen beurt meer", i.aftekst());
 			assertEquals("Wacht op het startsein", i.clownWachttekst());
 			assertEquals("Wacht op het startsein", i.ffaWachttekst());
+			assertEquals(3, i.veldHoogte());
 		}
 
 		@Test
@@ -615,6 +627,9 @@ class RondeLogicaTest {
 			assertEquals(Instellingen.AFTEKST, i.aftekst());
 			assertNotNull(Instellingen.checkMobPunten(101));
 			assertNull(Instellingen.checkMobPunten(0));
+			assertNull(Instellingen.checkVeldHoogte(0));
+			assertNotNull(Instellingen.checkVeldHoogte(11));
+			assertNotNull(Instellingen.checkVeldHoogte(-1));
 		}
 	}
 }

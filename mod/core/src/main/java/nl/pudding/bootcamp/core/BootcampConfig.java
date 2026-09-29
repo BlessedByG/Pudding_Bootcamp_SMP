@@ -316,6 +316,7 @@ public final class BootcampConfig {
 		i.mobPunten().forEach(punten::addProperty);
 		mob.add("punten", punten);
 		mob.addProperty("aftekst", i.aftekst());
+		mob.addProperty("veldhoogte", i.veldHoogte());
 		o.add("mobarena", mob);
 
 		JsonObject clown = new JsonObject();
@@ -365,6 +366,9 @@ public final class BootcampConfig {
 			}
 			if (m.has("aftekst")) {
 				wrap("instellingen.mobarena.aftekst", () -> i.zetAftekst(m.get("aftekst").getAsString()));
+			}
+			if (m.has("veldhoogte")) {
+				wrap("instellingen.mobarena.veldhoogte", () -> i.zetVeldHoogte(m.get("veldhoogte").getAsInt()));
 			}
 		}
 		if (o.has("clown") && o.getAsJsonObject("clown").has("wachttekst")) {

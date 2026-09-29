@@ -48,8 +48,6 @@ public final class Tribune {
 	}
 
 	private static final int TERUGZET_ELKE_TICKS = 10;
-	/** Een veld van de mob arena telt tot zoveel blokken boven de selectie: het balkon is geen veld. */
-	private static final int VELD_HOOGTE = 3;
 	private static int volgendeTribune;
 
 	private Tribune() {
@@ -257,6 +255,15 @@ public final class Tribune {
 
 	// Op de tribune houden
 
+	/** Tot zoveel blokken boven de vloer van regio {@code tribune_mob} sta je op de tribune (springen telt mee). */
+	public static final int TRIBUNE_HOOGTE = 3;
+
+	/** Staat deze plek op regio {@code tribune_mob}? Daar wordt niemand van een veld gezet, ook waar de selecties overlappen. */
+	public static boolean opMobTribune(double x, double y, double z) {
+		Regio t = Spel.regio("tribune_mob");
+		return t != null && t.staatOp(x, y, z, TRIBUNE_HOOGTE);
+	}
+
 	/**
 	 * Elke servertick: een kijker die toch het veld of de vloer op komt, gaat terug naar zijn
 	 * tribunepunt (of zijn kooi).
@@ -285,7 +292,8 @@ public final class Tribune {
 				if (st.arena > 0 || st.kooi == arena) {
 					continue;
 				}
-				if (veld.bevatSpelerTot(s.getX(), s.getY(), s.getZ(), VELD_HOOGTE)) {
+				if (veld.bevatSpelerTot(s.getX(), s.getY(), s.getZ(), Spel.instellingen().veldHoogte())
+						&& !opMobTribune(s.getX(), s.getY(), s.getZ())) {
 					terug(s, st, Ronde.MOBARENA);
 				}
 			}

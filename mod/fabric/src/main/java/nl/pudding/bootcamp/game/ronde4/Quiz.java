@@ -254,7 +254,7 @@ public final class Quiz extends RondeLogica {
 	}
 
 	private static Component glyph(int stand) {
-		return Component.literal(QuizRad.glyph(stand)).withStyle(s -> s.withFont(new FontDescription.Resource(RAD_FONT)));
+		return Component.literal(QuizRad.glyph(stand)).withStyle(s -> s.withFont(new FontDescription.Resource(RAD_FONT)).withoutShadow());
 	}
 
 	private static void toonStand(MinecraftServer server, int stand, int blijf) {

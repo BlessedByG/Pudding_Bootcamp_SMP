@@ -185,7 +185,42 @@ public final class MobArena extends RondeLogica {
 				punten.add("start_" + a + "_" + k.id());
 			}
 		}
-		return Spel.buitenRegio("mobarena", punten);
+		String fout = Spel.buitenRegio("mobarena", punten);
+		if (fout != null) {
+			return fout;
+		}
+		return tribuneKlopt();
+	}
+
+	/**
+	 * Op regio {@code tribune_mob} wordt niemand van een veld gezet. Een tribuneplek ernaast zet wie
+	 * er staat elke halve seconde terug als hij in een veld valt; een startplek erop zet wie aan de
+	 * beurt is steeds terug naar diezelfde plek.
+	 */
+	private static String tribuneKlopt() {
+		List<String> naast = new ArrayList<>();
+		for (String t : Spel.reeks("tribune_mob_")) {
+			Punt p = Spel.punt(t);
+			if (!Tribune.opMobTribune(p.x(), p.y(), p.z())) {
+				naast.add(t);
+			}
+		}
+		if (!naast.isEmpty()) {
+			return "deze tribuneplekken liggen niet op regio tribune_mob: " + String.join(", ", naast)
+					+ ". Selecteer de vloer van de tribune (/bc region save tribune_mob, en add voor meer delen)";
+		}
+		List<String> erop = new ArrayList<>();
+		for (int a = 1; a <= 2; a++) {
+			for (Kleur k : Kleur.values()) {
+				String naam = "start_" + a + "_" + k.id();
+				Punt p = Spel.punt(naam);
+				if (p != null && Tribune.opMobTribune(p.x(), p.y(), p.z())) {
+					erop.add(naam);
+				}
+			}
+		}
+		return erop.isEmpty() ? null : "deze startplekken liggen op regio tribune_mob, waar wie aan de beurt is juist af moet blijven: "
+				+ String.join(", ", erop);
 	}
 
 	private static WavesDef leesWaves() {
@@ -531,7 +566,7 @@ public final class MobArena extends RondeLogica {
 		}
 	}
 
-	/** Een speler die aan de beurt is en zijn veld uit komt, gaat terug naar zijn vlak. */
+	/** Een speler die aan de beurt is en zijn veld uit komt of de tribune op loopt, gaat terug naar zijn vlak. */
 	private void houdSpelersInHunVeld(MinecraftServer server) {
 		for (MobSchema.Plek p : opstelling) {
 			ServerPlayer s = p.speler() == null ? null : server.getPlayerList().getPlayer(p.speler());
@@ -540,7 +575,8 @@ public final class MobArena extends RondeLogica {
 			}
 			SpelerStatus st = Spel.status(s);
 			Regio veld = Spel.regio("veld_" + p.arena());
-			if (st.arena == p.arena() && !st.dood && veld != null && !veld.bevat(s.getX(), s.getZ())) {
+			if (st.arena == p.arena() && !st.dood && veld != null
+					&& (!veld.bevat(s.getX(), s.getZ()) || Tribune.opMobTribune(s.getX(), s.getY(), s.getZ()))) {
 				Spel.naarPunt(s, "start_" + p.arena() + "_" + p.kleur().id());
 			}
 		}

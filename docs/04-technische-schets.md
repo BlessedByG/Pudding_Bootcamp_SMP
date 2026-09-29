@@ -62,9 +62,13 @@ Geen Skript, geen datapack, geen plugins, geen client-mod behalve voice.
 Gamerules die de mod bij het opstarten en bij `/bc reset` zet: `naturalRegeneration` aan, `pvp`
 aan (de mod beslist zelf wie wie mag raken, zie PvP hieronder), `doMobSpawning` uit (mobs spawnen
 we zelf), `mobGriefing` uit (creepers in de mob arena), `doDaylightCycle` uit,
-`announceAdvancements` uit, `locatorBar` uit (aan in ronde 5). In 26.2 heten de gamerules in code
+`announceAdvancements` uit, `locatorBar` uit (aan in ronde 5), `randomTickSpeed` op 0 (geplakte bladeren
+vergaan dan niet, gras en gewassen groeien niet door). In 26.2 heten de gamerules in code
 anders (`GameRules.ADVANCE_TIME`, `SPAWN_MOBS`, ...) en zet je ze via
 `level.getGameRules().set(...)`.
+
+Zolang er geen ronde loopt (in de lobby en tussen de rondes) houdt de mod de honger van iedereen
+die meedoet elke seconde vol.
 
 Gamemode zet `/<ronde> start` per ronde: survival alleen in ronde 2 (het Ei), adventure in alle andere
 rondes; kijkers altijd adventure.
@@ -79,8 +83,12 @@ resource pack in `server.properties`:
 resource-pack=<url van bootcamp-pack.zip>
 resource-pack-sha1=<sha1 van dat bestand>
 require-resource-pack=true
-resource-pack-prompt=Nodig voor de bootcamp
+resource-pack-prompt=
 ```
+
+De prompt is in 26.2 een JSON-tekst. Een host als Pterodactyl herschrijft `server.properties` bij
+elke start en slikt dan het afsluitende aanhalingsteken en de regelovergang van
+`"Nodig voor de bootcamp"` in; daarom leeg laten (dan toont Minecraft zijn eigen tekst).
 
 ## PvP
 
@@ -135,16 +143,30 @@ Het pack staat in `pack/` in deze repo. **Aanleveren** gaat in `pack/aanleveren/
 **Bouwen:** `java pack/BouwPack.java`. Alleen de JDK 25 is nodig, die je voor de mod toch al hebt,
 en het werkt ook op Windows zonder Git Bash. Het programma:
 
-1. leest de foto (jpg of png) en zet hem om naar png;
-2. verkleint hem als de langste kant groter is dan 1024 pixels, met behoud van de verhouding (een
-   grotere foto maakt het pack alleen zwaarder om te downloaden en ziet er in beeld niet beter
-   uit); kleiner blijft zoals hij is;
-3. zet hem als `clown.png` in het pack, met het lachje;
-4. tekent **het quiz-rad** (Java2D, niets aan te leveren): 64 plaatjes van 512 × 512, elk 5,625°
+1. leest de foto (jpg of png) en schaalt hem naar 476 pixels hoog, met behoud van de verhouding
+   (een heel brede foto wordt kleiner, tot 1428 pixels breed);
+2. zet het lachje erbij;
+3. tekent **het quiz-rad** (Java2D, niets aan te leveren): 64 standen van 484 × 484, elk 5,625°
    verder gedraaid, met de 16 vakken in de vaste volgorde uit *Ronde 4* in alleen de
    teamkleuren (rood `#E24B4A`, blauw `#378ADD`, groen `#639922`, geel `#EF9F27`), een donkere
    rand en naad tussen de vakken, een dop in het midden, en het pijltje vast bovenin;
+4. knipt de foto en elke stand van het rad in **tegels** en schrijft de fonts (zie hieronder);
 5. zipt het pack naar `bootcamp-pack.zip` en print de SHA-1 voor `server.properties`.
+
+**Waarom tegels.** Minecraft 26.2 zet font-glyphs op vellen van 256 × 256 pixels; een glyph die
+groter is, wordt zonder foutmelding een leeg vierkantje. Daarom is elk plaatje geknipt in twee
+rijen tegels van hooguit 242 pixels, elk een eigen glyph. Twee rijen, omdat een glyph niet hoger
+boven de basislijn mag staan dan hij hoog is (`ascent` ≤ `height`): de bovenste rij hangt boven de
+basislijn, de onderste eronder, dus het plaatje staat in het midden van het scherm. De mod zet de
+tegels weer aan elkaar met één tekst (`core`: `FontTegels`): na elke tegel een spatie van -1
+(U+F801, want een bitmap-glyph schuift één eenheid meer op dan hij breed is), na de bovenste rij
+een spatie terug over de hele breedte (U+F802). Elke tegel is een heel aantal font-eenheden breed
+(7 pixels per eenheid voor de foto, 11 voor het rad), anders ontstaat er een naad.
+- Jumpscare: tegel (rij r, kolom c) is U+E000 + 16r + c, tot zes kolommen; 34 eenheden per rij,
+  dus 68 hoog. Kolommen die een smallere foto niet nodig heeft zijn spaties van +1.
+- Quiz-rad: stand s is 2 × 2 tegels, U+E100 + 4s + 2r + c; 22 eenheden per rij, dus 44 hoog.
+- `PackFontTest` in het fabric-project haalt elke provider door de echte font-codec van 26.2 en
+  controleert de maten van de tegels.
 
 Online zetten als bijlage van een GitHub-release (de repo is public), en die URL in
 `resource-pack=`. Na een nieuwe foto: opnieuw bouwen, opnieuw uploaden, nieuwe SHA-1 invullen,
@@ -156,11 +178,10 @@ pack/
   aanleveren/clown_lach.ogg
   BouwPack.java                               bouwt het pack en de zip
   pack.mcmeta
-  assets/bootcamp/font/schrik.json            bitmap-provider: één glyph U+E000 → clown.png
-  assets/bootcamp/textures/font/clown.png     gemaakt door BouwPack uit de aangeleverde foto
-  assets/bootcamp/font/rad.json               bitmap-provider: 64 glyphs U+E100 t/m U+E13F → rad_00..rad_63
-  assets/bootcamp/textures/font/rad_00.png    het quiz-rad in stand 0, gemaakt door BouwPack
-  ...                                         t/m rad_63.png
+  assets/bootcamp/font/schrik.json            per tegel een bitmap-provider, plus de spaties
+  assets/bootcamp/textures/font/clown_R_C.png de tegels van de foto (rij R, kolom C), gemaakt door BouwPack
+  assets/bootcamp/font/rad.json               per tegel een bitmap-provider (64 standen × 4), plus de spaties
+  assets/bootcamp/textures/font/rad_SS_R_C.png de tegels van stand SS van het quiz-rad
   assets/bootcamp/sounds.json                 bootcamp:clown_lach → sounds/clown_lach.ogg
   assets/bootcamp/sounds/clown_lach.ogg       gekopieerd uit aanleveren/
 ```
@@ -171,12 +192,13 @@ een stil ogg-bestand kan BouwPack niet maken. Wat BouwPack maakt (`assets/bootca
 zip) staat niet in git; de fonts en `pack.mcmeta` wel. Een foto die niet vierkant is, blijft in de jumpscare in zijn eigen verhouding:
 de breedte volgt de hoogte.
 
-**De jumpscare** (`Schrik.op(speler)`): een title met de glyph `` in font
+**De jumpscare** (`Schrik.op(speler)`): een title met de tegels van de foto in font
 `bootcamp:schrik`, fade-in 0, blijven 30 ticks, fade-out 10, plus `bootcamp:clown_lach` op volle
-sterkte, alleen voor die speler. De `height` en `ascent` in `schrik.json` bepalen hoe groot de
-foto op het scherm staat; afstemmen in de eerste test tot hij het beeld vult. Heeft een speler het
-pack niet (weigerde of downloadfout), dan ziet die een leeg vierkantje en hoort niks; met
-`require-resource-pack=true` kan dat niet. `/bc schrik <speler>` doet een jumpscare met de hand,
+sterkte, alleen voor die speler. Hoe groot hij op het scherm staat, bepalen `SCHRIK_EENHEDEN` en
+`SCHRIK_PX_PER_EENHEID` bovenin `BouwPack.java` (nu 68 eenheden hoog; een title tekent vier keer
+zo groot); afstemmen in de eerste test. Heeft een speler het pack niet (weigerde of
+downloadfout), dan ziet die lege vierkantjes en hoort niks; met `require-resource-pack=true` kan
+dat niet. `/bc schrik <speler>` doet een jumpscare met de hand,
 voor het testen en voor de lol.
 
 Waar een jumpscare vandaan komt:
@@ -247,6 +269,7 @@ hele avond geldt (setup, spelers, noodknoppen) staat onder `/bc`.
 | `/mobarena wave volgende` | De huidige wave telt als klaar in beide arena's (overgebleven mobs weg). |
 | `/mobarena punten [<mob> <punten>]` | Hoeveel punten een mobtype waard is. Zonder argumenten: de tabel. |
 | `/mobarena aftekst [<tekst>]` | De tekst die in de actionbar staat bij wie in de mob arena sneuvelt, standaard `Af · je speelt geen beurt meer`. Zonder tekst: de huidige laten zien. Bewaard in `bootcamp.json`. |
+| `/mobarena veldhoogte [<blokken>]` | Tot hoeveel blokken boven de selectie een veld telt voor kijkers en wachtenden, standaard 3. Op regio `tribune_mob` telt het veld nooit, dus meestal hoef je hier niets aan te doen. Bij `0` telt alleen wie binnen de selectie zelf staat. Geldt meteen; bewaard in `bootcamp.json`. |
 | `/quiz start\|stop` | Ronde 4. Weigert zonder presentator. |
 | `/quiz presentator [<speler>]` | Wie presenteert (Pudding). Op naam, mag ook voor iemand die nog niet online is; bewaard in `bootcamp.json`. Die gaat bij de start naar het podium in plaats van naar zijn bank en krijgt de drie quiz-items. |
 | `/quiz bank <rood\|blauw\|groen\|geel>` / `/quiz podium` | Zet de bank van dat team, of het podium, op de plek waar je staat, met je kijkrichting. Hetzelfde als `/bc point set quiz_<kleur>` en `quiz_podium`. |
@@ -304,6 +327,7 @@ ronde. Een nieuw aantal puntenblokken geldt vanaf de volgende `/ei start`.
 | `/ei blokken` | netherite 6, diamond 90, gold 120, redstone 10, emerald 10 (voorlopig) | 0 of meer; samen niet meer dan de deepslate-plekken in het Ei |
 | `/mobarena punten` | zombie 1; skeleton, spider, cave spider 2; creeper 3; witch 4; vindicator 5; evoker 8; ravager 10; elk ander type 1 | 0 tot 100 |
 | `/mobarena aftekst` | `Af · je speelt geen beurt meer` | tot 60 tekens |
+| `/mobarena veldhoogte` | 3 blokken | 0 tot 10 |
 | `/clown wachttekst` | `Wacht op het startsein` | tot 60 tekens |
 | `/ffa wachttekst` | `Wacht op het startsein` | tot 60 tekens |
 
@@ -348,7 +372,8 @@ hij de doos om alle delen heen; bij de cirkel van `vloer` is dat het vierkant er
 | `nep_1` t/m `nep_3` | De vakken aan het eind van de nep-gangen. |
 | `schrik_1` t/m `schrik_n` | Schrikplekken in het doolhof. Zoveel als je wilt, genummerd vanaf 1. |
 | `poort_doolhof` | De poort voor de echte uitgang, opent na `/doolhof poort` minuten. |
-| `veld_1`, `veld_2` | De twee mob-arenavelden, elk uit meerdere delen (de T-vorm: `save` voor de balk, `add` voor de poot). Een kijker die erin komt wordt teruggezet, behalve wie in de kooi van dat veld zit (de tralies houden die binnen); een speler die aan de beurt is en eruit komt ook. Voor kijkers telt een veld tot drie blokken boven de selectie, zodat het balkon erboven geen veld is; voor wie aan de beurt is telt alleen de kolom. |
+| `veld_1`, `veld_2` | De twee mob-arenavelden, elk uit meerdere delen (de T-vorm: `save` voor de balk, `add` voor de poot). Een kijker die erin komt wordt teruggezet, behalve wie in de kooi van dat veld zit (de tralies houden die binnen); een speler die aan de beurt is en eruit komt ook. Voor kijkers telt een veld tot drie blokken boven de selectie (`/mobarena veldhoogte`), zodat het balkon erboven geen veld is; voor wie aan de beurt is telt alleen de kolom. |
+| `tribune_mob` | De tribune van de mob arena: selecteer de vloer waar de kijkers op staan, in delen als dat moet (`save` + `add`). Daarop telt niemand als in het veld, ook waar de selectie over een veld hangt of ermee overlapt: tot drie blokken boven de selectie (springen telt mee), niet eronder. Wie aan de beurt is en de tribune op loopt, gaat terug naar zijn startplek. `/mobarena start` weigert als een `tribune_mob_n` er niet op ligt of een startplek er wel op ligt. |
 
 **Punten** met `/bc point set <naam>` of `/bc point block <naam>`.
 
@@ -362,7 +387,7 @@ hij de doos om alle delen heen; bij de cirkel van `vloer` is dat het vierkant er
 | `start_1_rood`, `start_1_blauw`, `start_1_groen`, `start_1_geel`, en hetzelfde met `start_2_` | De vier gekleurde startplekken in arena 1 en in arena 2: de speler van een team start altijd op het vlak in zijn eigen kleur. Zetten met `/mobarena startplek <arena> <kleur>`. |
 | `mob_1_1` t/m `mob_1_n`, `mob_2_1` t/m `mob_2_n` | Mob-spawns per arena, op zelf gekozen plekken. Zoveel als je wilt per arena; arena 1 en 2 mogen iets verschillen. De mobs van een wave gaan om en om over de spawns van hun arena. |
 | `kooi_1`, `kooi_2` | De kooi in het midden van elke arena. |
-| `tribune_mob_1` t/m `tribune_mob_n` | De tribune (het balkon). Zoveel als je wilt. |
+| `tribune_mob_1` t/m `tribune_mob_n` | De tribune (het balkon). Zoveel als je wilt, allemaal op regio `tribune_mob`. |
 | `quiz_rood`, `quiz_blauw`, `quiz_groen`, `quiz_geel` | De vier banken in de quizhal. Zetten met `/quiz bank <kleur>`. |
 | `quiz_podium` | Het podium boven aan de trap, waar de presentator staat. Zetten met `/quiz podium`. |
 | `quizlamp_rood`, `quizlamp_blauw`, `quizlamp_groen`, `quizlamp_geel` (blokken) | De lamp bij elke bank. Gedoofde redstone lamp, geen redstone ernaast. Zetten met `/quiz lamp <kleur>`. |
@@ -508,7 +533,8 @@ van `/ei blokken` samen meer zijn dan de deepslate-plekken. Start:
    willekeurig, zonder dubbele, zoveel plekken als `/ei blokken` zegt, en zet daar de puntenblokken
    (`core`: `EiVerdeling`). Varianten zoals cobbled deepslate of deepslate tiles tellen niet mee.
 3. Spelers om en om naar `ei_spawn_1..n` (die plek onthoudt de mod per speler), survival,
-   `ei.json`, border `eigebied`, countdown, timer (`/ei timer`, standaard 15 minuten).
+   `ei.json`, Night Vision zonder deeltjes zolang het Ei duurt (binnenin wordt het snel donker; ook
+   na een val en voor wie inlogt, eraf aan het einde), border `eigebied`, countdown, timer (`/ei timer`, standaard 15 minuten).
 
 `/ei vastleggen` bewaart alle blokken van de doos `ei` in de wereldmap (`bootcamp_ei.nbt`). Een
 doos van meer dan 250.000 blokken weigert hij: dat is een verkeerde selectie.
@@ -632,10 +658,10 @@ met een vast pijltje bovenin. 16 vakken in alleen de teamkleuren, elk team 4 kee
 volgorde waarin twee buren (ook rondom) nooit dezelfde kleur hebben:
 `rood blauw groen geel blauw rood geel groen rood groen blauw geel groen geel rood blauw`.
 
-Het pack heeft 64 plaatjes van het rad (`rad_00` t/m `rad_63`), elk 5,625° verder gedraaid: vier
-per vak, en elk vierde plaatje heeft een vak precies onder het pijltje. Het draaien is
+Het pack heeft 64 standen van het rad (elk 2 × 2 tegels, zie *Resource pack*), elk 5,625° verder
+gedraaid: vier per vak, en elk vierde plaatje heeft een vak precies onder het pijltje. Het draaien is
 `core`-`Rad` over die 64 standen: doel = de middenstand van een willekeurig vak (dus elk team
-25%), `rest` = de standen tot het doel plus 64 × (2 of 3). Per stap een title met de glyph van
+25%), `rest` = de standen tot het doel plus 64 × (2 of 3). Per stap een title met de tegels van
 die stand, fade 0, lang genoeg blijven tot de volgende stap; de wachttijd loopt op van 1 naar 6
 ticks naarmate `rest` kleiner wordt, dus het rad remt echt af. Elke keer dat er een vakgrens
 onder het pijltje door gaat (om de vier standen): `note_block.hat` voor iedereen in de hal. Bij
@@ -755,7 +781,8 @@ Geen spectator mode, geen tp-items, geen vliegen.
 - Geen schade, ook niet van de border. Een kijker ziet de border niet: hij krijgt een eigen
   border-pakket zo groot als de wereld, anders geeft de client een rood scherm.
 - Blijft op zijn plek: glas of tralies, en een tick-check die een kijker die toch in `vloer`,
-  `veld_1` of `veld_2` komt terugzet op zijn tribunepunt of in zijn kooi. Bij `vloer` telt de
+  `veld_1` of `veld_2` komt terugzet op zijn tribunepunt of in zijn kooi (op regio `tribune_mob` telt
+  geen veld). Bij `vloer` telt de
   cilinder: binnen de cirkel én binnen de 5 blokken hoogte. Een kijker die van de tribune de
   arena in springt of loopt, staat dus meteen weer op de tribune, met title `Terug naar de
   tribune`.

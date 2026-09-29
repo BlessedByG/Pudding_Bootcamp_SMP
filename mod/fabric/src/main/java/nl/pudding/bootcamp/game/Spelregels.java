@@ -28,6 +28,8 @@ public final class Spelregels {
 		regels.set(GameRules.SHOW_ADVANCEMENT_MESSAGES, false, server);
 		// Aan in ronde 4 t/m 6, met alleen de koningen zichtbaar.
 		regels.set(GameRules.LOCATOR_BAR, false, server);
+		// Geen willekeurige ticks: geplakte bladeren vergaan anders, en gras en gewassen groeien door.
+		regels.set(GameRules.RANDOM_TICK_SPEED, 0, server);
 		Bootcamp.LOG.info("Gamerules gezet");
 	}
 

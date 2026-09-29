@@ -19,6 +19,7 @@ import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HexFormat;
 import java.util.List;
 import java.util.stream.Stream;
@@ -33,34 +34,58 @@ import java.util.zip.ZipOutputStream;
  * Alleen de JDK is nodig. Het programma:
  * <ol>
  * <li>leest de foto van Clown uit {@code pack/aanleveren/} (jpg, jpeg of png, elk formaat) en
- * verkleint hem tot de langste kant hooguit 1024 pixels is, met behoud van de verhouding; zonder
- * foto tekent het een placeholder;</li>
+ * schaalt hem naar 476 pixels hoog (of zo breed als past, tot 1428 pixels), met behoud van de
+ * verhouding; zonder foto tekent het een placeholder;</li>
  * <li>zet het lachje ({@code clown_lach.ogg}) erbij als het er is;</li>
- * <li>tekent het quiz-rad: 64 plaatjes van 512 x 512, elk 5,625 graden verder met de klok mee
+ * <li>tekent het quiz-rad: 64 standen van 484 x 484, elk 5,625 graden verder met de klok mee
  * gedraaid, 16 vakken in de teamkleuren, pijltje vast bovenin;</li>
- * <li>schrijft de fonts en {@code pack.mcmeta}, zipt alles naar {@code pack/bootcamp-pack.zip} en
- * print de SHA-1 voor {@code server.properties}.</li>
+ * <li>knipt de foto en elke stand van het rad in tegels (zie hieronder) en schrijft de fonts en
+ * {@code pack.mcmeta};</li>
+ * <li>zipt alles naar {@code pack/bootcamp-pack.zip} en print de SHA-1 voor
+ * {@code server.properties}.</li>
  * </ol>
  *
- * De volgorde van de vakken en de draairichting zijn dezelfde als in de mod
- * ({@code nl.pudding.bootcamp.core.QuizRad}): op plaatje 0 staat vak 0 onder het pijltje.
+ * <p><b>Tegels.</b> Minecraft zet font-glyphs op vellen van 256 x 256 pixels; een glyph die groter
+ * is, wordt stilletjes een leeg vierkantje. Daarom wordt elk plaatje geknipt in twee rijen tegels
+ * van hooguit 242 pixels, elk met zijn eigen glyph. Twee rijen, omdat een glyph niet hoger boven de
+ * basislijn mag staan dan hij hoog is ({@code ascent <= height}). De mod zet de tegels weer aan
+ * elkaar met de tekst uit {@code nl.pudding.bootcamp.core.FontTegels}: na elke tegel een spatie van
+ * -1 (U+F801), na de bovenste rij een spatie terug over de hele breedte (U+F802). Een tegel moet
+ * precies een heel aantal font-eenheden breed zijn, anders ontstaat er een naad; daarom zijn de
+ * pixelmaten veelvouden van de pixels per eenheid (7 voor de foto, 11 voor het rad).
+ *
+ * <p>De volgorde van de vakken en de draairichting zijn dezelfde als in de mod
+ * ({@code nl.pudding.bootcamp.core.QuizRad}): in stand 0 staat vak 0 onder het pijltje.
  */
 public class BouwPack {
 	/** Het resource-packformaat van Minecraft 26.2. */
 	static final int PACK_FORMAT = 88;
-	static final int MAX_FOTO = 1024;
-	static final int RAD = 512;
 	static final int STANDEN = 64;
-	static final char SCHRIK_GLYPH = '';
-	static final int RAD_GLYPH = 0xE100;
+
+	/** Spatie van -1 na elke tegel, en de spatie terug na de bovenste rij (FontTegels in de mod). */
+	static final int TERUG_EEN = 0xF801;
+	static final int TERUG_RIJ = 0xF802;
 
 	/**
-	 * Hoe groot de plaatjes in beeld staan. Een title tekent tekst vier keer zo groot; bij de
-	 * automatische GUI-schaal op een 1080p-scherm is het scherm 270 hoog. Het rad komt dan op
-	 * ongeveer tweederde, de jumpscare vult het scherm. Afstemmen in de eerste test.
+	 * De jumpscare: twee rijen van 34 font-eenheden (238 pixels, 7 per eenheid), dus 68 eenheden
+	 * hoog; een title tekent vier keer zo groot, dat vult op 1080p met de automatische GUI-schaal het
+	 * scherm. Hooguit zes tegels breed. Tegel (r, c) is U+E000 + 16r + c (Schrik in de mod).
 	 */
-	static final int RAD_HOOGTE = 44;
-	static final int SCHRIK_HOOGTE = 68;
+	static final int SCHRIK_EERSTE = 0xE000;
+	static final int SCHRIK_RIJ_STAP = 16;
+	static final int SCHRIK_KOLOMMEN = 6;
+	static final int SCHRIK_EENHEDEN = 34;
+	static final int SCHRIK_PX_PER_EENHEID = 7;
+
+	/**
+	 * Het quiz-rad: 484 x 484 pixels, 2 x 2 tegels van 22 eenheden (242 pixels, 11 per eenheid), dus
+	 * 44 eenheden hoog: ongeveer tweederde van het scherm. Stand s, tegel (r, c) is
+	 * U+E100 + 4s + 2r + c (QuizRad in de mod).
+	 */
+	static final int RAD_EERSTE = 0xE100;
+	static final int RAD_EENHEDEN = 22;
+	static final int RAD_PX_PER_EENHEID = 11;
+	static final int RAD = 2 * RAD_EENHEDEN * RAD_PX_PER_EENHEID;
 
 	static final String ROOD = "E24B4A";
 	static final String BLAUW = "378ADD";
@@ -76,26 +101,47 @@ public class BouwPack {
 		Path aanleveren = pack.resolve("aanleveren");
 		Path assets = pack.resolve("assets").resolve("bootcamp");
 		Path fontTex = assets.resolve("textures").resolve("font");
+		// Schoon beginnen: een oud plaatje mag niet ongemerkt in de zip blijven.
+		leeg(fontTex);
 		Files.createDirectories(fontTex);
 		Files.createDirectories(assets.resolve("font"));
 		Files.createDirectories(aanleveren);
 
-		// 1. De foto van Clown
+		// 1. De foto van Clown, in tegels
 		Path foto = zoekFoto(aanleveren);
-		BufferedImage clown;
+		BufferedImage bron;
 		if (foto != null) {
-			BufferedImage bron = ImageIO.read(foto.toFile());
+			bron = ImageIO.read(foto.toFile());
 			if (bron == null) {
 				throw new IllegalStateException(foto + " is geen jpg of png die Java kan lezen. Sla hem opnieuw op als png.");
 			}
-			clown = verklein(bron, MAX_FOTO);
-			System.out.println("Foto: " + foto.getFileName() + " (" + bron.getWidth() + " x " + bron.getHeight() + ") -> "
-					+ clown.getWidth() + " x " + clown.getHeight());
 		} else {
-			clown = placeholder();
-			System.out.println("Foto: geen clown.jpg of clown.png in " + aanleveren + ", dus een placeholder.");
+			bron = placeholder();
 		}
-		ImageIO.write(clown, "png", fontTex.resolve("clown.png").toFile());
+		BufferedImage clown = schaalFoto(bron);
+		System.out.println(foto != null
+				? "Foto: " + foto.getFileName() + " (" + bron.getWidth() + " x " + bron.getHeight() + ") -> " + clown.getWidth() + " x " + clown.getHeight()
+				: "Foto: geen clown.jpg of clown.png in " + aanleveren + ", dus een placeholder.");
+		FontJson schrik = new FontJson();
+		int tegelPx = SCHRIK_EENHEDEN * SCHRIK_PX_PER_EENHEID;
+		int kolommen = (clown.getWidth() + tegelPx - 1) / tegelPx;
+		for (int r = 0; r < 2; r++) {
+			for (int c = 0; c < SCHRIK_KOLOMMEN; c++) {
+				int code = SCHRIK_EERSTE + r * SCHRIK_RIJ_STAP + c;
+				if (c >= kolommen) {
+					// Deze foto heeft deze kolom niet nodig: +1, samen met de -1 erachter niks.
+					schrik.spatie(code, 1);
+					continue;
+				}
+				int b = Math.min(tegelPx, clown.getWidth() - c * tegelPx);
+				String naam = "clown_" + r + "_" + c + ".png";
+				schrijfTegel(clown.getSubimage(c * tegelPx, r * tegelPx, b, tegelPx), fontTex.resolve(naam));
+				schrik.tegel("bootcamp:font/" + naam, SCHRIK_EENHEDEN, r == 0 ? SCHRIK_EENHEDEN : 0, code);
+			}
+		}
+		schrik.spatie(TERUG_EEN, -1);
+		schrik.spatie(TERUG_RIJ, -clown.getWidth() / SCHRIK_PX_PER_EENHEID);
+		schrijf(assets.resolve("font").resolve("schrik.json"), schrik.json());
 
 		// 2. Het lachje
 		Path lach = aanleveren.resolve("clown_lach.ogg");
@@ -118,27 +164,25 @@ public class BouwPack {
 			System.out.println("Lachje: geen clown_lach.ogg in " + aanleveren + "; de jumpscare is dan stil.");
 		}
 
-		// 3. Het quiz-rad
+		// 3. Het quiz-rad, elke stand in 2 x 2 tegels
+		FontJson rad = new FontJson();
+		int radTegel = RAD_EENHEDEN * RAD_PX_PER_EENHEID;
 		for (int s = 0; s < STANDEN; s++) {
-			ImageIO.write(tekenRad(s), "png", fontTex.resolve(String.format("rad_%02d.png", s)).toFile());
-		}
-		System.out.println("Quiz-rad: " + STANDEN + " plaatjes getekend.");
-
-		// 4. Fonts en pack.mcmeta
-		schrijf(assets.resolve("font").resolve("schrik.json"), """
-				{
-				  "providers": [
-				    {"type": "bitmap", "file": "bootcamp:font/clown.png", "height": %d, "ascent": %d, "chars": ["%s"]}
-				  ]
+			BufferedImage stand = tekenRad(s);
+			for (int r = 0; r < 2; r++) {
+				for (int c = 0; c < 2; c++) {
+					String naam = String.format("rad_%02d_%d_%d.png", s, r, c);
+					schrijfTegel(stand.getSubimage(c * radTegel, r * radTegel, radTegel, radTegel), fontTex.resolve(naam));
+					rad.tegel("bootcamp:font/" + naam, RAD_EENHEDEN, r == 0 ? RAD_EENHEDEN : 0, RAD_EERSTE + 4 * s + 2 * r + c);
 				}
-				""".formatted(SCHRIK_HOOGTE, SCHRIK_HOOGTE / 2 - 3, escape(SCHRIK_GLYPH)));
-		StringBuilder rad = new StringBuilder("{\n  \"providers\": [\n");
-		for (int s = 0; s < STANDEN; s++) {
-			rad.append(String.format("    {\"type\": \"bitmap\", \"file\": \"bootcamp:font/rad_%02d.png\", \"height\": %d, \"ascent\": %d, \"chars\": [\"%s\"]}%s\n",
-					s, RAD_HOOGTE, RAD_HOOGTE / 2 - 3, escape((char) (RAD_GLYPH + s)), s < STANDEN - 1 ? "," : ""));
+			}
 		}
-		rad.append("  ]\n}\n");
-		schrijf(assets.resolve("font").resolve("rad.json"), rad.toString());
+		rad.spatie(TERUG_EEN, -1);
+		rad.spatie(TERUG_RIJ, -2 * RAD_EENHEDEN);
+		schrijf(assets.resolve("font").resolve("rad.json"), rad.json());
+		System.out.println("Quiz-rad: " + STANDEN + " standen getekend, " + (STANDEN * 4) + " tegels.");
+
+		// 4. pack.mcmeta
 		schrijf(pack.resolve("pack.mcmeta"), """
 				{
 				  "pack": {
@@ -163,6 +207,78 @@ public class BouwPack {
 		System.out.println("  require-resource-pack=true");
 	}
 
+	/** De providers van één font: een bitmap per tegel en één space-provider. */
+	static final class FontJson {
+		private final List<String> tegels = new ArrayList<>();
+		private final List<String> spaties = new ArrayList<>();
+
+		void tegel(String file, int hoogte, int ascent, int code) {
+			tegels.add(String.format("    {\"type\": \"bitmap\", \"file\": \"%s\", \"height\": %d, \"ascent\": %d, \"chars\": [\"%s\"]}",
+					file, hoogte, ascent, escape(code)));
+		}
+
+		void spatie(int code, int breedte) {
+			spaties.add(String.format("\"%s\": %d", escape(code), breedte));
+		}
+
+		String json() {
+			List<String> alles = new ArrayList<>(tegels);
+			alles.add("    {\"type\": \"space\", \"advances\": {" + String.join(", ", spaties) + "}}");
+			return "{\n  \"providers\": [\n" + String.join(",\n", alles) + "\n  ]\n}\n";
+		}
+	}
+
+	/**
+	 * De foto op maat voor de tegels: 476 pixels hoog (twee rijen van 238), de breedte een veelvoud
+	 * van 7 pixels (een hele font-eenheid). Een heel brede foto wordt kleiner, en dan in het midden
+	 * van de twee rijen gezet.
+	 */
+	static BufferedImage schaalFoto(BufferedImage bron) {
+		int hoog = 2 * SCHRIK_EENHEDEN * SCHRIK_PX_PER_EENHEID;
+		int maxBreed = SCHRIK_KOLOMMEN * SCHRIK_EENHEDEN * SCHRIK_PX_PER_EENHEID;
+		double factor = Math.min((double) hoog / bron.getHeight(), (double) maxBreed / bron.getWidth());
+		int h = Math.max(1, (int) Math.round(bron.getHeight() * factor));
+		int b = (int) Math.round(bron.getWidth() * factor / SCHRIK_PX_PER_EENHEID) * SCHRIK_PX_PER_EENHEID;
+		b = Math.max(SCHRIK_PX_PER_EENHEID, Math.min(maxBreed, b));
+		BufferedImage geschaald = verklein(bron, b, h);
+		BufferedImage uit = new BufferedImage(b, hoog, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = uit.createGraphics();
+		g.drawImage(geschaald, 0, (hoog - h) / 2, null);
+		g.dispose();
+		return uit;
+	}
+
+	/**
+	 * Schrijft een tegel. Minecraft rekent de breedte van een glyph tot de meest rechtse kolom met
+	 * een zichtbare pixel; daarom krijgt de pixel rechtsonder minstens alfa 1 (onzichtbaar), zodat
+	 * elke tegel zijn volle breedte houdt en de tegels naadloos aansluiten.
+	 */
+	static void schrijfTegel(BufferedImage stuk, Path doel) throws IOException {
+		BufferedImage t = new BufferedImage(stuk.getWidth(), stuk.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = t.createGraphics();
+		g.drawImage(stuk, 0, 0, null);
+		g.dispose();
+		int x = t.getWidth() - 1;
+		int y = t.getHeight() - 1;
+		int argb = t.getRGB(x, y);
+		if ((argb >>> 24) == 0) {
+			t.setRGB(x, y, 0x01000000);
+		}
+		ImageIO.write(t, "png", doel.toFile());
+	}
+
+	static void leeg(Path map) throws IOException {
+		if (!Files.exists(map)) {
+			return;
+		}
+		try (Stream<Path> s = Files.walk(map)) {
+			for (Path p : s.sorted(Comparator.reverseOrder()).toList()) {
+				Files.delete(p);
+			}
+		}
+	}
+
+
 	static Path zoekPackMap() {
 		if (Files.exists(Path.of("pack", "BouwPack.java"))) {
 			return Path.of("pack");
@@ -183,16 +299,9 @@ public class BouwPack {
 		return null;
 	}
 
-	/** Verkleint tot de langste kant hooguit {@code max} is; kleiner blijft zoals het is. In stappen, voor een scherp resultaat. */
-	static BufferedImage verklein(BufferedImage bron, int max) {
+	/** Naar precies deze maat. Verkleinen gaat in stappen van de helft, voor een scherp resultaat. */
+	static BufferedImage verklein(BufferedImage bron, int doelB, int doelH) {
 		BufferedImage beeld = naarArgb(bron);
-		int langste = Math.max(beeld.getWidth(), beeld.getHeight());
-		if (langste <= max) {
-			return beeld;
-		}
-		double factor = (double) max / langste;
-		int doelB = Math.max(1, (int) Math.round(beeld.getWidth() * factor));
-		int doelH = Math.max(1, (int) Math.round(beeld.getHeight() * factor));
 		while (beeld.getWidth() / 2 >= doelB && beeld.getHeight() / 2 >= doelH) {
 			beeld = schaal(beeld, beeld.getWidth() / 2, beeld.getHeight() / 2);
 		}
@@ -261,8 +370,10 @@ public class BouwPack {
 	static BufferedImage tekenRad(int stand) {
 		BufferedImage beeld = new BufferedImage(RAD, RAD, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = mooi(beeld);
-		double cx = RAD / 2.0;
-		double cy = RAD / 2.0 + 8;
+		// Getekend op 512 x 512 en verkleind naar de maat van de tegels.
+		g.scale(RAD / 512.0, RAD / 512.0);
+		double cx = 512 / 2.0;
+		double cy = 512 / 2.0 + 8;
 		double r = 222;
 		double vak = 360.0 / VAKKEN.length;
 		double draai = stand * (360.0 / STANDEN);
@@ -323,8 +434,8 @@ public class BouwPack {
 		return beeld;
 	}
 
-	static String escape(char c) {
-		return String.format("\\u%04X", (int) c);
+	static String escape(int code) {
+		return String.format("\\u%04X", code);
 	}
 
 	static void schrijf(Path p, String tekst) throws IOException {

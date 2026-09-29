@@ -60,6 +60,7 @@ Vooraf instellen, in minuten (blijft bewaard):
 | `/ei blokken` | netherite 6, diamond 90, gold 120, redstone 10, emerald 10 (voorlopig) |
 | `/mobarena punten` | zombie 1; skeleton, spider, cave spider 2; creeper 3; witch 4; vindicator 5; evoker 8; ravager 10 |
 | `/mobarena aftekst` | "Af · je speelt geen beurt meer" |
+| `/mobarena veldhoogte` | 3 |
 | `/clown wachttekst` | "Wacht op het startsein" |
 | `/ffa wachttekst` | "Wacht op het startsein" |
 
@@ -92,8 +93,8 @@ zit, maar de commander moet alleen commander zijn.
    `ei_spawn_n` en `/ei vastleggen` (gebouwd).
 5. De mob arena: twee gespiegelde arena's, elk met vier gekleurde startplekken en een kooi van
    tralies in het midden, en een tribune (balkon). Daarna de velden (`veld_1`, `veld_2`, in
-   delen), de startplekken (`/mobarena startplek <arena> <kleur>` midden op elk gekleurd vlak),
-   mob-spawns, kooien en tribunepunten zetten (gebouwd).
+   delen), de tribunevloer (`tribune_mob`), de startplekken (`/mobarena startplek <arena>
+   <kleur>` midden op elk gekleurd vlak), mob-spawns, kooien en tribunepunten zetten (gebouwd).
 6. De quizhal met 4 gekleurde banken, een redstone lamp bij elke bank (geen redstone ernaast) en
    een trap met podium. Daarna `/quiz bank <kleur>` bij elke bank, `/quiz lamp <kleur>` kijkend
    naar elke lamp en `/quiz podium` boven aan de trap (gebouwd).
@@ -153,7 +154,7 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
 - [ ] `/quiz presentator <naam>`, `/quiz start`: iedereen zonder spullen bij zijn bank, de
       presentator op het podium met alleen groene wol, rode wol en het rad-item. Rad een paar keer
       draaien: een rond rad groot in beeld dat afremt en met een vak onder het pijltje stopt (is
-      het groot genoeg en scherp? anders `height` in `rad.json` bijstellen), de lamp bij die bank
+      het groot genoeg en scherp? anders `RAD_EENHEDEN` in `BouwPack.java` bijstellen), de lamp bij die bank
       gaat aan, groene wol geeft een
       punt (vanaf twee op rij met "3 op rij"), rode wol niet en zet de lamp uit, wol wordt nooit
       neergezet, de presentator ziet onderin wie aan de beurt is. Maak het gelijk en typ

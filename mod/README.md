@@ -53,12 +53,17 @@ als bijlage van een GitHub-release, en vul `server.properties` in:
 resource-pack=<url van bootcamp-pack.zip>
 resource-pack-sha1=<de sha-1 die BouwPack print>
 require-resource-pack=true
-resource-pack-prompt=Nodig voor de bootcamp
+resource-pack-prompt=
 ```
 
+De prompt is in 26.2 een JSON-tekst. Een host als Pterodactyl herschrijft `server.properties` bij
+elke start en slikt dan het afsluitende aanhalingsteken en de regelovergang van
+`"Nodig voor de bootcamp"` in; daarom leeg laten (dan toont Minecraft zijn eigen tekst).
+
 Na een nieuwe foto: opnieuw bouwen, opnieuw uploaden, nieuwe SHA-1 invullen, server herstarten. Hoe
-groot de foto en het rad in beeld staan, stel je in met `SCHRIK_HOOGTE` en `RAD_HOOGTE` bovenin
-`BouwPack.java`.
+groot de foto en het rad in beeld staan, stel je in met `SCHRIK_EENHEDEN` en `RAD_EENHEDEN` (en
+de pixels per eenheid) bovenin `BouwPack.java`. De plaatjes worden in tegels van hooguit 242 pixels
+geknipt, omdat Minecraft grotere font-plaatjes als leeg vierkantje toont; zie docs/04.
 
 ## Installeren
 
@@ -82,7 +87,8 @@ Jar vervangen betekent server herstarten. Bewaar de jar van de vorige werkende v
 - `<wereld>/bootcamp.json` bestaat nog niet; de mod begint met een lege config en de standaard
   instellingen.
 - Gamerules: natural regeneration en PvP aan (de mod beslist zelf wie wie mag raken); mob spawning,
-  mob griefing, daglichtcyclus, weer, advancement-meldingen en locator bar uit. De locator bar gaat
+  mob griefing, daglichtcyclus, weer, advancement-meldingen en locator bar uit, en `random_tick_speed`
+  op 0 (geplakte bladeren vergaan dan niet). De locator bar gaat
   aan in Clown vs All.
 - De teams `spelers`, `rood`, `blauw`, `groen`, `geel`, `jagers`, `kroon` en `out`.
 
@@ -160,7 +166,7 @@ blok waar je naar kijkt, tot 32 blokken). De commando's per ronde zetten de mees
 | Algemeen | | `basiskamp` (optioneel, voor `/bc reset`) |
 | Doolhof | `doolhof`, `doolhof_uit`, `poort_doolhof` (de muur, onder- en bovenhoek), `nep_1..3`, `schrik_1..n` | `doolhof_start`, `v2` |
 | Het Ei | `ei` (het Ei als doos), `eigebied` (Ei, kettingen, startplekken) | `ei_spawn_1..n`, `v3`; daarna `/ei vastleggen` |
-| Mob arena | `mobarena` (beide arena's met tribune), `veld_1`, `veld_2` (elk `save` + `add`) | `/mobarena startplek <1\|2> <kleur>` (8x), `mob_1_1..n`, `mob_2_1..n`, `kooi_1`, `kooi_2`, `tribune_mob_1..n` |
+| Mob arena | `mobarena` (beide arena's met tribune), `veld_1`, `veld_2` (elk `save` + `add`), `tribune_mob` (de tribunevloer) | `/mobarena startplek <1\|2> <kleur>` (8x), `mob_1_1..n`, `mob_2_1..n`, `kooi_1`, `kooi_2`, `tribune_mob_1..n` |
 | Quiz | `quiz` | `/quiz bank <kleur>` (4x), `/quiz podium`, `/quiz lamp <kleur>` (4x, kijk naar de lamp) |
 | Clown vs All, FFA | `/clown vloer <diameter>` (midden op de vloer staan), optioneel `colosseum` | `/clown troon`, `/clown jagerplek` (20x), `/clown tribune` (2 of meer, onderste ring) |
 
@@ -169,7 +175,7 @@ verzamelpunten: `/bc label zet <tekst>`.
 
 `/<ronde> start` weigert met één regel en verandert dan niets als er een regio, punt of kit mist
 (`ontbreekt: kooi_2, start_1_geel`), een startpunt buiten de border ligt, een tribuneplek op de vloer
-ligt, of (mob arena, quiz) iemand geen team heeft.
+ligt, een `tribune_mob_n` niet op regio `tribune_mob` ligt, of (mob arena, quiz) iemand geen team heeft.
 
 ## Commands
 
@@ -180,7 +186,7 @@ onder *Commands*.
 |---|---|
 | Doolhof | `/doolhof start\|stop\|resterend <sec>`, `timer [<min>]` (15), `poort [<min>]` (4), `hint [<min>]` (10), `hinttekst [<tekst>\|-]`, `poort open\|dicht` |
 | Het Ei | `/ei start\|stop\|resterend <sec>`, `timer [<min>]` (15), `blokken [<soort> <aantal>]`, `vastleggen` |
-| Mob arena | `/mobarena start\|volgende\|schema\|stop`, `wave volgende`, `startplek <1\|2> <kleur>`, `punten [<mob> <punten>]`, `aftekst [<tekst>]` |
+| Mob arena | `/mobarena start\|volgende\|schema\|stop`, `wave volgende`, `startplek <1\|2> <kleur>`, `punten [<mob> <punten>]`, `veldhoogte [<blokken>]`, `aftekst [<tekst>]` |
 | Quiz | `/quiz start\|stop`, `presentator [<speler>]`, `bank <kleur>`, `podium`, `lamp <kleur>`, `draai`, `goed`, `fout`, `punt <kleur> [<aantal>]`, `einde`, `winnaar <kleur>` |
 | Clown vs All | `/clown rad\|go\|start\|stop`, `uitverkoren [<speler>]`, `troon`, `jagerplek [<nr>]`, `vloer <diameter>`, `tribune [<nr>]`, `wachttekst [<tekst>]`, `kroon <speler>`, `krimp <grootte> [<sec>]` |
 | FFA | `/ffa start\|stop\|go`, `krimp <grootte> [<sec>]`, `wachttekst [<tekst>]` |

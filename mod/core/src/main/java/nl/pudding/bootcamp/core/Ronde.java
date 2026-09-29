@@ -19,7 +19,7 @@ public enum Ronde {
 			List.of("ei", "eigebied"),
 			List.of("ei_spawn_1", "v3")),
 	MOBARENA(3, "De Mob Arena", "mobarena", false,
-			List.of("mobarena", "veld_1", "veld_2"),
+			List.of("mobarena", "veld_1", "veld_2", "tribune_mob"),
 			List.of("kooi_1", "kooi_2", "tribune_mob_1", "mob_1_1", "mob_2_1",
 					"start_1_rood", "start_1_blauw", "start_1_groen", "start_1_geel",
 					"start_2_rood", "start_2_blauw", "start_2_groen", "start_2_geel")),

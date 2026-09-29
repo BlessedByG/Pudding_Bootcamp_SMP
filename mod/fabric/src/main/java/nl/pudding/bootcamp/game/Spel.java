@@ -422,7 +422,22 @@ public final class Spel {
 			actief.seconde(server);
 		}
 		spiegelTags(server);
+		if (actief == null) {
+			geenHonger(server);
+		}
 		Bossbar.iedereenErbij(server);
+	}
+
+	/** In de lobby en tussen de rondes: de honger blijft vol, ook zonder eten. */
+	private static void geenHonger(MinecraftServer server) {
+		for (ServerPlayer s : Mc.deelnemers(server)) {
+			if (s.getFoodData().getFoodLevel() < 20) {
+				s.getFoodData().setFoodLevel(20);
+			}
+			if (s.getFoodData().getSaturationLevel() < 5f) {
+				s.getFoodData().setSaturation(5f);
+			}
+		}
 	}
 
 	private static void spiegelTags(MinecraftServer server) {

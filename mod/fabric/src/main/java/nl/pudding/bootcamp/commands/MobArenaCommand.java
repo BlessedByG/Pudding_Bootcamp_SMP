@@ -38,6 +38,10 @@ final class MobArenaCommand {
 						.suggests((ctx, b) -> SharedSuggestionProvider.suggest(Instellingen.MOB_PUNTEN.keySet(), b))
 						.then(Commands.argument("punten", IntegerArgumentType.integer(0, Instellingen.MAX_MOB_PUNTEN))
 								.executes(MobArenaCommand::punten))));
+		cmd.then(Commands.literal("veldhoogte")
+				.executes(MobArenaCommand::toonVeldHoogte)
+				.then(Commands.argument("blokken", IntegerArgumentType.integer(0, Instellingen.MAX_VELD_HOOGTE))
+						.executes(MobArenaCommand::veldHoogte)));
 		cmd.then(RondeCommands.tekst("aftekst", "De aftekst", () -> Spel.instellingen().aftekst(),
 				t -> Spel.instellingen().zetAftekst(t)));
 		return cmd;
@@ -87,6 +91,20 @@ final class MobArenaCommand {
 		Punt p = SetupCommands.zetPunt(speler, naam);
 		return BcCommand.bewaard(ctx, "Startplek van " + kleur.naam() + " in arena " + arena + " (" + naam + ") gezet op "
 				+ SetupCommands.beschrijfPunt(p));
+	}
+
+	private static int toonVeldHoogte(CommandContext<CommandSourceStack> ctx) {
+		return BcCommand.info(ctx, "Een veld telt voor kijkers en wachtenden tot " + Spel.instellingen().veldHoogte()
+				+ " blokken boven de selectie (standaard " + Instellingen.VELD_HOOGTE + ").");
+	}
+
+	private static int veldHoogte(CommandContext<CommandSourceStack> ctx) {
+		int blokken = IntegerArgumentType.getInteger(ctx, "blokken");
+		Spel.instellingen().zetVeldHoogte(blokken);
+		String uitleg = blokken == 0
+				? " Let op: nu telt alleen wie binnen de selectie zelf staat, niet wie op de vloer ervan staat."
+				: "";
+		return BcCommand.bewaard(ctx, "Een veld telt nu tot " + blokken + " blokken boven de selectie; geldt meteen." + uitleg);
 	}
 
 	private static int puntenTabel(CommandContext<CommandSourceStack> ctx) {
