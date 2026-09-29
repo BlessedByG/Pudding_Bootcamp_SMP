@@ -136,8 +136,8 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
       de uitgang, vol team is grijs, bij de timer `DOOLHOF VOORBIJ`. Opnieuw joinen buiten een
       ronde: welkomsttitle.
 - [ ] Valkist in het doolhof: de bossbar noemt alleen de totale tijd. Een trapped chest openen geeft
-      de jumpscare en `/doolhof valmobs` husks en silverfish om je heen; nog eens openen geeft een
-      lege kist, een tweede speler krijgt hem wel. `/doolhof poortmelding uit`: de poort gaat stil
+      de jumpscare óf `/doolhof valmobs` husks en silverfish om je heen (open er een paar: ongeveer
+      de helft is elk); nog eens openen geeft een lege kist, een tweede speler krijgt hem wel. `/doolhof poortmelding uit`: de poort gaat stil
       open. Na `/doolhof stop` zijn de mobs weg.
 - [ ] `/ei vastleggen`, `/ei blokken`: het overzicht noemt het aantal deepslate-plekken.
 - [ ] `/ei start`: spelers verdeeld over de startplekken, punten per block, alles wat je vindt in

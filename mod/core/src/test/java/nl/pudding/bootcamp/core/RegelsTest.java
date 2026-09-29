@@ -60,6 +60,18 @@ class RegelsTest {
 	}
 
 	@Test
+	void valkistGokIsVijftigVijftig() {
+		Random random = new Random(2);
+		int schrik = 0;
+		for (int i = 0; i < 10_000; i++) {
+			if (Regels.valkistGok(random) == Regels.Val.SCHRIK) {
+				schrik++;
+			}
+		}
+		assertTrue(schrik > 4_700 && schrik < 5_300, "schrik " + schrik);
+	}
+
+	@Test
 	void redstoneGokIsVijftigVijftig() {
 		Random random = new Random(1);
 		int haste = 0;

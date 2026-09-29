@@ -10,6 +10,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -20,6 +21,7 @@ import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.ChestType;
 import nl.pudding.bootcamp.Mc;
+import nl.pudding.bootcamp.core.Regels;
 import nl.pudding.bootcamp.core.Regio;
 import nl.pudding.bootcamp.game.Spel;
 import nl.pudding.bootcamp.schrik.Schrik;
@@ -35,9 +37,9 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Valkisten: een trapped chest in regio {@code doolhof} heeft geen loot. Wie hem opent krijgt de
- * jumpscare en om zich heen willekeurig {@code /doolhof valmobs} husks en silverfish (standaard 3
- * t/m 10), die gewoon schade doen. Per speler gaat een kist één keer af; daarna gaat hij voor die
+ * Valkisten: een trapped chest in regio {@code doolhof} heeft geen loot. Wie hem opent krijgt 50/50
+ * de jumpscare, of om zich heen willekeurig {@code /doolhof valmobs} husks en silverfish (standaard
+ * 3 t/m 10) die gewoon schade doen. Per speler gaat een kist één keer af; daarna gaat hij voor die
  * speler open als lege kist.
  */
 public final class Valkisten {
@@ -75,8 +77,13 @@ public final class Valkisten {
 		if (!gehad.computeIfAbsent(speler.getUUID(), k -> new HashSet<>()).add(sleutel(pos, state))) {
 			return false;
 		}
-		Schrik.op(speler);
-		spawn(speler);
+		// Staan de mobs op 0, dan altijd de jumpscare.
+		if (Spel.instellingen().valMobsMax() == 0 || Regels.valkistGok(Spel.RANDOM) == Regels.Val.SCHRIK) {
+			Schrik.op(speler);
+		} else {
+			Mc.geluid(speler, SoundEvents.EVOKER_PREPARE_SUMMON, 1f, 1f);
+			spawn(speler);
+		}
 		return true;
 	}
 
