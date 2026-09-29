@@ -10,10 +10,6 @@ public final class BossbarTekst {
 	private BossbarTekst() {
 	}
 
-	public static String doolhofPoortDicht(int secondenTotOpen) {
-		return "Doolhof · uitgang open over " + Tijd.mmss(secondenTotOpen);
-	}
-
 	public static String doolhof(int seconden) {
 		return "Doolhof · " + Tijd.mmss(seconden);
 	}

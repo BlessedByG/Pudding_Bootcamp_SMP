@@ -47,9 +47,10 @@ public final class Poorten {
 	}
 
 	/**
+	 * @param hoorn de raid-hoorn voor iedereen; de wolkjes in de poort komen er altijd
 	 * @return {@code null} als het gelukt is (of er niks te doen was), anders waarom niet
 	 */
-	public static String open(MinecraftServer server, String naam) {
+	public static String open(MinecraftServer server, String naam, boolean hoorn) {
 		String regioNaam = regioNaam(naam);
 		Regio regio = ConfigStore.get().regios().get(regioNaam);
 		if (regio == null) {
@@ -76,7 +77,9 @@ public final class Poorten {
 			Mc.particles(wereld, ParticleTypes.CLOUD, (d.min().x() + d.max().x() + 1) / 2.0, (d.min().y() + d.max().y() + 1) / 2.0,
 					(d.min().z() + d.max().z() + 1) / 2.0, 60, Math.max(1.0, Math.max(d.breedteX(), d.breedteZ()) / 4.0), 0.02);
 		}
-		Mc.geluidAllen(server, SoundEvents.RAID_HORN, 1f, 1f);
+		if (hoorn) {
+			Mc.geluidAllen(server, SoundEvents.RAID_HORN, 1f, 1f);
+		}
 		return null;
 	}
 
@@ -113,9 +116,9 @@ public final class Poorten {
 	}
 
 	/** Opent de poort als hij bestaat; een ronde zonder poort start gewoon. */
-	public static void openAlsHijBestaat(MinecraftServer server, String naam) {
+	public static void openAlsHijBestaat(MinecraftServer server, String naam, boolean hoorn) {
 		if (ConfigStore.get().regios().containsKey(regioNaam(naam))) {
-			open(server, naam);
+			open(server, naam, hoorn);
 		}
 	}
 

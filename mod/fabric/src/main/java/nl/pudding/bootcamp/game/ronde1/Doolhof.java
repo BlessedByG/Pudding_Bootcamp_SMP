@@ -14,6 +14,8 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.entity.TrappedChestBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.GameType;
 import nl.pudding.bootcamp.Bootcamp;
@@ -55,9 +57,10 @@ import java.util.List;
 
 /**
  * Ronde 1: de doolhof. Iedereen start in de startruimte met de basiskit; de kisten zijn gevuld uit
- * de loot-tabel. Drie gangen eindigen in een nep-uitgang, de vierde bij de poort, die na
- * {@code /doolhof poort} minuten opengaat. Wie erdoor komt kiest in het teammenu een kleur en gaat
- * naar {@code v2}. Na de timer gaat wie nog geen team heeft naar het kleinste team.
+ * de loot-tabel, de trapped chests zijn valkisten ({@link Valkisten}). Drie gangen eindigen in een
+ * nep-uitgang, de vierde bij de poort, die na {@code /doolhof poort} minuten opengaat. Wie erdoor
+ * komt kiest in het teammenu een kleur en gaat naar {@code v2}. Na de timer gaat wie nog geen team
+ * heeft naar het kleinste team.
  */
 public final class Doolhof extends RondeLogica {
 	public static final String POORT = "doolhof";
@@ -73,6 +76,7 @@ public final class Doolhof extends RondeLogica {
 	private int spelersBijStart;
 	/** Wie de basiskit al kreeg; wie later binnenkomt krijgt hem bij het inloggen. */
 	private final java.util.Set<java.util.UUID> gestart = new java.util.HashSet<>();
+	private final Valkisten valkisten = new Valkisten();
 
 	@Override
 	public Ronde ronde() {
@@ -124,8 +128,8 @@ public final class Doolhof extends RondeLogica {
 			Spel.naarPunt(s, "doolhof_start");
 		}
 		Kits.geefAan(server, "basis", spelers);
-		int kisten = vulKisten(server);
-		Bootcamp.LOG.info("Doolhof: {} kisten gevuld", kisten);
+		vulKisten(server);
+		Valkisten.ruimOp(server);
 		Border.zet(server, Spel.regio("doolhof"));
 		toonSidebar(server);
 		Aftelling.start(Regels.COUNTDOWN, "Het doolhof begint over", () -> {
@@ -138,31 +142,42 @@ public final class Doolhof extends RondeLogica {
 		});
 	}
 
-	/** Alle kisten in de doos van regio {@code doolhof}: leeg, dan gevuld uit de loot-tabel. */
-	private static int vulKisten(MinecraftServer server) {
+	/**
+	 * Alle kisten in de doos van regio {@code doolhof}: leeg, dan gevuld uit de loot-tabel. Een
+	 * trapped chest is een valkist: die blijft leeg.
+	 */
+	private static void vulKisten(MinecraftServer server) {
 		LootTabel loot;
 		try {
 			loot = leesLoot();
 		} catch (IllegalArgumentException e) {
 			Bootcamp.LOG.error("Doolhof: {}", e.getMessage());
-			return 0;
+			return;
 		}
 		ServerLevel wereld = Mc.wereld(server);
 		Regio.Doos doos = Spel.regio("doolhof").omhullende();
 		int gevuld = 0;
+		int leeg = 0;
 		for (int cx = doos.min().x() >> 4; cx <= doos.max().x() >> 4; cx++) {
 			for (int cz = doos.min().z() >> 4; cz <= doos.max().z() >> 4; cz++) {
 				LevelChunk chunk = wereld.getChunk(cx, cz);
 				for (BlockEntity be : new ArrayList<>(chunk.getBlockEntities().values())) {
 					BlockPos p = be.getBlockPos();
-					if (be instanceof ChestBlockEntity kist && doos.bevatDoos(p.getX() + 0.5, p.getY() + 0.5, p.getZ() + 0.5)) {
+					if (!(be instanceof ChestBlockEntity kist) || !doos.bevatDoos(p.getX() + 0.5, p.getY() + 0.5, p.getZ() + 0.5)) {
+						continue;
+					}
+					if (kist instanceof TrappedChestBlockEntity) {
+						kist.clearContent();
+						kist.setChanged();
+						leeg++;
+					} else {
 						vul(server, kist, loot);
 						gevuld++;
 					}
 				}
 			}
 		}
-		return gevuld;
+		Bootcamp.LOG.info("Doolhof: {} kisten gevuld, {} valkisten leeg", gevuld, leeg);
 	}
 
 	private static void vul(MinecraftServer server, ChestBlockEntity kist, LootTabel loot) {
@@ -270,6 +285,18 @@ public final class Doolhof extends RondeLogica {
 		return !spelers.isEmpty() && spelers.stream().allMatch(s -> Spel.status(s).klaar);
 	}
 
+	/**
+	 * Een speler opent een trapped chest in het doolhof. {@code true}: de val ging af en de kist
+	 * gaat niet open.
+	 */
+	boolean valkist(ServerPlayer speler, BlockPos pos, BlockState state) {
+		SpelerStatus st = Spel.status(speler);
+		if (!timerGestart || st.klaar || st.rol != Rol.SPELER) {
+			return false;
+		}
+		return valkisten.open(speler, pos, state);
+	}
+
 	/** Wie klaar is staat bij v2, buiten de border; die krijgt geen schade. */
 	@Override
 	public boolean magSchade(ServerPlayer slachtoffer, DamageSource bron) {
@@ -296,14 +323,9 @@ public final class Doolhof extends RondeLogica {
 			hint(server);
 		}
 		int timer = Spel.timer();
-		if (!poortOpen && !poortMoment) {
-			int totOpen = Math.max(0, i.doolhofPoort() * 60 - gespeeld);
-			Bossbar.zet(BossbarTekst.doolhofPoortDicht(totOpen), BossEvent.BossBarColor.RED,
-					i.doolhofPoort() <= 0 ? 0f : (float) totOpen / (i.doolhofPoort() * 60));
-		} else {
-			BossEvent.BossBarColor kleur = timer <= Regels.LAATSTE_MINUUT ? BossEvent.BossBarColor.RED : BossEvent.BossBarColor.GREEN;
-			Bossbar.zet(BossbarTekst.doolhof(timer), kleur, Spel.timerDeel());
-		}
+		// Alleen de totale tijd: niemand hoeft te weten wanneer de uitgang opengaat.
+		BossEvent.BossBarColor kleur = timer <= Regels.LAATSTE_MINUUT ? BossEvent.BossBarColor.RED : BossEvent.BossBarColor.GREEN;
+		Bossbar.zet(BossbarTekst.doolhof(timer), kleur, Spel.timerDeel());
 		laatsteTellen(server, timer);
 	}
 
@@ -317,11 +339,17 @@ public final class Doolhof extends RondeLogica {
 		}
 	}
 
-	/** {@code /doolhof poort open}, en vanzelf na de ingestelde minuten. */
+	/**
+	 * {@code /doolhof poort open}, en vanzelf na de ingestelde minuten. Hoorn en title alleen met
+	 * {@code /doolhof poortmelding aan}.
+	 */
 	public void poortOpen(MinecraftServer server) {
 		poortOpen = true;
-		Poorten.openAlsHijBestaat(server, POORT);
-		Mc.titleAllen(server, Mc.tekst("DE UITGANG IS OPEN", ChatFormatting.GREEN, ChatFormatting.BOLD), null);
+		boolean melding = Spel.instellingen().poortMelding();
+		Poorten.openAlsHijBestaat(server, POORT, melding);
+		if (melding) {
+			Mc.titleAllen(server, Mc.tekst("DE UITGANG IS OPEN", ChatFormatting.GREEN, ChatFormatting.BOLD), null);
+		}
 	}
 
 	/** {@code /doolhof poort dicht}. Voor het ingestelde moment gaat hij dan alsnog vanzelf open. */
@@ -419,6 +447,7 @@ public final class Doolhof extends RondeLogica {
 	@Override
 	public void end(MinecraftServer server) {
 		Poorten.dichtAlsHijBestaat(server, POORT);
+		Valkisten.ruimOp(server);
 		for (ServerPlayer s : Mc.spelers(server)) {
 			if (Teammenu.heeftOpen(s)) {
 				s.closeContainer();
