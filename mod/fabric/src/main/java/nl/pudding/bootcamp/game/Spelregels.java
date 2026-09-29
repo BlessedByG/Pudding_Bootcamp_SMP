@@ -23,6 +23,8 @@ public final class Spelregels {
 		regels.set(GameRules.SPAWN_MOBS, false, server);
 		// Creepers in de ruïne-arena mogen niks slopen.
 		regels.set(GameRules.MOB_GRIEFING, false, server);
+		// TNT uit het Ei knalt de mod zelf, zodat alleen de deepslate weggaat. Vanilla TNT ontploft niet.
+		regels.set(GameRules.TNT_EXPLODES, false, server);
 		regels.set(GameRules.ADVANCE_TIME, false, server);
 		regels.set(GameRules.ADVANCE_WEATHER, false, server);
 		regels.set(GameRules.SHOW_ADVANCEMENT_MESSAGES, false, server);

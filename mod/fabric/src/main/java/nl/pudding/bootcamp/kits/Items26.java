@@ -66,6 +66,17 @@ public final class Items26 {
 		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(t));
 	}
 
+	/** Haalt een vlag uit de custom data van dit item (de rest blijft staan). */
+	public static void wisTag(ItemStack stack, String tag) {
+		CustomData oud = stack.get(DataComponents.CUSTOM_DATA);
+		if (oud == null) {
+			return;
+		}
+		CompoundTag t = oud.copyTag();
+		t.remove(tag);
+		stack.set(DataComponents.CUSTOM_DATA, CustomData.of(t));
+	}
+
 	public static boolean heeftTag(ItemStack stack, String tag) {
 		if (stack.isEmpty()) {
 			return false;
