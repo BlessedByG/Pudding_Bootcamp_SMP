@@ -295,6 +295,7 @@ hele avond geldt (setup, spelers, noodknoppen) staat onder `/bc`.
 | `/quiz presentator [<speler>]` | Wie presenteert (Pudding). Op naam, mag ook voor iemand die nog niet online is; bewaard in `bootcamp.json`. Die gaat bij de start naar het podium in plaats van naar zijn bank en krijgt de drie quiz-items. |
 | `/quiz bank <rood\|blauw\|groen\|geel>` / `/quiz podium` | Zet de bank van dat team, of het podium, op de plek waar je staat, met je kijkrichting. Hetzelfde als `/bc point set quiz_<kleur>` en `quiz_podium`. |
 | `/quiz lamp <rood\|blauw\|groen\|geel>` | Zet de lamp bij de bank van dat team: het blok waar je naar kijkt (tot 32 blokken). Hetzelfde als `/bc point block quizlamp_<kleur>`. |
+| `/quiz vuurwerk <kleur> <1\|2>` | Zet dispenser 1 of 2 bij de bank van dat team: het blok waar je naar kijkt (tot 32 blokken), en het moet een dispenser zijn. Bij een goed antwoord schiet hij een vuurpijl in de teamkleur, de kant op waar hij naartoe wijst. |
 | `/quiz draai` | Het rad draaien. Hetzelfde als het rad-item van de presentator. |
 | `/quiz goed` / `/quiz fout` | Het antwoord van het team dat aan de beurt is goedkeuren (+1 punt) of afkeuren. Hetzelfde als de groene en rode wol. |
 | `/quiz punt <kleur> [<aantal>]` | Punten erbij (standaard 1, negatief mag): om een verkeerde klik recht te zetten. |
@@ -424,6 +425,7 @@ hij de doos om alle delen heen; bij de cirkel van `vloer` is dat het vierkant er
 | `quiz_rood`, `quiz_blauw`, `quiz_groen`, `quiz_geel` | De vier banken in de quizhal. Zetten met `/quiz bank <kleur>`. |
 | `quiz_podium` | Het podium boven aan de trap, waar de presentator staat. Zetten met `/quiz podium`. |
 | `quizlamp_rood`, `quizlamp_blauw`, `quizlamp_groen`, `quizlamp_geel` (blokken) | De lamp bij elke bank. Gedoofde redstone lamp, geen redstone ernaast. Zetten met `/quiz lamp <kleur>`. |
+| `quizvuurwerk_<kleur>_1`, `quizvuurwerk_<kleur>_2` (blokken) | Twee dispensers bij elke bank, 8 in totaal. Zetten met `/quiz vuurwerk <kleur> <1\|2>`; `/quiz start` weigert als er een mist of geen dispenser is. |
 | `troon` | Het kleine podium in het midden van de Arena, waar de kroonhouder spawnt. Zetten met `/clown troon`. |
 | `jager_1` t/m `jager_n` | De startplekken van de jagers: in de Arena de 20 redstone blocks in een cirkel. Zetten met `/clown jagerplek`, bovenop het blok en kijkend waar de speler heen moet kijken; de kijkrichting gaat mee met de teleport. |
 | `tribune_1` t/m `tribune_n` | De plekken op de tribune van de Arena waar de mod iemand neerzet die af is (en iedereen voor het Rad), alleen op de **onderste ring** (de bovenste is decoratie). De mod verdeelt mensen om en om over deze plekken; daarna lopen ze vrij over de tribune. Er gaat meestal maar één tegelijk af, dus twee plekken is genoeg (minimaal één). Zetten met `/clown tribune`. |
@@ -777,14 +779,22 @@ op de tribune stond. Iedereen weer speler, geheald, zonder spullen naar de quiz.
 **Ronde 4, quiz.** Weigert zonder presentator (`/quiz presentator`). Start: iedereen naar
 `quiz_<kleur>` van zijn team, border `quiz`, geen schade, geen timer. Sidebar `Quiz` met de vier
 teams op 0. Iedereen heeft een lege inventory (ingeleverd na de mob arena). De presentator gaat
-naar `quiz_podium` en telt in de quiz niet mee voor zijn team; hij krijgt als enige iets: drie
-items in hotbar-slot 1 t/m 3, herkenbaar aan `custom_data={bootcamp_quiz:"..."}`:
+naar `quiz_podium` en telt in de quiz niet mee voor zijn team; hij krijgt als enige iets: vier
+items in hotbar-slot 1 t/m 4, herkenbaar aan `custom_data={bootcamp_quiz:"..."}`:
 
 | Slot | Item | Rechtsklik doet |
 |---|---|---|
 | 1 | Groene wol, naam `Goed` | hetzelfde als `/quiz goed` |
 | 2 | Rode wol, naam `Fout` | hetzelfde als `/quiz fout` |
 | 3 | Nether star, naam `Draai het rad` | hetzelfde als `/quiz draai` |
+| 4 | Emerald, naam `Punten geven of afpakken` | opent het puntenmenu |
+
+**Het puntenmenu** is een kistmenu met een rij per team: vooraan de wol met de stand
+(`Rood · 5`), daarachter knoppen `−2`, `−1`, `+1` en `+2` (gekleurde glazen panelen). Een klik
+past de stand meteen aan, voor elk team, ook als het niet aan de beurt is (voor wie bij Pudding
+slijmt); onder 0 mag. Iedereen ziet een chatregel `Pudding: +2 voor Rood (7)` met een pling
+(erbij) of een bas (eraf), en de sidebar wordt bijgewerkt. Alleen de presentator kan klikken;
+items verplaatsen kan niet.
 
 Rechtsklik wordt afgevangen in `UseItemCallback` én `UseBlockCallback`, zodat de wol nooit als
 blok wordt neergezet. De items zijn niet te droppen of te verplaatsen naar een kist; raakt de
@@ -809,7 +819,9 @@ gaat aan (`LIT=true`). Terwijl het rad draait, doen draai, goed en fout niets. D
 niet mee aan het draaien.
 
 **Goed**: alleen als er een team aan de beurt is: +1 voor dat team in de sidebar, title `GOED!`
-in groen met `+1 Rood`, `block.note_block.bell`. Het team blijft aan de beurt, de lamp blijft
+in groen met `+1 Rood`, `block.note_block.bell`, en uit de twee dispensers bij de bank van dat
+team (`quizvuurwerk_rood_1` en `_2`) een vuurpijl in de teamkleur, de kant op waar de dispenser
+naartoe wijst (er hoeft niets in te zitten). Het team blijft aan de beurt, de lamp blijft
 aan. De mod telt de **reeks** goede antwoorden van het team dat aan de beurt is; vanaf twee op
 rij staat die in de subtitle: `+1 Rood · 3 op rij`. Een fout of een nieuwe draai zet de reeks op
 nul. **Fout**: title `FOUT!` in rood, `entity.villager.no`, geen punt; de lamp gaat uit, niemand
@@ -1004,7 +1016,8 @@ langzaam draaiend. Opgeruimd als de kroonhouder kijker wordt.
 | Speler sneuvelt | Alleen de dode ziet een willekeurige doodtekst als title. Geen geluid, geen chatregel. |
 | Beurt klaar | Meteen de title `BEURT 3 KLAAR` met de stand van de teams, 10 seconden in beeld, met `ui.toast.challenge_complete`. Aftelling in de actionbar voor wie in een arena of kooi staat; daarna pas naar de tribune. |
 | Quiz-rad | Een echt rond rad groot in beeld (plaatjes uit het pack), alleen kleuren, pijltje bovenin; het draait en remt af, `note_block.hat` per vak dat het pijltje passeert. Twee seconden stil op het gekozen vak, dan `entity.player.levelup` en `ROOD IS AAN DE BEURT`. |
-| Quiz goed | Title `GOED!` in groen met `+1 Rood`, vanaf twee op rij `+1 Rood · 3 op rij`, `block.note_block.bell`. De lamp bij de bank blijft aan. |
+| Quiz goed | Title `GOED!` in groen met `+1 Rood`, vanaf twee op rij `+1 Rood · 3 op rij`, `block.note_block.bell`, een vuurpijl in de teamkleur uit elk van de twee dispensers bij de bank. De lamp bij de bank blijft aan. |
+| Puntenmenu | Chatregel `Pudding: +2 voor Rood (7)`, `note_block.pling` (erbij) of `note_block.bass` (eraf). |
 | Quiz fout | Title `FOUT!` in rood, `entity.villager.no`. De lamp bij de bank gaat uit, de reeks op nul. |
 | Quiz, presentator | Alleen voor Pudding in de actionbar: `Aan de beurt: Rood · 3 op rij` of `Draai het rad`. |
 | Quiz gelijkspel | Title `GELIJKSPEL`, subtitle `Rood en Geel · Pudding kiest`. |

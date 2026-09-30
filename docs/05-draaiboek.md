@@ -41,7 +41,7 @@ Wat de commander en de ref per ronde typen. Het volledige overzicht staat in
 | 1 De Doolhof | `/doolhof start`, dan `/doolhof go` op het sein van Pudding | `/doolhof poort open`, `/doolhof resterend <sec>`, noodknop `/doolhof einde`; na afloop `/doolhof naarei` |
 | 2 Het Ei | `/ei start` | `/ei resterend <sec>` |
 | 3 De Mob Arena | `/mobarena start` | `/mobarena volgende` (elke volgende beurt), `/mobarena schema`, `/mobarena wave volgende` |
-| 4 De Quiz | `/quiz start` | Pudding doet het met de drie items; noodknoppen `/quiz draai`, `/quiz goed`, `/quiz fout`, `/quiz punt <kleur> [-1]`. Einde: `/quiz einde` (bij gelijke stand `/quiz winnaar <kleur>`) |
+| 4 De Quiz | `/quiz start` | Pudding doet het met de vier items (ook het puntenmenu); noodknoppen `/quiz draai`, `/quiz goed`, `/quiz fout`, `/quiz punt <kleur> [-1]`. Einde: `/quiz einde` (bij gelijke stand `/quiz winnaar <kleur>`) |
 | 5 Clown vs All | `/clown rad`, dan `/clown go` op het sein van Pudding | `/clown kroon <speler>`, `/clown krimp <grootte>` |
 | 6 De FFA | `/ffa start`, dan `/ffa go` op het sein van Pudding | `/ffa krimp <grootte>` als het stilvalt |
 
@@ -105,9 +105,11 @@ zit, maar de commander moet alleen commander zijn.
    moet), de tribunevloer (`tribune_mob`), per team twee startplekken
    (`/mobarena startplek <kleur> <1|2>`, niet te dicht bij elkaar), mob-spawns `mob_1..n`, de
    `kooi`, punt `warden` (waar de warden uit de grond komt) en tribunepunten `tribune_mob_n`.
-7. De quizhal met 4 gekleurde banken, een redstone lamp bij elke bank (geen redstone ernaast) en
-   een trap met podium. Daarna `/quiz bank <kleur>` bij elke bank, `/quiz lamp <kleur>` kijkend
-   naar elke lamp en `/quiz podium` boven aan de trap (gebouwd).
+7. De quizhal met 4 gekleurde banken, een redstone lamp bij elke bank (geen redstone ernaast),
+   twee dispensers bij elke bank (de kant op gericht waar het vuurwerk heen moet) en een trap met
+   podium. Daarna `/quiz bank <kleur>` bij elke bank, `/quiz lamp <kleur>` kijkend naar elke lamp,
+   `/quiz vuurwerk <kleur> <1|2>` kijkend naar elke dispenser (8 keer) en `/quiz podium` boven
+   aan de trap (gebouwd).
 8. De Arena: colosseum met open vloer, podium in het midden, 20 redstone blocks in een cirkel,
    twee tribuneringen (alleen de onderste in gebruik). Daarna `/clown troon` op het podium,
    `/clown jagerplek` op elk redstone block (kijk de goede kant op), `/clown tribune` op twee
@@ -189,7 +191,7 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
       in het veld staat aan, het publiek krijgt geen Darkness, en hij blijft tot hij dood is
       (`/mobarena wave volgende` als noodknop). De kill staat in de chat met 50 punten.
 - [ ] `/quiz presentator <naam>`, `/quiz start`: iedereen zonder spullen bij zijn bank, de
-      presentator op het podium met alleen groene wol, rode wol en het rad-item. Rad een paar keer
+      presentator op het podium met alleen groene wol, rode wol, het rad-item en de emerald. Rad een paar keer
       draaien: een rond rad groot in beeld dat afremt en met een vak onder het pijltje stopt (is
       het groot genoeg en scherp? anders `RAD_EENHEDEN` in `BouwPack.java` bijstellen), de lamp bij die bank
       gaat aan, groene wol geeft een
@@ -197,6 +199,9 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
       neergezet, de presentator ziet onderin wie aan de beurt is. Maak het gelijk en typ
       `/quiz einde`: iedereen ziet GELIJKSPEL. `/quiz punt <kleur> -1` corrigeert. `/quiz einde`: winnaar, 10 seconden,
       de items van de presentator zijn weg.
+- [ ] Quiz extra: bij groene wol schieten de twee dispensers van dat team een vuurpijl in de
+      teamkleur. De emerald opent het puntenmenu: `+2` en `−1` bij een team dat niet aan de beurt
+      is veranderen de sidebar meteen, iedereen ziet de chatregel, onder 0 kan.
 - [ ] `/clown uitverkoren <naam>`, `/clown rad` terwijl iedereen op de tribune staat: de rij
       spelerskoppen met namen schuift langs het pijltje en landt op de uitverkorene (zijn de
       koppen echte skins?), DE KROON met kop, iedereen gaat de vloer op (kroonhouder op het podium,
