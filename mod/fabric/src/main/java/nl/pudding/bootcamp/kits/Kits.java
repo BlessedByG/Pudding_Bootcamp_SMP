@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 /**
@@ -107,21 +108,39 @@ public final class Kits {
 			if (markeer != null) {
 				markeer.accept(stack);
 			}
-			switch (g.plek().doel()) {
-				case HEAD -> {
-					if (!kroonOp) {
-						zetUitrusting(speler, EquipmentSlot.HEAD, stack);
-					}
-				}
-				case CHEST -> zetUitrusting(speler, EquipmentSlot.CHEST, stack);
-				case LEGS -> zetUitrusting(speler, EquipmentSlot.LEGS, stack);
-				case FEET -> zetUitrusting(speler, EquipmentSlot.FEET, stack);
-				case OFFHAND -> zetUitrusting(speler, EquipmentSlot.OFFHAND, stack);
-				case HOTBAR -> zetSlot(speler, HOTBAR_START + g.plek().index(), stack);
-				case INVENTORY -> zetSlot(speler, INVENTORY_START + g.plek().index(), stack);
+			plaats(speler, g.plek(), stack, kroonOp);
+		}
+		speler.inventoryMenu.broadcastChanges();
+	}
+
+	/**
+	 * De kit erbij zonder de inventory eerst te legen, en zonder de items waarvoor {@code overslaan}
+	 * ja zegt: bijvoorbeeld het eten dat iemand nog heeft.
+	 */
+	public static void vulAan(ServerPlayer speler, Kit kit, Predicate<ItemStack> overslaan) {
+		boolean kroonOp = Items26.isKroon(speler.getItemBySlot(EquipmentSlot.HEAD));
+		for (Gevuld g : kit.items()) {
+			if (!overslaan.test(g.stack())) {
+				plaats(speler, g.plek(), g.stack().copy(), kroonOp);
 			}
 		}
 		speler.inventoryMenu.broadcastChanges();
+	}
+
+	private static void plaats(ServerPlayer speler, KitDef.Plek plek, ItemStack stack, boolean kroonOp) {
+		switch (plek.doel()) {
+			case HEAD -> {
+				if (!kroonOp) {
+					zetUitrusting(speler, EquipmentSlot.HEAD, stack);
+				}
+			}
+			case CHEST -> zetUitrusting(speler, EquipmentSlot.CHEST, stack);
+			case LEGS -> zetUitrusting(speler, EquipmentSlot.LEGS, stack);
+			case FEET -> zetUitrusting(speler, EquipmentSlot.FEET, stack);
+			case OFFHAND -> zetUitrusting(speler, EquipmentSlot.OFFHAND, stack);
+			case HOTBAR -> zetSlot(speler, HOTBAR_START + plek.index(), stack);
+			case INVENTORY -> zetSlot(speler, INVENTORY_START + plek.index(), stack);
+		}
 	}
 
 	/** Op zijn slot als dat leeg is, anders ergens in de inventory: wat je al draagt blijft aan. */

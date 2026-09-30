@@ -21,6 +21,9 @@ public final class Regels {
 	public static final int LAATSTE_MINUUT = 60;
 	/** R1.6 en R2.9: de laatste tien seconden groot in beeld. */
 	public static final int LAATSTE_TELLEN = 10;
+	/** R1.7: na de timer is regio {@code doolhof_gif} giftig: elke zoveel seconden zoveel halve harten, plus Poison. */
+	public static final int DOOLHOF_GIF_ELKE = 2;
+	public static final int DOOLHOF_GIF_SCHADE = 2;
 	/** R2.5: redstone-gok. */
 	public static final int EI_HASTE = 15;
 	public static final int EI_BEVRIEZING = 15;
@@ -184,8 +187,6 @@ public final class Regels {
 		NIKS,
 		/** Doolhof: terug naar de startruimte. */
 		DOOLHOF_START,
-		/** Doolhof: had al een team, dus naar {@code v2}. */
-		NAAR_V2,
 		/** Het Ei: terug op zijn eigen startplek, met zijn punten. */
 		EIGEN_EI_SPAWN,
 		/** Mob arena: op de tribune, hij mag nog spelen als hij niet af is. */
@@ -211,7 +212,8 @@ public final class Regels {
 		}
 		return switch (ronde) {
 			case BASISKAMP -> JoinActie.NIKS;
-			case DOOLHOF -> heeftTeam ? JoinActie.NAAR_V2 : JoinActie.DOOLHOF_START;
+			// Met een team is hij al over de finish: verder waar hij uitlogde, ook terug in het doolhof.
+			case DOOLHOF -> heeftTeam ? JoinActie.NIKS : JoinActie.DOOLHOF_START;
 			case EI -> JoinActie.EIGEN_EI_SPAWN;
 			case MOBARENA -> JoinActie.MOB_TRIBUNE;
 			case QUIZ -> JoinActie.QUIZ_BANK;

@@ -88,8 +88,11 @@ zit, maar de commander moet alleen commander zijn.
    komt (plattegrond in [01-map-en-flow.md](01-map-en-flow.md)) (1 avond).
 2. Basiskamp en de verzamelpunten (uurtje).
 3. Het doolhof: startruimte in het midden, 4 gangen, 1 echte uitgang met een poort, 3
-   nep-uitgangen, lege kisten, valkisten (trapped chests), schrikplekken, het teamkeuzevak achter
-   de uitgang (1 tot 2 avonden).
+   nep-uitgangen, lege kisten, valkisten (trapped chests), schrikplekken, achter de echte uitgang
+   een afgesloten ruimte met een finishlijn (`doolhof_uit`), vanwaar je terug het doolhof in kunt.
+   Daarna regio `doolhof_gif` (het doolhof zonder de finishruimte, in delen als dat moet), punt
+   `doolhof_finish` in de finishruimte, en barrier blocks in de openingen van de startruimte,
+   geselecteerd als `poort_start` (elke opening een deel) (1 tot 2 avonden).
 4. Het zwevende Ei met de kettingen: schil van andere blokken, binnenkant gewone deepslate, geen
    gewone deepslate in schil of kettingen. Daarna regio `ei`, `eigebied`, de startplekken
    `ei_spawn_n` en `/ei vastleggen` (gebouwd).
@@ -130,11 +133,19 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
 - [ ] `/doolhof timer`, `/doolhof poort`, `/doolhof hint` en `/ei timer` zonder getal: 15, 4,
       10 en 15. Zet er een om en weer terug; een hint na het einde wordt
       geweigerd. Na een herstart staan ze er nog.
-- [ ] `/doolhof start`: kisten gevuld, nep-uitgang zet je terug met knal en grapje, schrikplek
-      werkt één keer, poort open na 4 minuten (`/doolhof resterend 665` om te versnellen), hint
-      na 10 minuten met je eigen `/doolhof hinttekst` (`/doolhof resterend 305`), teammenu bij
-      de uitgang, vol team is grijs, bij de timer `DOOLHOF VOORBIJ`. Opnieuw joinen buiten een
-      ronde: welkomsttitle.
+- [ ] `/doolhof start`: tijdens de countdown kom je de startruimte niet uit, bij de start van de
+      timer zijn de openingen weg; kisten gevuld, nep-uitgang zet je terug met knal en grapje,
+      schrikplek werkt één keer, poort open na 4 minuten (`/doolhof resterend 665` om te versnellen), hint
+      na 10 minuten met je eigen `/doolhof hinttekst` (`/doolhof resterend 305`), teammenu op de
+      finishlijn met de hoofden per team (alleen de wol kiest), vol team is grijs, de sidebar laat
+      de namen per team zien, na je keuze `GEFINISHT` en je kunt terug het doolhof in (mobs
+      en vallen werken dan nog), zodra iedereen een team heeft `DOOLHOF VOORBIJ` en iedereen naar
+      `v2`. Opnieuw joinen buiten een ronde: welkomsttitle.
+- [ ] Het gif: met twee accounts, één kiest geen team. Timer op (`/doolhof resterend 5`):
+      `DE TIJD IS OM`, paarse bossbar, in het doolhof Poison en om de 2 seconden een hart eraf,
+      in de finishruimte niets. Doodgaan in het gif: spullen weg behalve je steak, basiskit
+      terug, `VERGIFTIGD` in de finishruimte en het teammenu gaat open. Na je keuze
+      `DOOLHOF VOORBIJ`. `/doolhof einde` sluit het doolhof ook midden in het gif af.
 - [ ] Valkist in het doolhof: de bossbar noemt alleen de totale tijd. Een trapped chest openen geeft
       de jumpscare óf `/doolhof valmobs` husks en silverfish om je heen (open er een paar: ongeveer
       de helft is elk); nog eens openen geeft een lege kist, een tweede speler krijgt hem wel. `/doolhof poortmelding uit`: de poort gaat stil

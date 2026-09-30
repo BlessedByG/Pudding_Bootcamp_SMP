@@ -14,28 +14,32 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ResolvableProfile;
 import nl.pudding.bootcamp.Mc;
 import nl.pudding.bootcamp.core.Kleur;
 import nl.pudding.bootcamp.game.Planner;
 import nl.pudding.bootcamp.game.Spel;
 
+import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 /**
- * Het teammenu bij de uitgang van het doolhof: een vanilla kistmenu van één rij met op vier
- * plekken een gekleurd wolblok met de teamnaam en het aantal ({@code Rood · 3/5}). Een vol team is
- * grijze wol. Items verplaatsen kan niet: elke klik wordt afgevangen en de mod handelt hem zelf af.
- * Allemaal server-side, geen client-mod nodig.
+ * Het teammenu op de finishlijn van het doolhof: een vanilla kistmenu met een rij per kleur. Vooraan
+ * een gekleurd wolblok met de teamnaam en het aantal ({@code Rood · 3/5}); alleen een klik op de wol
+ * kiest dat team. Daarachter de hoofden van wie er al in zit. Een vol team is grijze wol. Items
+ * verplaatsen kan niet: elke klik wordt afgevangen en de mod handelt hem zelf af. Allemaal
+ * server-side, geen client-mod nodig.
  */
 public final class Teammenu extends ChestMenu {
-	/** Op welke plek in de rij van negen elke kleur staat. */
-	private static final int[] PLEK = {1, 3, 5, 7};
+	private static final int RIJ = 9;
+	private static final int RIJEN = Kleur.values().length;
 
 	private final SimpleContainer inhoud;
 	private final BiConsumer<ServerPlayer, Kleur> gekozen;
 
 	private Teammenu(int id, Inventory inv, SimpleContainer inhoud, BiConsumer<ServerPlayer, Kleur> gekozen) {
-		super(MenuType.GENERIC_9x1, id, inv, inhoud, 1);
+		super(MenuType.GENERIC_9x4, id, inv, inhoud, RIJEN);
 		this.inhoud = inhoud;
 		this.gekozen = gekozen;
 	}
@@ -47,7 +51,7 @@ public final class Teammenu extends ChestMenu {
 	 */
 	public static void open(ServerPlayer speler, BiConsumer<ServerPlayer, Kleur> gekozen) {
 		MinecraftServer server = speler.level().getServer();
-		SimpleContainer inhoud = new SimpleContainer(9);
+		SimpleContainer inhoud = new SimpleContainer(RIJ * RIJEN);
 		vul(server, inhoud);
 		speler.openMenu(new SimpleMenuProvider((id, inv, p) -> new Teammenu(id, inv, inhoud, gekozen),
 				Mc.tekst("Kies je team", ChatFormatting.DARK_GRAY)));
@@ -59,14 +63,43 @@ public final class Teammenu extends ChestMenu {
 
 	private static void vul(MinecraftServer server, SimpleContainer inhoud) {
 		int max = Teams.maximum(server);
+		Map<Kleur, List<String>> namen = Teams.namen();
 		for (Kleur k : Kleur.values()) {
+			int rij = k.ordinal() * RIJ;
 			int aantal = Teams.aantal(k);
 			boolean vol = aantal >= max;
 			ItemStack wol = new ItemStack(vol ? Items.WOOL.gray() : wol(k));
 			wol.set(DataComponents.ITEM_NAME, Mc.tekst(k.naam() + " · " + aantal + "/" + max,
 					vol ? ChatFormatting.GRAY : Mc.kleur(k), ChatFormatting.BOLD));
-			inhoud.setItem(PLEK[k.ordinal()], wol);
+			inhoud.setItem(rij, wol);
+			// De hoofden erachter; zijn het er meer dan passen, dan de laatste plek "+3 meer".
+			List<String> leden = namen.get(k);
+			boolean teVeel = leden.size() > RIJ - 1;
+			int koppen = teVeel ? RIJ - 2 : leden.size();
+			for (int i = 1; i < RIJ; i++) {
+				inhoud.setItem(rij + i, ItemStack.EMPTY);
+			}
+			for (int i = 0; i < koppen; i++) {
+				inhoud.setItem(rij + 1 + i, kop(server, leden.get(i), k));
+			}
+			if (teVeel) {
+				ItemStack meer = new ItemStack(Items.PAPER);
+				meer.set(DataComponents.ITEM_NAME, Mc.tekst("+" + (leden.size() - koppen) + " meer", Mc.kleur(k)));
+				inhoud.setItem(rij + RIJ - 1, meer);
+			}
 		}
+	}
+
+	/** Het hoofd van een teamlid, met zijn skin; online met zijn eigen profiel, anders op naam. */
+	private static ItemStack kop(MinecraftServer server, String naam, Kleur k) {
+		ServerPlayer p = server.getPlayerList().getPlayerByName(naam);
+		ItemStack kop = new ItemStack(Items.PLAYER_HEAD);
+		kop.set(DataComponents.PROFILE, p != null ? ResolvableProfile.createResolved(p.getGameProfile())
+				: ResolvableProfile.createUnresolved(naam));
+		// Een hoofd met een profiel heet anders "Piet's Head"; een eigen naam gaat daarvoor.
+		kop.set(DataComponents.CUSTOM_NAME, Mc.tekst(p != null ? Mc.naam(p) : naam, Mc.kleur(k))
+				.withStyle(s -> s.withItalic(false)));
+		return kop;
 	}
 
 	private static Item wol(Kleur k) {
@@ -114,13 +147,12 @@ public final class Teammenu extends ChestMenu {
 		}
 	}
 
+	/** Alleen de wol vooraan in een rij kiest een team; een hoofd niet. */
 	private static Kleur kleurBij(int slot) {
-		for (Kleur k : Kleur.values()) {
-			if (PLEK[k.ordinal()] == slot) {
-				return k;
-			}
+		if (slot < 0 || slot >= RIJ * RIJEN || slot % RIJ != 0) {
+			return null;
 		}
-		return null;
+		return Kleur.values()[slot / RIJ];
 	}
 
 	@Override

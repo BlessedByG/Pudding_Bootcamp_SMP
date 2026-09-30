@@ -19,7 +19,8 @@ import java.util.Map;
  * Poorten: een muur (regio {@code poort_<naam>}) die met één command weggaat. Een regio met meerdere
  * delen ({@code /bc region add}) is meerdere poorten die samen open en dicht gaan; alleen de blokken
  * in de delen zelf, nooit wat ertussen staat. Open is lucht. Dicht zet terug wat er stond toen hij
- * openging; weet de mod dat niet meer (na een herstart), dan iron bars.
+ * openging; weet de mod dat niet meer (na een herstart), dan iron bars, of barrier bij de startpoort
+ * van het doolhof ({@code poort_start}), die onzichtbaar hoort te zijn.
  */
 public final class Poorten {
 	public static final String PREFIX = "poort_";
@@ -109,8 +110,9 @@ public final class Poorten {
 			// Er staat al iets: de poort is dicht, niks overschrijven.
 			return null;
 		}
+		BlockState reserve = (regioNaam.equals(PREFIX + "start") ? Blocks.BARRIER : Blocks.IRON_BARS).defaultBlockState();
 		for (BlockPos pos : blokken(regio)) {
-			wereld.setBlock(pos, Blocks.IRON_BARS.defaultBlockState(), Block.UPDATE_ALL);
+			wereld.setBlock(pos, reserve, Block.UPDATE_ALL);
 		}
 		return null;
 	}

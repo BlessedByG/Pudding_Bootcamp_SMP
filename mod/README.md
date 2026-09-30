@@ -164,7 +164,7 @@ blok waar je naar kijkt, tot 32 blokken). De commando's per ronde zetten de mees
 | Ronde | Regio's | Punten |
 |---|---|---|
 | Algemeen | | `basiskamp` (optioneel, voor `/bc reset`) |
-| Doolhof | `doolhof`, `doolhof_uit`, `poort_doolhof` (de muur, onder- en bovenhoek), `nep_1..3`, `schrik_1..n` | `doolhof_start`, `v2` |
+| Doolhof | `doolhof`, `doolhof_uit` (de finishlijn), `doolhof_gif` (het doolhof zonder finishruimte), `poort_doolhof` (de muur, onder- en bovenhoek), `poort_start` (barrier blocks in de openingen van de startruimte, elk een deel), `nep_1..3`, `schrik_1..n` | `doolhof_start`, `doolhof_finish` (in de finishruimte), `v2` |
 | Het Ei | `ei` (het Ei als doos), `eigebied` (Ei, kettingen, startplekken) | `ei_spawn_1..n`, `v3`; daarna `/ei vastleggen` |
 | Mob arena | `mobarena` (beide arena's met tribune), `veld_1`, `veld_2` (elk `save` + `add`), `tribune_mob` (de tribunevloer) | `/mobarena startplek <1\|2> <kleur>` (8x), `mob_1_1..n`, `mob_2_1..n`, `kooi_1`, `kooi_2`, `tribune_mob_1..n` |
 | Quiz | `quiz` | `/quiz bank <kleur>` (4x), `/quiz podium`, `/quiz lamp <kleur>` (4x, kijk naar de lamp) |
@@ -184,7 +184,7 @@ onder *Commands*.
 
 | Ronde | Commands |
 |---|---|
-| Doolhof | `/doolhof start\|stop\|resterend <sec>`, `timer [<min>]` (15), `poort [<min>]` (4), `hint [<min>]` (10), `hinttekst [<tekst>\|-]`, `poort open\|dicht`, `poortmelding [aan\|uit]`, `valmobs [<min> [<max>]]` (3 t/m 10) |
+| Doolhof | `/doolhof start\|stop\|einde\|resterend <sec>`, `timer [<min>]` (15), `poort [<min>]` (4), `hint [<min>]` (10), `hinttekst [<tekst>\|-]`, `poort open\|dicht`, `startpoort open\|dicht`, `poortmelding [aan\|uit]`, `valmobs [<min> [<max>]]` (3 t/m 10) |
 | Het Ei | `/ei start\|stop\|resterend <sec>`, `timer [<min>]` (15), `blokken [<soort> <aantal>]`, `vastleggen` |
 | Mob arena | `/mobarena start\|volgende\|schema\|stop`, `wave volgende`, `startplek <1\|2> <kleur>`, `punten [<mob> <punten>]`, `veldhoogte [<blokken>]`, `aftekst [<tekst>]` |
 | Quiz | `/quiz start\|stop`, `presentator [<speler>]`, `bank <kleur>`, `podium`, `lamp <kleur>`, `draai`, `goed`, `fout`, `punt <kleur> [<aantal>]`, `einde`, `winnaar <kleur>` |
@@ -202,7 +202,7 @@ seconde worden bijgezet, zodat je met `@a[tag=...]` kunt kijken. Zelf zetten hee
 
 | Ronde | Commander |
 |---|---|
-| 1 Doolhof | `/doolhof start`. Eindigt vanzelf na de timer, of eerder als iedereen een team heeft. |
+| 1 Doolhof | `/doolhof start`. Eindigt als iedereen een team heeft; na de timer wordt het doolhof giftig tot het zover is. Noodknop: `/doolhof einde`. |
 | 2 Het Ei | `/ei start`. Eindigt na de timer. |
 | 3 Mob arena | `/mobarena start` (beurt 1), daarna per beurt `/mobarena volgende`. Na de laatste beurt vanzelf de winnaar en, tien seconden later, iedereen zonder spullen naar zijn bank. |
 | 4 Quiz | `/quiz start`. Pudding draait met de nether star en keurt met de wol. `/quiz einde`, bij gelijkspel `/quiz winnaar <kleur>`. Tien seconden later iedereen naar de tribune van de Arena. |

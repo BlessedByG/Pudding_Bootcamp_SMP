@@ -14,6 +14,11 @@ public final class BossbarTekst {
 		return "Doolhof · " + Tijd.mmss(seconden);
 	}
 
+	/** Na de timer, zolang niet iedereen een team heeft. */
+	public static String doolhofGif() {
+		return "Doolhof · de tijd is om · gif";
+	}
+
 	public static String ei(int seconden) {
 		return "Het Ei · " + Tijd.mmss(seconden);
 	}

@@ -39,6 +39,9 @@ final class DoolhofCommand {
 		cmd.then(Commands.literal("poort")
 				.then(Commands.literal("open").executes(ctx -> poort(ctx, true)))
 				.then(Commands.literal("dicht").executes(ctx -> poort(ctx, false))));
+		cmd.then(Commands.literal("startpoort")
+				.then(Commands.literal("open").executes(ctx -> startpoort(ctx, true)))
+				.then(Commands.literal("dicht").executes(ctx -> startpoort(ctx, false))));
 		// "/doolhof poort 4" is de instelling; "/doolhof poort open" de poort zelf.
 		cmd.then(RondeCommands.minuten("poort", "De poort gaat open na", () -> Spel.instellingen().doolhofPoort(),
 				min -> Spel.instellingen().checkDoolhofPoort(min), min -> Spel.instellingen().zetDoolhofPoort(min), null));
@@ -46,6 +49,7 @@ final class DoolhofCommand {
 				min -> Spel.instellingen().checkDoolhofHint(min), min -> Spel.instellingen().zetDoolhofHint(min), null));
 		cmd.then(RondeCommands.tekst("hinttekst", "De hinttekst", () -> Spel.instellingen().hinttekst(),
 				t -> Spel.instellingen().zetHinttekst(t)));
+		cmd.then(Commands.literal("einde").executes(DoolhofCommand::einde));
 		cmd.then(Commands.literal("poortmelding")
 				.executes(DoolhofCommand::toonPoortMelding)
 				.then(Commands.literal("aan").executes(ctx -> poortMelding(ctx, true)))
@@ -58,6 +62,16 @@ final class DoolhofCommand {
 						.then(Commands.argument("max", IntegerArgumentType.integer(0, Instellingen.MAX_VAL_MOBS))
 								.executes(ctx -> valMobs(ctx, IntegerArgumentType.getInteger(ctx, "min"), IntegerArgumentType.getInteger(ctx, "max"))))));
 		return cmd;
+	}
+
+	/** Noodknop: het doolhof nu afsluiten zoals bij de timer, ook tijdens het gif. */
+	private static int einde(CommandContext<CommandSourceStack> ctx) {
+		Doolhof doolhof = RondeCommands.lopend(Doolhof.class);
+		if (doolhof == null) {
+			return BcCommand.fout(ctx, "Het doolhof loopt niet.");
+		}
+		doolhof.eindeNu(ctx.getSource().getServer());
+		return BcCommand.ok(ctx, "Doolhof voorbij: wie nog geen team had zit in het kleinste, iedereen is bij v2.");
 	}
 
 	private static int toonPoortMelding(CommandContext<CommandSourceStack> ctx) {
@@ -91,6 +105,16 @@ final class DoolhofCommand {
 	/** {@code 5} of {@code willekeurig 3 t/m 10}. */
 	private static String aantal(int min, int max) {
 		return min == max ? String.valueOf(min) : "willekeurig " + min + " t/m " + max;
+	}
+
+	/** De openingen van de startruimte met de hand, om te testen. Open gaat stil, net als bij de start. */
+	private static int startpoort(CommandContext<CommandSourceStack> ctx, boolean open) {
+		MinecraftServer server = ctx.getSource().getServer();
+		String fout = open ? Poorten.open(server, Doolhof.START_POORT, false) : Poorten.dicht(server, Doolhof.START_POORT);
+		if (fout != null) {
+			return BcCommand.fout(ctx, "Startpoort: " + fout + ".");
+		}
+		return BcCommand.ok(ctx, "Startpoort " + (open ? "open." : "dicht."));
 	}
 
 	private static int poort(CommandContext<CommandSourceStack> ctx, boolean open) {

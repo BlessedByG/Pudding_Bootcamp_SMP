@@ -3,14 +3,19 @@ package nl.pudding.bootcamp.game.ronde1;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
@@ -27,14 +32,17 @@ import nl.pudding.bootcamp.core.Instellingen;
 import nl.pudding.bootcamp.core.KitDef;
 import nl.pudding.bootcamp.core.Kleur;
 import nl.pudding.bootcamp.core.Kompas;
+import nl.pudding.bootcamp.core.Punt;
 import nl.pudding.bootcamp.core.LootTabel;
 import nl.pudding.bootcamp.core.Regels;
 import nl.pudding.bootcamp.core.Regio;
 import nl.pudding.bootcamp.core.Rol;
 import nl.pudding.bootcamp.core.Ronde;
 import nl.pudding.bootcamp.core.TeamKeuze;
+import nl.pudding.bootcamp.core.TeamOverzicht;
 import nl.pudding.bootcamp.game.Aftelling;
 import nl.pudding.bootcamp.game.Border;
+import nl.pudding.bootcamp.game.Planner;
 import nl.pudding.bootcamp.game.Poorten;
 import nl.pudding.bootcamp.game.RondeLogica;
 import nl.pudding.bootcamp.game.Spel;
@@ -53,17 +61,23 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Ronde 1: de doolhof. Iedereen start in de startruimte met de basiskit; de kisten zijn gevuld uit
  * de loot-tabel, de trapped chests zijn valkisten ({@link Valkisten}). Drie gangen eindigen in een
- * nep-uitgang, de vierde bij de poort, die na {@code /doolhof poort} minuten opengaat. Wie erdoor
- * komt kiest in het teammenu een kleur en gaat naar {@code v2}. Na de timer gaat wie nog geen team
- * heeft naar het kleinste team.
+ * nep-uitgang, de vierde bij de poort, die na {@code /doolhof poort} minuten opengaat. Daarachter ligt
+ * een afgesloten ruimte met de finishlijn (regio {@code doolhof_uit}): wie eroverheen loopt kiest in
+ * het teammenu een kleur en mag daarna gewoon terug het doolhof in, om anderen te helpen of meer loot
+ * te zoeken. Heeft iedereen een team, of is de timer op, dan gaat iedereen naar {@code v2}; wie dan
+ * nog geen team heeft gaat naar het kleinste team.
  */
 public final class Doolhof extends RondeLogica {
 	public static final String POORT = "doolhof";
+	/** De openingen van de startruimte: dicht tijdens de countdown, stil open bij de start van de timer. */
+	public static final String START_POORT = "start";
 	private static final int CHECK_ELKE_TICKS = 5;
 	/** Na zoveel ticks opent het teammenu opnieuw voor wie hem zonder keuze sloot. */
 	private static final int MENU_OPNIEUW_NA = 40;
@@ -77,6 +91,14 @@ public final class Doolhof extends RondeLogica {
 	/** Wie de basiskit al kreeg; wie later binnenkomt krijgt hem bij het inloggen. */
 	private final java.util.Set<java.util.UUID> gestart = new java.util.HashSet<>();
 	private final Valkisten valkisten = new Valkisten();
+	/** Wat de sidebar nu laat zien, zodat hij alleen bij een verandering opnieuw gaat. */
+	private String sidebarNu;
+	/** De timer is op: regio {@code doolhof_gif} is giftig tot iedereen een team heeft. */
+	private boolean gifLoopt;
+	private int gifSeconden;
+	/** Wie zelf over de finish kwam; wie in het gif doodging en daarna koos, telt niet mee. */
+	private final java.util.Set<java.util.UUID> gevonden = new java.util.HashSet<>();
+	private final java.util.Set<java.util.UUID> vergiftigd = new java.util.HashSet<>();
 
 	@Override
 	public Ronde ronde() {
@@ -94,13 +116,18 @@ public final class Doolhof extends RondeLogica {
 		} catch (IllegalArgumentException e) {
 			return e.getMessage();
 		}
-		fout = Spel.buitenRegio("doolhof", List.of("doolhof_start"));
+		fout = Spel.buitenRegio("doolhof", List.of("doolhof_start", "doolhof_finish"));
 		if (fout != null) {
 			return fout;
 		}
 		Regio uit = Spel.regio("doolhof_uit");
 		if (!Spel.regio("doolhof").omhullende().bevat(uit.centerX(), uit.centerZ())) {
 			return "regio doolhof_uit ligt buiten regio doolhof: niemand kan er dan komen, want de border staat om doolhof";
+		}
+		Punt finish = Spel.punt("doolhof_finish");
+		if (Spel.regio("doolhof_gif").bevat(finish.x(), finish.z())) {
+			return "punt doolhof_finish ligt in regio doolhof_gif: wie in het gif doodgaat, staat er dan meteen weer in."
+					+ " Zet het punt in de finishruimte, of selecteer het gif zonder de finishruimte";
 		}
 		return null;
 	}
@@ -117,6 +144,8 @@ public final class Doolhof extends RondeLogica {
 	@Override
 	public void start(MinecraftServer server) {
 		Poorten.dichtAlsHijBestaat(server, POORT);
+		// Eerst dicht, dan pas iedereen de startruimte in: niemand staat in een opening.
+		Poorten.dichtAlsHijBestaat(server, START_POORT);
 		Spelregels.locatorBar(server, false);
 		// Het doolhof is de teamkeuze: een nieuw doolhof begint zonder teams.
 		Teams.wisKeuzes();
@@ -134,6 +163,7 @@ public final class Doolhof extends RondeLogica {
 		toonSidebar(server);
 		Aftelling.start(Regels.COUNTDOWN, "Het doolhof begint over", () -> {
 			timerGestart = true;
+			Poorten.openAlsHijBestaat(server, START_POORT, false);
 			Spel.startTimer(Spel.instellingen().doolhofTimer() * 60);
 			if (Spel.instellingen().doolhofPoort() == 0) {
 				poortMoment = true;
@@ -200,21 +230,24 @@ public final class Doolhof extends RondeLogica {
 		kist.setChanged();
 	}
 
-	// Elke paar ticks: nep-uitgangen, schrikplekken, het teammenu
+	// Elke tick de finishlijn, elke paar ticks de nep-uitgangen en schrikplekken
 
 	@Override
 	public void tick(MinecraftServer server) {
-		if (!timerGestart || server.getTickCount() % CHECK_ELKE_TICKS != 0) {
+		if (!timerGestart) {
+			return;
+		}
+		if (finishLijn(server)) {
+			return;
+		}
+		if (server.getTickCount() % CHECK_ELKE_TICKS != 0) {
 			return;
 		}
 		List<String> nep = Ronde.reeks("nep_", ConfigStore.get().regios().keySet());
 		List<String> schrik = Ronde.reeks("schrik_", ConfigStore.get().regios().keySet());
-		Regio uit = Spel.regio("doolhof_uit");
 		for (ServerPlayer s : Spel.levend(server, Rol.SPELER)) {
+			// Ook wie al over de finish is doet gewoon mee: nep-uitgangen en schrikplekken werken ook voor hem.
 			SpelerStatus st = Spel.status(s);
-			if (st.klaar) {
-				continue;
-			}
 			for (String n : nep) {
 				if (Spel.regio(n).bevat(s.getX(), s.getZ())) {
 					nepUitgang(server, s);
@@ -227,14 +260,34 @@ public final class Doolhof extends RondeLogica {
 					Schrik.op(s);
 				}
 			}
-			if (uit.bevat(s.getX(), s.getZ()) && Teams.keuze(s) == null && !Teammenu.heeftOpen(s)
-					&& server.getTickCount() - st.menuDicht >= MENU_OPNIEUW_NA) {
+		}
+	}
+
+	/**
+	 * Wie op de finishlijn (regio {@code doolhof_uit}) staat en nog niet klaar is, krijgt het
+	 * teammenu. Elke tick, want over een lijn van één blok ren je anders heen tussen twee checks.
+	 *
+	 * @return {@code true} als het doolhof hiermee voorbij is
+	 */
+	private boolean finishLijn(MinecraftServer server) {
+		Regio uit = Spel.regio("doolhof_uit");
+		for (ServerPlayer s : Spel.levend(server, Rol.SPELER)) {
+			SpelerStatus st = Spel.status(s);
+			if (st.klaar || !uit.bevat(s.getX(), s.getZ())) {
+				continue;
+			}
+			if (Teams.keuze(s) == null && !Teammenu.heeftOpen(s) && server.getTickCount() - st.menuDicht >= MENU_OPNIEUW_NA) {
 				Teammenu.open(s, (speler, kleur) -> teamGekozen(server, speler, kleur));
-			} else if (uit.bevat(s.getX(), s.getZ()) && Teams.keuze(s) != null) {
-				// Al een kleur (van /bc team, of van voor een herstart): meteen door.
-				eruit(server, s);
+			} else if (Teams.keuze(s) != null) {
+				// Al een kleur (van /bc team, of van voor een herstart): meteen gefinisht.
+				finish(s);
+				if (iedereenKlaar(server)) {
+					einde(server);
+					return true;
+				}
 			}
 		}
+		return false;
 	}
 
 	private static void nepUitgang(MinecraftServer server, ServerPlayer speler) {
@@ -248,7 +301,7 @@ public final class Doolhof extends RondeLogica {
 		Spel.naarPunt(speler, "doolhof_start");
 	}
 
-	/** Uit het teammenu: in dat team, chatregel voor iedereen, naar {@code v2}. */
+	/** Uit het teammenu: in dat team, chatregel voor iedereen, gefinisht. */
 	private void teamGekozen(MinecraftServer server, ServerPlayer speler, Kleur kleur) {
 		if (Spel.actief() != this || Spel.status(speler).klaar) {
 			return;
@@ -264,20 +317,24 @@ public final class Doolhof extends RondeLogica {
 		Mc.chatAllen(server, Component.empty()
 				.append(Mc.tekst(Mc.naam(speler), Mc.kleur(kleur)))
 				.append(Mc.tekst(" zit in " + kleur.naam() + " (" + Teams.aantal(kleur) + "/" + Teams.maximum(server) + ")", ChatFormatting.GRAY)));
-		eruit(server, speler);
+		finish(speler);
 		toonSidebar(server);
 		if (iedereenKlaar(server)) {
 			einde(server);
 		}
 	}
 
-	private void eruit(MinecraftServer server, ServerPlayer speler) {
-		SpelerStatus st = Spel.status(speler);
-		st.klaar = true;
+	/** Over de finish met een team: hij blijft waar hij is en mag terug het doolhof in. */
+	private void finish(ServerPlayer speler) {
+		Spel.status(speler).klaar = true;
+		if (!vergiftigd.contains(speler.getUUID())) {
+			gevonden.add(speler.getUUID());
+		}
+		Kleur kleur = Teams.keuze(speler);
 		Mc.geluid(speler, SoundEvents.PLAYER_LEVELUP, 1f, 1f);
-		Spel.naarPunt(speler, "v2");
-		// Bij v2 staat hij buiten de border van het doolhof: geen rood scherm.
-		Border.verberg(speler);
+		Mc.title(speler, Mc.tekst("GEFINISHT", ChatFormatting.GREEN, ChatFormatting.BOLD),
+				Component.empty().append(Mc.tekst("Je zit in " + kleur.naam(), Mc.kleur(kleur)))
+						.append(Mc.tekst(" · je mag terug het doolhof in", ChatFormatting.WHITE)), 0, 60, 15);
 	}
 
 	private static boolean iedereenKlaar(MinecraftServer server) {
@@ -291,16 +348,10 @@ public final class Doolhof extends RondeLogica {
 	 */
 	boolean valkist(ServerPlayer speler, BlockPos pos, BlockState state) {
 		SpelerStatus st = Spel.status(speler);
-		if (!timerGestart || st.klaar || st.rol != Rol.SPELER) {
+		if (!timerGestart || st.rol != Rol.SPELER) {
 			return false;
 		}
 		return valkisten.open(speler, pos, state);
-	}
-
-	/** Wie klaar is staat bij v2, buiten de border; die krijgt geen schade. */
-	@Override
-	public boolean magSchade(ServerPlayer slachtoffer, DamageSource bron) {
-		return !Spel.status(slachtoffer).klaar;
 	}
 
 	// Elke seconde: poort, hint, bossbar
@@ -308,6 +359,12 @@ public final class Doolhof extends RondeLogica {
 	@Override
 	public void seconde(MinecraftServer server) {
 		Teammenu.ververs(server);
+		// Ook /bc team en wie in- of uitlogt (hoofd erbij of eraf).
+		toonSidebar(server);
+		if (gifLoopt) {
+			gif(server);
+			return;
+		}
 		if (!timerGestart || !Spel.timerLoopt()) {
 			return;
 		}
@@ -374,24 +431,141 @@ public final class Doolhof extends RondeLogica {
 		}
 	}
 
-	private static void toonSidebar(MinecraftServer server) {
+	/**
+	 * De teams rechts in beeld: per kleur {@code Rood 3/5} en daaronder wie erin zit, met zijn hoofd
+	 * als hij online is. Elke seconde bekeken, maar alleen opnieuw gestuurd als er iets veranderde.
+	 */
+	private void toonSidebar(MinecraftServer server) {
 		int max = Teams.maximum(server);
 		List<Component> regels = new ArrayList<>();
-		for (Kleur k : Kleur.values()) {
-			regels.add(Mc.tekst(k.naam() + " " + Teams.aantal(k) + "/" + max, Mc.kleur(k)));
+		StringBuilder sleutel = new StringBuilder().append(max);
+		for (TeamOverzicht.Regel r : TeamOverzicht.regels(Teams.namen())) {
+			Kleur k = r.kleur();
+			if (r.kop()) {
+				regels.add(Mc.tekst(k.naam() + " " + Teams.aantal(k) + "/" + max, Mc.kleur(k), ChatFormatting.BOLD));
+				sleutel.append('|').append(k.id());
+				continue;
+			}
+			MutableComponent regel = Component.literal(" ");
+			for (String naam : r.namen()) {
+				ServerPlayer p = server.getPlayerList().getPlayerByName(naam);
+				regel.append(" ").append(p != null ? Mc.kopEnNaam(p, Mc.kleur(k)) : Mc.tekst(naam, Mc.kleur(k)));
+				sleutel.append(',').append(naam).append(p != null ? '+' : '-');
+			}
+			regels.add(regel);
 		}
-		Sidebar.toonTekst(server, "Teams", regels);
+		if (!sleutel.toString().equals(sidebarNu)) {
+			sidebarNu = sleutel.toString();
+			Sidebar.toonTekst(server, "Teams", regels);
+		}
 	}
 
+	/**
+	 * Timer op: het doolhof is niet meteen voorbij. Regio {@code doolhof_gif} wordt giftig, tot
+	 * iedereen een team heeft (of {@code /doolhof einde}).
+	 */
 	@Override
 	public void timerOp(MinecraftServer server) {
-		einde(server);
+		if (iedereenKlaar(server)) {
+			einde(server);
+			return;
+		}
+		gifLoopt = true;
+		Mc.titleAllen(server, Mc.tekst("DE TIJD IS OM", ChatFormatting.RED, ChatFormatting.BOLD),
+				Mc.tekst("Het doolhof is giftig · ga naar de finish", ChatFormatting.YELLOW), 0, 70, 15);
+		Mc.geluidAllen(server, SoundEvents.ELDER_GUARDIAN_CURSE, 1f, 1f);
+		Bossbar.zet(BossbarTekst.doolhofGif(), BossEvent.BossBarColor.PURPLE, 1f);
 	}
 
-	/** In het doolhof ga je niet dood; gebeurt het toch, dan geheald terug naar de startruimte. */
+	/**
+	 * Elke seconde van het gif: wie in regio {@code doolhof_gif} staat krijgt Poison, en om de
+	 * {@link Regels#DOOLHOF_GIF_ELKE} seconden een klap die door armor heen gaat. Poison alleen doodt
+	 * niet; de klap wel.
+	 */
+	private void gif(MinecraftServer server) {
+		gifSeconden++;
+		Bossbar.zet(BossbarTekst.doolhofGif(), BossEvent.BossBarColor.PURPLE, 1f);
+		Regio gif = Spel.regio("doolhof_gif");
+		if (gif == null) {
+			return;
+		}
+		ServerLevel wereld = Mc.wereld(server);
+		boolean klap = gifSeconden % Regels.DOOLHOF_GIF_ELKE == 0;
+		for (ServerPlayer s : Spel.levend(server, Rol.SPELER)) {
+			if (!gif.bevat(s.getX(), s.getZ())) {
+				continue;
+			}
+			// Kort, en elke seconde opnieuw: wie het gif uit loopt, is er zo weer van af.
+			Mc.effect(s, MobEffects.POISON, 3, 0);
+			if (klap) {
+				s.hurtServer(wereld, wereld.damageSources().magic(), Regels.DOOLHOF_GIF_SCHADE);
+			}
+		}
+	}
+
+	/**
+	 * In het doolhof ga je niet dood; gebeurt het toch, dan geheald terug naar de startruimte. Ook wie
+	 * al gefinisht is: zijn team houdt hij. Na de timer (het gif) anders: zie {@link #gifDood}.
+	 */
 	@Override
 	public void onDeath(MinecraftServer server, ServerPlayer speler, DamageSource bron) {
-		Spel.naarPunt(speler, Spel.status(speler).klaar ? "v2" : "doolhof_start");
+		if (gifLoopt) {
+			gifDood(server, speler);
+			return;
+		}
+		Spel.naarPunt(speler, "doolhof_start");
+	}
+
+	/**
+	 * Dood tijdens het gif: al zijn spullen weg behalve het eten uit de basiskit, de rest van de
+	 * basiskit terug, en naar de finishruimte ({@code doolhof_finish}). Heeft hij nog geen team, dan
+	 * kiest hij er daar een; hij telt dan niet als iemand die de uitgang vond.
+	 */
+	private void gifDood(MinecraftServer server, ServerPlayer speler) {
+		vergiftigd.add(speler.getUUID());
+		Kits.Kit basis = null;
+		try {
+			basis = Kits.laad(server, "basis");
+		} catch (KitDef.KitFout e) {
+			Bootcamp.LOG.error("Doolhof: basiskit na het gif: {}", e.getMessage());
+		}
+		Set<Item> eten = new HashSet<>();
+		if (basis != null) {
+			for (Kits.Gevuld g : basis.items()) {
+				if (g.stack().has(DataComponents.FOOD)) {
+					eten.add(g.stack().getItem());
+				}
+			}
+		}
+		Inventory inv = speler.getInventory();
+		for (int i = 0; i < inv.getContainerSize(); i++) {
+			if (!eten.contains(inv.getItem(i).getItem())) {
+				inv.setItem(i, ItemStack.EMPTY);
+			}
+		}
+		speler.containerMenu.setCarried(ItemStack.EMPTY);
+		if (basis != null) {
+			Kits.vulAan(speler, basis, stack -> eten.contains(stack.getItem()));
+		}
+		Spel.naarPunt(speler, "doolhof_finish");
+		boolean kiezen = Teams.keuze(speler) == null;
+		Mc.title(speler, Mc.tekst("VERGIFTIGD", ChatFormatting.DARK_GREEN, ChatFormatting.BOLD),
+				Mc.tekst(kiezen ? "Je spullen zijn weg · kies je team" : "Je spullen zijn weg", ChatFormatting.WHITE), 0, 60, 15);
+		Mc.chatAllen(server, Component.empty().append(Mc.tekst(Mc.naam(speler), Mc.kleur(Teams.keuze(speler))))
+				.append(Mc.tekst(" bezweek aan het gif", ChatFormatting.DARK_GREEN)));
+		if (kiezen) {
+			// Niet midden in de dood-afhandeling een menu openen: een tick later.
+			Planner.na(1, () -> {
+				if (Spel.actief() == this && Teams.keuze(speler) == null && !Teammenu.heeftOpen(speler)) {
+					Teammenu.open(speler, (s, kleur) -> teamGekozen(server, s, kleur));
+				}
+			});
+		}
+	}
+
+	/** {@code /doolhof einde}: de noodknop, bijvoorbeeld als iemand in de finish blijft staan zonder te kiezen. */
+	public void eindeNu(MinecraftServer server) {
+		einde(server);
 	}
 
 	@Override
@@ -400,9 +574,8 @@ public final class Doolhof extends RondeLogica {
 		Spel.zetRol(server, speler, Rol.SPELER);
 		speler.setGameMode(GameType.ADVENTURE);
 		if (st.klaar || Teams.keuze(speler) != null) {
+			// Gefinisht: hij gaat verder waar hij uitlogde, binnen of buiten het doolhof.
 			st.klaar = true;
-			Spel.naarPunt(speler, "v2");
-			Border.verberg(speler);
 		} else {
 			Spel.naarPunt(speler, "doolhof_start");
 		}
@@ -414,7 +587,7 @@ public final class Doolhof extends RondeLogica {
 	private void einde(MinecraftServer server) {
 		int gevonden = 0;
 		for (ServerPlayer s : Mc.deelnemers(server)) {
-			if (Spel.status(s).klaar) {
+			if (this.gevonden.contains(s.getUUID())) {
 				gevonden++;
 			}
 		}
@@ -429,10 +602,9 @@ public final class Doolhof extends RondeLogica {
 				Spel.zetRol(server, s, Rol.SPELER);
 				Mc.actionbar(s, Mc.tekst("Je zit in " + k.naam(), Mc.kleur(k), ChatFormatting.BOLD));
 			}
-			if (!Spel.status(s).klaar) {
-				Spel.status(s).klaar = true;
-				Spel.naarPunt(s, "v2");
-			}
+			// Ook wie al gefinisht was: die kan nog in het doolhof lopen.
+			Spel.status(s).klaar = true;
+			Spel.naarPunt(s, "v2");
 		}
 		Mc.titleAllen(server, Mc.tekst("DOOLHOF VOORBIJ", ChatFormatting.GOLD, ChatFormatting.BOLD),
 				Mc.tekst(gevonden + " van de " + totaal + " vonden de uitgang", ChatFormatting.WHITE), 10, 80, 20);
@@ -441,7 +613,8 @@ public final class Doolhof extends RondeLogica {
 
 	@Override
 	public String statusRegel(MinecraftServer server) {
-		return "poort " + (poortOpen ? "open" : "dicht") + ", hint " + (hintGegeven ? "geweest" : "nog niet");
+		return "poort " + (poortOpen ? "open" : "dicht") + ", hint " + (hintGegeven ? "geweest" : "nog niet")
+				+ (gifLoopt ? ", de tijd is om: het gif loopt" : "");
 	}
 
 	@Override
@@ -454,5 +627,7 @@ public final class Doolhof extends RondeLogica {
 			}
 		}
 		Sidebar.weg(server);
+		// Het einde tekent de eindstand daarna opnieuw; dat mag niet als "niets veranderd" wegvallen.
+		sidebarNu = null;
 	}
 }
