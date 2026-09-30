@@ -139,6 +139,7 @@ class KleineTests {
 			assertEquals("Pudding Bootcamp", BossbarTekst.BASISKAMP);
 			assertEquals("Doolhof · 04:41", BossbarTekst.doolhof(281));
 			assertEquals("Doolhof · de tijd is om · gif", BossbarTekst.doolhofGif());
+			assertEquals("Doolhof · wacht op de start", BossbarTekst.DOOLHOF_WACHT);
 			assertEquals("Het Ei · 07:12", BossbarTekst.ei(432));
 			assertEquals("Mob Arena · beurt 3/5 · wave 2", BossbarTekst.mobarena(3, 5, 2));
 			assertEquals("Mob Arena · beurt 3/5", BossbarTekst.mobarena(3, 5, 0));

@@ -7,6 +7,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.MinecraftServer;
 import nl.pudding.bootcamp.core.Instellingen;
+import nl.pudding.bootcamp.core.Regels;
 import nl.pudding.bootcamp.core.Ronde;
 import nl.pudding.bootcamp.game.Poorten;
 import nl.pudding.bootcamp.game.Spel;
@@ -49,8 +50,11 @@ final class DoolhofCommand {
 				min -> Spel.instellingen().checkDoolhofHint(min), min -> Spel.instellingen().zetDoolhofHint(min), null));
 		cmd.then(RondeCommands.tekst("hinttekst", "De hinttekst", () -> Spel.instellingen().hinttekst(),
 				t -> Spel.instellingen().zetHinttekst(t)));
+		cmd.then(Commands.literal("go").executes(DoolhofCommand::go));
 		cmd.then(Commands.literal("einde").executes(DoolhofCommand::einde));
 		cmd.then(Commands.literal("naarei").executes(DoolhofCommand::naarEi));
+		cmd.then(RondeCommands.tekst("wachttekst", "De wachttekst", () -> Spel.instellingen().doolhofWachttekst(),
+				t -> Spel.instellingen().zetDoolhofWachttekst(t)));
 		cmd.then(Commands.literal("poortmelding")
 				.executes(DoolhofCommand::toonPoortMelding)
 				.then(Commands.literal("aan").executes(ctx -> poortMelding(ctx, true)))
@@ -63,6 +67,19 @@ final class DoolhofCommand {
 						.then(Commands.argument("max", IntegerArgumentType.integer(0, Instellingen.MAX_VAL_MOBS))
 								.executes(ctx -> valMobs(ctx, IntegerArgumentType.getInteger(ctx, "min"), IntegerArgumentType.getInteger(ctx, "max"))))));
 		return cmd;
+	}
+
+	/** Na {@code /doolhof start}: de countdown, daarna gaat de startpoort open. */
+	private static int go(CommandContext<CommandSourceStack> ctx) {
+		Doolhof doolhof = RondeCommands.lopend(Doolhof.class);
+		if (doolhof == null) {
+			return BcCommand.fout(ctx, "Het doolhof loopt niet (/doolhof start).");
+		}
+		String fout = doolhof.go(ctx.getSource().getServer());
+		if (fout != null) {
+			return BcCommand.fout(ctx, "Kan niet: " + fout + ".");
+		}
+		return BcCommand.ok(ctx, Regels.COUNTDOWN + " seconden, dan begint het doolhof.");
 	}
 
 	/** Noodknop: het doolhof nu afsluiten zoals bij de timer, ook tijdens het gif. */

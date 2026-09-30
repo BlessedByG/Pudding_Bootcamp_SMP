@@ -4,6 +4,7 @@ package nl.pudding.bootcamp.core;
 public final class BossbarTekst {
 	public static final String BASISKAMP = "Pudding Bootcamp";
 	public static final String QUIZ_DRAAI = "Quiz · draai het rad";
+	public static final String DOOLHOF_WACHT = "Doolhof · wacht op de start";
 	public static final String CLOWN_WACHT = "Clown vs All · wacht op de start";
 	public static final String FFA_WACHT = "FFA · wacht op de start";
 

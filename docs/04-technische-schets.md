@@ -263,7 +263,9 @@ hele avond geldt (setup, spelers, noodknoppen) staat onder `/bc`.
 
 | Command | Doet |
 |---|---|
-| `/doolhof start\|stop\|resterend` | Ronde 1. |
+| `/doolhof start\|stop\|resterend` | Ronde 1. `start` zet iedereen klaar in de startruimte, zonder countdown. |
+| `/doolhof go` | De countdown na `/doolhof start`; daarna gaat de startpoort open en loopt de timer. |
+| `/doolhof wachttekst [<tekst>]` | De tekst in de actionbar zolang het doolhof op `/doolhof go` wacht, standaard `Wacht op het startsein`. Zonder tekst: de huidige laten zien. Bewaard in `bootcamp.json`. |
 | `/doolhof einde` | Noodknop: het doolhof nu afsluiten zoals na het gif (kleinste team voor wie er nog geen heeft, iedereen naar de finishruimte). Bijvoorbeeld als iemand in de finishruimte blijft staan zonder te kiezen. |
 | `/doolhof naarei` | Na het doolhof: iedereen die meedoet van de finishruimte naar `v2` bij het Ei, title `OP NAAR HET EI`. Weigert zolang er een ronde loopt. |
 | `/doolhof timer [<minuten>]` | Hoe lang het doolhof duurt, standaard 15. |
@@ -341,6 +343,7 @@ ronde. Een nieuw aantal puntenblokken geldt vanaf de volgende `/ei start`.
 | `/doolhof hint` | 10 | 1 tot de timer |
 | `/doolhof hinttekst` | geen (dan de windrichting) | tot 60 tekens, zodat hij op één regel past |
 | `/doolhof poortmelding` | aan | aan of uit |
+| `/doolhof wachttekst` | `Wacht op het startsein` | tot 60 tekens |
 | `/doolhof valmobs` | 3 t/m 10 | 0 tot 20, min niet boven max |
 | `/ei timer` | 15 | 5 tot 60 |
 | `/ei blokken` | netherite 6, diamond 90, gold 120, redstone 10, emerald 10, tnt 10, glowstone 10, slime 10, target 5 (voorlopig; samen 271) | 0 of meer; samen niet meer dan de deepslate-plekken in het Ei |
@@ -527,9 +530,11 @@ dood geannuleerd, de speler geheald en afgehandeld volgens de ronde:
 
 Geen death-screen, geen respawn. De laatste hit komt uit `ALLOW_DAMAGE`.
 
-**Ronde 1, doolhof.** Start: poort en startpoort (`poort_start`) dicht, iedereen naar
-`doolhof_start`, basiskit, kisten vullen, border `doolhof`. Countdown; dan gaat de startpoort stil
-open en loopt de timer (`/doolhof timer`, standaard 15 minuten). Na
+**Ronde 1, doolhof.** `/doolhof start`: poort en startpoort (`poort_start`) dicht, iedereen naar
+`doolhof_start`, basiskit, kisten vullen, border `doolhof`. Dan wacht het doolhof, zoals Clown en
+FFA: bossbar `Doolhof · wacht op de start`, elke seconde `/doolhof wachttekst` in de actionbar;
+de startpoort houdt iedereen binnen. **`/doolhof go`** start de countdown; daarna gaat de
+startpoort stil open en loopt de timer (`/doolhof timer`, standaard 15 minuten). Na
 `/doolhof poort` minuten (standaard 4) gaat `poort_doolhof` open, met horn en title
 `DE UITGANG IS OPEN` zolang `/doolhof poortmelding` aan staat. De bossbar laat alleen de totale tijd
 zien, zodat niemand weet wanneer de uitgang opengaat. Elke 5 ticks: wie in `nep_n` staat krijgt
@@ -896,6 +901,7 @@ Eén bossbar, kort, altijd hetzelfde formaat. Persoonlijke info via de actionbar
 | Ronde | Tekst | Kleur | Vulling |
 |---|---|---|---|
 | Basiskamp | `Pudding Bootcamp` | wit | vol |
+| 1, voor `/doolhof go` | `Doolhof · wacht op de start` | groen | vol |
 | 1 | `Doolhof · 04:41` | groen, de laatste minuut rood | tijd; de poort staat er niet in |
 | 1, na de timer | `Doolhof · de tijd is om · gif` | paars | vol |
 | 2 | `Het Ei · 07:12` | groen, de laatste minuut rood | tijd |
