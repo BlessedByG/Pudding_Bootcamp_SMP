@@ -94,6 +94,8 @@ public final class Doolhof extends RondeLogica {
 	/** Wat de sidebar nu laat zien, zodat hij alleen bij een verandering opnieuw gaat. */
 	private String sidebarNu;
 	/** De timer is op: regio {@code doolhof_gif} is giftig tot iedereen een team heeft. */
+	/** Na het doolhof verzamelt iedereen in de finishruimte; pas na {@code /doolhof naarei} is {@code v2} het verzamelpunt. */
+	private static boolean naarEi;
 	private boolean gifLoopt;
 	private int gifSeconden;
 	/** Wie zelf over de finish kwam; wie in het gif doodging en daarna koos, telt niet mee. */
@@ -143,6 +145,7 @@ public final class Doolhof extends RondeLogica {
 
 	@Override
 	public void start(MinecraftServer server) {
+		naarEi = false;
 		Poorten.dichtAlsHijBestaat(server, POORT);
 		// Eerst dicht, dan pas iedereen de startruimte in: niemand staat in een opening.
 		Poorten.dichtAlsHijBestaat(server, START_POORT);
@@ -584,6 +587,28 @@ public final class Doolhof extends RondeLogica {
 		einde(server);
 	}
 
+	/** Of iedereen al naar het Ei is ({@code /doolhof naarei}); tot dan is de finishruimte het verzamelpunt. */
+	public static boolean naarEi() {
+		return naarEi;
+	}
+
+	/**
+	 * {@code /doolhof naarei}: iedereen die meedoet van de finishruimte naar {@code v2} bij het Ei.
+	 *
+	 * @return {@code null} als het gelukt is, anders waarom niet
+	 */
+	public static String naarHetEi(MinecraftServer server) {
+		if (Spel.actief() != null) {
+			return "er loopt nog een ronde (" + Spel.actief().ronde().naam() + ")";
+		}
+		naarEi = true;
+		for (ServerPlayer s : Mc.deelnemers(server)) {
+			Spel.naarPunt(s, "v2");
+		}
+		Mc.titleAllen(server, Mc.tekst("OP NAAR HET EI", ChatFormatting.GOLD, ChatFormatting.BOLD), null, 10, 50, 15);
+		return null;
+	}
+
 	@Override
 	public void onJoin(MinecraftServer server, ServerPlayer speler) {
 		SpelerStatus st = Spel.status(speler);
@@ -611,6 +636,8 @@ public final class Doolhof extends RondeLogica {
 		Spel.einde(server);
 		Bossbar.basiskamp();
 		Spel.maakSpelers(server, false);
+		// Het gif is het doolhof zonder de finishruimte: wie daar niet in staat, staat al goed.
+		Regio doolhof = Spel.regio("doolhof_gif");
 		for (ServerPlayer s : Mc.deelnemers(server)) {
 			if (Teams.keuze(s) == null) {
 				Kleur k = TeamKeuze.kleinste(Teams.aantallen(), Spel.RANDOM);
@@ -618,9 +645,12 @@ public final class Doolhof extends RondeLogica {
 				Spel.zetRol(server, s, Rol.SPELER);
 				Mc.actionbar(s, Mc.tekst("Je zit in " + k.naam(), Mc.kleur(k), ChatFormatting.BOLD));
 			}
-			// Ook wie al gefinisht was: die kan nog in het doolhof lopen.
 			Spel.status(s).klaar = true;
-			Spel.naarPunt(s, "v2");
+			// Iedereen verzamelt in de finishruimte: wie nog in het doolhof loopt gaat erheen, wie er
+			// al staat blijft staan. Naar het Ei pas met /doolhof naarei.
+			if (doolhof == null || doolhof.bevat(s.getX(), s.getZ())) {
+				Spel.naarPunt(s, "doolhof_finish");
+			}
 		}
 		Mc.titleAllen(server, Mc.tekst("DOOLHOF VOORBIJ", ChatFormatting.GOLD, ChatFormatting.BOLD),
 				Mc.tekst(gevonden + " van de " + totaal + " vonden de uitgang", ChatFormatting.WHITE), 10, 80, 20);

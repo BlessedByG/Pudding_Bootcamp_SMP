@@ -264,7 +264,8 @@ hele avond geldt (setup, spelers, noodknoppen) staat onder `/bc`.
 | Command | Doet |
 |---|---|
 | `/doolhof start\|stop\|resterend` | Ronde 1. |
-| `/doolhof einde` | Noodknop: het doolhof nu afsluiten zoals na het gif (kleinste team voor wie er nog geen heeft, iedereen naar `v2`). Bijvoorbeeld als iemand in de finishruimte blijft staan zonder te kiezen. |
+| `/doolhof einde` | Noodknop: het doolhof nu afsluiten zoals na het gif (kleinste team voor wie er nog geen heeft, iedereen naar de finishruimte). Bijvoorbeeld als iemand in de finishruimte blijft staan zonder te kiezen. |
+| `/doolhof naarei` | Na het doolhof: iedereen die meedoet van de finishruimte naar `v2` bij het Ei, title `OP NAAR HET EI`. Weigert zolang er een ronde loopt. |
 | `/doolhof timer [<minuten>]` | Hoe lang het doolhof duurt, standaard 15. |
 | `/doolhof poort [<minuten>]` | Na hoeveel minuten de poort van de uitgang opengaat, standaard 4. |
 | `/doolhof hint [<minuten>]` | Na hoeveel minuten de hint komt, standaard 10. |
@@ -401,8 +402,8 @@ hij de doos om alle delen heen; bij de cirkel van `vloer` is dat het vierkant er
 |---|---|
 | `basiskamp` | Spawn en reset. |
 | `doolhof_start` | De startruimte in het midden van het doolhof; ook waar een nep-uitgang je neerzet. |
-| `doolhof_finish` | In de finishruimte: waar wie tijdens het gif doodgaat neerkomt. Binnen regio `doolhof`, niet in `doolhof_gif`. |
-| `v2` | Verzamelpunt bij het Ei: als het doolhof voorbij is. |
+| `doolhof_finish` | In de finishruimte: waar wie tijdens het gif doodgaat neerkomt, en waar wie nog in het doolhof liep heen gaat als het doolhof voorbij is. Binnen regio `doolhof`, niet in `doolhof_gif`. |
+| `v2` | Verzamelpunt bij het Ei: na `/doolhof naarei`. |
 | `ei_spawn_1` t/m `ei_spawn_n` | De startplekken aan het buiteneinde van de kettingen. Zoveel als je wilt, genummerd vanaf 1. Spelers worden er om en om over verdeeld; na een dodelijke klap kom je terug op je eigen startplek. |
 | `v3` | Verzamelpunt bij de mob arena. |
 | `start_1_rood`, `start_1_blauw`, `start_1_groen`, `start_1_geel`, en hetzelfde met `start_2_` | De vier gekleurde startplekken in arena 1 en in arena 2: de speler van een team start altijd op het vlak in zijn eigen kleur. Zetten met `/mobarena startplek <arena> <kleur>`. |
@@ -570,8 +571,12 @@ vond. Het gif loopt tot iedereen een team heeft; `/doolhof einde` is de noodknop
 **Einde** (iedereen een team, of `/doolhof einde`): wie nog geen team heeft gaat naar het kleinste
 team (bij gelijk: willekeurig) en ziet in de actionbar `Je zit in Groen`; iedereen ziet de title
 `DOOLHOF VOORBIJ` met als subtitle `14 van de 20 vonden de uitgang` (wie zelf over de finish kwam),
-en iedereen naar `v2`, ook wie gefinisht nog in het doolhof loopt. `/doolhof start` begint zonder
-teams: het doolhof is de teamkeuze, dus oude keuzes gaan weg.
+en iedereen verzamelt in de finishruimte: wie nog in het doolhof loopt (regio `doolhof_gif`) gaat
+naar `doolhof_finish`, wie al in de finishruimte staat blijft staan. Daar kan de host de teams
+bespreken; **`/doolhof naarei`** zet daarna iedereen die meedoet naar `v2` bij het Ei, met de
+title `OP NAAR HET EI`. Tot dat command is de finishruimte ook het verzamelpunt voor wie
+tussendoor inlogt of in de void valt; daarna `v2`. `/doolhof start` begint
+zonder teams: het doolhof is de teamkeuze, dus oude keuzes gaan weg.
 
 **Welkom.** Wie joint terwijl er geen ronde loopt, krijgt de title `PUDDING BOOTCAMP` met als
 subtitle `Welkom, <naam>` en `block.note_block.chime`, alleen voor hem. Tijdens een ronde niet,

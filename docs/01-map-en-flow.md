@@ -54,7 +54,7 @@ Twee dingen houden het toch strak:
 | Van | Naar |
 |---|---|
 | Basiskamp | Startruimte in het midden van het doolhof |
-| Doolhof, als iedereen een team heeft of de timer op is | V2 bij het Ei |
+| Doolhof, als iedereen een team heeft | De finishruimte van het doolhof; met `/doolhof naarei` naar V2 bij het Ei |
 | Het Ei | V3 bij de mob arena |
 | Mob arena | De quiz: iedereen bij de bank van zijn team, Pudding op het podium |
 | Quiz | De tribune van de Arena, voor het Rad; na het Rad de vloer op |
@@ -102,7 +102,8 @@ Niemand gaat ooit in spectator mode en er zijn geen tp-items. Wie klaar is of af
 plek waar de rest ook komt en hangt daar tot de ronde voorbij is:
 
 - Over de finish van het doolhof, team gekozen: je blijft in het doolhof en mag terug naar
-  binnen om te helpen of loot te zoeken. Pas als het doolhof voorbij is ga je naar V2.
+  binnen om te helpen of loot te zoeken. Als het doolhof voorbij is verzamelt iedereen in de
+  finishruimte, en met `/doolhof naarei` gaat iedereen samen naar V2.
 - Dood in de mob arena: de rest van die beurt in de kooi in het midden van je arena, daarna op de
   tribune. Wie niet aan de beurt is, staat ook op de tribune.
 - Af in Clown vs All of de FFA: naar de tribune van de Arena.

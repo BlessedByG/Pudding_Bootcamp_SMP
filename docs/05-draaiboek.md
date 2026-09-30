@@ -11,7 +11,7 @@ Tijdschema, rollen en checklists voor de avond zelf. Tijden zijn een voorbeeld m
 | 19:55 | Host legt de regels uit, zonder Clown vs All te verklappen. | Host |
 | 20:00 | **Intro op stream.** Iedereen naar de startruimte van het doolhof, countdown. | Host, Admin 1 |
 | 20:02 | **Ronde 1: De Doolhof** (15 min, uitgang open na 4 min, hint na 10 min, teamkeuze bij de uitgang) | |
-| 20:18 | V2 bij het Ei: teams in beeld, praatje. | Host |
+| 20:18 | Iedereen in de finishruimte van het doolhof: teams in beeld, praatje. Dan `/doolhof naarei`: iedereen naar V2 bij het Ei. | Host, Admin 1 |
 | 20:20 | **Ronde 2: Het Ei** (15 min) | |
 | 20:36 | Winnaar van het Ei. Naar V3 bij de mob arena. | Host |
 | 20:38 | **Pauze** (5 min). | Host |
@@ -38,7 +38,7 @@ Wat de commander en de ref per ronde typen. Het volledige overzicht staat in
 
 | Ronde | Starten | Tijdens de ronde |
 |---|---|---|
-| 1 De Doolhof | `/doolhof start` | `/doolhof poort open`, `/doolhof resterend <sec>` |
+| 1 De Doolhof | `/doolhof start` | `/doolhof poort open`, `/doolhof resterend <sec>`, noodknop `/doolhof einde`; na afloop `/doolhof naarei` |
 | 2 Het Ei | `/ei start` | `/ei resterend <sec>` |
 | 3 De Mob Arena | `/mobarena start` | `/mobarena volgende` (elke volgende beurt), `/mobarena schema`, `/mobarena wave volgende` |
 | 4 De Quiz | `/quiz start` | Pudding doet het met de drie items; noodknoppen `/quiz draai`, `/quiz goed`, `/quiz fout`, `/quiz punt <kleur> [-1]`. Einde: `/quiz einde` (bij gelijke stand `/quiz winnaar <kleur>`) |
@@ -139,8 +139,10 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
       na 10 minuten met je eigen `/doolhof hinttekst` (`/doolhof resterend 305`), teammenu op de
       finishlijn met de hoofden per team (alleen de wol kiest), vol team is grijs, de sidebar laat
       de namen per team zien, na je keuze `GEFINISHT` en je kunt terug het doolhof in (mobs
-      en vallen werken dan nog), zodra iedereen een team heeft `DOOLHOF VOORBIJ` en iedereen naar
-      `v2`. Opnieuw joinen buiten een ronde: welkomsttitle.
+      en vallen werken dan nog), zodra iedereen een team heeft `DOOLHOF VOORBIJ`: wie nog in het
+      doolhof liep staat in de finishruimte, wie er al stond blijft staan; `/doolhof naarei` zet
+      iedereen naar `v2`. Opnieuw joinen buiten een ronde:
+      welkomsttitle.
 - [ ] Het gif: met twee accounts, één kiest geen team. Timer op (`/doolhof resterend 5`):
       `DE TIJD IS OM`, paarse bossbar, in het doolhof Poison en om de 2 seconden een hart eraf,
       in de finishruimte niets. Doodgaan in het gif: spullen weg behalve je steak, basiskit

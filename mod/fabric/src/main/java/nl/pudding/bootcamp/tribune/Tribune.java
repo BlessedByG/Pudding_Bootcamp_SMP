@@ -24,6 +24,7 @@ import nl.pudding.bootcamp.game.Aftelling;
 import nl.pudding.bootcamp.game.Reset;
 import nl.pudding.bootcamp.game.RondeLogica;
 import nl.pudding.bootcamp.game.Spel;
+import nl.pudding.bootcamp.game.ronde1.Doolhof;
 import nl.pudding.bootcamp.game.SpelerStatus;
 import nl.pudding.bootcamp.rad.KroonRad;
 import nl.pudding.bootcamp.teams.Teams;
@@ -170,7 +171,8 @@ public final class Tribune {
 	public static String verzamelpunt(ServerPlayer speler) {
 		return switch (Spel.ronde()) {
 			case BASISKAMP -> "basiskamp";
-			case DOOLHOF -> "v2";
+			// Na het doolhof eerst de finishruimte; na /doolhof naarei het Ei.
+			case DOOLHOF -> Doolhof.naarEi() ? "v2" : "doolhof_finish";
 			case EI -> "v3";
 			case MOBARENA -> {
 				// Na de mob arena naar de quiz: bij de bank van je team, de presentator op het podium.
