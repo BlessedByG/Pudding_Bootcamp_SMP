@@ -175,14 +175,33 @@ public final class ClownVsAll extends RondeLogica {
 			} else if (rol == Rol.JAGER) {
 				Spel.status(speler).dood = true;
 				Tribune.maakKijker(server, speler, Tribune.Spullen.LEGEN, true);
+				int over = over(server);
 				Arena.afMelding(server, Mc.naam(speler), ChatFormatting.AQUA,
-						killer == null ? null : Mc.naam(killer), ChatFormatting.GOLD, over(server));
+						killer == null ? null : Mc.naam(killer), ChatFormatting.GOLD, over);
+				// Bij de laatste kill komt de winnaar in beeld, niet de kill.
+				if (killer != null && Spel.status(killer).rol == Rol.KROON && !Regels.laatsteOver(over)) {
+					kroonKill(server, killer, speler, over);
+				}
 				sterkte(server);
 				controleerEinde(server);
 			}
 		} finally {
 			netDood.clear();
 		}
+	}
+
+	/**
+	 * Een kill van de kroonhouder is een prestatie: groot in beeld voor iedereen behalve de dode, die
+	 * zijn doodtekst ziet. Met de naam van wie de kroon nu heeft, dus niet altijd Clown.
+	 */
+	private void kroonKill(MinecraftServer server, ServerPlayer kroonhouder, ServerPlayer dode, int over) {
+		MutableComponent titel = Component.empty().append(Mc.kop(kroonhouder)).append(Component.literal(" "))
+				.append(Mc.tekst(Mc.naam(kroonhouder).toUpperCase(Locale.ROOT), ChatFormatting.GOLD, ChatFormatting.BOLD));
+		MutableComponent onder = Component.empty().append(Mc.tekst("pakt ", ChatFormatting.WHITE))
+				.append(Mc.tekst(Mc.naam(dode), ChatFormatting.AQUA))
+				.append(Mc.tekst(" · " + over + " over", ChatFormatting.GRAY));
+		Mc.titleAllenBehalve(server, netDood, titel, onder, 5, 40, 15);
+		Mc.geluidAllen(server, SoundEvents.RAVAGER_ROAR, 1f, 1f);
 	}
 
 	/**

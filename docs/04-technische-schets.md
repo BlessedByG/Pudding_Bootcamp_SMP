@@ -331,6 +331,7 @@ hele avond geldt (setup, spelers, noodknoppen) staat onder `/bc`.
 | `/bc team <speler> <rood\|blauw\|groen\|geel\|weg>` | Noodknop: iemand in een team zetten of de keuze weghalen. Mag boven het maximum. |
 | `/bc schrik <speler>` | Een jumpscare, met de hand. |
 | `/bc kijker <speler> aan\|uit` | Noodknop: iemand met de hand op de tribune zetten of eraf halen. |
+| `/bc doodtekst lijst\|nieuw <tekst>\|weg <nr>\|standaard` | De doodteksten bekijken, er een bijzetten, er een weghalen (op nummer uit de lijst; er blijft er minstens één) of de standaard zes terugzetten. Wordt meteen opgeslagen. |
 | `/bc reset` | Alles terug naar de basiskamp-staat via het reset-register; ook alle teamkeuzes weg en het Ei teruggezet. Instellingen blijven. |
 
 **Instellingen.** De timers (`/doolhof timer`, `/ei timer`), de momenten in het doolhof
@@ -886,6 +887,10 @@ effect. Bij het einde gaat Strength er bij iedereen af.
 `Speler3 is af door ClownPierce · 11 over`, of zonder killer `Speler3 is af · 11 over`, met de
 namen in hun teamkleur (aqua, goud). De dode ziet daarnaast zijn doodtekst als title.
 
+**Kill van de kroonhouder** (`kroonKill`): doodt de kroonhouder een jager en is de ronde daarna
+niet voorbij, dan krijgt iedereen behalve de dode een title: kop en naam van de kroonhouder in
+hoofdletters (goud), subtitle `pakt Speler3 · 11 over`, 5/40/15 ticks, en `entity.ravager.roar`.
+
 **Winnaar**: title met kop en `SPELER7 WINT KING OF THE HILL`, ook als het de uitverkorene is
 (geen aparte title voor Clown, die zou het rigged rad verraden); zonder winnaar
 `KING OF THE HILL IS VOORBIJ`. Vuurpijl erboven,
@@ -949,7 +954,10 @@ Geen spectator mode, geen tp-items, geen vliegen.
 - Mobs laten kijkers met rust (zie ronde 3).
 - Niet op de locator bar, geen Glowing.
 - Bij de dood een title met een willekeurige doodtekst, alleen voor de dode zelf. De lijst staat
-  in `bootcamp.json`.
+  in `bootcamp.json` en gaat in-game met `/bc doodtekst`. Standaard zes: `Grote L gepakt!`,
+  `Kleine L gepakt`, `Had je nou maar beter je best gedaan`, `Gelukkig is dit de CSMP niet..`,
+  `Dag 1...`, `Op de lijst..`. Staat in een oude `bootcamp.json` nog precies de oude standaard
+  (drie teksten), dan maakt de mod er bij het laden de nieuwe zes van.
 
 Waar kijkers heen gaan: ronde 3 bij een dood naar `kooi` tot het einde van die
 beurt, en anders naar `tribune_mob_n`; ronde 5 en 6 naar `tribune_n`. Clown zit tijdens de FFA ook op de
@@ -1037,6 +1045,7 @@ langzaam draaiend. Opgeruimd als de kroonhouder kijker wordt.
 | Wachten op `/clown go` | Bossbar `King of the Hill · wacht op de start`, actionbar `/clown wachttekst` (standaard `Wacht op het startsein`). |
 | Kroonhouder | Alleen voor hem in de actionbar: `Jij hebt de kroon · 11 jagers`. |
 | Af in Clown vs All | Chatregel voor iedereen: `Speler3 is af door ClownPierce · 11 over`. De dode ziet zijn doodtekst. |
+| Kill van de kroonhouder | Iedereen behalve de dode: title met kop en naam van de kroonhouder, subtitle `pakt Speler3 · 11 over`, brul van een ravager. Niet bij de laatste kill. |
 | Winnaar Clown vs All | Title met de kop van de winnaar en `SPELER7 WINT KING OF THE HILL`, ook als het de uitverkorene is. Vuurpijl erboven. |
 | Wachten op `/ffa go` | Bossbar `FFA · wacht op de start`, actionbar `/ffa wachttekst`. |
 | Af in de FFA | Chatregel voor iedereen: `Speler3 is af door Speler7 · 11 over`. |

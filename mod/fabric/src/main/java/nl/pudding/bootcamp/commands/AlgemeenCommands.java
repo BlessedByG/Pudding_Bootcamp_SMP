@@ -1,5 +1,6 @@
 package nl.pudding.bootcamp.commands;
 
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -15,6 +16,7 @@ import nl.pudding.bootcamp.Mc;
 import nl.pudding.bootcamp.config.ConfigStore;
 import nl.pudding.bootcamp.config.Standaardbestanden;
 import nl.pudding.bootcamp.core.BootcampConfig;
+import nl.pudding.bootcamp.core.Doodteksten;
 import nl.pudding.bootcamp.core.Kleur;
 import nl.pudding.bootcamp.core.Rol;
 import nl.pudding.bootcamp.game.Reset;
@@ -33,7 +35,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Stream;
 
-/** {@code /bc status|kit|team|schrik|kijker|reset}: wat voor de hele avond geldt, plus de noodknoppen. */
+/** {@code /bc status|kit|team|schrik|kijker|reset|doodtekst}: wat voor de hele avond geldt, plus de noodknoppen. */
 final class AlgemeenCommands {
 	private AlgemeenCommands() {
 	}
@@ -74,6 +76,52 @@ final class AlgemeenCommands {
 				.then(Commands.literal("aan").executes(ctx -> kijker(ctx, true)))
 				.then(Commands.literal("uit").executes(ctx -> kijker(ctx, false)))));
 		bc.then(Commands.literal("reset").executes(AlgemeenCommands::reset));
+		bc.then(Commands.literal("doodtekst")
+				.then(Commands.literal("lijst").executes(AlgemeenCommands::doodtekstLijst))
+				.then(Commands.literal("nieuw").then(Commands.argument("tekst", StringArgumentType.greedyString())
+						.executes(AlgemeenCommands::doodtekstNieuw)))
+				.then(Commands.literal("weg").then(Commands.argument("nummer", IntegerArgumentType.integer(1))
+						.executes(AlgemeenCommands::doodtekstWeg)))
+				.then(Commands.literal("standaard").executes(AlgemeenCommands::doodtekstStandaard)));
+	}
+
+	private static int doodtekstLijst(CommandContext<CommandSourceStack> ctx) {
+		List<String> teksten = ConfigStore.get().doodteksten();
+		StringBuilder sb = new StringBuilder("Doodteksten (willekeurig, alleen voor de dode):");
+		for (int i = 0; i < teksten.size(); i++) {
+			sb.append("\n  ").append(i + 1).append(". ").append(teksten.get(i));
+		}
+		return BcCommand.info(ctx, sb.toString());
+	}
+
+	private static int doodtekstNieuw(CommandContext<CommandSourceStack> ctx) {
+		String tekst = StringArgumentType.getString(ctx, "tekst").strip();
+		if (tekst.isEmpty()) {
+			return BcCommand.fout(ctx, "Geef de tekst.");
+		}
+		List<String> teksten = ConfigStore.get().doodteksten();
+		teksten.add(tekst);
+		return BcCommand.bewaard(ctx, "Doodtekst " + teksten.size() + " erbij: " + tekst);
+	}
+
+	private static int doodtekstWeg(CommandContext<CommandSourceStack> ctx) {
+		List<String> teksten = ConfigStore.get().doodteksten();
+		int nummer = IntegerArgumentType.getInteger(ctx, "nummer");
+		if (nummer > teksten.size()) {
+			return BcCommand.fout(ctx, "Er zijn maar " + teksten.size() + " doodteksten (/bc doodtekst lijst).");
+		}
+		if (teksten.size() == 1) {
+			return BcCommand.fout(ctx, "Er moet er minstens één blijven; zet er eerst een nieuwe bij.");
+		}
+		String weg = teksten.remove(nummer - 1);
+		return BcCommand.bewaard(ctx, "Doodtekst weg: " + weg);
+	}
+
+	private static int doodtekstStandaard(CommandContext<CommandSourceStack> ctx) {
+		List<String> teksten = ConfigStore.get().doodteksten();
+		teksten.clear();
+		teksten.addAll(Doodteksten.STANDAARD);
+		return BcCommand.bewaard(ctx, "De " + teksten.size() + " standaard doodteksten staan er weer.");
 	}
 
 	private static int kit(CommandContext<CommandSourceStack> ctx, Collection<ServerPlayer> spelers) {

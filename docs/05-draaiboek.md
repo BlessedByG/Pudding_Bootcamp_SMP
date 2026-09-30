@@ -211,7 +211,8 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
       een afgevallen jager komt in de chat, en de winnaar (ook Clown) krijgt "... WINT KING OF
       THE HILL". De bossbar zegt "King of the Hill". Beide hebben dezelfde full-diamond kit met 10 gapples, de
       kroonhouder heeft de kroon als diamond helm die niet af kan, en Strength II (jagers niks).
-      Bij nog 3 over heeft iedereen Strength I, ook de kroonhouder. Jager raakt jager:
+      Bij nog 3 over heeft iedereen Strength I, ook de kroonhouder. Killt de kroonhouder een
+      jager, dan ziet de rest zijn kop en naam groot met "pakt Speler3 · n over" en een brul. Jager raakt jager:
       geen schade. Kill de kroonhouder: kroon over, kroonpakket, reset. Laatste over wint.
 - [ ] `/ffa start`: iedereen behalve Clown op een willekeurige plek, Clown op de tribune,
       iedereen stil. Kit: dezelfde als King of the Hill met 32 gapples, gewone diamond helm.
@@ -220,6 +221,8 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
       Bij drie en twee over LAATSTE DRIE en LAATSTE TWEE. Laatste over: kroning op het podium,
       iedereen op de tribune, vuurwerk, KING OF THE SMP BOOTCAMP met de kop van de winnaar; de
       bossbar "King: <naam>" en de zwevende kroon blijven tot `/bc reset`.
+- [ ] `/bc doodtekst lijst` toont de zes teksten; `nieuw`, `weg <nr>` en `standaard` werken en
+      blijven na een herstart staan.
 - [ ] `/bc reset`: alles terug, ook de teams.
 - [ ] Alles wat niet klopt in één bericht terug, met de console-regels erbij.
 

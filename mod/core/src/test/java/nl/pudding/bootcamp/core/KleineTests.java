@@ -34,7 +34,8 @@ class KleineTests {
 			Random random = new Random(3);
 			assertTrue(Doodteksten.STANDAARD.contains(Doodteksten.kies(List.of(), random)));
 			assertTrue(Doodteksten.STANDAARD.contains(Doodteksten.kies(null, random)));
-			assertEquals(3, Doodteksten.STANDAARD.size());
+			assertEquals(6, Doodteksten.STANDAARD.size());
+			assertTrue(Doodteksten.STANDAARD.containsAll(List.of("Gelukkig is dit de CSMP niet..", "Dag 1...", "Op de lijst..", "Kleine L gepakt")));
 		}
 	}
 

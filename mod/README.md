@@ -190,7 +190,7 @@ onder *Commands*.
 | Quiz | `/quiz start\|stop`, `presentator [<speler>]`, `bank <kleur>`, `podium`, `lamp <kleur>`, `vuurwerk <kleur> <1\|2>`, `draai`, `goed`, `fout`, `punt <kleur> [<aantal>]`, `einde`, `winnaar <kleur>` |
 | Clown vs All | `/clown rad\|go\|start\|stop`, `uitverkoren [<speler>]`, `troon`, `jagerplek [<nr>]`, `vloer <diameter>`, `tribune [<nr>]`, `wachttekst [<tekst>]`, `kroon <speler>`, `krimp <grootte> [<sec>]` |
 | FFA | `/ffa start\|stop\|go`, `krimp <grootte> [<sec>]`, `wachttekst [<tekst>]` |
-| Algemeen | `/bc wand`, `region save\|add\|show\|list\|del`, `point set\|block\|tp\|list\|del`, `label zet\|weg`, `status`, `kit <naam> [<speler>]`, `team <speler> <kleur\|weg>`, `schrik <speler>`, `kijker <speler> aan\|uit`, `reset` |
+| Algemeen | `/bc wand`, `region save\|add\|show\|list\|del`, `point set\|block\|tp\|list\|del`, `label zet\|weg`, `status`, `kit <naam> [<speler>]`, `team <speler> <kleur\|weg>`, `schrik <speler>`, `kijker <speler> aan\|uit`, `doodtekst lijst\|nieuw <tekst>\|weg <nr>\|standaard`, `reset` |
 
 **Staff** is wie in creative of spectator staat: de mod blijft van ze af (geen teleport, geen kit,
 ze tellen niet mee). Zet host, camera's en admins dus in creative of spectator vóór een ronde.

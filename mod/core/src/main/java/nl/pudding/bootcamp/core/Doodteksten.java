@@ -7,6 +7,15 @@ import java.util.random.RandomGenerator;
 public final class Doodteksten {
 	public static final List<String> STANDAARD = List.of(
 			"Grote L gepakt!",
+			"Kleine L gepakt",
+			"Had je nou maar beter je best gedaan",
+			"Gelukkig is dit de CSMP niet..",
+			"Dag 1...",
+			"Op de lijst..");
+
+	/** De standaardlijst tot 30 september 2026. Staat die nog zo in bootcamp.json, dan wordt het de nieuwe. */
+	static final List<String> OUDE_STANDAARD = List.of(
+			"Grote L gepakt!",
 			"Had je nou maar beter je best gedaan",
 			"Gelukkig is dit niet de CSMP");
 

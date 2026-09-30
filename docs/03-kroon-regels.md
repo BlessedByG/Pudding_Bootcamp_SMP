@@ -60,9 +60,14 @@ Jagers kunnen elkaar dus niet in de weg zitten met zwaard of boog. Samenwerken i
 
 - Ga je dood, door de kroonhouder of door een val, dan ben je **af** en ga je de tribune op. Geen
   respawns.
-- Wie doodgaat ziet groot in beeld een van de doodteksten: **Grote L gepakt!**, **Had je nou maar
-  beter je best gedaan**, **Gelukkig is dit niet de CSMP**. Willekeurig, alleen voor de dode
-  zelf. De rest ziet een chatregel: "Speler3 is af door ClownPierce · 11 over".
+- Wie doodgaat ziet groot in beeld een van de doodteksten: **Grote L gepakt!**, **Kleine L
+  gepakt**, **Had je nou maar beter je best gedaan**, **Gelukkig is dit de CSMP niet..**, **Dag
+  1...** of **Op de lijst..**. Willekeurig, alleen voor de dode zelf. Aan te passen met
+  `/bc doodtekst`. De rest ziet een chatregel: "Speler3 is af door ClownPierce · 11 over".
+- **Een kill van de kroonhouder is een prestatie** en komt groot in beeld bij iedereen behalve de
+  dode: de kop en de naam van wie de kroon op dat moment heeft (niet altijd Clown), met eronder
+  "pakt Speler3 · 11 over", en de brul van een ravager. Bij de laatste kill niet: dan komt de
+  winnaar in beeld.
 
 ## De kroon wisselt: elke wissel is een reset
 
