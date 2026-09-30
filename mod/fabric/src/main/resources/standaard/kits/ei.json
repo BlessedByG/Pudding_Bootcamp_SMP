@@ -1,6 +1,6 @@
 {
   "clear": false,
-  "inventory": [
+  "hotbar": [
     "minecraft:diamond_pickaxe[minecraft:enchantments={\"minecraft:efficiency\":2}]"
   ]
 }

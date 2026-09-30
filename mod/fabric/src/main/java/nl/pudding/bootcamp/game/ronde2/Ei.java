@@ -11,6 +11,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.protocol.game.ClientboundSetHeldSlotPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -189,6 +190,7 @@ public final class Ei extends RondeLogica {
 		Kits.geefAan(server, "ei", spelers, stack -> Items26.markeer(stack, Items26.EI_TAG, null));
 		// Binnenin het Ei wordt het snel donker: Night Vision voor iedereen die meedoet.
 		for (ServerPlayer s : spelers) {
+			hotbarVoorHetEi(s);
 			nachtzicht(s);
 		}
 		Border.zet(server, Spel.regio("eigebied"));
@@ -473,6 +475,46 @@ public final class Ei extends RondeLogica {
 		chat(server, speler, Mc.tekst(" hakte een target: iedereen gehusseld", ChatFormatting.RED));
 	}
 
+	/**
+	 * Alleen de pickaxe in de hotbar: wat er uit het doolhof in zat gaat naar de inventory, en de
+	 * spullen uit {@code ei.json} komen vooraan, met slot 1 geselecteerd. Los van waar de kit ze zet.
+	 * Er gaat niets verloren: past het niet in de inventory, dan blijft het staan, en vooraan zetten
+	 * is ruilen.
+	 */
+	private static void hotbarVoorHetEi(ServerPlayer speler) {
+		Inventory inv = speler.getInventory();
+		int vrij = Inventory.SELECTION_SIZE;
+		for (int i = 0; i < Inventory.SELECTION_SIZE; i++) {
+			ItemStack s = inv.getItem(i);
+			if (s.isEmpty() || Items26.heeftTag(s, Items26.EI_TAG)) {
+				continue;
+			}
+			while (vrij < Inventory.INVENTORY_SIZE && !inv.getItem(vrij).isEmpty()) {
+				vrij++;
+			}
+			if (vrij >= Inventory.INVENTORY_SIZE) {
+				break;
+			}
+			inv.setItem(vrij, s);
+			inv.setItem(i, ItemStack.EMPTY);
+		}
+		int plek = 0;
+		for (int i = 0; i < Inventory.INVENTORY_SIZE && plek < Inventory.SELECTION_SIZE; i++) {
+			ItemStack s = inv.getItem(i);
+			if (!Items26.heeftTag(s, Items26.EI_TAG)) {
+				continue;
+			}
+			if (i != plek) {
+				inv.setItem(i, inv.getItem(plek));
+				inv.setItem(plek, s);
+			}
+			plek++;
+		}
+		inv.setSelectedSlot(0);
+		speler.connection.send(new ClientboundSetHeldSlotPacket(0));
+		speler.inventoryMenu.broadcastChanges();
+	}
+
 	/** Night Vision zonder deeltjes, zolang het Ei duurt. */
 	private static void nachtzicht(ServerPlayer speler) {
 		Mc.effect(speler, MobEffects.NIGHT_VISION, -1, 0);
@@ -665,6 +707,7 @@ public final class Ei extends RondeLogica {
 			st.eiSpawn = spawns.isEmpty() ? "ei_spawn_1" : spawns.get(Math.floorMod(volgendeSpawn++, spawns.size()));
 			// Nieuw in deze ronde: de pickaxe alsnog.
 			Kits.geefAan(server, "ei", List.of(speler), stack -> Items26.markeer(stack, Items26.EI_TAG, null));
+			hotbarVoorHetEi(speler);
 		}
 		Spel.naarPunt(speler, st.eiSpawn);
 		nachtzicht(speler);
