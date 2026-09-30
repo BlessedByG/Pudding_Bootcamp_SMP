@@ -38,15 +38,17 @@ Minecraft-imports, en alle command-literals uit docs/04 aanwezig.
 
 ## Het resource pack
 
-Het pack staat in [../pack/](../pack/). Foto van Clown (jpg of png, elk formaat) en het lachje
-(`clown_lach.ogg`) in `pack/aanleveren/`, dan vanuit de repo:
+Het pack staat in [../pack/](../pack/). De vijf jumpscare-foto's (`schrik_1.png` t/m `schrik_5.png`,
+jpg of png, elk formaat), het schrikgeluid (`schrik.ogg`) en de 8D-klop (`klop.ogg`, stereo) in
+`pack/aanleveren/`, dan vanuit de repo. Minecraft speelt alleen ogg vorbis: een wav eerst omzetten
+(Audacity of ffmpeg, zie `pack/aanleveren/LEESMIJ.txt`).
 
 ```
 java pack/BouwPack.java
 ```
 
-Dat maakt `pack/bootcamp-pack.zip` (foto, quiz-rad in 64 standen, fonts) en print de SHA-1. Zonder
-foto zit er een placeholder in, zonder lachje is de jumpscare stil. Zet de zip online, bijvoorbeeld
+Dat maakt `pack/bootcamp-pack.zip` (foto's, geluiden, quiz-rad in 64 standen, fonts) en print de
+SHA-1. Zonder foto zit er een placeholder in, zonder geluid is het stil. Zet de zip online, bijvoorbeeld
 als bijlage van een GitHub-release, en vul `server.properties` in:
 
 ```
@@ -185,14 +187,14 @@ onder *Commands*.
 
 | Ronde | Commands |
 |---|---|
-| Doolhof | `/doolhof start\|go\|stop\|einde\|naarei\|resterend <sec>`, `wachttekst [<tekst>]`, `timer [<min>]` (15), `poort [<min>]` (4), `hint [<min>]` (10), `hinttekst [<tekst>\|-]`, `poort open\|dicht`, `startpoort open\|dicht`, `poortmelding [aan\|uit]`, `valmobs [<min> [<max>]]` (3 t/m 10) |
+| Doolhof | `/doolhof start\|go\|stop\|einde\|naarei\|resterend <sec>`, `wachttekst [<tekst>]`, `timer [<min>]` (15), `poort [<min>]` (4), `hint [<min>]` (10), `hinttekst [<tekst>\|-]`, `poort open\|dicht`, `startpoort open\|dicht`, `poortmelding [aan\|uit]`, `valmobs [<min> [<max>]]` (3 t/m 10), `schrik [<nr> [<1..5\|random>]]` (foto per schrikplek) |
 | Het Ei | `/ei start\|stop\|resterend <sec>`, `timer [<min>]` (15), `blokken [<soort> <aantal>]`, `vastleggen`, `prijskader` |
 | Mob arena | `/mobarena start\|volgende\|schema\|stop`, `wave volgende`, `startplek <kleur> <1\|2>`, `warden [leven\|klap\|boom <hp>]`, `punten [<mob> <punten>]`, `veldhoogte [<blokken>]`, `aftekst [<tekst>]` |
 | Quiz | `/quiz start\|stop`, `presentator [<speler>]`, `bank <kleur>`, `podium`, `lamp <kleur>`, `vuurwerk <kleur> <1\|2>`, `draai`, `goed`, `fout`, `punt <kleur> [<aantal>]`, `einde`, `winnaar <kleur>` |
 | Clown vs All | `/clown rad\|go\|start\|stop`, `uitverkoren [<speler>]`, `troon`, `jagerplek [<nr>]`, `vloer <diameter>`, `tribune [<nr>]`, `wachttekst [<tekst>]`, `kroon <speler>`, `krimp <grootte> [<sec>]` |
 | FFA | `/ffa start\|stop\|go`, `krimp <grootte> [<sec>]`, `wachttekst [<tekst>]` |
 | Finale | `/finale start\|stop\|go`, `combatlog`, `crash`, `plek 1\|2`, `spelers [<speler1> <speler2>]`, `krimp <grootte> [<sec>]`, `wachttekst [<tekst>]` |
-| Algemeen | `/bc wand`, `region save\|add\|show\|list\|del`, `point set\|block\|tp\|list\|del`, `label zet\|weg`, `status`, `kit <naam> [<speler>]`, `team <speler> <kleur\|weg>`, `schrik <speler>`, `kijker <speler> aan\|uit`, `doodtekst lijst\|nieuw <tekst>\|weg <nr>\|standaard`, `reset` |
+| Algemeen | `/bc wand`, `region save\|add\|show\|list\|del`, `point set\|block\|tp\|list\|del`, `label zet\|weg`, `status`, `kit <naam> [<speler>]`, `team <speler> <kleur\|weg>`, `schrik <speler> [<foto>]`, `klop <speler>`, `kijker <speler> aan\|uit`, `doodtekst lijst\|nieuw <tekst>\|weg <nr>\|standaard`, `reset` |
 
 **Staff** is wie in creative of spectator staat: de mod blijft van ze af (geen teleport, geen kit,
 ze tellen niet mee). Zet host, camera's en admins dus in creative of spectator vóór een ronde.

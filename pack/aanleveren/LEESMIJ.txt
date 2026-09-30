@@ -1,13 +1,22 @@
-Hier komen de bestanden voor de jumpscare:
+Hier komen de bestanden voor de jumpscares:
 
-  clown.jpg, clown.jpeg of clown.png   De foto van Clown. Elk formaat en elke verhouding.
-                                       BouwPack schaalt hem vanzelf naar 476 pixels hoog.
-  clown_lach.ogg                       Het lachje, ogg vorbis (mono is het mooist).
-                                       Een mp3 of wav eerst omzetten, bijvoorbeeld met Audacity.
+  schrik_1.png t/m schrik_5.png   De vijf jumpscare-foto's (ook .jpg of .jpeg). Elk formaat en
+                                  elke verhouding; BouwPack schaalt ze vanzelf naar 476 pixels
+                                  hoog. In de mod heten ze foto 1 t/m 5.
+  schrik.ogg                      Het geluid bij elke jumpscare, ogg vorbis.
+  klop.ogg                        De 8D-klop uit de valkisten, ogg vorbis. Laat hem stereo:
+                                  Minecraft speelt stereo zonder richting af, dus het 8D-effect
+                                  blijft.
+
+Minecraft speelt alleen ogg vorbis. Een mp3 of wav eerst omzetten, bijvoorbeeld met Audacity
+(Bestand > Exporteren > Exporteren als OGG) of met ffmpeg:
+
+  ffmpeg -i "Jumpscare Sound Effect-(p).wav" -c:a libvorbis -q:a 5 schrik.ogg
+  ffmpeg -i "8d knock.wav" -c:a libvorbis -q:a 5 klop.ogg
 
 Daarna vanuit de repo:
 
   java pack/BouwPack.java
 
 Dat maakt pack/bootcamp-pack.zip en print de SHA-1 voor server.properties.
-Zonder foto komt er een placeholder in; zonder lachje is de jumpscare stil.
+Zonder foto komt er een placeholder in; zonder geluid is het stil.

@@ -4,6 +4,9 @@ bootcamp-pack.zip.tmp
 assets/bootcamp/textures/
 assets/bootcamp/sounds/
 assets/bootcamp/sounds.json
-# De aangeleverde foto en het lachje horen niet in de publieke repo
+# De aangeleverde foto's en geluiden horen niet in de publieke repo
 aanleveren/clown.*
 aanleveren/clown_lach.*
+aanleveren/schrik_*
+aanleveren/*.ogg
+aanleveren/*.wav

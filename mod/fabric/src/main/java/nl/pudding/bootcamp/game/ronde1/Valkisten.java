@@ -37,10 +37,10 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Valkisten: een trapped chest in regio {@code doolhof} heeft geen loot. Wie hem opent krijgt 50/50
- * de jumpscare, of om zich heen willekeurig {@code /doolhof valmobs} husks en silverfish (standaard
- * 3 t/m 10) die gewoon schade doen. Per speler gaat een kist één keer af; daarna gaat hij voor die
- * speler open als lege kist.
+ * Valkisten: een trapped chest in regio {@code doolhof} heeft geen loot. Wie hem opent krijgt 25% de
+ * jumpscare met een willekeurige foto, 25% de 8D-klop, of 50% om zich heen willekeurig
+ * {@code /doolhof valmobs} husks en silverfish (standaard 3 t/m 10) die gewoon schade doen. Per
+ * speler gaat een kist één keer af; daarna gaat hij voor die speler open als lege kist.
  */
 public final class Valkisten {
 	public static final String TAG = "bootcamp_valkist";
@@ -77,12 +77,14 @@ public final class Valkisten {
 		if (!gehad.computeIfAbsent(speler.getUUID(), k -> new HashSet<>()).add(sleutel(pos, state))) {
 			return false;
 		}
-		// Staan de mobs op 0, dan altijd de jumpscare.
-		if (Spel.instellingen().valMobsMax() == 0 || Regels.valkistGok(Spel.RANDOM) == Regels.Val.SCHRIK) {
-			Schrik.op(speler);
-		} else {
-			Mc.geluid(speler, SoundEvents.EVOKER_PREPARE_SUMMON, 1f, 1f);
-			spawn(speler);
+		// Staan de mobs op 0, dan de jumpscare of de klop.
+		switch (Regels.valkistGok(Spel.RANDOM, Spel.instellingen().valMobsMax() > 0)) {
+			case SCHRIK -> Schrik.op(speler);
+			case KLOP -> Schrik.klop(speler);
+			case MOBS -> {
+				Mc.geluid(speler, SoundEvents.EVOKER_PREPARE_SUMMON, 1f, 1f);
+				spawn(speler);
+			}
 		}
 		return true;
 	}

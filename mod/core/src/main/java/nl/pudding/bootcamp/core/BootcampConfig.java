@@ -367,6 +367,11 @@ public final class BootcampConfig {
 		valmobs.add(i.valMobsMin());
 		valmobs.add(i.valMobsMax());
 		doolhof.add("valmobs", valmobs);
+		if (!i.schrikFotos().isEmpty()) {
+			JsonObject fotos = new JsonObject();
+			i.schrikFotos().forEach(fotos::addProperty);
+			doolhof.add("schrikfotos", fotos);
+		}
 		doolhof.addProperty("wachttekst", i.doolhofWachttekst());
 		if (i.hinttekst() != null) {
 			doolhof.addProperty("hinttekst", i.hinttekst());
@@ -422,6 +427,11 @@ public final class BootcampConfig {
 			if (d.has("valmobs")) {
 				JsonArray v = d.getAsJsonArray("valmobs");
 				wrap("instellingen.doolhof.valmobs", () -> i.zetValMobs(v.get(0).getAsInt(), v.get(1).getAsInt()));
+			}
+			if (d.has("schrikfotos")) {
+				for (Map.Entry<String, JsonElement> e : d.getAsJsonObject("schrikfotos").entrySet()) {
+					wrap("instellingen.doolhof.schrikfotos." + e.getKey(), () -> i.zetSchrikFoto(e.getKey(), e.getValue().getAsInt()));
+				}
 			}
 			if (d.has("wachttekst")) {
 				wrap("instellingen.doolhof.wachttekst", () -> i.zetDoolhofWachttekst(d.get("wachttekst").getAsString()));

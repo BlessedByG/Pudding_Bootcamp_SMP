@@ -1,17 +1,25 @@
 package nl.pudding.bootcamp.commands;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.server.MinecraftServer;
+import nl.pudding.bootcamp.config.ConfigStore;
 import nl.pudding.bootcamp.core.Instellingen;
 import nl.pudding.bootcamp.core.Regels;
 import nl.pudding.bootcamp.core.Ronde;
 import nl.pudding.bootcamp.game.Poorten;
 import nl.pudding.bootcamp.game.Spel;
 import nl.pudding.bootcamp.game.ronde1.Doolhof;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /** {@code /doolhof}: ronde 1. */
 final class DoolhofCommand {
@@ -66,7 +74,66 @@ final class DoolhofCommand {
 						.executes(ctx -> valMobs(ctx, IntegerArgumentType.getInteger(ctx, "min"), IntegerArgumentType.getInteger(ctx, "min")))
 						.then(Commands.argument("max", IntegerArgumentType.integer(0, Instellingen.MAX_VAL_MOBS))
 								.executes(ctx -> valMobs(ctx, IntegerArgumentType.getInteger(ctx, "min"), IntegerArgumentType.getInteger(ctx, "max"))))));
+		cmd.then(Commands.literal("schrik")
+				.executes(DoolhofCommand::toonSchrikFotos)
+				.then(Commands.argument("nummer", IntegerArgumentType.integer(1, 200))
+						.executes(DoolhofCommand::toonSchrikFoto)
+						.then(Commands.argument("foto", StringArgumentType.word()).suggests(FOTOS)
+								.executes(DoolhofCommand::zetSchrikFoto))));
 		return cmd;
+	}
+
+	/** Foto 1 t/m 5, of willekeurig. */
+	private static final SuggestionProvider<CommandSourceStack> FOTOS = (ctx, b) -> {
+		List<String> opties = new ArrayList<>(List.of("random"));
+		for (int i = 1; i <= Regels.SCHRIK_FOTOS; i++) {
+			opties.add(String.valueOf(i));
+		}
+		return SharedSuggestionProvider.suggest(opties, b);
+	};
+
+	/** {@code /doolhof schrik}: elke schrikplek met zijn foto. */
+	private static int toonSchrikFotos(CommandContext<CommandSourceStack> ctx) {
+		List<String> plekken = Ronde.reeks("schrik_", ConfigStore.get().regios().keySet());
+		if (plekken.isEmpty()) {
+			return BcCommand.info(ctx, "Er zijn nog geen schrikplekken (/bc region save schrik_1).");
+		}
+		StringBuilder sb = new StringBuilder("Schrikplekken:");
+		for (String p : plekken) {
+			sb.append("\n  ").append(p).append(": ").append(fotoTekst(Spel.instellingen().schrikFoto(p)));
+		}
+		return BcCommand.info(ctx, sb.toString());
+	}
+
+	private static int toonSchrikFoto(CommandContext<CommandSourceStack> ctx) {
+		String plek = "schrik_" + IntegerArgumentType.getInteger(ctx, "nummer");
+		return BcCommand.info(ctx, plek + ": " + fotoTekst(Spel.instellingen().schrikFoto(plek)) + ".");
+	}
+
+	/** {@code /doolhof schrik <nr> <1..5|random>}: een vaste foto voor die plek, of willekeurig. */
+	private static int zetSchrikFoto(CommandContext<CommandSourceStack> ctx) {
+		String plek = "schrik_" + IntegerArgumentType.getInteger(ctx, "nummer");
+		String keuze = StringArgumentType.getString(ctx, "foto").toLowerCase(Locale.ROOT);
+		int foto;
+		if (keuze.equals("random") || keuze.equals("willekeurig")) {
+			foto = 0;
+		} else {
+			try {
+				foto = Integer.parseInt(keuze);
+			} catch (NumberFormatException e) {
+				foto = -1;
+			}
+		}
+		if (Instellingen.checkSchrikFoto(foto) != null) {
+			return BcCommand.fout(ctx, "Kies foto 1 t/m " + Regels.SCHRIK_FOTOS + " of random.");
+		}
+		Spel.instellingen().zetSchrikFoto(plek, foto);
+		String erbij = ConfigStore.get().regios().containsKey(plek) ? "" : " (de regio " + plek + " is er nog niet)";
+		return BcCommand.bewaard(ctx, plek + ": " + fotoTekst(foto) + "." + erbij);
+	}
+
+	private static String fotoTekst(int foto) {
+		return foto == 0 ? "willekeurige foto" : "foto " + foto;
 	}
 
 	/** Na {@code /doolhof start}: de countdown, daarna gaat de startpoort open. */
@@ -125,7 +192,7 @@ final class DoolhofCommand {
 		}
 		Spel.instellingen().zetValMobs(min, max);
 		return BcCommand.bewaard(ctx, max == 0
-				? "Een valkist geeft nu alleen de jumpscare, zonder mobs."
+				? "Een valkist geeft nu alleen de jumpscare of de 8D-klop, zonder mobs."
 				: "Uit een valkist komen nu " + aantal(min, max) + " mobs.");
 	}
 

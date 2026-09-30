@@ -4,6 +4,7 @@ import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * De instellingen per ronde uit {@code bootcamp.json}: timers, de momenten in het doolhof, de
@@ -59,6 +60,7 @@ public final class Instellingen {
 	private boolean poortMelding = true;
 	private int valMobsMin = VAL_MOBS_MIN;
 	private int valMobsMax = VAL_MOBS_MAX;
+	private final Map<String, Integer> schrikFotos = new TreeMap<>();
 	private String doolhofWachttekst = WACHTTEKST;
 	private int eiTimer = EI_TIMER;
 	private final EnumMap<EiBlok, Integer> eiBlokken = new EnumMap<>(EiBlok.class);
@@ -195,6 +197,33 @@ public final class Instellingen {
 		vereis(checkValMobs(min, max));
 		valMobsMin = min;
 		valMobsMax = max;
+	}
+
+	/** R1.6: de foto van een schrikplek ({@code schrik_3}), of 0 voor willekeurig. */
+	public int schrikFoto(String plek) {
+		return schrikFotos.getOrDefault(plek, 0);
+	}
+
+	/** De schrikplekken met een vaste foto; wat er niet in staat, is willekeurig. */
+	public Map<String, Integer> schrikFotos() {
+		return java.util.Collections.unmodifiableMap(schrikFotos);
+	}
+
+	public static String checkSchrikFoto(int foto) {
+		if (foto < 0 || foto > Regels.SCHRIK_FOTOS) {
+			return "kies foto 1 t/m " + Regels.SCHRIK_FOTOS + " of willekeurig, niet " + foto;
+		}
+		return null;
+	}
+
+	/** @param foto 1 t/m {@link Regels#SCHRIK_FOTOS}, of 0 voor willekeurig */
+	public void zetSchrikFoto(String plek, int foto) {
+		vereis(checkSchrikFoto(foto));
+		if (foto == 0) {
+			schrikFotos.remove(plek);
+		} else {
+			schrikFotos.put(plek, foto);
+		}
 	}
 
 	/** In de actionbar zolang het doolhof op {@code /doolhof go} wacht. */

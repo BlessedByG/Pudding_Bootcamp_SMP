@@ -24,7 +24,7 @@ getest moet worden, in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
 |---|---|
 | Fabric-server 26.2 + Fabric API | De server en de event/command-API. |
 | `bootcamp`-mod (deze repo, map `mod/`) | Alles wat hieronder staat. |
-| Server resource pack (deze repo, map `pack/`) | De foto van Clown en het lachje voor de jumpscare. |
+| Server resource pack (deze repo, map `pack/`) | De vijf jumpscare-foto's, het schrikgeluid en de 8D-klop. |
 | Simple Voice Chat (Fabric) | Voice. Puur proximity, de mod doet er niks mee. |
 | WorldEdit (Fabric) | Bouwen. Niet voor de spellogica. |
 
@@ -147,20 +147,26 @@ Het pack staat in `pack/` in deze repo. **Aanleveren** gaat in `pack/aanleveren/
 
 | Bestand | Eisen |
 |---|---|
-| `clown.jpg`, `clown.jpeg` of `clown.png` | De foto van Clown. **Elk formaat en elke verhouding**: vierkant, liggend of staand, zo groot als je wilt. |
-| `clown_lach.ogg` | Het lachje, ogg vorbis (mono is het mooist). Heb je een mp3 of wav, zet die dan eerst om, bijvoorbeeld met Audacity. |
+| `schrik_1.png` t/m `schrik_5.png` (ook `.jpg` of `.jpeg`) | De vijf jumpscare-foto's; in de mod heten ze foto 1 t/m 5. **Elk formaat en elke verhouding**: vierkant, liggend of staand, zo groot als je wilt. Een webp eerst omzetten naar png. |
+| `schrik.ogg` | Het geluid bij elke jumpscare, ogg vorbis. |
+| `klop.ogg` | De 8D-klop uit de valkisten, ogg vorbis. **Stereo laten**: Minecraft speelt een stereogeluid zonder richting af, dus het 8D-effect in het bestand blijft. |
+
+Minecraft speelt alleen ogg vorbis. Een wav of mp3 eerst omzetten, met Audacity (Bestand >
+Exporteren > Exporteren als OGG) of `ffmpeg -i in.wav -c:a libvorbis -q:a 5 uit.ogg`. BouwPack
+meldt het als er wel een `.wav` ligt maar geen `.ogg`.
 
 **Bouwen:** `java pack/BouwPack.java`. Alleen de JDK 25 is nodig, die je voor de mod toch al hebt,
 en het werkt ook op Windows zonder Git Bash. Het programma:
 
-1. leest de foto (jpg of png) en schaalt hem naar 476 pixels hoog, met behoud van de verhouding
-   (een heel brede foto wordt kleiner, tot 1428 pixels breed);
-2. zet het lachje erbij;
+1. leest de vijf foto's (jpg of png) en schaalt ze naar 476 pixels hoog, met behoud van de
+   verhouding (een heel brede foto wordt kleiner, tot 1428 pixels breed); een foto die er niet is,
+   wordt een placeholder met "foto N volgt";
+2. zet `schrik.ogg` en `klop.ogg` erbij (de klop streamt, want die is lang);
 3. tekent **het quiz-rad** (Java2D, niets aan te leveren): 64 standen van 484 × 484, elk 5,625°
    verder gedraaid, met de 16 vakken in de vaste volgorde uit *Ronde 4* in alleen de
    teamkleuren (rood `#E24B4A`, blauw `#378ADD`, groen `#639922`, geel `#EF9F27`), een donkere
    rand en naad tussen de vakken, een dop in het midden, en het pijltje vast bovenin;
-4. knipt de foto en elke stand van het rad in **tegels** en schrijft de fonts (zie hieronder);
+4. knipt de foto's en elke stand van het rad in **tegels** en schrijft de fonts (zie hieronder);
 5. zipt het pack naar `bootcamp-pack.zip` en print de SHA-1 voor `server.properties`.
 
 **Waarom tegels.** Minecraft 26.2 zet font-glyphs op vellen van 256 × 256 pixels; een glyph die
@@ -171,52 +177,57 @@ basislijn, de onderste eronder, dus het plaatje staat in het midden van het sche
 tegels weer aan elkaar met één tekst (`core`: `FontTegels`): na elke tegel een spatie van -1
 (U+F801, want een bitmap-glyph schuift één eenheid meer op dan hij breed is), na de bovenste rij
 een spatie terug over de hele breedte (U+F802). Elke tegel is een heel aantal font-eenheden breed
-(7 pixels per eenheid voor de foto, 11 voor het rad), anders ontstaat er een naad.
-- Jumpscare: tegel (rij r, kolom c) is U+E000 + 16r + c, tot zes kolommen; 34 eenheden per rij,
-  dus 68 hoog. Kolommen die een smallere foto niet nodig heeft zijn spaties van +1.
+(7 pixels per eenheid voor de foto's, 11 voor het rad), anders ontstaat er een naad.
+- Jumpscare: elke foto een eigen font `bootcamp:schrik_1` t/m `schrik_5`, zodat elke foto zijn
+  eigen spatie terug (U+F802) heeft. In elke font is tegel (rij r, kolom c) U+E000 + 16r + c, tot
+  zes kolommen; 34 eenheden per rij, dus 68 hoog. Kolommen die een smallere foto niet nodig heeft
+  zijn spaties van +1. De mod stuurt dus voor elke foto dezelfde tekst, in een andere font.
 - Quiz-rad: stand s is 2 × 2 tegels, U+E100 + 4s + 2r + c; 22 eenheden per rij, dus 44 hoog.
-- `PackFontTest` in het fabric-project haalt elke provider door de echte font-codec van 26.2 en
-  controleert de maten van de tegels.
+- `PackFontTest` in het fabric-project haalt elke provider van alle vijf foto's en het rad door
+  de echte font-codec van 26.2 en controleert de maten van de tegels.
 
-Online zetten als bijlage van een GitHub-release (de repo is public), en die URL in
-`resource-pack=`. Na een nieuwe foto: opnieuw bouwen, opnieuw uploaden, nieuwe SHA-1 invullen,
-server herstarten.
+Online zetten als bijlage van een GitHub-release (de repo is public, dus de foto's in de zip zijn
+dan openbaar), en die URL in `resource-pack=`. Na een nieuwe foto of geluid: opnieuw bouwen,
+opnieuw uploaden, nieuwe SHA-1 invullen, server herstarten.
 
 ```
 pack/
-  aanleveren/clown.jpg                        wat je aanlevert (jpg of png, elk formaat)
-  aanleveren/clown_lach.ogg
+  aanleveren/schrik_1.png … schrik_5.png      wat je aanlevert (jpg of png, elk formaat)
+  aanleveren/schrik.ogg, aanleveren/klop.ogg
   BouwPack.java                               bouwt het pack en de zip
   pack.mcmeta
-  assets/bootcamp/font/schrik.json            per tegel een bitmap-provider, plus de spaties
-  assets/bootcamp/textures/font/clown_R_C.png de tegels van de foto (rij R, kolom C), gemaakt door BouwPack
+  assets/bootcamp/font/schrik_N.json          per foto: per tegel een bitmap-provider, plus de spaties
+  assets/bootcamp/textures/font/schrik_N_R_C.png de tegels van foto N (rij R, kolom C), gemaakt door BouwPack
   assets/bootcamp/font/rad.json               per tegel een bitmap-provider (64 standen × 4), plus de spaties
   assets/bootcamp/textures/font/rad_SS_R_C.png de tegels van stand SS van het quiz-rad
-  assets/bootcamp/sounds.json                 bootcamp:clown_lach → sounds/clown_lach.ogg
-  assets/bootcamp/sounds/clown_lach.ogg       gekopieerd uit aanleveren/
+  assets/bootcamp/sounds.json                 bootcamp:schrik en bootcamp:klop
+  assets/bootcamp/sounds/schrik.ogg, klop.ogg gekopieerd uit aanleveren/
 ```
 
-De foto en het lachje levert Pudding aan, wanneer het uitkomt. Tot de foto er is tekent BouwPack
-een placeholder (een clownsgezicht met "foto volgt"); zonder lachje is de jumpscare stil, want
-een stil ogg-bestand kan BouwPack niet maken. Wat BouwPack maakt (`assets/bootcamp/textures/`, de
-zip) staat niet in git; de fonts en `pack.mcmeta` wel. Een foto die niet vierkant is, blijft in de jumpscare in zijn eigen verhouding:
-de breedte volgt de hoogte.
+De foto's en geluiden in `aanleveren/` staan niet in git (de repo is public); wat BouwPack maakt
+(`assets/bootcamp/textures/`, de geluiden, de zip) ook niet. De fonts en `pack.mcmeta` wel. Zonder
+geluid is het stil, want een stil ogg-bestand kan BouwPack niet maken. Een foto die niet vierkant
+is, blijft in de jumpscare in zijn eigen verhouding: de breedte volgt de hoogte.
 
-**De jumpscare** (`Schrik.op(speler)`): een title met de tegels van de foto in font
-`bootcamp:schrik`, fade-in 0, blijven 30 ticks, fade-out 10, plus `bootcamp:clown_lach` op volle
-sterkte, alleen voor die speler. Hoe groot hij op het scherm staat, bepalen `SCHRIK_EENHEDEN` en
-`SCHRIK_PX_PER_EENHEID` bovenin `BouwPack.java` (nu 68 eenheden hoog; een title tekent vier keer
-zo groot); afstemmen in de eerste test. Heeft een speler het pack niet (weigerde of
-downloadfout), dan ziet die lege vierkantjes en hoort niks; met `require-resource-pack=true` kan
-dat niet. `/bc schrik <speler>` doet een jumpscare met de hand,
-voor het testen en voor de lol.
+**De jumpscare** (`Schrik.op(speler, foto)`): een title met de tegels van foto 1 t/m 5 in font
+`bootcamp:schrik_N` (foto 0 = willekeurig, R1.6), fade-in 0, blijven 30 ticks, fade-out 10, plus
+`bootcamp:schrik` op volle sterkte, alleen voor die speler. Hoe groot hij op het scherm staat,
+bepalen `SCHRIK_EENHEDEN` en `SCHRIK_PX_PER_EENHEID` bovenin `BouwPack.java` (nu 68 eenheden hoog;
+een title tekent vier keer zo groot); afstemmen in de eerste test. Heeft een speler het pack niet
+(weigerde of downloadfout), dan ziet die lege vierkantjes en hoort niks; met
+`require-resource-pack=true` kan dat niet. `/bc schrik <speler> [<foto>]` doet een jumpscare met
+de hand (zonder foto een willekeurige), voor het testen en voor de lol.
+
+**De 8D-klop** (`Schrik.klop(speler)`): alleen het geluid `bootcamp:klop`, alleen voor die speler,
+geen beeld. `/bc klop <speler>` om te testen.
 
 Waar een jumpscare vandaan komt:
-- Doolhof: in een regio `schrik_1` t/m `schrik_n`, één keer per regio per speler.
-- Doolhof: een valkist (trapped chest) openen, één keer per kist per speler; de helft van de keren
-  (de andere helft komen er mobs).
-- Het Ei: een emerald block, bij een willekeurige andere levende deelnemer; iedereen ziet groot
-  wie naar wie.
+- Doolhof: in een regio `schrik_1` t/m `schrik_n`, één keer per regio per speler. Per plek een
+  vaste foto of willekeurig: `/doolhof schrik <nr> <1..5|random>`, standaard willekeurig.
+- Doolhof: een valkist (trapped chest) openen, één keer per kist per speler: 25% de jumpscare met
+  een willekeurige foto, 25% de 8D-klop, 50% mobs (R1.4).
+- Het Ei: een emerald block, bij een willekeurige andere levende deelnemer, met een willekeurige
+  foto; iedereen ziet groot wie naar wie.
 
 ## Modules
 
@@ -276,7 +287,8 @@ hele avond geldt (setup, spelers, noodknoppen) staat onder `/bc`.
 | `/doolhof poort open\|dicht` | De poort met de hand bedienen. |
 | `/doolhof startpoort open\|dicht` | De startpoort (`poort_start`) met de hand bedienen, om te testen. Open gaat stil, zoals bij de start van de timer. Dicht zet terug wat er stond. |
 | `/doolhof poortmelding [aan\|uit]` | Of iedereen de raid-hoorn hoort en de title `DE UITGANG IS OPEN` ziet als de uitgang opengaat, standaard `aan`. Met `uit` gaat de poort stil open (de wolkjes in de poort komen er wel). Geldt ook voor `/doolhof poort open`. Zonder argument: de huidige stand. Bewaard in `bootcamp.json`. |
-| `/doolhof valmobs [<min> [<max>]]` | Hoeveel mobs (husks en silverfish door elkaar) er uit een valkist komen: elke keer willekeurig van `<min>` t/m `<max>`, standaard 3 t/m 10. Met één getal altijd zoveel; `0` is alleen de jumpscare. Bewaard in `bootcamp.json`. |
+| `/doolhof schrik [<nr> [<foto>]]` | Welke foto schrikplek `schrik_<nr>` laat zien: `1` t/m `5` voor een vaste foto, `random` voor een willekeurige (standaard). Zonder foto: de huidige; zonder nummer: alle schrikplekken. Bewaard in `bootcamp.json`. |
+| `/doolhof valmobs [<min> [<max>]]` | Hoeveel mobs (husks en silverfish door elkaar) er uit een valkist komen: elke keer willekeurig van `<min>` t/m `<max>`, standaard 3 t/m 10. Met één getal altijd zoveel; `0` is alleen de jumpscare of de klop (50/50). Bewaard in `bootcamp.json`. |
 | `/ei start\|stop\|resterend` | Ronde 2. |
 | `/ei timer [<minuten>]` | Hoe lang het Ei duurt, standaard 15. |
 | `/ei blokken [<soort> <aantal>]` | Hoeveel blokken van een soort (`netherite`, `diamond`, `gold`, `redstone`, `emerald`, `tnt`, `glowstone`, `slime`, `target`) de mod in het Ei strooit. Zonder argumenten: het overzicht, met het aantal deepslate-plekken in het Ei. |
@@ -338,7 +350,8 @@ hele avond geldt (setup, spelers, noodknoppen) staat onder `/bc`.
 | `/bc status` | Rollen, teams en vlaggen van alle spelers, huidige ronde, timer en de instellingen. |
 | `/bc kit <naam> [<speler>]` | Zet een kit op iedereen die meedoet, of op één speler. |
 | `/bc team <speler> <rood\|blauw\|groen\|geel\|weg>` | Noodknop: iemand in een team zetten of de keuze weghalen. Mag boven het maximum. |
-| `/bc schrik <speler>` | Een jumpscare, met de hand. |
+| `/bc schrik <speler> [<foto>]` | Een jumpscare, met de hand: foto 1 t/m 5, zonder foto een willekeurige. |
+| `/bc klop <speler>` | De 8D-klop, met de hand (om te testen). |
 | `/bc kijker <speler> aan\|uit` | Noodknop: iemand met de hand op de tribune zetten of eraf halen. |
 | `/bc doodtekst lijst\|nieuw <tekst>\|weg <nr>\|standaard` | De doodteksten bekijken, er een bijzetten, er een weghalen (op nummer uit de lijst; er blijft er minstens één) of de standaard zes terugzetten. Wordt meteen opgeslagen. |
 | `/bc reset` | Alles terug naar de basiskamp-staat via het reset-register; ook alle teamkeuzes weg en het Ei teruggezet. Instellingen blijven. |
@@ -358,6 +371,7 @@ ronde. Een nieuw aantal puntenblokken geldt vanaf de volgende `/ei start`.
 | `/doolhof poortmelding` | aan | aan of uit |
 | `/doolhof wachttekst` | `Wacht op het startsein` | tot 60 tekens |
 | `/doolhof valmobs` | 3 t/m 10 | 0 tot 20, min niet boven max |
+| `/doolhof schrik` | per plek willekeurig | foto 1 t/m 5, of random |
 | `/ei timer` | 15 | 5 tot 60 |
 | `/ei blokken` | netherite 6, diamond 90, gold 120, redstone 10, emerald 10, tnt 10, glowstone 10, slime 10, target 5 (voorlopig; samen 271) | 0 of meer; samen niet meer dan de deepslate-plekken in het Ei |
 | `/mobarena punten` | zombie 1; skeleton, spider, cave spider 2; creeper 3; witch 4; vindicator 5; evoker 8; ravager 10; elk ander type 1 | 0 tot 100 |
@@ -408,7 +422,7 @@ hij de doos om alle delen heen; bij de cirkel van `vloer` is dat het vierkant er
 | `colosseum` | *Optioneel.* De hele Arena inclusief tribunes: border van ronde 5 en 6. Anders `vloer`. |
 | `doolhof_uit` | De finishlijn in de afgesloten ruimte achter de echte uitgang: wie erop staat en nog geen team heeft krijgt het teammenu. Een smalle lijn van één blok mag (de mod kijkt elke tick). Moet binnen regio `doolhof` liggen, anders weigert `/doolhof start`. |
 | `nep_1` t/m `nep_3` | De vakken aan het eind van de nep-gangen. |
-| `schrik_1` t/m `schrik_n` | Schrikplekken in het doolhof. Zoveel als je wilt, genummerd vanaf 1. |
+| `schrik_1` t/m `schrik_n` | Schrikplekken in het doolhof. Zoveel als je wilt, genummerd vanaf 1. Per plek een vaste foto of willekeurig met `/doolhof schrik`. |
 | `poort_doolhof` | De poort voor de echte uitgang, opent na `/doolhof poort` minuten. |
 | `poort_start` | De openingen van de startruimte, elk een deel (`save` + `add`). Zet er zelf barrier blocks in (of glas): tijdens de countdown kan niemand de startruimte uit. Bij de start van de timer haalt de mod ze stil weg (geen hoorn); bij de volgende `/doolhof start` zet hij ze terug, vóór iedereen de startruimte in gaat. Weet de mod na een herstart niet meer wat er stond, dan barrier. |
 | `doolhof_gif` | Het doolhof zelf, zonder de finishruimte (in delen als dat moet: `save` + `add`). Na de timer is het hier giftig. Punt `doolhof_finish` mag er niet in liggen, anders weigert `/doolhof start`. |
@@ -580,11 +594,11 @@ voor iedereen (`Speler7 zit in Rood (3/5)`) en blijft waar hij is. Wie gefinisht
 als hij terug naar binnen loopt, om anderen te helpen of meer loot te zoeken: loot, mobs, valkisten,
 schrikplekken en nep-uitgangen werken ook voor hem, en doodgaan zet hem terug in de startruimte.
 Zijn team houdt hij. Logt hij uit en weer in, dan gaat hij verder waar hij was. **Valkisten**: een
-trapped chest in regio `doolhof` heeft geen loot en gaat niet open. Wie hem opent krijgt 50/50
-(`core`: `Regels.valkistGok`) óf de jumpscare, óf om zich heen (binnen twee blokken, op een vrije
+trapped chest in regio `doolhof` heeft geen loot en gaat niet open. Wie hem opent krijgt (`core`:
+`Regels.valkistGok`) 25% de jumpscare met een willekeurige foto, 25% de 8D-klop, óf 50% om zich heen (binnen twee blokken, op een vrije
 plek met grond eronder) willekeurig `/doolhof valmobs` mobs (standaard 3 t/m 10), husks en
 silverfish door elkaar, elk op een eigen plek als dat past, met een wolkje en
-`entity.evoker.prepare_summon`. Staat `/doolhof valmobs` op 0, dan altijd de jumpscare. De mobs
+`entity.evoker.prepare_summon`. Staat `/doolhof valmobs` op 0, dan de jumpscare of de klop, 50/50. De mobs
 hebben de opener als doel en doen gewone schade; wie doodgaat, gaat terug naar `doolhof_start`. Per
 speler gaat een kist één keer af (een dubbele kist is één kist), daarna gaat hij voor die speler
 open als lege kist. Staff zet niets af. De mobs verdwijnen aan het einde van het doolhof en komen na
@@ -1055,11 +1069,12 @@ langzaam draaiend. Opgeruimd als de kroonhouder kijker wordt.
 | Joinen in het basiskamp | Title `PUDDING BOOTCAMP`, subtitle `Welkom, <naam>`, `block.note_block.chime`. Alleen voor wie joint, en niet tijdens een ronde. |
 | Countdown | Titles 5 t/m 1 in goud met een stijgende `note_block.pling`, dan `GO` met `event.raid.horn`. |
 | Poort doolhof open | Cloud-particles in de poort; met `/doolhof poortmelding aan` ook `event.raid.horn` voor iedereen en de title `DE UITGANG IS OPEN` in groen. |
-| Valkist | 50/50: de jumpscare voor wie hem opent, of mobs met `poof`-particles en `entity.evoker.prepare_summon`. |
+| Valkist | 25% de jumpscare (willekeurige foto) voor wie hem opent, 25% de 8D-klop, 50% mobs met `poof`-particles en `entity.evoker.prepare_summon`. |
 | Nep-uitgang | Explosie-particles, creeper-sis en knal, grapje als title, terug in de startruimte. |
 | Hint doolhof | Title `HINT` in geel, subtitle de hinttekst, voor wie nog binnen is. |
 | Doolhof voorbij | Title `DOOLHOF VOORBIJ`, subtitle `14 van de 20 vonden de uitgang`; wie in een team is gezet ziet in de actionbar `Je zit in Groen`. |
-| Jumpscare | Foto van Clown schermvullend, `bootcamp:clown_lach`. |
+| Jumpscare | Een van de vijf foto's schermvullend (vast per schrikplek, of willekeurig), `bootcamp:schrik`. |
+| 8D-klop | Alleen het geluid `bootcamp:klop`, stereo, alleen voor wie de valkist opende. |
 | Team gekozen | `entity.player.levelup`, je naam in de teamkleur, chatregel voor iedereen: `<naam> zit in Rood (3/5)`. |
 | Ei: punten | `entity.experience_orb.pickup`, actionbar met wat je erbij kreeg, je score en je plek. |
 | Ei: netherite | `+50` in paars in de actionbar, chatregel voor iedereen: `Speler7 hakte netherite (+50)`. |
