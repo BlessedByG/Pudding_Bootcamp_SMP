@@ -184,7 +184,7 @@ onder *Commands*.
 
 | Ronde | Commands |
 |---|---|
-| Doolhof | `/doolhof start\|stop\|einde\|resterend <sec>`, `timer [<min>]` (15), `poort [<min>]` (4), `hint [<min>]` (10), `hinttekst [<tekst>\|-]`, `poort open\|dicht`, `startpoort open\|dicht`, `poortmelding [aan\|uit]`, `valmobs [<min> [<max>]]` (3 t/m 10) |
+| Doolhof | `/doolhof start\|stop\|einde\|naarei\|resterend <sec>`, `timer [<min>]` (15), `poort [<min>]` (4), `hint [<min>]` (10), `hinttekst [<tekst>\|-]`, `poort open\|dicht`, `startpoort open\|dicht`, `poortmelding [aan\|uit]`, `valmobs [<min> [<max>]]` (3 t/m 10) |
 | Het Ei | `/ei start\|stop\|resterend <sec>`, `timer [<min>]` (15), `blokken [<soort> <aantal>]`, `vastleggen` |
 | Mob arena | `/mobarena start\|volgende\|schema\|stop`, `wave volgende`, `startplek <1\|2> <kleur>`, `punten [<mob> <punten>]`, `veldhoogte [<blokken>]`, `aftekst [<tekst>]` |
 | Quiz | `/quiz start\|stop`, `presentator [<speler>]`, `bank <kleur>`, `podium`, `lamp <kleur>`, `draai`, `goed`, `fout`, `punt <kleur> [<aantal>]`, `einde`, `winnaar <kleur>` |
@@ -202,7 +202,7 @@ seconde worden bijgezet, zodat je met `@a[tag=...]` kunt kijken. Zelf zetten hee
 
 | Ronde | Commander |
 |---|---|
-| 1 Doolhof | `/doolhof start`. Eindigt als iedereen een team heeft; na de timer wordt het doolhof giftig tot het zover is. Noodknop: `/doolhof einde`. |
+| 1 Doolhof | `/doolhof start`. Eindigt als iedereen een team heeft; na de timer wordt het doolhof giftig tot het zover is. Noodknop: `/doolhof einde`. Daarna staat iedereen in de finishruimte; `/doolhof naarei` zet iedereen bij het Ei (`v2`). |
 | 2 Het Ei | `/ei start`. Eindigt na de timer. |
 | 3 Mob arena | `/mobarena start` (beurt 1), daarna per beurt `/mobarena volgende`. Na de laatste beurt vanzelf de winnaar en, tien seconden later, iedereen zonder spullen naar zijn bank. |
 | 4 Quiz | `/quiz start`. Pudding draait met de nether star en keurt met de wol. `/quiz einde`, bij gelijkspel `/quiz winnaar <kleur>`. Tien seconden later iedereen naar de tribune van de Arena. |

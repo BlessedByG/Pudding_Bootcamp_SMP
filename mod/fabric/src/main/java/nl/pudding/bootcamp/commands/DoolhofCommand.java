@@ -50,6 +50,7 @@ final class DoolhofCommand {
 		cmd.then(RondeCommands.tekst("hinttekst", "De hinttekst", () -> Spel.instellingen().hinttekst(),
 				t -> Spel.instellingen().zetHinttekst(t)));
 		cmd.then(Commands.literal("einde").executes(DoolhofCommand::einde));
+		cmd.then(Commands.literal("naarei").executes(DoolhofCommand::naarEi));
 		cmd.then(Commands.literal("poortmelding")
 				.executes(DoolhofCommand::toonPoortMelding)
 				.then(Commands.literal("aan").executes(ctx -> poortMelding(ctx, true)))
@@ -72,6 +73,15 @@ final class DoolhofCommand {
 		}
 		doolhof.eindeNu(ctx.getSource().getServer());
 		return BcCommand.ok(ctx, "Doolhof voorbij: wie nog geen team had zit in het kleinste, iedereen is bij v2.");
+	}
+
+	/** Na het doolhof: iedereen van de finishruimte naar v2 bij het Ei. */
+	private static int naarEi(CommandContext<CommandSourceStack> ctx) {
+		String fout = Doolhof.naarHetEi(ctx.getSource().getServer());
+		if (fout != null) {
+			return BcCommand.fout(ctx, "Nog niet: " + fout + ".");
+		}
+		return BcCommand.ok(ctx, "Iedereen is naar v2, bij het Ei.");
 	}
 
 	private static int toonPoortMelding(CommandContext<CommandSourceStack> ctx) {
