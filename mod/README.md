@@ -191,7 +191,7 @@ onder *Commands*.
 | Quiz | `/quiz start\|stop`, `presentator [<speler>]`, `bank <kleur>`, `podium`, `lamp <kleur>`, `vuurwerk <kleur> <1\|2>`, `draai`, `goed`, `fout`, `punt <kleur> [<aantal>]`, `einde`, `winnaar <kleur>` |
 | Clown vs All | `/clown rad\|go\|start\|stop`, `uitverkoren [<speler>]`, `troon`, `jagerplek [<nr>]`, `vloer <diameter>`, `tribune [<nr>]`, `wachttekst [<tekst>]`, `kroon <speler>`, `krimp <grootte> [<sec>]` |
 | FFA | `/ffa start\|stop\|go`, `krimp <grootte> [<sec>]`, `wachttekst [<tekst>]` |
-| Finale | `/finale start\|stop\|go`, `plek 1\|2`, `spelers [<speler1> <speler2>]`, `krimp <grootte> [<sec>]`, `wachttekst [<tekst>]` |
+| Finale | `/finale start\|stop\|go`, `combatlog`, `crash`, `plek 1\|2`, `spelers [<speler1> <speler2>]`, `krimp <grootte> [<sec>]`, `wachttekst [<tekst>]` |
 | Algemeen | `/bc wand`, `region save\|add\|show\|list\|del`, `point set\|block\|tp\|list\|del`, `label zet\|weg`, `status`, `kit <naam> [<speler>]`, `team <speler> <kleur\|weg>`, `schrik <speler>`, `kijker <speler> aan\|uit`, `doodtekst lijst\|nieuw <tekst>\|weg <nr>\|standaard`, `reset` |
 
 **Staff** is wie in creative of spectator staat: de mod blijft van ze af (geen teleport, geen kit,
@@ -210,7 +210,7 @@ seconde worden bijgezet, zodat je met `@a[tag=...]` kunt kijken. Zelf zetten hee
 | 4 Quiz | `/quiz start`. Pudding draait met de nether star, keurt met de wol en geeft of pakt punten met de emerald. `/quiz einde`, bij gelijkspel `/quiz winnaar <kleur>`. Tien seconden later iedereen naar de tribune van de Arena. |
 | 5 Clown vs All | `/clown rad` (of `/clown start` zonder rad), iedereen staat bevroren klaar, dan `/clown go`. |
 | 6 FFA | `/ffa start`, dan `/ffa go`. De winnaar staat daarna in beeld en gaat door naar de finale. |
-| 7 Finale | `/finale start` (de winnaar van King of the Hill tegen die van de FFA; `/finale spelers` laat zien wie), dan `/finale go`. De kroning volgt vanzelf. Logt een finalist uit, dan stopt de finale: opnieuw `/finale start` en `/finale go` als hij terug is. |
+| 7 Finale | `/finale start` (de winnaar van King of the Hill tegen die van de FFA; `/finale spelers` laat zien wie), dan `/finale go`. De kroning volgt vanzelf. Logt een finalist uit, dan pauzeert de finale en kiest Pudding (als op): `/finale combatlog` (de ander wint) of `/finale crash` (stoppen; als hij terug is `/finale start` en `/finale go`). |
 
 Tussen twee rondes in is er geen border en geen PvP. Gaat er in een ronde iets mis in de mod zelf,
 dan breekt die ronde zichzelf af met een melding in de chat en de fout in de console; de server

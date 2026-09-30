@@ -52,6 +52,11 @@ public final class BossbarTekst {
 		return "De Finale · " + een + " tegen " + twee;
 	}
 
+	/** Een finalist is uitgelogd: de finale staat stil tot de commander kiest. */
+	public static String finalePauze(String weg) {
+		return "De Finale · " + weg + " is weg · Pudding beslist";
+	}
+
 	public static String king(String naam) {
 		return "Pudding Bootcamp · King: " + naam;
 	}

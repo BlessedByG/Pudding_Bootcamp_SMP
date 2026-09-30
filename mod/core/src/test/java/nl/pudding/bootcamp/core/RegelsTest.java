@@ -164,7 +164,7 @@ class RegelsTest {
 		assertEquals(Regels.QuitActie.KROON_WACHT, Regels.bijQuit(Ronde.CLOWN, Rol.KROON, false));
 		assertEquals(Regels.QuitActie.NIKS, Regels.bijQuit(Ronde.CLOWN, Rol.KIJKER, false));
 		assertEquals(Regels.QuitActie.DOOD, Regels.bijQuit(Ronde.FFA, Rol.FFA, false));
-		assertEquals(Regels.QuitActie.RONDE_STOPT, Regels.bijQuit(Ronde.FINALE, Rol.FFA, false));
+		assertEquals(Regels.QuitActie.PAUZE, Regels.bijQuit(Ronde.FINALE, Rol.FFA, false));
 		assertEquals(Regels.QuitActie.NIKS, Regels.bijQuit(Ronde.FINALE, Rol.KIJKER, false));
 		assertEquals(Regels.QuitActie.DOOD, Regels.bijQuit(Ronde.MOBARENA, Rol.SPELER, true));
 		assertEquals(Regels.QuitActie.NIKS, Regels.bijQuit(Ronde.MOBARENA, Rol.SPELER, false));

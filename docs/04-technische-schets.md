@@ -320,6 +320,8 @@ hele avond geldt (setup, spelers, noodknoppen) staat onder `/bc`.
 | `/ffa wachttekst [<tekst>]` | De tekst in de actionbar terwijl iedereen wacht op `/ffa go`, standaard `Wacht op het startsein`. Zonder tekst: de huidige laten zien. Bewaard in `bootcamp.json`. |
 | `/finale start\|stop` | Ronde 7: de winnaar van King of the Hill tegen de winnaar van de FFA, één tegen één, met de kroning aan het eind. `start` zet ze allebei bevroren klaar op `finale_1` en `finale_2`, de rest op de tribune. Geen timer. |
 | `/finale go` | Start de countdown van 10 seconden; daarna zijn ze los. |
+| `/finale combatlog` | Alleen als een finalist is uitgelogd (de finale pauzeert dan): het was een combat log, de ander wint en krijgt meteen de kroning. |
+| `/finale crash` | Alleen als een finalist is uitgelogd: het was een crash, de finale stopt zonder winnaar. Is hij terug, dan `/finale start` en `/finale go`. |
 | `/finale plek 1\|2` | Zet `finale_1` (de winnaar van King of the Hill) of `finale_2` (de winnaar van de FFA) op je positie, met je kijkrichting. |
 | `/finale spelers [<speler1> <speler2>]` | Zonder namen: de uitslag (winnaar King of the Hill, winnaar en nummer twee van de FFA) en wie de finale speelt. Met namen: de twee finalisten met de hand, `speler1` op `finale_1`. Noodknop, en om te testen. |
 | `/finale krimp <grootte> [<seconden>]` | De border laten krimpen als het stilvalt. Standaard in 60 seconden. |
@@ -967,8 +969,14 @@ start` (rood), actionbar `/finale wachttekst`. Na `/finale go` 10 seconden count
 bossbar `De Finale · ClownPierce tegen Speler7`. Border om `colosseum` (of `vloer`), krimpt alleen
 met `/finale krimp`. Een dode finalist wordt kijker met een doodtekst, chatregel `Speler7 is af
 door ClownPierce · 1 over`, en de ander krijgt meteen de kroning. Logt een finalist uit (R7.1),
-dan stopt de finale zonder winnaar met een rode chatregel voor iedereen; de commander start hem
-opnieuw. `/bc kijker <speler> uit` werkt niet tijdens de finale. `/bc reset` wist de uitslag.
+dan **pauzeert** de finale: een lopende countdown stopt, de ander wordt bevroren (`/finale go`
+weigert), bossbar `De Finale · Speler7 is weg · Pudding beslist` (rood), actionbar voor de ander
+`Speler7 is weg · even wachten`, en een gouden chatregel alleen voor de ops (en de console) met
+beide keuzes. Er wordt geen winnaar gecontroleerd zolang de pauze loopt. `/finale combatlog`:
+wie uitlogde telt als dood en de ander krijgt meteen de kroning, zonder melding over de combat
+log; is de ander ook weg, dan weigert het. `/finale crash`: de finale stopt, gele chatregel voor
+iedereen `De finale is gestopt en begint opnieuw zodra Speler7 terug is.`; de commander start hem
+opnieuw. Logt hij in tijdens de pauze, dan wordt hij kijker en krijgen de ops een melding. `/bc kijker <speler> uit` werkt niet tijdens de finale. `/bc reset` wist de uitslag.
 
 **Kroning** (na de finale): iedereen naar de tribune, de winnaar naar `troon` (het podium) met de kroon en de
 zweefkroon, twintig seconden vuurpijlen, title `KING OF THE SMP BOOTCAMP` met de kop en de naam
@@ -1093,6 +1101,7 @@ langzaam draaiend. Opgeruimd als de kroonhouder kijker wordt.
 | Winnaar FFA | Title met de kop van de winnaar en `SPELER7 WINT DE FFA`, vuurpijl, toast-geluid. |
 | Start finale | Title `DE FINALE` voor iedereen, subtitle met koppen `ClownPierce tegen Speler7`, `event.raid.horn`. |
 | Wachten op `/finale go` | Bossbar `De Finale · wacht op de start`, actionbar `/finale wachttekst`. |
+| Finalist uitgelogd | Bossbar `De Finale · Speler7 is weg · Pudding beslist`, actionbar voor de ander `Speler7 is weg · even wachten`, chatregel met de keuzes alleen voor de ops. |
 | `/clown krimp`, `/ffa krimp` | Title `DE BORDER KRIMPT` in rood, subtitle `naar 20 in 60 seconden`, `event.raid.horn`. Kijkers zien de title ook, maar merken niets van de border. |
 | Laatste drie, laatste twee | Title `LAATSTE DRIE` of `LAATSTE TWEE` in paars met de namen, `entity.wither.spawn` zacht. |
 | Kroning (na de finale) | Twintig seconden vuurpijlen, title `KING OF THE SMP BOOTCAMP` met de kop en de naam van de winnaar als subtitle. Daarna blijven de bossbar `Pudding Bootcamp · King: Speler7` en de zweefkroon tot `/bc reset`. |

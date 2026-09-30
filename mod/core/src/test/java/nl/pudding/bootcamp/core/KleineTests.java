@@ -150,6 +150,7 @@ class KleineTests {
 			assertEquals("FFA · 7 over", BossbarTekst.ffa(7));
 			assertEquals("De Finale · wacht op de start", BossbarTekst.FINALE_WACHT);
 			assertEquals("De Finale · ClownPierce tegen Speler7", BossbarTekst.finale("ClownPierce", "Speler7"));
+			assertEquals("De Finale · Speler7 is weg · Pudding beslist", BossbarTekst.finalePauze("Speler7"));
 			assertEquals("Pudding Bootcamp · King: Speler7", BossbarTekst.king("Speler7"));
 		}
 

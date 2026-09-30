@@ -20,6 +20,7 @@ import nl.pudding.bootcamp.core.Rol;
 import nl.pudding.bootcamp.core.Ronde;
 import nl.pudding.bootcamp.crown.Kroon;
 import nl.pudding.bootcamp.crown.Opstelling;
+import nl.pudding.bootcamp.game.Aftelling;
 import nl.pudding.bootcamp.game.Arena;
 import nl.pudding.bootcamp.game.Border;
 import nl.pudding.bootcamp.game.Reset;
@@ -43,14 +44,15 @@ import java.util.UUID;
  * Ronde 7: de finale in de Arena, één tegen één met de FFA-kit. De winnaar van King of the Hill
  * tegen de winnaar van de FFA; won één speler allebei, dan tegen de nummer twee van de FFA. De rest
  * kijkt vanaf de tribune. Wie wint is King of the SMP Bootcamp: meteen de kroning op het podium.
- * Logt een finalist uit, dan stopt de finale zonder winnaar en start de commander hem opnieuw.
+ * Logt een finalist uit, dan pauzeert de finale tot de staff kiest: combat log (de ander wint) of
+ * crash (de finale stopt en de commander start hem opnieuw).
  */
 public final class Finale extends RondeLogica {
 	private static final int VUURWERK_STRAAL = 14;
 	private static final int VUURPIJLEN_PER_SECONDE = 2;
 
 	private enum Fase {
-		VECHTEN, KRONING
+		VECHTEN, PAUZE, KRONING
 	}
 
 	private Fase fase = Fase.VECHTEN;
@@ -58,6 +60,9 @@ public final class Finale extends RondeLogica {
 	private final List<UUID> finalisten = new ArrayList<>();
 	private int kroning;
 	private UUID king;
+	/** In de pauze: de finalist die uitlogde. */
+	private UUID weg;
+	private String wegNaam;
 	private final Set<UUID> netDood = new HashSet<>();
 
 	public static void init() {
@@ -144,6 +149,9 @@ public final class Finale extends RondeLogica {
 
 	/** {@code /finale go}: de countdown van tien seconden, daarna zijn ze los. */
 	public String go(MinecraftServer server) {
+		if (fase == Fase.PAUZE) {
+			return wegNaam + " is weg; kies eerst /finale combatlog of /finale crash";
+		}
 		if (!Opstelling.wachtOpGo()) {
 			return "er staat niemand klaar";
 		}
@@ -174,18 +182,82 @@ public final class Finale extends RondeLogica {
 		}
 	}
 
-	/** R7.1: geen winnaar door een crash of een uitlogger. De finale stopt; de commander start hem opnieuw. */
+	/**
+	 * R7.1: een finalist logt uit. Geen winnaar door een crash, maar ook geen vrije uitweg voor een
+	 * combat log: de finale pauzeert, de ander staat stil, en de staff kiest.
+	 */
 	@Override
 	public void onQuit(MinecraftServer server, ServerPlayer speler) {
 		SpelerStatus st = Spel.status(speler);
 		if (fase != Fase.VECHTEN || st.dood
-				|| Regels.bijQuit(ronde(), st.rol, false) != Regels.QuitActie.RONDE_STOPT) {
+				|| Regels.bijQuit(ronde(), st.rol, false) != Regels.QuitActie.PAUZE) {
 			return;
 		}
-		String naam = Mc.naam(speler);
+		fase = Fase.PAUZE;
+		weg = speler.getUUID();
+		wegNaam = Mc.naam(speler);
+		// Een lopende countdown stopt; de ander staat stil tot er gekozen is.
+		Aftelling.stop();
+		Opstelling.wacht(server, Spel.levend(server, Rol.FFA).stream().filter(s -> s != speler).toList());
+		Bossbar.zet(BossbarTekst.finalePauze(wegNaam), BossEvent.BossBarColor.RED, 1f);
+		String ander = anderNaam();
+		Mc.chatOps(server, Mc.tekst("[bootcamp] " + wegNaam + " is uitgelogd tijdens de finale. Combat log: /finale combatlog ("
+				+ ander + " wint). Crash: /finale crash (de finale stopt; is " + wegNaam + " terug, dan /finale start en /finale go).",
+				ChatFormatting.GOLD));
+	}
+
+	/** {@code /finale combatlog}: wie uitlogde heeft verloren, de ander krijgt meteen de kroning. */
+	public String combatlog(MinecraftServer server) {
+		if (fase != Fase.PAUZE) {
+			return "er is geen finalist uitgelogd";
+		}
+		ServerPlayer winnaar = ander(server);
+		if (winnaar == null) {
+			return "de andere finalist is ook weg; kies /finale crash";
+		}
+		SpelerStatus st = Spel.status(weg);
+		if (st != null) {
+			st.dood = true;
+		}
+		kroning(server, winnaar);
+		return null;
+	}
+
+	/** {@code /finale crash}: de finale stopt zonder winnaar; de commander start hem opnieuw. */
+	public String crash(MinecraftServer server) {
+		if (fase != Fase.PAUZE) {
+			return "er is geen finalist uitgelogd";
+		}
+		String naam = wegNaam;
 		Spel.stop(server);
-		Mc.chatAllen(server, Mc.tekst("[bootcamp] " + naam + " is uitgelogd. De finale is gestopt en begint opnieuw zodra "
-				+ naam + " terug is (/finale start).", ChatFormatting.RED));
+		Mc.chatAllen(server, Mc.tekst("[bootcamp] De finale is gestopt en begint opnieuw zodra " + naam + " terug is.",
+				ChatFormatting.YELLOW));
+		return null;
+	}
+
+	/** In de pauze: wie uitlogde. */
+	public String wegNaam() {
+		return wegNaam;
+	}
+
+	/** De finalist die niet uitlogde, als hij nog online is en meedoet. */
+	private ServerPlayer ander(MinecraftServer server) {
+		for (UUID id : finalisten) {
+			ServerPlayer s = server.getPlayerList().getPlayer(id);
+			if (!id.equals(weg) && s != null && Spel.status(s).rol == Rol.FFA && !Spel.status(s).dood) {
+				return s;
+			}
+		}
+		return null;
+	}
+
+	private String anderNaam() {
+		for (UUID id : finalisten) {
+			if (!id.equals(weg)) {
+				return Spel.naamVan(id);
+			}
+		}
+		return "?";
 	}
 
 	private void controleerWinnaar(MinecraftServer server) {
@@ -217,6 +289,14 @@ public final class Finale extends RondeLogica {
 			if (kroning-- <= 0) {
 				Spel.einde(server);
 				Bossbar.basiskamp();
+			}
+			return;
+		}
+		if (fase == Fase.PAUZE) {
+			// Geen winnaar controleren: wie uitlogde telt niet als dood.
+			Bossbar.zet(BossbarTekst.finalePauze(wegNaam), BossEvent.BossBarColor.RED, 1f);
+			for (ServerPlayer s : Spel.levend(server, Rol.FFA)) {
+				Mc.actionbar(s, Mc.tekst(wegNaam + " is weg · even wachten", ChatFormatting.YELLOW));
 			}
 			return;
 		}
@@ -287,10 +367,17 @@ public final class Finale extends RondeLogica {
 		}
 		Spel.status(speler).dood = true;
 		Tribune.maakKijker(server, speler, Tribune.Spullen.LEGEN, false);
+		if (fase == Fase.PAUZE && speler.getUUID().equals(weg)) {
+			Mc.chatOps(server, Mc.tekst("[bootcamp] " + wegNaam + " is terug (op de tribune). Opnieuw: /finale crash, dan /finale start"
+					+ " en /finale go. Of toch /finale combatlog.", ChatFormatting.GOLD));
+		}
 	}
 
 	@Override
 	public String statusRegel(MinecraftServer server) {
+		if (fase == Fase.PAUZE) {
+			return "gepauzeerd: " + wegNaam + " is weg, kies /finale combatlog of /finale crash";
+		}
 		return fase == Fase.KRONING ? "kroning van " + Spel.naamVan(king)
 				: naam(0) + " tegen " + naam(1) + (Opstelling.wachtOpGo() ? ", wacht op /finale go" : "");
 	}

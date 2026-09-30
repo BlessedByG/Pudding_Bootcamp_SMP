@@ -474,8 +474,16 @@ tegen één. Wie wint is **King of the SMP Bootcamp**.
 **Regels**
 - Eén leven. Wie doodgaat, heeft verloren en gaat de tribune op (met een doodtekst).
 - **Geen timer.** Valt het stil, dan `/finale krimp <grootte> [<seconden>]`.
-- **Logt een finalist uit**, dan stopt de finale zonder winnaar. In de chat staat dat hij opnieuw
-  begint zodra die speler terug is; de commander doet dan `/finale start` en `/finale go`.
+- **Logt een finalist uit**, dan **pauzeert** de finale: de ander staat stil en de bossbar zegt
+  "Speler7 is weg · Pudding beslist". De ops krijgen een melding in de chat. Pudding kiest:
+  - **Combat log** (`/finale combatlog`): de ander wint en krijgt meteen de kroning. Geen melding
+    over de combat log, alleen de kroning.
+  - **Crash** (`/finale crash`): de finale stopt zonder winnaar, met in de chat dat hij opnieuw
+    begint zodra die speler terug is. Is hij terug, dan `/finale start` en `/finale go`.
+  Komt hij terug voordat er gekozen is, dan staat hij op de tribune en krijgen de ops een
+  melding; kiezen kan dan nog steeds.
+- De commands zijn alleen voor ops; Pudding moet dus op zijn, of hij laat de commander het
+  typen.
 
 **Einde**
 - De winnaar is **King of the SMP Bootcamp**. Meteen de **kroning** op het podium in het midden

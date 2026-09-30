@@ -1,6 +1,7 @@
 package nl.pudding.bootcamp;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.commands.Commands;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -83,6 +84,16 @@ public final class Mc {
 	/** Een chatregel voor iedereen. */
 	public static void chatAllen(MinecraftServer server, Component tekst) {
 		server.getPlayerList().broadcastSystemMessage(tekst, false);
+	}
+
+	/** Een chatregel alleen voor de ops (level 2), en in de console. Voor wat de staff moet beslissen. */
+	public static void chatOps(MinecraftServer server, Component tekst) {
+		for (ServerPlayer s : spelers(server)) {
+			if (Commands.hasPermission(Commands.LEVEL_GAMEMASTERS).test(s.createCommandSourceStack())) {
+				s.sendSystemMessage(tekst);
+			}
+		}
+		server.sendSystemMessage(tekst);
 	}
 
 	// Spelers

@@ -66,7 +66,7 @@ Dit is de lijst van het rondeplan van 25 september 2026 (taakplan 2). De regels 
 | R6.1 | Iedereen behalve de uitverkorene doet mee aan de FFA, ook wie in ronde 5 af was. | `Regels.ffaDeelnemers` | `RegelsTest.ffaZonderDeUitverkorene` |
 | R6.5 | Bij drie over `LAATSTE DRIE`, bij twee `LAATSTE TWEE`. | `Regels.aftelTitle` | `RegelsTest.laatsteDrieEnTwee` |
 | R6.6 | De finale: de winnaar van King of the Hill tegen de winnaar van de FFA; won dezelfde speler allebei, dan tegen de nummer twee van de FFA. Zonder twee namen geen finale. | `Regels.finalisten` | `RegelsTest.finaleKingOfTheHillTegenFfa` |
-| R7.1 | Uitloggen: een jager in ronde 5 en een FFA-speler zijn af; wie in de mob arena aan de beurt is telt als dood; logt een finalist uit, dan stopt de finale zonder winnaar; in de andere rondes gebeurt er niks. | `Regels.bijQuit` | `RegelsTest.quitRegels` |
+| R7.1 | Uitloggen: een jager in ronde 5 en een FFA-speler zijn af; wie in de mob arena aan de beurt is telt als dood; logt een finalist uit, dan pauzeert de finale tot de staff kiest (combat log of crash); in de andere rondes gebeurt er niks. | `Regels.bijQuit` | `RegelsTest.quitRegels` |
 | R7.2 | Terugkomen: doolhof naar de start (met een team: verder waar je was), Ei naar je eigen startplek, mob arena de tribune, quiz je bank, ronde 5, 6 en de finale kijker (de kroonhouder binnen zijn dertig seconden blijft kroonhouder). | `Regels.bijJoin` | `RegelsTest.joinRegels` |
 | R8.1 | Een kit is per slot een item in `/give`-syntax, met optioneel een aantal. Fouten noemen bestand en slot. | `KitDef` | `KitDefTest` |
 | R8.2 | De bossbar heeft per ronde een vast formaat. | `BossbarTekst`, `Tijd` | `BossbarTekstTest` |

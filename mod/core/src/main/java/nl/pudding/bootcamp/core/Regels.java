@@ -195,8 +195,8 @@ public final class Regels {
 		DOOD,
 		/** De kroonhouder is weg: dertig seconden aftellen, dan gaat de kroon door. */
 		KROON_WACHT,
-		/** De finale stopt zonder winnaar; de commander start hem opnieuw. */
-		RONDE_STOPT
+		/** De finale pauzeert tot de commander kiest: combat log (de ander wint) of crash (opnieuw). */
+		PAUZE
 	}
 
 	/**
@@ -213,7 +213,7 @@ public final class Regels {
 				default -> QuitActie.NIKS;
 			};
 			case FFA -> rol == Rol.FFA ? QuitActie.DOOD : QuitActie.NIKS;
-			case FINALE -> rol == Rol.FFA ? QuitActie.RONDE_STOPT : QuitActie.NIKS;
+			case FINALE -> rol == Rol.FFA ? QuitActie.PAUZE : QuitActie.NIKS;
 			default -> QuitActie.NIKS;
 		};
 	}

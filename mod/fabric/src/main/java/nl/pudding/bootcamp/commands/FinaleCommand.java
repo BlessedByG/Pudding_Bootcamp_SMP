@@ -27,6 +27,8 @@ final class FinaleCommand {
 		LiteralArgumentBuilder<CommandSourceStack> cmd = BcCommand.op("finale");
 		RondeCommands.startStop(cmd, Ronde.FINALE);
 		cmd.then(Commands.literal("go").executes(FinaleCommand::go));
+		cmd.then(Commands.literal("combatlog").executes(FinaleCommand::combatlog));
+		cmd.then(Commands.literal("crash").executes(FinaleCommand::crash));
 		cmd.then(Commands.literal("plek").then(Commands.argument("nummer", IntegerArgumentType.integer(1, 2))
 				.executes(FinaleCommand::plek)));
 		cmd.then(Commands.literal("spelers")
@@ -53,6 +55,34 @@ final class FinaleCommand {
 			return BcCommand.fout(ctx, "Kan niet: " + fout + ".");
 		}
 		return BcCommand.ok(ctx, "Tien seconden, dan zijn ze los.");
+	}
+
+	/** Een finalist logde uit en het was een combat log: de ander wint. */
+	private static int combatlog(CommandContext<CommandSourceStack> ctx) {
+		Finale ronde = RondeCommands.lopend(Finale.class);
+		if (ronde == null) {
+			return BcCommand.fout(ctx, "De finale loopt niet.");
+		}
+		String weg = ronde.wegNaam();
+		String fout = ronde.combatlog(ctx.getSource().getServer());
+		if (fout != null) {
+			return BcCommand.fout(ctx, "Kan niet: " + fout + ".");
+		}
+		return BcCommand.ok(ctx, "Combat log van " + weg + ": de ander wint, de kroning begint.");
+	}
+
+	/** Een finalist logde uit door een crash: de finale stopt, daarna opnieuw starten. */
+	private static int crash(CommandContext<CommandSourceStack> ctx) {
+		Finale ronde = RondeCommands.lopend(Finale.class);
+		if (ronde == null) {
+			return BcCommand.fout(ctx, "De finale loopt niet.");
+		}
+		String weg = ronde.wegNaam();
+		String fout = ronde.crash(ctx.getSource().getServer());
+		if (fout != null) {
+			return BcCommand.fout(ctx, "Kan niet: " + fout + ".");
+		}
+		return BcCommand.ok(ctx, "De finale is gestopt. Is " + weg + " terug, dan /finale start en /finale go.");
 	}
 
 	/** Plek 1 is voor de winnaar van King of the Hill, plek 2 voor de winnaar van de FFA. */
