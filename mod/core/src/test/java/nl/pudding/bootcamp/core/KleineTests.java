@@ -148,6 +148,9 @@ class KleineTests {
 			assertEquals("Quiz · draai het rad", BossbarTekst.quiz(null));
 			assertEquals("King of the Hill · Kroon: Clown · 12 over", BossbarTekst.clown("Clown", 12));
 			assertEquals("FFA · 7 over", BossbarTekst.ffa(7));
+			assertEquals("De Finale · wacht op de start", BossbarTekst.FINALE_WACHT);
+			assertEquals("De Finale · ClownPierce tegen Speler7", BossbarTekst.finale("ClownPierce", "Speler7"));
+			assertEquals("De Finale · Speler7 is weg · Pudding beslist", BossbarTekst.finalePauze("Speler7"));
 			assertEquals("Pudding Bootcamp · King: Speler7", BossbarTekst.king("Speler7"));
 		}
 

@@ -35,7 +35,11 @@ public enum Ronde {
 			List.of("troon", "jager_1", "tribune_1")),
 	FFA(6, "De FFA", "ffa", false,
 			List.of("vloer"),
-			List.of("troon", "jager_1", "tribune_1"));
+			List.of("troon", "jager_1", "tribune_1")),
+	// De winnaar van King of the Hill tegen de winnaar van de FFA, met de kroning aan het eind.
+	FINALE(7, "De Finale", "finale", false,
+			List.of("vloer"),
+			List.of("troon", "finale_1", "finale_2", "tribune_1"));
 
 	private final int nummer;
 	private final String naam;
@@ -82,7 +86,7 @@ public enum Ronde {
 
 	/** Speelt deze ronde in de Arena (tribune = {@code tribune_n}, terugkomers worden kijker)? */
 	public boolean inArena() {
-		return this == CLOWN || this == FFA;
+		return this == CLOWN || this == FFA || this == FINALE;
 	}
 
 	/** Spelen de vier teamkleuren mee (ronde 1 t/m 4)? */

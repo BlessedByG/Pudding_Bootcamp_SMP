@@ -17,7 +17,8 @@ import java.util.TreeMap;
 
 /**
  * De inhoud van {@code <wereld>/bootcamp.json}: regio's, punten, doodteksten, de grapjes van de
- * nep-uitgangen, de teamkeuzes, de uitverkorene, de presentator en de instellingen per ronde.
+ * nep-uitgangen, de teamkeuzes, de uitverkorene, de presentator, de uitslag voor de finale en de
+ * instellingen per ronde.
  * Geen coördinaten in code.
  *
  * <p>Spelers staan hier op naam, zodat de staff alles kan klaarzetten voordat iemand online is.
@@ -38,6 +39,9 @@ public final class BootcampConfig {
 	private final Map<String, Kleur> teams = new TreeMap<>();
 	private String uitverkoren;
 	private String presentator;
+	private String winnaarKing;
+	private String winnaarFfa;
+	private String tweedeFfa;
 	private Instellingen instellingen = new Instellingen();
 
 	public Map<String, Regio> regios() {
@@ -113,6 +117,39 @@ public final class BootcampConfig {
 		return presentator != null && naam != null && presentator.equals(sleutel(naam));
 	}
 
+	// Uitslag voor de finale
+
+	/** Winnaar van King of the Hill in kleine letters, of {@code null}. */
+	public String winnaarKing() {
+		return winnaarKing;
+	}
+
+	public void zetWinnaarKing(String naam) {
+		winnaarKing = naam == null ? null : sleutel(naam);
+	}
+
+	/** Winnaar van de FFA in kleine letters, of {@code null}. */
+	public String winnaarFfa() {
+		return winnaarFfa;
+	}
+
+	/** Wie in de FFA als laatste afviel, in kleine letters, of {@code null}. */
+	public String tweedeFfa() {
+		return tweedeFfa;
+	}
+
+	public void zetUitslagFfa(String winnaar, String tweede) {
+		winnaarFfa = winnaar == null ? null : sleutel(winnaar);
+		tweedeFfa = tweede == null ? null : sleutel(tweede);
+	}
+
+	/** {@code /bc reset}: een nieuwe avond, nog geen winnaars. */
+	public void wisUitslag() {
+		winnaarKing = null;
+		winnaarFfa = null;
+		tweedeFfa = null;
+	}
+
 	public static String sleutel(String naam) {
 		return naam.toLowerCase(Locale.ROOT);
 	}
@@ -159,6 +196,19 @@ public final class BootcampConfig {
 		}
 		if (presentator != null) {
 			root.addProperty("presentator", presentator);
+		}
+		if (winnaarKing != null || winnaarFfa != null || tweedeFfa != null) {
+			JsonObject u = new JsonObject();
+			if (winnaarKing != null) {
+				u.addProperty("kingofthehill", winnaarKing);
+			}
+			if (winnaarFfa != null) {
+				u.addProperty("ffa", winnaarFfa);
+			}
+			if (tweedeFfa != null) {
+				u.addProperty("ffa_tweede", tweedeFfa);
+			}
+			root.add("uitslag", u);
 		}
 		root.add("instellingen", instellingenNaarJson(instellingen));
 		return GSON.toJson(root);
@@ -221,6 +271,14 @@ public final class BootcampConfig {
 			}
 			if (root.has("presentator") && !root.get("presentator").isJsonNull()) {
 				c.zetPresentator(root.get("presentator").getAsString());
+			}
+			if (root.has("uitslag")) {
+				JsonObject u = root.getAsJsonObject("uitslag");
+				if (u.has("kingofthehill")) {
+					c.zetWinnaarKing(u.get("kingofthehill").getAsString());
+				}
+				c.zetUitslagFfa(u.has("ffa") ? u.get("ffa").getAsString() : null,
+						u.has("ffa_tweede") ? u.get("ffa_tweede").getAsString() : null);
 			}
 			if (root.has("instellingen")) {
 				c.instellingen = instellingenUitJson(root.getAsJsonObject("instellingen"));
@@ -341,6 +399,9 @@ public final class BootcampConfig {
 		JsonObject ffa = new JsonObject();
 		ffa.addProperty("wachttekst", i.ffaWachttekst());
 		o.add("ffa", ffa);
+		JsonObject finale = new JsonObject();
+		finale.addProperty("wachttekst", i.finaleWachttekst());
+		o.add("finale", finale);
 		return o;
 	}
 
@@ -410,6 +471,9 @@ public final class BootcampConfig {
 		}
 		if (o.has("ffa") && o.getAsJsonObject("ffa").has("wachttekst")) {
 			wrap("instellingen.ffa.wachttekst", () -> i.zetFfaWachttekst(o.getAsJsonObject("ffa").get("wachttekst").getAsString()));
+		}
+		if (o.has("finale") && o.getAsJsonObject("finale").has("wachttekst")) {
+			wrap("instellingen.finale.wachttekst", () -> i.zetFinaleWachttekst(o.getAsJsonObject("finale").get("wachttekst").getAsString()));
 		}
 		return i;
 	}

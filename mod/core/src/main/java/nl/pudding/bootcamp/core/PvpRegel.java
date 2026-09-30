@@ -8,6 +8,7 @@ package nl.pudding.bootcamp.core;
  * <tr><td>0 t/m 4</td><td>nooit (de mob arena is PvE)</td></tr>
  * <tr><td>5 Clown vs All</td><td>alleen als aanvaller of slachtoffer de kroonhouder is</td></tr>
  * <tr><td>6 FFA</td><td>altijd</td></tr>
+ * <tr><td>7 finale</td><td>altijd (alleen de twee finalisten doen mee)</td></tr>
  * <tr><td>opstelling of countdown</td><td>nooit</td></tr>
  * </table>
  */
@@ -27,7 +28,7 @@ public final class PvpRegel {
 		}
 		return switch (ronde) {
 			case CLOWN -> aanvaller == Rol.KROON || slachtoffer == Rol.KROON;
-			case FFA -> true;
+			case FFA, FINALE -> true;
 			default -> false;
 		};
 	}

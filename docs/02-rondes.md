@@ -12,17 +12,18 @@ Getallen zijn uitgangspunt voor 20 spelers: 4 teams van 5. Schaal ze mee met het
 | 3 | De Mob Arena | team | het team met de meeste punten uit mob-kills |
 | 4 | De Quiz | team | het team met de meeste goede antwoorden |
 | 5 | Clown vs All | solo | de laatste die overblijft |
-| 6 | De FFA | solo | de laatste die overblijft: King of the SMP Bootcamp |
+| 6 | De FFA | solo | de laatste die overblijft; die gaat door naar de finale |
+| 7 | De Finale | 1 tegen 1 | de winnaar: King of the SMP Bootcamp |
 
 Er is geen totaalstand over de avond: elke ronde met een winnaar staat op zichzelf.
 
 **Gear.** Je start het doolhof met de basiskit. Wat je in de doolhofkisten vindt houd je in het Ei
 en de mob arena. De pickaxe die je in het Ei krijgt, ben je na het Ei weer kwijt. **Na de mob arena levert iedereen alles in**: de quiz doe je zonder spullen (alleen
 Pudding krijgt zijn quiz-items). Bij Clown vs All krijgt iedereen dezelfde kit, en in de FFA weer
-(dezelfde kit met meer gapples).
+(dezelfde kit met meer gapples). De finale speel je met de FFA-kit.
 
-**PvP** staat de hele avond uit, behalve voor de kroonhouder in Clown vs All en voor iedereen in
-de FFA. De mod regelt dat, niet de teams.
+**PvP** staat de hele avond uit, behalve voor de kroonhouder in Clown vs All, voor iedereen in
+de FFA en voor de twee finalisten. De mod regelt dat, niet de teams.
 
 **Doodgaan.** De mod laat niemand echt doodgaan: geen death-screen, geen respawn. Wat er dan
 gebeurt hangt af van de ronde en staat per ronde hieronder. Wie uit een ronde ligt, gaat naar de
@@ -398,7 +399,7 @@ De volledige regels staan in [03-kroon-regels.md](03-kroon-regels.md). Hier het 
   onderin "Jij hebt de kroon · 11 jagers"; tijdens het wachten op `/clown go` ziet iedereen
   "Wacht op het startsein" (aan te passen met `/clown wachttekst`).
 - Clown doet niet mee aan de FFA, ook niet na een overwinning. Iedereen anders wel, ook wie
-  af was.
+  af was. De winnaar van King of the Hill speelt daarna de finale tegen de winnaar van de FFA.
 
 **Voice:** proximity. De tribune is publiek: de vloer hoort de doden.
 
@@ -408,7 +409,8 @@ De volledige regels staan in [03-kroon-regels.md](03-kroon-regels.md). Hier het 
 
 ## Ronde 6: De FFA
 
-**Doel:** laatste die overblijft. Die is **King of the SMP Bootcamp**.
+**Doel:** laatste die overblijft. Die gaat door naar **de finale** tegen de winnaar van King of
+the Hill.
 
 **Setup**
 - Dezelfde Arena als Clown vs All. Iedereen behalve Clown, full hp, **willekeurig verdeeld over de
@@ -436,11 +438,59 @@ De volledige regels staan in [03-kroon-regels.md](03-kroon-regels.md). Hier het 
 - Onderin ziet iedereen die nog vecht zijn eigen kills: "3 kills · 11 over".
 
 **Einde**
-- De laatste levende speler is **King of the SMP Bootcamp**.
-- Meteen daarna de **kroning** op het podium in het midden van de Arena: iedereen op de tribune,
-  de winnaar op het podium met de kroon, twintig seconden vuurpijlen, en voor iedereen in beeld
-  **KING OF THE SMP BOOTCAMP** met de kop en de naam. Geen prijs, just for fun.
+- De laatste levende speler wint de FFA: **SPELER7 WINT DE FFA** in beeld met zijn kop, een
+  vuurpijl erboven. Hij blijft op de vloer staan, de rest zit op de tribune.
+- Wie als laatste afviel is de **nummer twee**. Die is alleen nodig als de winnaar van de FFA ook
+  King of the Hill won (zie de finale).
+- De kills rechts blijven staan tot de finale begint.
+
+**Voice:** proximity. Clown zit op de tribune en mag meejoelen.
+
+---
+
+## Ronde 7: De Finale
+
+**Doel:** de laatste ronde. De winnaar van King of the Hill tegen de winnaar van de FFA, één
+tegen één. Wie wint is **King of the SMP Bootcamp**.
+
+**Wie speelt**
+- De winnaar van King of the Hill (meestal Clown) tegen de winnaar van de FFA. De mod onthoudt
+  beide winnaars, ook na een herstart van de server.
+- Won dezelfde speler King of the Hill én de FFA (een jager die King of the Hill won), dan speelt
+  hij tegen de **nummer twee van de FFA**: wie daar als laatste afviel.
+- Klopt er iets niet, of wil je testen: `/finale spelers <speler1> <speler2>` zet de twee met de
+  hand. `/finale spelers` laat zien wie het nu zijn.
+
+**Setup**
+- Dezelfde Arena, dezelfde vloer en border. De twee staan op hun eigen startplek: `finale_1` voor
+  de winnaar van King of the Hill, `finale_2` voor de winnaar van de FFA. Die zet je met
+  `/finale plek 1` en `/finale plek 2`, bijvoorbeeld tegenover elkaar, kijkend naar elkaar.
+- De rest gaat de tribune op.
+- Allebei krijgen ze de **FFA-kit**, full hp, geen effecten. Eigen spullen gaan weg.
+- In beeld voor iedereen: **DE FINALE** met de koppen en namen, "ClownPierce tegen Speler7", en de
+  raid horn.
+- **Allebei staan ze stil** tot de commander `/finale go` doet. Dan 10 seconden countdown en los.
+
+**Regels**
+- Eén leven. Wie doodgaat, heeft verloren en gaat de tribune op (met een doodtekst).
+- **Geen timer.** Valt het stil, dan `/finale krimp <grootte> [<seconden>]`.
+- **Logt een finalist uit**, dan **pauzeert** de finale: de ander staat stil en de bossbar zegt
+  "Speler7 is weg · Pudding beslist". De ops krijgen een melding in de chat. Pudding kiest:
+  - **Combat log** (`/finale combatlog`): de ander wint en krijgt meteen de kroning. Geen melding
+    over de combat log, alleen de kroning.
+  - **Crash** (`/finale crash`): de finale stopt zonder winnaar, met in de chat dat hij opnieuw
+    begint zodra die speler terug is. Is hij terug, dan `/finale start` en `/finale go`.
+  Komt hij terug voordat er gekozen is, dan staat hij op de tribune en krijgen de ops een
+  melding; kiezen kan dan nog steeds.
+- De commands zijn alleen voor ops; Pudding moet dus op zijn, of hij laat de commander het
+  typen.
+
+**Einde**
+- De winnaar is **King of the SMP Bootcamp**. Meteen de **kroning** op het podium in het midden
+  van de Arena: iedereen op de tribune, de winnaar op het podium met de kroon, twintig seconden
+  vuurpijlen, en voor iedereen in beeld **KING OF THE SMP BOOTCAMP** met de kop en de naam. Geen
+  prijs, just for fun.
 - Daarna blijft de King zichtbaar: de bossbar "Pudding Bootcamp · King: Speler7" en de zwevende
   kroon boven de winnaar, tot `/bc reset`.
 
-**Voice:** proximity. Clown zit op de tribune en mag meejoelen.
+**Voice:** proximity. De hele tribune kijkt mee.

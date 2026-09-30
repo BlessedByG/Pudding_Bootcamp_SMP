@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class RondeTest {
 	@Test
 	void nummersEnCommandos() {
-		assertEquals(List.of(Ronde.BASISKAMP, Ronde.DOOLHOF, Ronde.EI, Ronde.MOBARENA, Ronde.QUIZ, Ronde.CLOWN, Ronde.FFA),
+		assertEquals(List.of(Ronde.BASISKAMP, Ronde.DOOLHOF, Ronde.EI, Ronde.MOBARENA, Ronde.QUIZ, Ronde.CLOWN, Ronde.FFA, Ronde.FINALE),
 				List.of(Ronde.values()));
 		for (Ronde r : Ronde.values()) {
 			assertEquals(r.ordinal(), r.nummer());
@@ -25,6 +25,7 @@ class RondeTest {
 		assertEquals("quiz", Ronde.QUIZ.commando());
 		assertEquals("clown", Ronde.CLOWN.commando());
 		assertEquals("ffa", Ronde.FFA.commando());
+		assertEquals("finale", Ronde.FINALE.commando());
 		assertNull(Ronde.BASISKAMP.commando());
 	}
 
@@ -39,6 +40,7 @@ class RondeTest {
 	void arenaEnTeams() {
 		assertTrue(Ronde.CLOWN.inArena());
 		assertTrue(Ronde.FFA.inArena());
+		assertTrue(Ronde.FINALE.inArena());
 		assertFalse(Ronde.MOBARENA.inArena());
 		for (Ronde r : Ronde.values()) {
 			assertEquals(r.nummer() >= 1 && r.nummer() <= 4, r.metTeams(), r.name());
@@ -50,7 +52,7 @@ class RondeTest {
 		for (Ronde r : Ronde.values()) {
 			assertEquals(r, Ronde.vanNummer(r.nummer()));
 		}
-		assertNull(Ronde.vanNummer(7));
+		assertNull(Ronde.vanNummer(8));
 	}
 
 	@Test
@@ -58,6 +60,7 @@ class RondeTest {
 		assertEquals(List.of("doolhof", "doolhof_uit", "poort_doolhof", "poort_start", "doolhof_gif", "doolhof_start", "doolhof_finish", "v2"),
 				Ronde.DOOLHOF.ontbreekt(Set.of(), Set.of()));
 		assertEquals(List.of("troon"), Ronde.CLOWN.ontbreekt(Set.of("vloer"), Set.of("jager_1", "tribune_1")));
+		assertEquals(List.of("finale_2"), Ronde.FINALE.ontbreekt(Set.of("vloer"), Set.of("troon", "finale_1", "tribune_1")));
 		List<String> mob = Ronde.MOBARENA.ontbreekt(Set.of("mobarena", "veld"), Set.of());
 		assertTrue(mob.contains("start_geel_2"));
 		assertTrue(mob.contains("kooi"));

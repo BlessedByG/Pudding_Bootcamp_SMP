@@ -2,24 +2,23 @@ package nl.pudding.bootcamp.game.ronde6;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.level.GameType;
 import nl.pudding.bootcamp.Mc;
+import nl.pudding.bootcamp.config.ConfigStore;
 import nl.pudding.bootcamp.core.BossbarTekst;
 import nl.pudding.bootcamp.core.Klassement;
-import nl.pudding.bootcamp.core.Punt;
 import nl.pudding.bootcamp.core.Regels;
 import nl.pudding.bootcamp.core.Rol;
 import nl.pudding.bootcamp.core.Ronde;
 import nl.pudding.bootcamp.crown.Kroon;
 import nl.pudding.bootcamp.crown.Opstelling;
 import nl.pudding.bootcamp.game.Arena;
-import nl.pudding.bootcamp.game.Border;
 import nl.pudding.bootcamp.game.RondeLogica;
 import nl.pudding.bootcamp.game.Spel;
 import nl.pudding.bootcamp.game.SpelerStatus;
@@ -33,29 +32,24 @@ import nl.pudding.bootcamp.visuals.Vuurwerk;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
 /**
  * Ronde 6: de FFA in de Arena. Iedereen behalve de uitverkorene, ook wie in Clown vs All af was,
- * met dezelfde kit. Geen timer: de laatste die overblijft is King of the SMP Bootcamp. Daarna meteen
- * de kroning op het podium in het midden.
+ * met dezelfde kit. Geen timer: de laatste die overblijft wint en speelt de finale tegen de winnaar
+ * van King of the Hill. De kroning komt na de finale.
  */
 public final class Ffa extends RondeLogica {
-	private static final int VUURWERK_STRAAL = 14;
-	private static final int VUURPIJLEN_PER_SECONDE = 2;
 	private static final int PAARS = 0xAA00AA;
 
-	private enum Fase {
-		VECHTEN, KRONING
-	}
-
-	private Fase fase = Fase.VECHTEN;
+	private boolean voorbij;
+	/** Wie als laatste afviel: de nummer twee, voor de finale. */
+	private String laatsteAf;
 	private final Klassement kills = new Klassement();
 	private int bijStart;
 	private int laatstGemeld = Integer.MAX_VALUE;
-	private int kroning;
-	private UUID king;
 	private final Set<UUID> netDood = new HashSet<>();
 
 	@Override
@@ -130,7 +124,7 @@ public final class Ffa extends RondeLogica {
 
 	@Override
 	public void onDeath(MinecraftServer server, ServerPlayer speler, DamageSource bron) {
-		if (fase != Fase.VECHTEN || Spel.status(speler).rol != Rol.FFA) {
+		if (voorbij || Spel.status(speler).rol != Rol.FFA) {
 			return;
 		}
 		netDood.add(speler.getUUID());
@@ -144,11 +138,12 @@ public final class Ffa extends RondeLogica {
 				kills.voegToe(killer.getUUID(), 1);
 				toonSidebar(server);
 			}
+			laatsteAf = Mc.naam(speler);
 			Spel.status(speler).dood = true;
 			Tribune.maakKijker(server, speler, Tribune.Spullen.LEGEN, true);
 			int over = Spel.levend(server, Rol.FFA).size();
 			Arena.afMelding(server, Mc.naam(speler), ChatFormatting.WHITE, killer == null ? null : Mc.naam(killer), ChatFormatting.WHITE, over);
-			// LAATSTE DRIE en TWEE gaan voor de kill; bij de laatste kill komt de kroning.
+			// LAATSTE DRIE en TWEE gaan voor de kill; bij de laatste kill komt de winnaar.
 			if (!laatsten(server, over) && killer != null && over > 1) {
 				killInBeeld(server, killer, speler, over);
 			}
@@ -161,7 +156,8 @@ public final class Ffa extends RondeLogica {
 
 	@Override
 	protected void naQuitDood(MinecraftServer server, ServerPlayer speler) {
-		if (fase == Fase.VECHTEN) {
+		if (!voorbij) {
+			laatsteAf = Mc.naam(speler);
 			// Hij telt al als dood, dus hij zit niet meer in de telling.
 			int over = Spel.levend(server, Rol.FFA).size();
 			Arena.afMelding(server, Mc.naam(speler), ChatFormatting.WHITE, null, ChatFormatting.WHITE, over);
@@ -210,12 +206,12 @@ public final class Ffa extends RondeLogica {
 	}
 
 	private void controleerWinnaar(MinecraftServer server) {
-		if (fase != Fase.VECHTEN) {
+		if (voorbij) {
 			return;
 		}
 		List<ServerPlayer> over = Spel.levend(server, Rol.FFA);
 		if (over.size() == 1) {
-			kroning(server, over.get(0));
+			einde(server, over.get(0));
 		} else if (over.isEmpty()) {
 			// Iedereen tegelijk weg (de laatste twee logden uit): de ref beslist.
 			Spel.stop(server);
@@ -233,14 +229,6 @@ public final class Ffa extends RondeLogica {
 
 	@Override
 	public void seconde(MinecraftServer server) {
-		if (fase == Fase.KRONING) {
-			vuurwerk(server);
-			if (kroning-- <= 0) {
-				Spel.einde(server);
-				Bossbar.basiskamp();
-			}
-			return;
-		}
 		int over = Spel.levend(server, Rol.FFA).size();
 		if (Opstelling.wachtOpGo()) {
 			Bossbar.zet(BossbarTekst.FFA_WACHT, BossEvent.BossBarColor.PURPLE, 1f);
@@ -265,69 +253,38 @@ public final class Ffa extends RondeLogica {
 		Sidebar.toonScores(server, "Kills", regels);
 	}
 
-	// De kroning
+	// Einde
 
-	private void kroning(MinecraftServer server, ServerPlayer winnaar) {
-		fase = Fase.KRONING;
-		king = winnaar.getUUID();
-		kroning = Regels.KRONING_VUURWERK;
-		Opstelling.losIedereen(server);
-		Border.weg(server);
-		// Iedereen op de tribune; de winnaar op het podium met de kroon en de zweefkroon.
-		for (ServerPlayer s : Mc.deelnemers(server)) {
-			if (s != winnaar && Spel.status(s).rol != Rol.KIJKER) {
-				Spel.status(s).dood = true;
-				Tribune.maakKijker(server, s, Tribune.Spullen.LEGEN, false);
-			}
-		}
-		winnaar.removeAllEffects();
+	/** De laatste die overblijft wint de FFA en gaat door naar de finale; de kroning komt daarna. */
+	private void einde(MinecraftServer server, ServerPlayer winnaar) {
+		voorbij = true;
+		ConfigStore.get().zetUitslagFfa(Mc.naam(winnaar), laatsteAf);
+		ConfigStore.bewaar();
+		Spel.einde(server);
+		Bossbar.basiskamp();
+		MutableComponent titel = Component.empty().append(Mc.kop(winnaar)).append(Component.literal(" "))
+				.append(Mc.tekst(Mc.naam(winnaar).toUpperCase(Locale.ROOT) + " WINT DE FFA", ChatFormatting.GOLD, ChatFormatting.BOLD));
+		Mc.titleAllenBehalve(server, netDood, titel, null);
+		Vuurwerk.goud(Mc.wereld(server), winnaar.getX(), winnaar.getY() + 2, winnaar.getZ());
 		Mc.heal(winnaar);
-		Kroon.geef(server, winnaar);
-		Kroon.zetKing(king);
-		Spel.naarPunt(winnaar, "troon");
-		Mc.titleAllenBehalve(server, netDood, Mc.tekst("KING OF THE SMP BOOTCAMP", ChatFormatting.GOLD, ChatFormatting.BOLD),
-				Mc.kopEnNaam(winnaar, ChatFormatting.YELLOW, ChatFormatting.BOLD), 10, 200, 30);
 		Mc.geluidAllen(server, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 1f, 1f);
-		// De bossbar met de King blijft staan tot /bc reset, net als de zweefkroon.
-		Bossbar.king(Mc.naam(winnaar));
-	}
-
-	/** Twintig seconden vuurpijlen rond het podium. */
-	private void vuurwerk(MinecraftServer server) {
-		Punt p = Spel.punt("troon");
-		if (p == null) {
-			return;
-		}
-		ServerLevel wereld = Mc.wereld(server);
-		for (int i = 0; i < VUURPIJLEN_PER_SECONDE; i++) {
-			double x = p.x() + (Spel.RANDOM.nextDouble() * 2 - 1) * VUURWERK_STRAAL;
-			double z = p.z() + (Spel.RANDOM.nextDouble() * 2 - 1) * VUURWERK_STRAAL;
-			Vuurwerk.goud(wereld, x, p.y() + 4 + Spel.RANDOM.nextInt(8), z);
-		}
 	}
 
 	@Override
 	public void onJoin(MinecraftServer server, ServerPlayer speler) {
-		if (fase == Fase.KRONING && speler.getUUID().equals(king)) {
-			// De winnaar relogt tijdens zijn eigen kroning: hij houdt zijn kroon.
-			Kroon.geef(server, speler);
-			Spel.naarPunt(speler, "troon");
-			return;
-		}
 		Spel.status(speler).dood = true;
 		Tribune.maakKijker(server, speler, Tribune.Spullen.LEGEN, false);
 	}
 
 	@Override
 	public String statusRegel(MinecraftServer server) {
-		return fase == Fase.KRONING ? "kroning van " + Spel.naamVan(king)
-				: Spel.levend(server, Rol.FFA).size() + " over" + (Opstelling.wachtOpGo() ? ", wacht op /ffa go" : "");
+		return Spel.levend(server, Rol.FFA).size() + " over" + (Opstelling.wachtOpGo() ? ", wacht op /ffa go" : "");
 	}
 
 	@Override
 	public void end(MinecraftServer server) {
-		// De sidebar met de kills blijft na de kroning staan tot de volgende ronde of /bc reset.
-		if (fase != Fase.KRONING) {
+		// De sidebar met de kills blijft na de winst staan tot de finale of /bc reset.
+		if (!voorbij) {
 			Sidebar.weg(server);
 		}
 	}

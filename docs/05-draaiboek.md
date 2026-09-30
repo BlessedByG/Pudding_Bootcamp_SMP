@@ -22,14 +22,16 @@ Tijdschema, rollen en checklists voor de avond zelf. Tijden zijn een voorbeeld m
 | 21:28 | **Ronde 5: King of the Hill** (intern Clown vs All; iedereen stil tot `/clown go`, dan 10 sec countdown, geen timer, reken op 10 tot 20 min) | Admin 1 |
 | 21:45 | Winnaar. Iedereen behalve Clown de vloer op. | Admin 1 |
 | 21:47 | **Ronde 6: De FFA** (iedereen stil tot `/ffa go`, dan 10 sec countdown, geen timer, reken op 5 tot 10 min) | Admin 1 |
-| 21:58 | **Kroning** op het podium in het midden van de Arena, tribunes vol. | Host |
-| 22:10 | Einde stream. | |
+| 21:58 | Winnaar FFA. `/finale spelers`: wie speelt de finale? Host kondigt aan: de winnaar van King of the Hill tegen de winnaar van de FFA. | Host, Admin 1 |
+| 22:00 | **Ronde 7: De Finale** (1 tegen 1, stil tot `/finale go`, dan 10 sec countdown, geen timer, reken op 2 tot 5 min) | Admin 1 |
+| 22:05 | **Kroning** op het podium in het midden van de Arena, tribunes vol. | Host |
+| 22:15 | Einde stream. | |
 
 Totaal ruim 1,5 uur speeltijd, plan 2 uur en een kwartier met buffer. De tijden van het doolhof
 en het Ei volgen hun timers (`/doolhof timer`, `/ei timer`); zet je die om, schuift het schema
-mee. De mob arena, Clown vs All en de FFA hebben geen timer; die kunnen uitlopen. Tussen de
+mee. De mob arena, Clown vs All, de FFA en de finale hebben geen timer; die kunnen uitlopen. Tussen de
 beurten van de mob arena bepaalt de host het tempo. Loopt het echt uit, dan kan de ref een wave
-forceren (`/mobarena wave volgende`) of de border laten krimpen (`/clown krimp`, `/ffa krimp`).
+forceren (`/mobarena wave volgende`) of de border laten krimpen (`/clown krimp`, `/ffa krimp`, `/finale krimp`).
 
 ## Commando's per ronde
 
@@ -44,6 +46,7 @@ Wat de commander en de ref per ronde typen. Het volledige overzicht staat in
 | 4 De Quiz | `/quiz start` | Pudding doet het met de vier items (ook het puntenmenu); noodknoppen `/quiz draai`, `/quiz goed`, `/quiz fout`, `/quiz punt <kleur> [-1]`. Einde: `/quiz einde` (bij gelijke stand `/quiz winnaar <kleur>`) |
 | 5 Clown vs All | `/clown rad`, dan `/clown go` op het sein van Pudding | `/clown kroon <speler>`, `/clown krimp <grootte>` |
 | 6 De FFA | `/ffa start`, dan `/ffa go` op het sein van Pudding | `/ffa krimp <grootte>` als het stilvalt |
+| 7 De Finale | `/finale start`, dan `/finale go` op het sein van Pudding | `/finale krimp <grootte>` als het stilvalt; `/finale spelers` laat zien wie er speelt; logt een finalist uit, dan pauzeert de finale: Pudding kiest `/finale combatlog` (de ander wint) of `/finale crash` (daarna opnieuw `/finale start`) |
 
 Elke ronde stopt met `/<ronde> stop`. Voor de hele avond: `/bc status`, `/bc team`,
 `/bc kijker`, `/bc reset`.
@@ -67,6 +70,7 @@ Vooraf instellen, in minuten (blijft bewaard):
 | `/mobarena warden` | leven 200, klap 8, boom 5 (HP; 2 HP is één hartje) |
 | `/clown wachttekst` | "Wacht op het startsein" |
 | `/ffa wachttekst` | "Wacht op het startsein" |
+| `/finale wachttekst` | "Wacht op het startsein" |
 
 Na elke bouwwijziging aan het Ei: `/ei vastleggen`.
 
@@ -114,7 +118,8 @@ zit, maar de commander moet alleen commander zijn.
    twee tribuneringen (alleen de onderste in gebruik). Daarna `/clown troon` op het podium,
    `/clown jagerplek` op elk redstone block (kijk de goede kant op), `/clown tribune` op twee
    plekken op de onderste ring, `/clown vloer <diameter>` midden in de Arena,
-   en eventueel `colosseum` (gebouwd).
+   en eventueel `colosseum` (gebouwd). Voor de finale `/finale plek 1` en `/finale plek 2` op de
+   vloer, bijvoorbeeld tegenover elkaar en kijkend naar elkaar.
 9. Het resource pack: foto van Clown (jpg of png, elk formaat) en het lachje (ogg) in
    `pack/aanleveren/`, `java pack/BouwPack.java`, de zip online zetten (uurtje, zie
    [04-technische-schets.md](04-technische-schets.md)).
@@ -220,9 +225,16 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
       Kills rechts, wie af is in de chat, onderin "n kills · n over" voor wie vecht. Een kill
       komt groot in beeld bij de tribune en de killer (zachte brul), niet bij de andere
       vechters. `/ffa krimp 20`: DE BORDER KRIMPT en de border krimpt.
-      Bij drie en twee over LAATSTE DRIE en LAATSTE TWEE. Laatste over: kroning op het podium,
-      iedereen op de tribune, vuurwerk, KING OF THE SMP BOOTCAMP met de kop van de winnaar; de
-      bossbar "King: <naam>" en de zwevende kroon blijven tot `/bc reset`.
+      Bij drie en twee over LAATSTE DRIE en LAATSTE TWEE. Laatste over: SPELER WINT DE FFA met
+      zijn kop en een vuurpijl, geen kroning.
+- [ ] `/finale spelers` toont de winnaar van King of the Hill en de FFA (won dezelfde speler
+      allebei: de nummer twee van de FFA). `/finale start`: die twee op `finale_1` en `finale_2`,
+      FFA-kit, de rest op de tribune, DE FINALE met hun koppen, stil tot `/finale go`. Wie wint:
+      kroning op het podium, iedereen op de tribune, vuurwerk, KING OF THE SMP BOOTCAMP met de kop
+      van de winnaar; de bossbar "King: <naam>" en de zwevende kroon blijven tot `/bc reset`. Log
+      een finalist uit: de finale pauzeert, de ander staat stil, de ops krijgen een melding.
+      `/finale combatlog`: de ander krijgt de kroning. Nog een keer met `/finale crash`: de
+      finale stopt, daarna opnieuw `/finale start` en `/finale go`. `/finale spelers a b` zet ze met de hand.
 - [ ] `/bc doodtekst lijst` toont de zes teksten; `nieuw`, `weg <nr>` en `standaard` werken en
       blijven na een herstart staan.
 - [ ] `/bc reset`: alles terug, ook de teams.
@@ -293,7 +305,9 @@ Kort en op de borden in het basiskamp:
 | Server crasht | Backup terugzetten, ronde opnieuw starten. De teams staan in `bootcamp.json` en overleven een herstart; klopt er iets niet, dan `/bc team`. |
 | Timer loopt niet | `/<ronde> stop`, dan `/<ronde> start` en `/<ronde> resterend <seconden>`. |
 | Doolhof of Ei duurt te lang of te kort | Tijdens de ronde `/<ronde> timer <minuten>`: geldt meteen, gerekend vanaf de start. |
-| FFA of Clown vs All valt stil | `/ffa krimp <grootte>` of `/clown krimp <grootte>`. |
+| FFA, Clown vs All of de finale valt stil | `/ffa krimp <grootte>`, `/clown krimp <grootte>` of `/finale krimp <grootte>`. |
+| Finale: de verkeerde spelers, of een winnaar ontbreekt | `/finale spelers <speler1> <speler2>` (1 = King of the Hill, 2 = FFA), dan `/finale start`. |
+| Finalist logt uit tijdens de finale | De finale pauzeert vanzelf. Pudding kiest: combat log (`/finale combatlog`, de ander wint) of crash (`/finale crash`; is hij terug, dan `/finale start` en `/finale go`). Alleen ops kunnen dit typen. |
 | Iemand heeft geen team of het verkeerde | `/bc team <speler> <kleur>`. |
 | Iemand ziet de jumpscare als leeg vierkantje | Pack niet geladen. Opnieuw joinen, of accepteren in het menu. |
 | Mob arena: een wave komt niet af | `/mobarena wave volgende`. |

@@ -7,6 +7,7 @@ import nl.pudding.bootcamp.game.ronde3.MobArena;
 import nl.pudding.bootcamp.game.ronde4.Quiz;
 import nl.pudding.bootcamp.game.ronde5.ClownVsAll;
 import nl.pudding.bootcamp.game.ronde6.Ffa;
+import nl.pudding.bootcamp.game.ronde7.Finale;
 
 /** Welke klasse bij welke ronde hoort. */
 public final class Rondes {
@@ -21,6 +22,7 @@ public final class Rondes {
 			case QUIZ -> new Quiz();
 			case CLOWN -> new ClownVsAll();
 			case FFA -> new Ffa();
+			case FINALE -> new Finale();
 			case BASISKAMP -> throw new IllegalArgumentException("het basiskamp is geen ronde; gebruik /bc reset");
 		};
 	}

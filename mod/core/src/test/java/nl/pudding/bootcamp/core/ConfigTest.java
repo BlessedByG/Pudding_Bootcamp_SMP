@@ -25,6 +25,9 @@ class ConfigTest {
 		c.zetTeam("Speler7", Kleur.GROEN);
 		c.zetUitverkoren("ClownPierce");
 		c.zetPresentator("Pudding");
+		c.zetWinnaarKing("ClownPierce");
+		c.zetUitslagFfa("Speler7", "Speler2");
+		c.instellingen().zetFinaleWachttekst("Zo gaat het beginnen");
 		c.instellingen().zetDoolhofTimer(20);
 		c.instellingen().zetDoolhofHint(12);
 		c.instellingen().zetHinttekst("De echte gang begint bij de lantaarn");
@@ -50,6 +53,10 @@ class ConfigTest {
 		assertEquals(Kleur.GROEN, t.teamVan("SPELER7"));
 		assertTrue(t.isUitverkoren("CLOWNPIERCE"));
 		assertTrue(t.isPresentator("pudding"));
+		assertEquals("clownpierce", t.winnaarKing());
+		assertEquals("speler7", t.winnaarFfa());
+		assertEquals("speler2", t.tweedeFfa());
+		assertEquals("Zo gaat het beginnen", t.instellingen().finaleWachttekst());
 		assertEquals(20, t.instellingen().doolhofTimer());
 		assertEquals(12, t.instellingen().doolhofHint());
 		assertEquals(4, t.instellingen().doolhofPoort());
@@ -77,6 +84,13 @@ class ConfigTest {
 		assertEquals(BootcampConfig.GRAPJES, c.grapjes());
 		assertNull(c.uitverkoren());
 		assertNull(c.presentator());
+		assertNull(c.winnaarKing());
+		assertNull(c.winnaarFfa());
+		c.zetWinnaarKing("ClownPierce");
+		c.zetUitslagFfa("Speler7", null);
+		c.wisUitslag();
+		assertNull(c.winnaarKing());
+		assertNull(c.winnaarFfa());
 		assertFalse(c.isUitverkoren("iemand"));
 		assertEquals(15, c.instellingen().doolhofTimer());
 		assertNull(c.instellingen().hinttekst());

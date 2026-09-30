@@ -21,6 +21,7 @@ import nl.pudding.bootcamp.core.Kleur;
 import nl.pudding.bootcamp.core.Rol;
 import nl.pudding.bootcamp.game.Reset;
 import nl.pudding.bootcamp.game.Spel;
+import nl.pudding.bootcamp.game.ronde7.Finale;
 import nl.pudding.bootcamp.kits.Kits;
 import nl.pudding.bootcamp.schrik.Schrik;
 import nl.pudding.bootcamp.teams.Teams;
@@ -184,6 +185,8 @@ final class AlgemeenCommands {
 		sb.append(" (maximum ").append(Teams.maximum(ctx.getSource().getServer())).append(")");
 		sb.append("\n  uitverkoren: ").append(c.uitverkoren() == null ? "niemand" : c.uitverkoren());
 		sb.append("\n  presentator: ").append(c.presentator() == null ? "niemand" : c.presentator());
+		List<String> finale = Finale.namen();
+		sb.append("\n  finale: ").append(finale.isEmpty() ? "nog geen twee finalisten (/finale spelers)" : finale.get(0) + " tegen " + finale.get(1));
 		return BcCommand.info(ctx, sb.toString());
 	}
 
