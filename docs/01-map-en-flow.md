@@ -2,7 +2,7 @@
 
 Alles speelt zich af in één open wereld van grofweg 500 x 500 blokken: heuvels, bos, water. De
 events zijn in dat landschap gebouwd: een hagendoolhof in een dal, een zwevend Ei aan kettingen,
-twee gespiegelde mob-arena's, een quizhal, en in het midden **de Arena**: een
+een mob arena met een plein ervoor, een quizhal, en in het midden **de Arena**: een
 colosseum met tribunes waar het eindigt. Geen gangen, geen wachtkamers, geen lobby.
 
 Twee dingen houden het toch strak:
@@ -55,7 +55,7 @@ Twee dingen houden het toch strak:
 |---|---|
 | Basiskamp | Startruimte in het midden van het doolhof |
 | Doolhof, als iedereen een team heeft | De finishruimte van het doolhof; met `/doolhof naarei` naar V2 bij het Ei |
-| Het Ei | V3 bij de mob arena |
+| Het Ei | Het plein bij de mob arena (V3): de winnaar op het podium, de rest ervoor |
 | Mob arena | De quiz: iedereen bij de bank van zijn team, Pudding op het podium |
 | Quiz | De tribune van de Arena, voor het Rad; na het Rad de vloer op |
 | Clown vs All | Blijft in de Arena: wie af is zit al op de tribune |
@@ -69,7 +69,7 @@ Lopen is er niet bij: teleporteren, en elke ronde start op het sein van Pudding.
 |---|---|---|
 | 1 De Doolhof | het doolhof | nee |
 | 2 Het Ei | het Ei met de kettingen | nee |
-| 3 De Mob Arena | beide arena's met de tribune | nee |
+| 3 De Mob Arena | het veld met de tribune en het plein | nee |
 | 4 De Quiz | de quizhal | nee |
 | 5 Clown vs All | de hele Arena inclusief tribunes | alleen als de commander `/clown krimp` doet |
 | 6 De FFA | de hele Arena | alleen als de commander `/ffa krimp` doet |
@@ -85,7 +85,7 @@ eerst teleporteren, dan de border zetten.
 | Basiskamp | Noord, naast het doolhof | Spawnpoint, kampvuur, tenten, regels op borden. | adventure |
 | 1 De Doolhof | Noord, in een dal | Hagendoolhof ±64 x 64, hagen 4 hoog, geen plafond. **Een grote startruimte in het midden** met 4 gangen die het doolhof in lopen. Eén gang leidt naar de echte uitgang, met een poort die de mod na 4 minuten opent. De andere drie eindigen in een nep-uitgang: een vak dat de mod herkent. 10 tot 15 kisten in doodlopende gangen, leeg neerzetten: de mod vult ze. 2 of 3 schrikplekken. Achter de uitgang een vak waar je je team kiest. | adventure |
 | 2 Het Ei (V2) | Zuid | Een **zwevend Ei** van ±30 x 30 x 60, van ver te zien. De schil van andere blokken, de binnenkant helemaal gewone deepslate (de mod strooit daar de puntenblokken in). Gebruik in de schil en de kettingen geen gewone deepslate. **Kettingen** van de grond naar het Ei, met aan het buiteneinde de startplekken. V2 met kampvuur in de buurt. | survival, alleen het Ei te breken |
-| 3 De Mob Arena (V3) | Oost | **Twee arena's** die er hetzelfde uitzien maar gespiegeld zijn. In elke arena vier startplekken in de teamkleuren, mob-spawnpunten op zelf gekozen plekken (in arena 1 en 2 mogen ze iets verschillen), en **in het midden een kooi** van tralies voor wie in die arena sneuvelt. Een **tribune** (balkon) met zicht op de arena. | adventure |
+| 3 De Mob Arena (V3) | Oost | **Eén veld** waar per beurt van elk team twee spelers tegelijk in staan, met per team twee startplekken, mob-spawnpunten op zelf gekozen plekken, een plek waar de warden uit de grond komt, en **een kooi** van tralies voor wie sneuvelt. Een **tribune** (balkon) met zicht op het veld. Ervoor een **plein met een podium** en een item frame: daar wordt de winnaar van het Ei gehuldigd en krijgt hij het Warden-ei. | adventure |
 | 4 De Quiz | West | Een **quizhal** ("?CSMP?" op de muur): 4 **banken** in rood, blauw, groen en geel, bij elke bank een redstone lamp (brandt als dat team aan de beurt is), een **trap met een klein podium** waar Pudding presenteert, en in het midden een rond vloerontwerp met een vraagteken (decor; het rad staat alleen in beeld). Klein genoeg dat iedereen binnen voice-bereik (48 blokken) staat. | adventure |
 | De Arena | Midden | Colosseum met een open zandvloer. In het midden een **klein podium** (een pilaartje) waar de kroonhouder spawnt. Rondom op de vloer **20 redstone blocks in een cirkel**: de startplekken van de jagers (één meer dan nodig, voor de symmetrie en zodat de verdeling willekeurig blijft). **Twee tribuneringen**: alleen de onderste wordt gebruikt, de bovenste is decoratie. Ronde 5, 6 en de kroning. | adventure |
 
@@ -104,7 +104,7 @@ plek waar de rest ook komt en hangt daar tot de ronde voorbij is:
 - Over de finish van het doolhof, team gekozen: je blijft in het doolhof en mag terug naar
   binnen om te helpen of loot te zoeken. Als het doolhof voorbij is verzamelt iedereen in de
   finishruimte, en met `/doolhof naarei` gaat iedereen samen naar V2.
-- Dood in de mob arena: de rest van die beurt in de kooi in het midden van je arena, daarna op de
+- Dood in de mob arena: de rest van die beurt in de kooi in het veld, daarna op de
   tribune. Wie niet aan de beurt is, staat ook op de tribune.
 - Af in Clown vs All of de FFA: naar de tribune van de Arena.
 - Doodgaan in het doolhof of het Ei kan eigenlijk niet; gebeurt het toch, dan sta je geheald
@@ -122,7 +122,7 @@ gebruikt spectator of creative, voor de camera.
 
 - Het doolhof is van bovenaf een mooi shot, zeker de startruimte waar mensen na een nep-uitgang
   terugploffen.
-- De mob arena: een camera boven elke arena. Vier kleuren op één veld, en in de kooi in het midden
+- De mob arena: een camera boven het veld. Acht spelers in vier kleuren, en in de kooi
   zie je wie het al niet gered heeft.
 - De quiz: vast shot op de hal met de vier gekleurde banken en Pudding op het podium; het rad en
   GOED/FOUT staan in beeld.

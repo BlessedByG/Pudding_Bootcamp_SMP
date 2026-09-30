@@ -158,9 +158,12 @@ Clown vs All en het Rad pas bij ronde 5. Nog geen teams; iedereen is wit.
 
 **Einde**
 - Timer 15 minuten, instelbaar met `/ei timer <minuten>`. Wie de meeste punten heeft, wint: title
-  voor iedereen, vuurpijl boven de winnaar. Gelijk? Dan wint wie die score het eerst had.
-- De pickaxe gaat weer weg. Iedereen naar verzamelpunt 3 bij de mob arena. De punten tellen
-  verder nergens voor.
+  voor iedereen. Gelijk? Dan wint wie die score het eerst had.
+- De pickaxe gaat weer weg. **Huldiging op het plein bij de mob arena**: de winnaar staat op het
+  podium, de rest verspreid op het plein ervoor, met vuurwerk boven het podium.
+- **De prijs: het Warden-ei.** Het verschijnt in een item frame op het podium. Alleen de winnaar
+  of Pudding (de presentator) kan het eruit halen. Tijdens de mob arena kan de winnaar het vanaf
+  de tribune inzetten: dan is de volgende wave een warden (zie ronde 3).
 
 **Voice:** proximity. Op het Ei hoor je wie naast je hakt.
 
@@ -181,54 +184,54 @@ Clown vs All en het Rad pas bij ronde 5. Nog geen teams; iedereen is wit.
 punten wint.
 
 **Setup**
-- **Twee arena's**, 1 en 2. Ze zien er hetzelfde uit maar zijn gespiegeld. In elke arena vier
-  startplekken in de teamkleuren (rood, blauw, groen, geel) en **in het midden een kooi** voor
-  wie sneuvelt. Een **tribune** (balkon) met zicht op de arena.
-- **Arena 1 en 2 spelen tegelijk.** Per beurt staat in elke arena **van elk team één speler** op
-  het vlak in de kleur van zijn team (de kleur die hij in het doolhof koos): acht spelers
-  tegelijk. De rest kijkt vanaf de tribune.
-- **Iedereen speelt twee beurten**: één in arena 1 en één in arena 2. Met teams van 5 zijn dat
-  5 beurten.
+- **Eén veld**, met per team twee startplekken en **een kooi** voor wie sneuvelt. Een
+  **tribune** (balkon) met zicht op het veld.
+- Per beurt staan er **van elk team twee spelers** tegelijk in het veld: acht spelers. De rest
+  kijkt vanaf de tribune.
+- **Iedereen speelt één beurt.** Met 4 teams van 4 zijn dat 2 beurten.
 - **Het schema loot de mod** bij de start en houdt het **geheim**: je merkt pas dat je aan de
-  beurt bent als je naar je vlak wordt geteleporteerd. Niemand speelt twee beurten achter
-  elkaar. Voorbeeld voor één team:
+  beurt bent als je naar je startplek wordt geteleporteerd. Voorbeeld voor één team:
 
-| Beurt | Arena 1 | Arena 2 |
+| Beurt | Startplek 1 | Startplek 2 |
 |---|---|---|
-| 1 | speler 1 | speler 3 |
-| 2 | speler 2 | speler 4 |
-| 3 | speler 3 | speler 5 |
-| 4 | speler 4 | speler 1 |
-| 5 | speler 5 | speler 2 |
+| 1 | speler 1 | speler 2 |
+| 2 | speler 3 | speler 4 |
 
-- **Ongelijke teams** (bijvoorbeeld 5-5-4-4): er zijn zoveel beurten als het grootste team
-  spelers heeft. De plekken die een kleiner team tekortkomt zijn **extra beurten**: aan het begin
-  van die beurt loot de mod een speler van dat team die nog niet af is en niet al in de andere
-  arena staat. Is er niemand, dan blijft de plek leeg.
+- **Kleiner team** (bijvoorbeeld 4-4-3-3): de plek die een kleiner team tekortkomt is een **extra
+  beurt**: aan het begin van die beurt loot de mod een speler van dat team die nog niet af is en
+  niet al in deze beurt staat. Is er niemand, dan blijft de plek leeg.
 - **Gear:** alleen wat je al hebt, uit het doolhof. Geen kit, geen eten, niets extra's. Je begint
   elke beurt wel met volle levens.
 
 **Een beurt**
-- De commander start elke beurt op het sein van Pudding. Countdown, dan **5 waves**, in beide
-  arena's tegelijk dezelfde mobs.
-- De volgende wave komt **5 seconden nadat de vorige in beide arena's dood is**. Blijft er een
-  mob hangen, dan komt de volgende toch na 2 minuten.
-- Waves per arena (voor 4 spelers):
+- De commander start elke beurt op het sein van Pudding. Iedereen staat op zijn startplek en
+  **kan niet lopen tot de countdown voorbij is** (rondkijken wel). Dan **5 waves**.
+- De volgende wave komt **5 seconden nadat de vorige dood is**. Blijft er een mob hangen, dan komt
+  de volgende toch na 2 minuten.
+- Waves (voor 8 spelers):
 
 | Wave | Wat | Aantal |
 |---|---|---|
-| 1 | Zombies | 4 |
-| 2 | Skeletons + spiders | 4 + 3 |
-| 3 | Zombies met iron gear + creepers | 4 + 2 |
-| 4 | Zombies met iron gear + witches + cave spiders | 4 + 2 + 3 |
-| 5 | Ravager + vindicators + evoker | 1 + 3 + 1 |
+| 1 | Zombies + husks | 10 + 4 |
+| 2 | Skeletons + spiders | 8 + 8 |
+| 3 | Zombies met iron gear + creepers + skeletons | 8 + 4 + 4 |
+| 4 | Zombies met iron gear + witches + cave spiders + vindicators | 8 + 4 + 6 + 2 |
+| 5 | Ravagers + vindicators + evokers | 2 + 8 + 2 |
 
 - De aantallen staan in `waves.json` en zijn af te stemmen in de testrun.
-- Een arena is klaar na wave 5, of als alle spelers erin af zijn. De beurt is klaar als beide
-  arena's klaar zijn.
-- **Na de beurt: 10 seconden om te vieren.** `BEURT 3 KLAAR` met de stand staat meteen in beeld,
-  met een aftelling van 10 seconden. Pas daarna gaan de spelers uit de arena's en de mensen in de
-  kooien naar de tribune. Wie al op de tribune stond, blijft gewoon staan waar hij staat.
+- De beurt is klaar na wave 5, of als alle spelers in het veld af zijn.
+- **Na de beurt: 10 seconden om te vieren.** `BEURT 1 KLAAR` met de stand staat meteen in beeld,
+  met een aftelling van 10 seconden. Pas daarna gaan de spelers uit het veld en de mensen in de
+  kooi naar de tribune. Wie al op de tribune stond, blijft gewoon staan waar hij staat.
+
+**Het Warden-ei**
+- De winnaar van het Ei kan het ei **vanaf de tribune** inzetten, dus niet als hij zelf aan de
+  beurt is en niet vanuit de kooi. Iedereen ziet dat hij het doet.
+- **De volgende wave is dan een warden** in plaats van de geplande wave: hij komt uit de grond in
+  het veld. Hij is zwakker dan een gewone warden (200 HP, klap 4 hartjes, sonic boom 2,5 hartje),
+  haalbaar maar zwaar, en blijft tot hij dood is. Het team dat hem doodt krijgt 50 punten.
+- Ingezet tijdens de laatste wave of tussen twee beurten? Dan is het wave 1 van de volgende beurt.
+  Komt er geen wave meer, dan houdt hij het ei.
 
 **Punten**
 - Kill je een mob, dan krijgt je team punten. Wie de laatste klap gaf telt, ook met een pijl.
@@ -243,43 +246,44 @@ punten wint.
 | Vindicator | 5 |
 | Evoker | 8 |
 | Ravager | 10 |
+| Warden | 50 |
 | Elk ander type | 1 |
 
-- **PvE, geen PvP**: je vecht alleen tegen de mobs. De vier spelers in een arena strijden wel om
+- **PvE, geen PvP**: je vecht alleen tegen de mobs. De acht spelers in het veld strijden wel om
   dezelfde mobs, maar elkaar raken kan niet, ook niet met pijlen.
 - Sidebar: de teamstand. Actionbar: wat je net kreeg en de stand van je team
-  (`+3 · Rood 47`). Bossbar: `Mob Arena · beurt 3/5 · wave 2`.
+  (`+3 · Rood 47`). Bossbar: `Mob Arena · beurt 1/2 · wave 2`.
 - Wie aan de beurt is, **gloeit in zijn teamkleur**: kijkers en streams zien meteen wie van welk
-  team is. Een kill op een evoker of ravager komt in de chat: "Speler7 killde de ravager (+10)".
+  team is. Een kill op een evoker, ravager of de warden komt in de chat: "Speler7 killde de
+  ravager (+10)".
 
 **Doodgaan**
-- Ga je dood, dan ga je **in de kooi in het midden van je arena** en kijk je de rest van die beurt
-  vanaf daar. Doodtekst groot in beeld, alleen voor jou, en daarna onderin "Af · je speelt geen
-  beurt meer" (aan te passen met `/mobarena aftekst`). Je punten blijven staan.
-- Na de beurt (en de 10 seconden) ga je naar de tribune. **Je speelt geen tweede beurt meer**:
-  stond je nog op het schema, dan blijft de plek van je team in die beurt leeg. Je spullen ben je
-  kwijt; die had je na de mob arena toch ingeleverd.
+- Ga je dood, dan ga je **in de kooi** en kijk je de rest van die beurt vanaf daar. Doodtekst
+  groot in beeld, alleen voor jou, en daarna onderin "Af · je speelt geen beurt meer" (aan te
+  passen met `/mobarena aftekst`). Je punten blijven staan.
+- Na de beurt (en de 10 seconden) ga je naar de tribune. Je spullen ben je kwijt; die had je na
+  de mob arena toch ingeleverd. Het Warden-ei houd je wel.
 - Wie uitlogt telt als dood.
-- Mobs vallen alleen de levende spelers in hun eigen arena aan. De kooi en de tribune laten ze met
-  rust.
+- Mobs vallen alleen de levende spelers in het veld aan. De kooi en de tribune laten ze met rust.
 
 **Einde**
 - Na de laatste beurt (ook met de 10 seconden) wint het team met de meeste punten: title voor
   iedereen, vuurpijlen boven het team. Gelijk? Dan wint het team met de meeste kills; is dat ook
   gelijk, dan winnen ze samen.
 - Ook dan eerst 10 seconden om te vieren; daarna **levert iedereen alles in**: inventory en
-  armor leeg. Iedereen geheald en zonder spullen naar de quiz.
+  armor leeg, ook een ongebruikt Warden-ei. Iedereen geheald en zonder spullen naar de quiz.
 
-**Voice:** proximity. In de arena hoor je de drie spelers van de andere teams, in de kooi en op de
-tribune hoor je wie in de buurt staat.
+**Voice:** proximity. In het veld hoor je de andere spelers, in de kooi en op de tribune hoor je
+wie in de buurt staat.
 
 **Wat train je:** mobs, snel reageren, kills pakken voor een ander ze pakt.
 
 **Wat kan misgaan**
 - Een mob blijft hangen achter dekking: na 2 minuten komt de volgende wave toch. De ref kan een
-  wave forceren met `/mobarena wave volgende`.
-- Een beurt is te snel voorbij of te zwaar: de aantallen in `waves.json` bijstellen in de testrun.
-- Server lag: 2 arena's met elk hooguit 10 mobs is weinig, maar houd view distance op 8.
+  wave forceren met `/mobarena wave volgende`, ook de warden.
+- Een beurt is te snel voorbij of te zwaar: de aantallen in `waves.json` bijstellen in de testrun,
+  de warden met `/mobarena warden`.
+- Server lag: één veld met hooguit 20 mobs is weinig, maar houd view distance op 8.
 
 ---
 

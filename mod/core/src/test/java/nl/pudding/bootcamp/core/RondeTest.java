@@ -58,9 +58,12 @@ class RondeTest {
 		assertEquals(List.of("doolhof", "doolhof_uit", "poort_doolhof", "poort_start", "doolhof_gif", "doolhof_start", "doolhof_finish", "v2"),
 				Ronde.DOOLHOF.ontbreekt(Set.of(), Set.of()));
 		assertEquals(List.of("troon"), Ronde.CLOWN.ontbreekt(Set.of("vloer"), Set.of("jager_1", "tribune_1")));
-		List<String> mob = Ronde.MOBARENA.ontbreekt(Set.of("mobarena", "veld_1", "veld_2"), Set.of());
-		assertTrue(mob.contains("start_2_geel"));
-		assertTrue(mob.contains("kooi_1"));
+		List<String> mob = Ronde.MOBARENA.ontbreekt(Set.of("mobarena", "veld"), Set.of());
+		assertTrue(mob.contains("start_geel_2"));
+		assertTrue(mob.contains("kooi"));
+		assertTrue(mob.contains("warden"));
+		List<String> ei = Ronde.EI.ontbreekt(Set.of("ei", "eigebied"), Set.of("ei_spawn_1", "v3"));
+		assertEquals(List.of("ei_plein", "ei_podium", "ei_prijskader"), ei);
 		assertTrue(mob.contains("tribune_mob"));
 	}
 

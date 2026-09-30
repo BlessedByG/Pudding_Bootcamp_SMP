@@ -279,13 +279,15 @@ hele avond geldt (setup, spelers, noodknoppen) staat onder `/bc`.
 | `/ei start\|stop\|resterend` | Ronde 2. |
 | `/ei timer [<minuten>]` | Hoe lang het Ei duurt, standaard 15. |
 | `/ei blokken [<soort> <aantal>]` | Hoeveel blokken van een soort (`netherite`, `diamond`, `gold`, `redstone`, `emerald`, `tnt`, `glowstone`, `slime`, `target`) de mod in het Ei strooit. Zonder argumenten: het overzicht, met het aantal deepslate-plekken in het Ei. |
+| `/ei prijskader` | Het item frame waar je naar kijkt (binnen 5 blokken) wordt het frame voor het Warden-ei: daar verschijnt het als het Ei voorbij is. Slaat punt `ei_prijskader` op. |
 | `/ei vastleggen` | Legt het Ei vast zoals het nu gebouwd is: alle blokken in regio `ei`. Eén keer na het bouwen, en opnieuw na elke bouwwijziging. Niet tijdens ronde 2. Antwoord: `Ei vastgelegd: 54.000 blokken, waarvan 27.812 deepslate.` |
 | `/mobarena start` | Ronde 3: loot het schema (geheim, niet in de chat) en start beurt 1. |
 | `/mobarena volgende` | Start de volgende beurt. Weigert zolang de huidige beurt nog loopt, ook tijdens de 10 seconden na de beurt. |
 | `/mobarena schema` | Het schema, alleen voor wie het typt (de spelers zien het niet): per beurt wie in welke arena staat, wie af is. |
-| `/mobarena startplek <1\|2> <rood\|blauw\|groen\|geel>` | Zet de startplek van dat team in die arena op de plek waar je staat, met je kijkrichting. Ga midden op het gekleurde vlak staan. Hetzelfde als `/bc point set start_<arena>_<kleur>`. |
+| `/mobarena startplek <rood\|blauw\|groen\|geel> <1\|2>` | Zet startplek 1 of 2 van dat team op de plek waar je staat, met je kijkrichting. Elk team heeft er twee, zodat de twee spelers van een team niet in elkaar spawnen. Hetzelfde als `/bc point set start_<kleur>_<nummer>`. |
 | `/mobarena stop` | Breekt ronde 3 af. |
-| `/mobarena wave volgende` | De huidige wave telt als klaar in beide arena's (overgebleven mobs weg). |
+| `/mobarena wave volgende` | De huidige wave telt als klaar (overgebleven mobs weg), ook de warden. |
+| `/mobarena warden [leven\|klap\|boom <hp>]` | De warden uit het Warden-ei, in HP (2 HP is één hartje): `leven` (standaard 200), `klap` (8) en `boom` voor de sonic boom (5). Zonder argumenten: de huidige waarden. Geldt voor de volgende warden; bewaard in `bootcamp.json`. Zijn punten: `/mobarena punten warden <n>`. |
 | `/mobarena punten [<mob> <punten>]` | Hoeveel punten een mobtype waard is. Zonder argumenten: de tabel. |
 | `/mobarena aftekst [<tekst>]` | De tekst die in de actionbar staat bij wie in de mob arena sneuvelt, standaard `Af · je speelt geen beurt meer`. Zonder tekst: de huidige laten zien. Bewaard in `bootcamp.json`. |
 | `/mobarena veldhoogte [<blokken>]` | Tot hoeveel blokken boven de selectie een veld telt voor kijkers en wachtenden, standaard 3. Op regio `tribune_mob` telt het veld nooit, dus meestal hoef je hier niets aan te doen. Bij `0` telt alleen wie binnen de selectie zelf staat. Geldt meteen; bewaard in `bootcamp.json`. |
@@ -350,6 +352,7 @@ ronde. Een nieuw aantal puntenblokken geldt vanaf de volgende `/ei start`.
 | `/mobarena punten` | zombie 1; skeleton, spider, cave spider 2; creeper 3; witch 4; vindicator 5; evoker 8; ravager 10; elk ander type 1 | 0 tot 100 |
 | `/mobarena aftekst` | `Af · je speelt geen beurt meer` | tot 60 tekens |
 | `/mobarena veldhoogte` | 3 blokken | 0 tot 10 |
+| `/mobarena warden` | leven 200, klap 8, boom 5 (HP) | leven 20 tot 1000, klap 0 tot 60, boom 0 tot 40 |
 | `/clown wachttekst` | `Wacht op het startsein` | tot 60 tekens |
 | `/ffa wachttekst` | `Wacht op het startsein` | tot 60 tekens |
 
@@ -365,8 +368,8 @@ coördinaten in code.
 
 **Regio's** met de wand: linksklik op een blok is hoek 1, rechtsklik hoek 2, dan
 `/bc region save <naam>`. **Voor spelers is een regio een kolom**: alleen x en z tellen. Een
-poort gebruikt wel de hele doos, net als de kistenscan van het doolhof en het Ei (`ei`). `veld_1`
-en `veld_2` tellen als rechthoek. Startpunten horen binnen de border-regio van hun ronde te
+poort gebruikt wel de hele doos, net als de kistenscan van het doolhof en het Ei (`ei`). `veld`
+telt als rechthoek. Startpunten horen binnen de border-regio van hun ronde te
 liggen; anders weigert `/<ronde> start`.
 
 **De vloer van de Arena is een cirkel**, gezet met een commando in plaats van de wand:
@@ -387,7 +390,8 @@ hij de doos om alle delen heen; bij de cirkel van `vloer` is dat het vierkant er
 
 | Regio's | Waarvoor |
 |---|---|
-| `doolhof`, `eigebied`, `mobarena`, `quiz`, `vloer` | Worldborder per ronde. `quiz` is de quizhal. `eigebied` omvat het Ei, de kettingen en hun startplekken, `mobarena` beide arena's met de tribune. `vloer` is de vloer van de Arena: een cilinder van 5 hoog, gezet met `/clown vloer <diameter>`; kijkers die erin komen gaan terug naar de tribune. |
+| `doolhof`, `eigebied`, `mobarena`, `quiz`, `vloer` | Worldborder per ronde. `quiz` is de quizhal. `eigebied` omvat het Ei, de kettingen en hun startplekken, `mobarena` het veld met de tribune en het plein. `vloer` is de vloer van de Arena: een cilinder van 5 hoog, gezet met `/clown vloer <diameter>`; kijkers die erin komen gaan terug naar de tribune. |
+| `ei_plein` | De vloer van het plein bij de mob arena, vóór het podium (in delen als dat moet). Na het Ei komt iedereen behalve de winnaar hier op een willekeurige vrije plek te staan. |
 | `ei` | Het Ei zelf, als doos: onderhoek en bovenhoek. Alleen hierbinnen kun je in ronde 2 breken; `/ei vastleggen` legt deze doos vast en de mod strooit de puntenblokken op de gewone deepslate erin. Kettingen (iron en copper) blijven ook binnen de doos heel: daar klim je over. |
 | `colosseum` | *Optioneel.* De hele Arena inclusief tribunes: border van ronde 5 en 6. Anders `vloer`. |
 | `doolhof_uit` | De finishlijn in de afgesloten ruimte achter de echte uitgang: wie erop staat en nog geen team heeft krijgt het teammenu. Een smalle lijn van één blok mag (de mod kijkt elke tick). Moet binnen regio `doolhof` liggen, anders weigert `/doolhof start`. |
@@ -396,7 +400,7 @@ hij de doos om alle delen heen; bij de cirkel van `vloer` is dat het vierkant er
 | `poort_doolhof` | De poort voor de echte uitgang, opent na `/doolhof poort` minuten. |
 | `poort_start` | De openingen van de startruimte, elk een deel (`save` + `add`). Zet er zelf barrier blocks in (of glas): tijdens de countdown kan niemand de startruimte uit. Bij de start van de timer haalt de mod ze stil weg (geen hoorn); bij de volgende `/doolhof start` zet hij ze terug, vóór iedereen de startruimte in gaat. Weet de mod na een herstart niet meer wat er stond, dan barrier. |
 | `doolhof_gif` | Het doolhof zelf, zonder de finishruimte (in delen als dat moet: `save` + `add`). Na de timer is het hier giftig. Punt `doolhof_finish` mag er niet in liggen, anders weigert `/doolhof start`. |
-| `veld_1`, `veld_2` | De twee mob-arenavelden, elk uit meerdere delen (de T-vorm: `save` voor de balk, `add` voor de poot). Een kijker die erin komt wordt teruggezet, behalve wie in de kooi van dat veld zit (de tralies houden die binnen); een speler die aan de beurt is en eruit komt ook. Voor kijkers telt een veld tot drie blokken boven de selectie (`/mobarena veldhoogte`), zodat het balkon erboven geen veld is; voor wie aan de beurt is telt alleen de kolom. |
+| `veld` | Het veld van de mob arena, in delen als dat moet (`save` + `add`). Een kijker die erin komt wordt teruggezet, behalve wie in de kooi zit (de tralies houden die binnen); een speler die aan de beurt is en eruit komt ook. Voor kijkers telt een veld tot drie blokken boven de selectie (`/mobarena veldhoogte`), zodat het balkon erboven geen veld is; voor wie aan de beurt is telt alleen de kolom. |
 | `tribune_mob` | De tribune van de mob arena: selecteer de vloer waar de kijkers op staan, in delen als dat moet (`save` + `add`). Daarop telt niemand als in het veld, ook waar de selectie over een veld hangt of ermee overlapt: tot drie blokken boven de selectie (springen telt mee), niet eronder. Wie aan de beurt is en de tribune op loopt, gaat terug naar zijn startplek. `/mobarena start` weigert als een `tribune_mob_n` er niet op ligt of een startplek er wel op ligt. |
 
 **Punten** met `/bc point set <naam>` of `/bc point block <naam>`.
@@ -408,10 +412,13 @@ hij de doos om alle delen heen; bij de cirkel van `vloer` is dat het vierkant er
 | `doolhof_finish` | In de finishruimte: waar wie tijdens het gif doodgaat neerkomt, en waar wie nog in het doolhof liep heen gaat als het doolhof voorbij is. Binnen regio `doolhof`, niet in `doolhof_gif`. |
 | `v2` | Verzamelpunt bij het Ei: na `/doolhof naarei`. |
 | `ei_spawn_1` t/m `ei_spawn_n` | De startplekken aan het buiteneinde van de kettingen. Zoveel als je wilt, genummerd vanaf 1. Spelers worden er om en om over verdeeld; na een dodelijke klap kom je terug op je eigen startplek. |
-| `v3` | Verzamelpunt bij de mob arena. |
-| `start_1_rood`, `start_1_blauw`, `start_1_groen`, `start_1_geel`, en hetzelfde met `start_2_` | De vier gekleurde startplekken in arena 1 en in arena 2: de speler van een team start altijd op het vlak in zijn eigen kleur. Zetten met `/mobarena startplek <arena> <kleur>`. |
-| `mob_1_1` t/m `mob_1_n`, `mob_2_1` t/m `mob_2_n` | Mob-spawns per arena, op zelf gekozen plekken. Zoveel als je wilt per arena; arena 1 en 2 mogen iets verschillen. De mobs van een wave gaan om en om over de spawns van hun arena. |
-| `kooi_1`, `kooi_2` | De kooi in het midden van elke arena. |
+| `v3` | Verzamelpunt bij de mob arena, op het plein: voor wie tussen het Ei en de mob arena inlogt. |
+| `ei_podium` | Het podium op het plein, kijkend naar het plein: daar komt de winnaar van het Ei. |
+| `ei_prijskader` | Het item frame voor het Warden-ei. Zetten met `/ei prijskader` terwijl je naar het frame kijkt. |
+| `start_rood_1`, `start_rood_2`, en zo voor `blauw`, `groen`, `geel` | Twee startplekken per team in het veld, niet te dicht bij elkaar. Zetten met `/mobarena startplek <kleur> <1\|2>`. |
+| `mob_1` t/m `mob_n` | Mob-spawns in het veld, op zelf gekozen plekken. Zoveel als je wilt; de mobs van een wave gaan er om en om over. |
+| `kooi` | De kooi in het veld, waar wie af is de rest van de beurt zit. |
+| `warden` | Waar de warden van het Warden-ei uit de grond komt: op de vloer van het veld. |
 | `tribune_mob_1` t/m `tribune_mob_n` | De tribune (het balkon). Zoveel als je wilt, allemaal op regio `tribune_mob`. |
 | `quiz_rood`, `quiz_blauw`, `quiz_groen`, `quiz_geel` | De vier banken in de quizhal. Zetten met `/quiz bank <kleur>`. |
 | `quiz_podium` | Het podium boven aan de trap, waar de presentator staat. Zetten met `/quiz podium`. |
@@ -489,10 +496,18 @@ is een valkist: die blijft leeg (zie ronde 1).
 ```
 
 **Waves** staan in `config/bootcamp/waves.json`: standaard 5 waves (de mod leest er ook meer of
-minder, voor een test), per wave een lijst mobs met
-type, aantal en eventueel gear. Het aantal geldt per arena (voor 4 spelers) en schaalt niet mee:
-een lege startplek maakt de wave niet kleiner, zodat beide arena's altijd precies dezelfde mobs
-krijgen. De mobs gaan om en om over de spawns van hun arena (`mob_1_n` of `mob_2_n`).
+minder, voor een test), per wave een lijst mobs met type, aantal en eventueel gear. Het aantal
+geldt voor het hele veld (voor 8 spelers) en schaalt niet mee: een lege startplek maakt de wave
+niet kleiner. De mobs gaan om en om over de spawns `mob_1..n`. De mod schrijft dit bestand alleen
+als het er nog niet is; een nieuwe standaard krijg je door het bestand weg te gooien.
+
+| Wave | Mobs |
+|---|---|
+| 1 Zombies en husks | 10 zombies, 4 husks |
+| 2 Skeletons en spiders | 8 skeletons (boog), 8 spiders |
+| 3 Zombies met iron gear, creepers en skeletons | 8 zombies (iron armor en zwaard), 4 creepers, 4 skeletons |
+| 4 Zombies, witches, cave spiders en vindicators | 8 zombies (iron), 4 witches, 6 cave spiders, 2 vindicators (bijl) |
+| 5 Ravagers, vindicators en evokers | 2 ravagers, 8 vindicators (bijl), 2 evokers |
 
 ## Spellogica
 
@@ -502,7 +517,7 @@ slot, punten, schrikplekken gehad). De mod is de bron van waarheid; scoreboard-t
 spiegels die elke seconde worden bijgezet. `/bc status` toont alles.
 
 **Ontbrekende config.** Elke ronde declareert welke regio's, punten en kits ze nodig heeft.
-`/<ronde> start` weigert met één regel ("ontbreekt: kooi_2, start_1_geel, ...") en verandert
+`/<ronde> start` weigert met één regel ("ontbreekt: kooi, start_geel_2, ...") en verandert
 niets. Ronde 3 en 4 weigeren ook als niet iedereen een team heeft: `/bc team` lost dat op.
 
 **Uitloggen en terugkomen.** In ronde 1 t/m 4 kom je terug waar je hoort: in het doolhof bij de
@@ -522,7 +537,7 @@ dood geannuleerd, de speler geheald en afgehandeld volgens de ronde:
 |---|---|
 | 1 | Geheald terug naar `doolhof_start`. |
 | 2 | Geheald terug naar zijn eigen `ei_spawn_n`, punten en spullen blijven. |
-| 3 | Kijker in de kooi van zijn arena (`kooi_1` of `kooi_2`), na de beurt naar de tribune. Af voor de rest van de mob arena: een latere beurt op het schema blijft leeg. Punten blijven staan. Inventory leeg: wie af is speelt niet meer, en na ronde 3 levert iedereen toch alles in. Doodtekst. Zijn alle spelers in een arena af, dan is die arena klaar. |
+| 3 | Kijker in de kooi (`kooi`), na de beurt naar de tribune. Af voor de rest van de mob arena: een latere beurt op het schema blijft leeg. Punten blijven staan. Inventory leeg: wie af is speelt niet meer, en na ronde 3 levert iedereen toch alles in. Doodtekst. Het Warden-ei houdt hij. Zijn alle spelers in het veld af, dan is de beurt klaar. |
 | 4 | Kan niet: geen schade. |
 | 5, kroonhouder | Kroonwissel naar de killer, anders de laatste hit, anders een willekeurige levende jager. Ex-kroonhouder wordt kijker op de tribune. |
 | 5, jager | Kijker op de tribune, af. Is er nog maar één speler over, dan is die de winnaar. |
@@ -663,64 +678,92 @@ bijgewerkt bij elk puntenblok. De volgorde is die van de mod, ook bij gelijke pu
 score het eerst had staat hoger. De client sorteert gelijke scores zelf op de naam van de regel,
 dus de regels heten intern `01` t/m `10` en krijgen de spelersnaam als display name. Wie nog 0
 punten heeft staat er niet in. Geen zoekhints: het Ei is van ver te zien. Timer op: de meeste
-punten wint (gelijk: wie die score het eerst had), title en vuurpijl, iedereen naar `v3`,
-adventure. **De pickaxe gaat weg**: elk item met `custom_data={bootcamp_ei:1b}` verdwijnt uit
+punten wint (gelijk: wie die score het eerst had), title, adventure, en de **huldiging** op het
+plein bij de mob arena: de winnaar naar `ei_podium`, de rest verspreid over regio `ei_plein` (op
+een willekeurige vrije plek op de vloer, niet in elkaar, kijkend naar het podium; lukt dat niet,
+dan `v3`), en een tick later een gouden vuurpijl boven het podium. Het **Warden-ei** verschijnt in
+het item frame van `/ei prijskader` (punt `ei_prijskader`). Alleen de winnaar of de presentator
+(`/quiz presentator`, de spelleider) kan het eruit halen, met een rechtsklik of een klap; dan komt
+het in zijn inventory, met een chatregel `Speler7 pakt het Warden-ei`. Anderen zien `Alleen
+Speler7 of de presentator kan het Warden-ei pakken`. Staat er geen frame, dan krijgt de winnaar het
+meteen. Zonder winnaar blijft het frame leeg en het podium ook. Na een herstart weet de mod de
+winnaar niet meer; dan kan alleen de presentator het ei pakken. **De pickaxe gaat weg**: elk item met `custom_data={bootcamp_ei:1b}` verdwijnt uit
 inventory, offhand en cursor, ook bij `/ei stop` en `/bc reset`. Wie tijdens het Ei uitlogde en
 later terugkomt, raakt hem bij het inloggen kwijt. Het Ei blijft uitgehakt liggen tot de
 volgende `/ei start`; ook `/bc reset` zet het terug (zonder puntenblokken).
 
-**Ronde 3, mob arena.** Geen kit: iedereen speelt met wat hij heeft. Start bij `v3`: border
-`mobarena`, iedereen naar `tribune_mob_n`, dan het **schema** (`core`: `MobSchema`):
+**Ronde 3, mob arena.** Eén veld (`veld`); per beurt staan er van elk team twee spelers tegelijk
+in. Geen kit: iedereen speelt met wat hij heeft. Start bij `v3`: border `mobarena`, iedereen naar
+`tribune_mob_n`, dan het **schema** (`core`: `MobSchema`):
 
-- Aantal beurten = het grootste team (5 bij 20 spelers). Per team een willekeurige volgorde van
-  de spelers; met *n* beurten speelt in beurt *b* in arena 1 speler *b* en in arena 2 speler
-  *b + ⌊n/2⌋* (rondom), dus bij 5 beurten speler *b + 2*.
-  Zo speelt iedereen één keer in elke arena en niemand twee beurten achter elkaar (waar het
-  aantal spelers dat toelaat).
-- Een kleiner team heeft in sommige beurten geen speler: dat zijn **extra beurten**. De mod vult
-  ze pas bij de start van die beurt, met een willekeurige speler van dat team die nog niet af is
-  en niet al in de andere arena staat. Is er niemand, dan blijft de plek leeg.
+- Per team een willekeurige volgorde van de spelers; in beurt *b* spelen speler *2b* en *2b + 1*.
+  Aantal beurten = het grootste team gedeeld door twee, naar boven afgerond: 4 teams van 4 geeft
+  2 beurten van 8 spelers. Iedereen speelt één keer.
+- Een kleiner team heeft in sommige beurten een plek zonder speler: dat is een **extra beurt**. De
+  mod vult hem pas bij de start van die beurt, met een willekeurige speler van dat team die nog
+  niet af is en niet al in deze beurt staat. Is er niemand, dan blijft de plek leeg.
 - Het schema is **geheim**: het komt niet in de chat. Spelers merken pas dat ze aan de beurt zijn
-  als de mod ze bij de start van een beurt naar hun vlak teleporteert. Alleen staff kan het
+  als de mod ze bij de start van een beurt naar hun plek teleporteert. Alleen staff kan het
   opvragen met `/mobarena schema`; dat antwoord ziet alleen wie het typt.
 
 **Een beurt** (start met `/mobarena start` voor beurt 1 en `/mobarena volgende` voor de rest):
-de ingeplande spelers die nog niet af zijn gaan naar `start_<arena>_<kleur>`, geheald en honger
-vol; de rest blijft op de tribune. Wie op zijn beurt wacht, houdt daar zijn spullen, krijgt geen
-schade en telt voor de mobs als kijker; alleen wie af is wordt echt kijker (inventory leeg).
-Title `BEURT 3` voor iedereen (geen subtitle). De spelers die aan de beurt zijn krijgen
-**Glowing**, dat in hun teamkleur gloeit (de outline volgt de kleur van hun team), tot het einde
-van de beurt of tot ze af zijn. Countdown 5. Dan 5 waves uit `waves.json`, in beide arena's
-tegelijk, met tag `bootcamp_mob` en `arena_1` of `arena_2`, `setPersistenceRequired()`, stenen
-knoop op het hoofd tegen zonlicht. Bij elke wave eerst een wolk `large_smoke`-particles en
-`block.fire.extinguish` op elk spawnpunt, dan de mobs. Een arena is klaar met een wave als haar teller 0 is; zijn
-beide klaar, dan na 5 seconden de volgende wave. Na 120 seconden telt een wave altijd als klaar
-(overgebleven mobs weg). Een arena is klaar met de beurt na wave 5, of zodra al haar spelers af
-zijn (haar mobs weg); de beurt is klaar als beide arena's klaar zijn. Dan meteen mobs en vexes
-weg en de title `BEURT 3 KLAAR` met de stand (fade-in 0, 200 ticks blijven), plus
-voor wie in een arena of kooi staat een aftelling van 10 seconden in de actionbar
-(`Naar de tribune over 7`). **Pas na 10 seconden** gaan de spelers uit de arena's en de kijkers
-uit de kooien naar `tribune_mob_n` (om en om over de punten). Wie al op de tribune stond, wordt
-niet verplaatst. In die 10 seconden doet niemand schade en is er niets meer om te killen. Daarna
-wacht de mod op `/mobarena volgende`.
+de ingeplande spelers die nog niet af zijn gaan naar hun eigen startplek, `start_<kleur>_1` en
+`start_<kleur>_2` (zo staan de twee van een team nooit in elkaar), geheald en honger vol; de rest
+blijft op de tribune. Wie op zijn beurt wacht, houdt daar zijn spullen, krijgt geen schade en telt
+voor de mobs als kijker; alleen wie af is wordt echt kijker (inventory leeg). Title `BEURT 2` voor
+iedereen (geen subtitle). De spelers die aan de beurt zijn krijgen **Glowing**, dat in hun
+teamkleur gloeit, tot het einde van de beurt of tot ze af zijn. **Tot de countdown voorbij is
+staan ze stil**: rondkijken kan, lopen en springen niet (dezelfde bevriezing als bij Clown en FFA).
+Countdown 5, bij `GO` zijn ze los. Dan 5 waves uit `waves.json`, met tag `bootcamp_mob`,
+`setPersistenceRequired()`, stenen knoop op het hoofd tegen zonlicht. Bij elke wave eerst een
+wolk `large_smoke`-particles en `block.fire.extinguish` op elk spawnpunt, dan de mobs, om en om
+over `mob_1..n`. Zijn alle mobs dood, dan na 5 seconden de volgende wave. Na 120 seconden telt
+een wave altijd als klaar (overgebleven mobs weg), behalve de warden (zie onder). De beurt is klaar
+na wave 5, of zodra iedereen in het veld af is. Dan meteen mobs en vexes weg en de title
+`BEURT 2 KLAAR` met de stand (fade-in 0, 200 ticks blijven), plus voor wie in het veld of de kooi
+staat een aftelling van 10 seconden in de actionbar (`Naar de tribune over 7`). **Pas na 10
+seconden** gaan de spelers uit het veld en de kijkers uit de kooi naar `tribune_mob_n` (om en om
+over de punten). Wie al op de tribune stond, wordt niet verplaatst. In die 10 seconden doet
+niemand schade en is er niets meer om te killen. Daarna wacht de mod op `/mobarena volgende`.
+
+**Het Warden-ei** (de prijs van het Ei): een warden spawn egg met `custom_data={bootcamp_warden:1b}`,
+naam `Warden-ei`. Vanilla spawnt er nooit een warden mee: rechtsklik in de lucht, op een blok of op
+een entity wordt altijd afgevangen. Inzetten kan alleen tijdens de mob arena, als deelnemer op de
+tribune (regio `tribune_mob`): niet wie zelf aan de beurt is, niet vanuit de kooi, niet als staff.
+Dan is het ei op, iedereen ziet `WARDEN-EI` met `Speler7 zet hem in: de volgende wave is de warden`
+(`entity.warden.roar`) en een chatregel. **De volgende wave die start, is de warden** in plaats van
+de geplande wave; die vervalt. Tijdens een wave of de pauze erna is dat de volgende wave van deze
+beurt; in de laatste wave of tussen twee beurten wave 1 van de volgende beurt. Is er geen volgende
+wave meer, dan weigert hij en houdt de speler het ei. Wie het ei heeft en in het veld sneuvelt,
+houdt het (de rest van zijn spullen is hij kwijt); een ongebruikt ei gaat aan het einde van de mob
+arena weg met de rest.
+
+**De warden-wave**: title `WAVE 3` met `De warden van Speler7`, `entity.warden.emerge`. De warden
+komt met de graaf-animatie uit de grond op punt `warden` (spawnreden `TRIGGERED`), met de levens
+en klap uit `/mobarena warden` (standaard 200 HP, klap 8 = 4 hartjes); zijn sonic boom doet de
+ingestelde schade (standaard 5 = 2,5 hartje) in plaats van 10. Hij kiest zijn doel met woede: de mod
+wist woede op wie niet aan de beurt is en zet hem op de dichtstbijzijnde speler in het veld, en
+houdt hem boven de grond zolang de wave loopt. Het publiek krijgt geen Darkness. De wave heeft
+**geen tijdslimiet**: hij loopt tot de warden dood is, of tot `/mobarena wave volgende`. Een kill
+op de warden is `/mobarena punten warden` waard (standaard 50) en komt in de chat.
 
 **Punten**: `ServerLivingEntityEvents.AFTER_DEATH` op een mob met `bootcamp_mob`. De killer is
 de speler die de laatste klap gaf, ook via een pijl of andere projectile; vanilla
 (`getLastHurtByMob`/`lastHurtByPlayer`) telt een speler die de mob in de laatste 5 seconden
 raakte. Punten uit `/mobarena punten` naar het team van die speler, plus één kill voor de
-tiebreak. Zonder speler (magma, val) geen punten. Een kill op een **evoker of ravager** komt als
-chatregel voor iedereen: `Speler7 killde de ravager (+10)`, met de naam in de teamkleur. Andere
-kills alleen in de actionbar van de killer.
+tiebreak. Zonder speler (magma, val) geen punten. Een kill op een **evoker, ravager of de warden**
+komt als chatregel voor iedereen: `Speler7 killde de ravager (+10)`, met de naam in de teamkleur.
+Andere kills alleen in de actionbar van de killer.
 
 **Af**: wie in de mob arena sneuvelt, ziet eerst de doodtekst als title en daarna in de actionbar
 de tekst van `/mobarena aftekst` (standaard `Af · je speelt geen beurt meer`), vijf seconden lang.
 
 **Mobs laten kijkers met rust**: elke tick krijgt een `bootcamp_mob` die een kijker, een staff-lid
-of een speler buiten zijn eigen arena als doel heeft `setTarget(null)`; daarna kiest hij zelf de
-dichtstbijzijnde speler die aan de beurt is in zijn arena. Dat kijkers geen schade krijgen is
+of een speler die niet aan de beurt is als doel heeft `setTarget(null)`; daarna kiest hij zelf de
+dichtstbijzijnde speler die aan de beurt is. Dat kijkers geen schade krijgen is
 niet genoeg: zonder deze check kiezen mobs ze nog steeds als doel en blijven ze om de kooi hangen.
 Wie op zijn beurt wacht, kan vanaf de tribune ook geen mob raken: een klap of pijl van een speler die
-niet in een arena staat, doet een `bootcamp_mob` niks, en een kill telt alleen voor wie aan de
+niet in het veld staat, doet een `bootcamp_mob` niks, en een kill telt alleen voor wie aan de
 beurt is.
 
 **Einde**, na de laatste beurt en haar 10 seconden: het team met de meeste punten wint (gelijk:
@@ -873,7 +916,7 @@ Geen spectator mode, geen tp-items, geen vliegen.
 - Geen schade, ook niet van de border. Een kijker ziet de border niet: hij krijgt een eigen
   border-pakket zo groot als de wereld, anders geeft de client een rood scherm.
 - Blijft op zijn plek: glas of tralies, en een tick-check die een kijker die toch in `vloer`,
-  `veld_1` of `veld_2` komt terugzet op zijn tribunepunt of in zijn kooi (op regio `tribune_mob` telt
+  `veld` komt terugzet op zijn tribunepunt of in zijn kooi (op regio `tribune_mob` telt
   geen veld). Bij `vloer` telt de
   cilinder: binnen de cirkel én binnen de 5 blokken hoogte. Een kijker die van de tribune de
   arena in springt of loopt, staat dus meteen weer op de tribune, met title `Terug naar de
@@ -883,7 +926,7 @@ Geen spectator mode, geen tp-items, geen vliegen.
 - Bij de dood een title met een willekeurige doodtekst, alleen voor de dode zelf. De lijst staat
   in `bootcamp.json`.
 
-Waar kijkers heen gaan: ronde 3 bij een dood naar `kooi_1` of `kooi_2` tot het einde van die
+Waar kijkers heen gaan: ronde 3 bij een dood naar `kooi` tot het einde van die
 beurt, en anders naar `tribune_mob_n`; ronde 5 en 6 naar `tribune_n`. Clown zit tijdens de FFA ook op de
 tribune.
 
@@ -905,7 +948,7 @@ Eén bossbar, kort, altijd hetzelfde formaat. Persoonlijke info via de actionbar
 | 1 | `Doolhof · 04:41` | groen, de laatste minuut rood | tijd; de poort staat er niet in |
 | 1, na de timer | `Doolhof · de tijd is om · gif` | paars | vol |
 | 2 | `Het Ei · 07:12` | groen, de laatste minuut rood | tijd |
-| 3 | `Mob Arena · beurt 3/5 · wave 2` | rood | mobs over in beide arena's |
+| 3 | `Mob Arena · beurt 2/2 · wave 2` | rood | mobs over in het veld |
 | 4 | `Quiz · aan de beurt: Groen`, of `Quiz · draai het rad` | teamkleur, wit als niemand aan de beurt is | vol |
 | 5 | `Clown vs All · Kroon: Clown · 12 over` | geel | spelers over |
 | 6 | `FFA · 7 over` | paars | spelers over |
@@ -947,10 +990,12 @@ langzaam draaiend. Opgeruimd als de kroonhouder kijker wordt.
 | Ei: slime | Title `MISSELIJK` met `door <naam>` voor de anderen, `entity.slime.squish`. |
 | Ei: target | Title `GEHUSSELD` met `door <naam>` voor iedereen, `entity.enderman.teleport`. |
 | Laatste minuut (doolhof, Ei) | Bossbar wordt rood. De laatste 10 seconden staan groot in beeld in rood, met `block.note_block.hat` per tel. |
-| Winnaar Ei | Title met de kop van de winnaar en `SPELER4 WINT HET EI` in goud, subtitle `185 punten`, `ui.toast.challenge_complete`, vuurpijl boven de winnaar. |
+| Winnaar Ei | Title met de kop van de winnaar en `SPELER4 WINT HET EI` in goud, subtitle `185 punten`, `ui.toast.challenge_complete`; winnaar op het podium, gouden vuurpijl erboven, het Warden-ei in het frame. |
 | Start mob arena | `ui.toast.challenge_complete`; het schema blijft geheim. Bij elke beurt de title `BEURT 3` voor iedereen, zonder subtitle. |
 | Spelers in de mob arena | Glowing in hun teamkleur tijdens hun beurt. |
-| Nieuwe wave | Rookwolk en `block.fire.extinguish` op de spawnpunten, dan title `WAVE 3` in rood, `event.raid.horn`, in beide arena's tegelijk. |
+| Nieuwe wave | Rookwolk en `block.fire.extinguish` op de spawnpunten, dan title `WAVE 3` in rood, `event.raid.horn`. |
+| Warden-ei ingezet | Title `WARDEN-EI` met `Speler7 zet hem in: de volgende wave is de warden`, `entity.warden.roar`, chatregel. |
+| Warden-wave | Title `WAVE 3` in donker-aqua met `De warden van Speler7`, `entity.warden.emerge`; de warden komt uit de grond. |
 | Mob gekild (ronde 3) | `entity.experience_orb.pickup` voor de killer, actionbar met de punten. Evoker en ravager ook als chatregel voor iedereen. |
 | Af in de mob arena | Doodtekst als title, daarna 5 seconden `/mobarena aftekst` in de actionbar. |
 | Speler sneuvelt | Alleen de dode ziet een willekeurige doodtekst als title. Geen geluid, geen chatregel. |

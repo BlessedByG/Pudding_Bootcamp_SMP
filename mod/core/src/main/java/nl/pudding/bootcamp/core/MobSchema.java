@@ -11,14 +11,14 @@ import java.util.UUID;
 import java.util.random.RandomGenerator;
 
 /**
- * Het geheime schema van de mob arena. Aantal beurten = het grootste team. Per team een gelote
- * volgorde; met n beurten speelt in beurt b in arena 1 speler b en in arena 2 speler b + ⌊n/2⌋
- * (rondom). Zo speelt iedereen één keer in elke arena, en niemand twee beurten achter elkaar waar
- * het aantal spelers dat toelaat. Een kleiner team heeft plekken zonder speler: extra beurten, die
- * pas bij de start van die beurt gevuld worden.
+ * Het geheime schema van de mob arena: één veld, per beurt twee spelers van elk team tegelijk. Per
+ * team een gelote volgorde; in beurt b spelen speler 2b en 2b + 1. Aantal beurten = het grootste
+ * team gedeeld door twee, naar boven afgerond, zodat iedereen één keer speelt. Een kleiner team
+ * heeft plekken zonder speler: extra beurten, die pas bij de start van die beurt gevuld worden.
  */
 public final class MobSchema {
-	public static final int ARENAS = 2;
+	/** Zoveel spelers van elk team staan er per beurt in het veld; zoveel startplekken heeft elk team. */
+	public static final int PER_BEURT = 2;
 
 	private final int beurten;
 	private final Map<Kleur, List<UUID>> volgorde;
@@ -38,7 +38,7 @@ public final class MobSchema {
 			volgorde.put(k, List.copyOf(leden));
 			n = Math.max(n, leden.size());
 		}
-		return new MobSchema(n, volgorde);
+		return new MobSchema(beurtenVoor(n), volgorde);
 	}
 
 	/** Een schema met een vaste volgorde, voor tests. */
@@ -50,7 +50,11 @@ public final class MobSchema {
 			v.put(k, leden);
 			n = Math.max(n, leden.size());
 		}
-		return new MobSchema(n, v);
+		return new MobSchema(beurtenVoor(n), v);
+	}
+
+	private static int beurtenVoor(int grootsteTeam) {
+		return (grootsteTeam + PER_BEURT - 1) / PER_BEURT;
 	}
 
 	public int beurten() {
@@ -61,26 +65,21 @@ public final class MobSchema {
 		return volgorde;
 	}
 
-	/** De verschuiving van arena 2: ⌊n/2⌋, minstens 1 als er meer dan één beurt is. */
-	public int verschuiving() {
-		return beurten <= 1 ? 0 : Math.max(1, beurten / 2);
-	}
-
 	/**
-	 * Wie volgens het schema speelt in deze beurt (vanaf 0) en arena (1 of 2); {@code null} is een
-	 * extra beurt: het team heeft daar geen speler.
+	 * Wie volgens het schema speelt in deze beurt (vanaf 0) op deze plek (1 of 2) van zijn team;
+	 * {@code null} is een extra beurt: het team heeft daar geen speler.
 	 */
-	public UUID gepland(int beurt, int arena, Kleur kleur) {
+	public UUID gepland(int beurt, int plek, Kleur kleur) {
 		List<UUID> leden = volgorde.get(kleur);
 		if (beurten == 0 || leden == null) {
 			return null;
 		}
-		int index = arena == 1 ? beurt : Math.floorMod(beurt + verschuiving(), beurten);
+		int index = beurt * PER_BEURT + plek - 1;
 		return index < leden.size() ? leden.get(index) : null;
 	}
 
-	/** Een plek in een beurt: welke arena, welk team, wie (of {@code null} = leeg). */
-	public record Plek(int arena, Kleur kleur, UUID speler, boolean extra) {
+	/** Een plek in een beurt: welk team, welke startplek (1 of 2), wie (of {@code null} = leeg). */
+	public record Plek(Kleur kleur, int nummer, UUID speler, boolean extra) {
 	}
 
 	/**
@@ -96,23 +95,23 @@ public final class MobSchema {
 		List<Plek> uit = new ArrayList<>();
 		Set<UUID> ingezet = new HashSet<>();
 		// Eerst de geplande spelers, zodat een extra beurt nooit iemand pakt die al gepland staat.
-		for (int arena = 1; arena <= ARENAS; arena++) {
-			for (Kleur k : Kleur.values()) {
-				UUID s = gepland(beurt, arena, k);
+		for (Kleur k : Kleur.values()) {
+			for (int plek = 1; plek <= PER_BEURT; plek++) {
+				UUID s = gepland(beurt, plek, k);
 				if (s != null && !af.contains(s) && aanwezig.contains(s)) {
 					ingezet.add(s);
 				}
 			}
 		}
-		for (int arena = 1; arena <= ARENAS; arena++) {
-			for (Kleur k : Kleur.values()) {
-				if (volgorde.get(k).isEmpty()) {
-					continue;
-				}
-				UUID s = gepland(beurt, arena, k);
+		for (Kleur k : Kleur.values()) {
+			if (volgorde.get(k).isEmpty()) {
+				continue;
+			}
+			for (int plek = 1; plek <= PER_BEURT; plek++) {
+				UUID s = gepland(beurt, plek, k);
 				if (s != null) {
 					boolean mag = !af.contains(s) && aanwezig.contains(s);
-					uit.add(new Plek(arena, k, mag ? s : null, false));
+					uit.add(new Plek(k, plek, mag ? s : null, false));
 					continue;
 				}
 				List<UUID> kandidaten = new ArrayList<>();
@@ -125,7 +124,7 @@ public final class MobSchema {
 				if (gekozen != null) {
 					ingezet.add(gekozen);
 				}
-				uit.add(new Plek(arena, k, gekozen, true));
+				uit.add(new Plek(k, plek, gekozen, true));
 			}
 		}
 		return uit;

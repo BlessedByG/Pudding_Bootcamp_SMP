@@ -66,7 +66,6 @@ import nl.pudding.bootcamp.schrik.Schrik;
 import nl.pudding.bootcamp.teams.Teams;
 import nl.pudding.bootcamp.visuals.Bossbar;
 import nl.pudding.bootcamp.visuals.Sidebar;
-import nl.pudding.bootcamp.visuals.Vuurwerk;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -108,6 +107,7 @@ public final class Ei extends RondeLogica {
 	private int volgendeSpawn;
 
 	public static void init() {
+		Huldiging.init();
 		PlayerBlockBreakEvents.BEFORE.register((level, player, pos, state, blockEntity) -> {
 			if (!(player instanceof ServerPlayer speler) || Mc.isStaff(speler) || !(Spel.actief() instanceof Ei ei)) {
 				return true;
@@ -657,18 +657,16 @@ public final class Ei extends RondeLogica {
 			}
 			titel.append(Mc.tekst(naam + " WINT HET EI", ChatFormatting.GOLD, ChatFormatting.BOLD));
 			Mc.titleAllen(server, titel, Mc.tekst(winnaar.score() + " punten", ChatFormatting.YELLOW), 10, 80, 20);
-			if (w != null) {
-				Vuurwerk.goud(Mc.wereld(server), w.getX(), w.getY() + 2, w.getZ());
-			}
 		} else {
 			Mc.titleAllen(server, Mc.tekst("HET EI IS VOORBIJ", ChatFormatting.GOLD, ChatFormatting.BOLD),
 					Mc.tekst("niemand hakte punten", ChatFormatting.GRAY), 10, 80, 20);
 		}
 		Mc.geluidAllen(server, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 1f, 1f);
 		Spel.maakSpelers(server, false);
-		for (ServerPlayer s : Mc.deelnemers(server)) {
-			Spel.naarPunt(s, "v3");
-		}
+		// De huldiging: winnaar op het podium, de rest op het plein, het Warden-ei in het frame.
+		UUID winnaarId = winnaar == null ? null : winnaar.speler();
+		Huldiging.opstellen(server, winnaarId);
+		Huldiging.prijsKlaarzetten(server, winnaarId);
 		toonSidebar(server);
 	}
 

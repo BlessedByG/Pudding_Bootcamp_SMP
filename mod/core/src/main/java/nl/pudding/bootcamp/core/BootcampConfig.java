@@ -323,6 +323,11 @@ public final class BootcampConfig {
 		mob.add("punten", punten);
 		mob.addProperty("aftekst", i.aftekst());
 		mob.addProperty("veldhoogte", i.veldHoogte());
+		JsonObject warden = new JsonObject();
+		for (Instellingen.WardenWaarde w : Instellingen.WardenWaarde.values()) {
+			warden.addProperty(w.id(), i.warden(w));
+		}
+		mob.add("warden", warden);
 		o.add("mobarena", mob);
 
 		JsonObject clown = new JsonObject();
@@ -385,6 +390,14 @@ public final class BootcampConfig {
 			}
 			if (m.has("veldhoogte")) {
 				wrap("instellingen.mobarena.veldhoogte", () -> i.zetVeldHoogte(m.get("veldhoogte").getAsInt()));
+			}
+			if (m.has("warden")) {
+				JsonObject w = m.getAsJsonObject("warden");
+				for (Instellingen.WardenWaarde waarde : Instellingen.WardenWaarde.values()) {
+					if (w.has(waarde.id())) {
+						wrap("instellingen.mobarena.warden." + waarde.id(), () -> i.zetWarden(waarde, w.get(waarde.id()).getAsInt()));
+					}
+				}
 			}
 		}
 		if (o.has("clown") && o.getAsJsonObject("clown").has("wachttekst")) {

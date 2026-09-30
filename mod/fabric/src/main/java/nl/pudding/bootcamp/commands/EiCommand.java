@@ -13,6 +13,7 @@ import nl.pudding.bootcamp.core.Instellingen;
 import nl.pudding.bootcamp.core.Ronde;
 import nl.pudding.bootcamp.game.Spel;
 import nl.pudding.bootcamp.game.ronde2.Ei;
+import nl.pudding.bootcamp.game.ronde2.Huldiging;
 import nl.pudding.bootcamp.game.ronde2.EiOpslag;
 
 import java.util.Arrays;
@@ -46,6 +47,7 @@ final class EiCommand {
 						.suggests((ctx, b) -> SharedSuggestionProvider.suggest(Arrays.stream(EiBlok.values()).map(EiBlok::id), b))
 						.then(Commands.argument("aantal", IntegerArgumentType.integer(0, 100_000)).executes(EiCommand::blokken))));
 		cmd.then(Commands.literal("vastleggen").executes(EiCommand::vastleggen));
+		cmd.then(Commands.literal("prijskader").executes(EiCommand::prijskader));
 		return cmd;
 	}
 
@@ -75,6 +77,15 @@ final class EiCommand {
 		Spel.instellingen().zetEiBlokken(blok, aantal);
 		String wanneer = RondeCommands.lopend(Ei.class) != null ? " Geldt vanaf de volgende /ei start." : "";
 		return BcCommand.bewaard(ctx, blok.id() + ": " + aantal + " blokken." + wanneer);
+	}
+
+	/** Het item frame waar de speler naar kijkt, wordt het frame voor het Warden-ei. */
+	private static int prijskader(CommandContext<CommandSourceStack> ctx) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+		String fout = Huldiging.zetKader(ctx.getSource().getPlayerOrException());
+		if (fout != null) {
+			return BcCommand.fout(ctx, "Geen frame: " + fout + ".");
+		}
+		return BcCommand.ok(ctx, "Dit item frame krijgt het Warden-ei als het Ei voorbij is (punt " + Huldiging.KADER + ").");
 	}
 
 	private static int vastleggen(CommandContext<CommandSourceStack> ctx) {
