@@ -571,10 +571,11 @@ vond. Het gif loopt tot iedereen een team heeft; `/doolhof einde` is de noodknop
 **Einde** (iedereen een team, of `/doolhof einde`): wie nog geen team heeft gaat naar het kleinste
 team (bij gelijk: willekeurig) en ziet in de actionbar `Je zit in Groen`; iedereen ziet de title
 `DOOLHOF VOORBIJ` met als subtitle `14 van de 20 vonden de uitgang` (wie zelf over de finish kwam),
-en iedereen verzamelt in de finishruimte: wie nog in het doolhof loopt (regio `doolhof_gif`) gaat naar
-`doolhof_finish`, wie al in de finishruimte staat blijft staan. Daar kan de host de teams bespreken; **`/doolhof naarei`** zet daarna iedereen die meedoet
-naar `v2` bij het Ei, met de title `OP NAAR HET EI`. Tot dat command is de finishruimte ook het
-verzamelpunt voor wie tussendoor inlogt of in de void valt; daarna `v2`. `/doolhof start` begint
+en iedereen verzamelt in de finishruimte: wie nog in het doolhof loopt (regio `doolhof_gif`) gaat
+naar `doolhof_finish`, wie al in de finishruimte staat blijft staan. Daar kan de host de teams
+bespreken; **`/doolhof naarei`** zet daarna iedereen die meedoet naar `v2` bij het Ei, met de
+title `OP NAAR HET EI`. Tot dat command is de finishruimte ook het verzamelpunt voor wie
+tussendoor inlogt of in de void valt; daarna `v2`. `/doolhof start` begint
 zonder teams: het doolhof is de teamkeuze, dus oude keuzes gaan weg.
 
 **Welkom.** Wie joint terwijl er geen ronde loopt, krijgt de title `PUDDING BOOTCAMP` met als
