@@ -215,11 +215,11 @@ is, blijft in de jumpscare in zijn eigen verhouding: de breedte volgt de hoogte.
 bepalen `SCHRIK_EENHEDEN` en `SCHRIK_PX_PER_EENHEID` bovenin `BouwPack.java` (nu 68 eenheden hoog;
 een title tekent vier keer zo groot); afstemmen in de eerste test. Heeft een speler het pack niet
 (weigerde of downloadfout), dan ziet die lege vierkantjes en hoort niks; met
-`require-resource-pack=true` kan dat niet. `/bc schrik <speler> [<foto>]` doet een jumpscare met
+`require-resource-pack=true` kan dat niet. `/bc schrik <spelers> [<foto>]` doet een jumpscare met
 de hand (zonder foto een willekeurige), voor het testen en voor de lol.
 
 **De 8D-klop** (`Schrik.klop(speler)`): alleen het geluid `bootcamp:klop`, alleen voor die speler,
-geen beeld. `/bc klop <speler>` om te testen.
+geen beeld. `/bc klop <spelers>` om te testen.
 
 Waar een jumpscare vandaan komt:
 - Doolhof: in een regio `schrik_1` t/m `schrik_n`, één keer per regio per speler. Per plek een
@@ -350,8 +350,8 @@ hele avond geldt (setup, spelers, noodknoppen) staat onder `/bc`.
 | `/bc status` | Rollen, teams en vlaggen van alle spelers, huidige ronde, timer en de instellingen. |
 | `/bc kit <naam> [<speler>]` | Zet een kit op iedereen die meedoet, of op één speler. |
 | `/bc team <speler> <rood\|blauw\|groen\|geel\|weg>` | Noodknop: iemand in een team zetten of de keuze weghalen. Mag boven het maximum. |
-| `/bc schrik <speler> [<foto>]` | Een jumpscare, met de hand: foto 1 t/m 5, zonder foto een willekeurige. |
-| `/bc klop <speler>` | De 8D-klop, met de hand (om te testen). |
+| `/bc schrik <spelers> [<foto>]` | Een jumpscare, met de hand: foto 1 t/m 5, zonder foto voor ieder een willekeurige. Eén speler of een selector, bijvoorbeeld `/bc schrik @a 3`. |
+| `/bc klop <spelers>` | De 8D-klop, met de hand (om te testen); ook met `@a`. |
 | `/bc kijker <speler> aan\|uit` | Noodknop: iemand met de hand op de tribune zetten of eraf halen. |
 | `/bc doodtekst lijst\|nieuw <tekst>\|weg <nr>\|standaard` | De doodteksten bekijken, er een bijzetten, er een weghalen (op nummer uit de lijst; er blijft er minstens één) of de standaard zes terugzetten. Wordt meteen opgeslagen. |
 | `/bc reset` | Alles terug naar de basiskamp-staat via het reset-register; ook alle teamkeuzes weg en het Ei teruggezet. Instellingen blijven. |

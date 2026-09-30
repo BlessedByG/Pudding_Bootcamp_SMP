@@ -72,11 +72,11 @@ final class AlgemeenCommands {
 						.executes(ctx -> kit(ctx, List.of(EntityArgument.getPlayer(ctx, "speler")))))));
 		bc.then(Commands.literal("team").then(Commands.argument("speler", StringArgumentType.word()).suggests(BcCommand.ONLINE)
 				.then(Commands.argument("kleur", StringArgumentType.word()).suggests(TEAMS).executes(AlgemeenCommands::team))));
-		bc.then(Commands.literal("schrik").then(Commands.argument("speler", EntityArgument.player())
+		bc.then(Commands.literal("schrik").then(Commands.argument("spelers", EntityArgument.players())
 				.executes(ctx -> schrik(ctx, 0))
 				.then(Commands.argument("foto", IntegerArgumentType.integer(1, Regels.SCHRIK_FOTOS))
 						.executes(ctx -> schrik(ctx, IntegerArgumentType.getInteger(ctx, "foto"))))));
-		bc.then(Commands.literal("klop").then(Commands.argument("speler", EntityArgument.player())
+		bc.then(Commands.literal("klop").then(Commands.argument("spelers", EntityArgument.players())
 				.executes(AlgemeenCommands::klop)));
 		bc.then(Commands.literal("kijker").then(Commands.argument("speler", EntityArgument.player())
 				.then(Commands.literal("aan").executes(ctx -> kijker(ctx, true)))
@@ -164,16 +164,26 @@ final class AlgemeenCommands {
 	}
 
 	/** @param foto 1 t/m 5, of 0 voor een willekeurige */
+	/** Ook voor meer spelers tegelijk ({@code @a}); zonder foto krijgt ieder zijn eigen willekeurige. */
 	private static int schrik(CommandContext<CommandSourceStack> ctx, int foto) throws CommandSyntaxException {
-		ServerPlayer speler = EntityArgument.getPlayer(ctx, "speler");
-		Schrik.op(speler, foto);
-		return BcCommand.info(ctx, "Jumpscare naar " + Mc.naam(speler) + (foto == 0 ? " (willekeurige foto)." : " (foto " + foto + ")."));
+		Collection<ServerPlayer> spelers = EntityArgument.getPlayers(ctx, "spelers");
+		for (ServerPlayer s : spelers) {
+			Schrik.op(s, foto);
+		}
+		return BcCommand.info(ctx, "Jumpscare naar " + wie(spelers) + (foto == 0 ? " (willekeurige foto)." : " (foto " + foto + ")."));
 	}
 
 	private static int klop(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-		ServerPlayer speler = EntityArgument.getPlayer(ctx, "speler");
-		Schrik.klop(speler);
-		return BcCommand.info(ctx, "8D-klop naar " + Mc.naam(speler) + ".");
+		Collection<ServerPlayer> spelers = EntityArgument.getPlayers(ctx, "spelers");
+		for (ServerPlayer s : spelers) {
+			Schrik.klop(s);
+		}
+		return BcCommand.info(ctx, "8D-klop naar " + wie(spelers) + ".");
+	}
+
+	/** {@code Speler7}, of {@code 12 spelers}. */
+	private static String wie(Collection<ServerPlayer> spelers) {
+		return spelers.size() == 1 ? Mc.naam(spelers.iterator().next()) : spelers.size() + " spelers";
 	}
 
 	private static int kijker(CommandContext<CommandSourceStack> ctx, boolean aan) throws CommandSyntaxException {
