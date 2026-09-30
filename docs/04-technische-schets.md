@@ -148,7 +148,7 @@ Het pack staat in `pack/` in deze repo. **Aanleveren** gaat in `pack/aanleveren/
 | Bestand | Eisen |
 |---|---|
 | `schrik_1.png` t/m `schrik_5.png` (ook `.jpg` of `.jpeg`) | De vijf jumpscare-foto's; in de mod heten ze foto 1 t/m 5. **Elk formaat en elke verhouding**: vierkant, liggend of staand, zo groot als je wilt. Een webp eerst omzetten naar png. |
-| `schrik.ogg` | Het geluid bij elke jumpscare, ogg vorbis. |
+| `schrik.ogg` | Het geluid bij elke jumpscare, ogg vorbis. **Zonder stilte aan het begin** (anders komt het geluid na de foto) en zo hard als je hem wilt: Minecraft speelt nooit harder dan het bestand zelf. Het huidige bestand is 0,362 s ingekort en 12 dB harder gemaakt, zie `pack/aanleveren/LEESMIJ.txt`. |
 | `klop.ogg` | De 8D-klop uit de valkisten, ogg vorbis. **Stereo laten**: Minecraft speelt een stereogeluid zonder richting af, dus het 8D-effect in het bestand blijft. |
 
 Minecraft speelt alleen ogg vorbis. Een wav of mp3 eerst omzetten, met Audacity (Bestand >
@@ -161,7 +161,9 @@ en het werkt ook op Windows zonder Git Bash. Het programma:
 1. leest de vijf foto's (jpg of png) en schaalt ze naar 476 pixels hoog, met behoud van de
    verhouding (een heel brede foto wordt kleiner, tot 1428 pixels breed); een foto die er niet is,
    wordt een placeholder met "foto N volgt";
-2. zet `schrik.ogg` en `klop.ogg` erbij (de klop streamt, want die is lang);
+2. zet `schrik.ogg` en `klop.ogg` erbij (de klop streamt, want die is lang; de jumpscare laadt al
+   bij het laden van het pack, `preload`, anders laadt Minecraft hem pas bij de eerste keer en komt
+   die te laat);
 3. tekent **het quiz-rad** (Java2D, niets aan te leveren): 64 standen van 484 × 484, elk 5,625°
    verder gedraaid, met de 16 vakken in de vaste volgorde uit *Ronde 4* in alleen de
    teamkleuren (rood `#E24B4A`, blauw `#378ADD`, groen `#639922`, geel `#EF9F27`), een donkere

@@ -161,8 +161,11 @@ public class BouwPack {
 			if (Files.exists(ogg)) {
 				Files.createDirectories(sounds);
 				Files.copy(ogg, sounds.resolve(g[0] + ".ogg"), StandardCopyOption.REPLACE_EXISTING);
-				// Een lang geluid streamt, dan hoeft het niet helemaal in het geheugen.
-				geluiden.add("  \"" + g[0] + "\": {\"sounds\": [{\"name\": \"bootcamp:" + g[0] + "\", \"stream\": " + g[2] + "}]}");
+				// Een lang geluid streamt, dan hoeft het niet helemaal in het geheugen. Een kort geluid laadt
+				// al bij het laden van het pack (preload): anders laadt Minecraft het pas bij de eerste keer
+				// afspelen, en dan komt de eerste jumpscare te laat.
+				String laden = g[2].equals("true") ? "\"stream\": true" : "\"stream\": false, \"preload\": true";
+				geluiden.add("  \"" + g[0] + "\": {\"sounds\": [{\"name\": \"bootcamp:" + g[0] + "\", " + laden + "}]}");
 				System.out.println(g[1] + ": " + g[0] + ".ogg erbij.");
 			} else if (Files.exists(aanleveren.resolve(g[0] + ".wav"))) {
 				System.out.println(g[1] + ": " + g[0] + ".wav gevonden, maar Minecraft speelt alleen ogg vorbis. Zet hem om naar "

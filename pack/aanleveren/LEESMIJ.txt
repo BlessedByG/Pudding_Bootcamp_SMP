@@ -8,11 +8,22 @@ Hier komen de bestanden voor de jumpscares:
                                   Minecraft speelt stereo zonder richting af, dus het 8D-effect
                                   blijft.
 
-Minecraft speelt alleen ogg vorbis. Een mp3 of wav eerst omzetten, bijvoorbeeld met Audacity
-(Bestand > Exporteren > Exporteren als OGG) of met ffmpeg:
+Minecraft speelt alleen ogg vorbis, en nooit harder dan het bestand zelf (volume 1 is het
+maximum). Harder betekent dus: het bestand harder maken. En knip de stilte aan het begin weg:
+elke fractie stilte komt de jumpscare te laat.
 
-  ffmpeg -i "Jumpscare Sound Effect-(p).wav" -c:a libvorbis -q:a 5 schrik.ogg
+Zo zijn ze gemaakt (ffmpeg, via winget install Gyan.FFmpeg):
+
+  ffmpeg -i "Jumpscare Sound Effect-(p).wav" -af "atrim=start=0.362,asetpts=PTS-STARTPTS,volume=12dB,alimiter=limit=0.89:attack=1:release=50:level=false" -c:a libvorbis -q:a 6 schrik.ogg
   ffmpeg -i "8d knock.wav" -c:a libvorbis -q:a 5 klop.ogg
+
+atrim knipt de eerste 0,362 seconde stilte eraf, volume maakt hem 12 dB harder en de limiter
+houdt de pieken 1 dB onder het maximum. Een ander geluid: kijk eerst hoe lang de stilte is met
+
+  ffmpeg -i bestand.wav -af silencedetect=noise=-50dB:d=0.02 -f null -
+
+Met Audacity kan het ook: stilte selecteren en wissen, Effect > Versterken, dan Bestand >
+Exporteren > Exporteren als OGG.
 
 Daarna vanuit de repo:
 
