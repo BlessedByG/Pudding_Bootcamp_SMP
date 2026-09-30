@@ -148,7 +148,11 @@ public final class Ffa extends RondeLogica {
 			Tribune.maakKijker(server, speler, Tribune.Spullen.LEGEN, true);
 			int over = Spel.levend(server, Rol.FFA).size();
 			Arena.afMelding(server, Mc.naam(speler), ChatFormatting.WHITE, killer == null ? null : Mc.naam(killer), ChatFormatting.WHITE, over);
-			laatsten(server, over);
+			// LAATSTE DRIE en TWEE gaan voor de kill; bij de laatste kill komt de kroning.
+			if (!laatsten(server, over) && killer != null && over > 1) {
+				killInBeeld(server, killer, speler, over);
+			}
+			toonKills(server);
 			controleerWinnaar(server);
 		} finally {
 			netDood.clear();
@@ -165,11 +169,36 @@ public final class Ffa extends RondeLogica {
 		}
 	}
 
-	/** Bij drie over LAATSTE DRIE, bij twee LAATSTE TWEE, met de namen. */
-	private void laatsten(MinecraftServer server, int over) {
+	/**
+	 * Een kill groot in beeld voor de tribune (en staff) en voor de killer zelf. Wie nog vecht, ziet
+	 * alleen de chatregel; de dode ziet zijn doodtekst.
+	 */
+	private void killInBeeld(MinecraftServer server, ServerPlayer killer, ServerPlayer dode, int over) {
+		List<ServerPlayer> voor = Mc.spelers(server).stream()
+				.filter(s -> !netDood.contains(s.getUUID()))
+				.filter(s -> s == killer || Spel.status(s).rol != Rol.FFA || Spel.status(s).dood)
+				.toList();
+		// Zachter dan in King of the Hill: in de FFA vallen veel meer kills.
+		Arena.killInBeeld(voor, killer, dode, ChatFormatting.WHITE, over, 0.5f);
+	}
+
+	/** Onderin voor iedereen die nog vecht: {@code 3 kills · 11 over}. Niet zolang iedereen stil staat. */
+	private void toonKills(MinecraftServer server) {
+		if (Tribune.stil()) {
+			return;
+		}
+		List<ServerPlayer> vechters = Spel.levend(server, Rol.FFA);
+		for (ServerPlayer s : vechters) {
+			int k = kills.score(s.getUUID());
+			Mc.actionbar(s, Mc.tekst(k + (k == 1 ? " kill" : " kills") + " · " + vechters.size() + " over", ChatFormatting.GOLD));
+		}
+	}
+
+	/** Bij drie over LAATSTE DRIE, bij twee LAATSTE TWEE, met de namen. Geeft terug of die kwam. */
+	private boolean laatsten(MinecraftServer server, int over) {
 		String titel = Regels.aftelTitle(over);
 		if (titel == null || over >= laatstGemeld) {
-			return;
+			return false;
 		}
 		laatstGemeld = over;
 		List<String> namen = Spel.levend(server, Rol.FFA).stream().map(Mc::naam).toList();
@@ -177,6 +206,7 @@ public final class Ffa extends RondeLogica {
 		Mc.titleAllenBehalve(server, netDood, Component.literal(titel).withStyle(s -> s.withColor(PAARS).withBold(true)),
 				Mc.tekst(sub, ChatFormatting.LIGHT_PURPLE), 5, 50, 15);
 		Mc.geluidAllen(server, SoundEvents.WITHER_SPAWN, 0.3f, 1f);
+		return true;
 	}
 
 	private void controleerWinnaar(MinecraftServer server) {
@@ -220,6 +250,7 @@ public final class Ffa extends RondeLogica {
 			return;
 		}
 		Bossbar.zet(BossbarTekst.ffa(over), BossEvent.BossBarColor.PURPLE, bijStart <= 0 ? 1f : (float) over / bijStart);
+		toonKills(server);
 		// Niet alleen bij een dood: ook met maar één vechter, of na /bc kijker.
 		if (over <= 1) {
 			controleerWinnaar(server);

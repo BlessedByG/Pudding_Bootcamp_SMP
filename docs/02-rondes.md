@@ -429,6 +429,11 @@ De volledige regels staan in [03-kroon-regels.md](03-kroon-regels.md). Hier het 
   als het stilvalt. Iedereen ziet dan **DE BORDER KRIMPT**. Zonder dat blijft de hele vloer vrij.
 - In beeld: rechts de **kills** per speler, wie af is in de chat ("Speler3 is af door Speler7 ·
   11 over"), en bij drie en twee over **LAATSTE DRIE** en **LAATSTE TWEE** met de namen.
+- **Een kill komt groot in beeld**, net als bij King of the Hill: de kop en naam van de killer
+  met "pakt Speler3 · 11 over" en een zachte brul van een ravager. Dat ziet iedereen op de
+  tribune en de killer zelf; wie nog vecht, ziet alleen de chatregel. Bij drie en twee over gaat
+  LAATSTE DRIE of LAATSTE TWEE voor, en bij de laatste kill komt de kroning.
+- Onderin ziet iedereen die nog vecht zijn eigen kills: "3 kills · 11 over".
 
 **Einde**
 - De laatste levende speler is **King of the SMP Bootcamp**.

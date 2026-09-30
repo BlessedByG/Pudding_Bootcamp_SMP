@@ -217,7 +217,9 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
 - [ ] `/ffa start`: iedereen behalve Clown op een willekeurige plek, Clown op de tribune,
       iedereen stil. Kit: dezelfde als King of the Hill met 32 gapples, gewone diamond helm.
       Onderin "Wacht op het startsein". `/ffa go`: 10 seconden, dan raakt iedereen iedereen.
-      Kills rechts, wie af is in de chat. `/ffa krimp 20`: DE BORDER KRIMPT en de border krimpt.
+      Kills rechts, wie af is in de chat, onderin "n kills · n over" voor wie vecht. Een kill
+      komt groot in beeld bij de tribune en de killer (zachte brul), niet bij de andere
+      vechters. `/ffa krimp 20`: DE BORDER KRIMPT en de border krimpt.
       Bij drie en twee over LAATSTE DRIE en LAATSTE TWEE. Laatste over: kroning op het podium,
       iedereen op de tribune, vuurwerk, KING OF THE SMP BOOTCAMP met de kop van de winnaar; de
       bossbar "King: <naam>" en de zwevende kroon blijven tot `/bc reset`.
