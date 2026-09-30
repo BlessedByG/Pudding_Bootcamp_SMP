@@ -414,6 +414,7 @@ hij de doos om alle delen heen; bij de cirkel van `vloer` is dat het vierkant er
 | `ei_spawn_1` t/m `ei_spawn_n` | De startplekken aan het buiteneinde van de kettingen. Zoveel als je wilt, genummerd vanaf 1. Spelers worden er om en om over verdeeld; na een dodelijke klap kom je terug op je eigen startplek. |
 | `v3` | Verzamelpunt bij de mob arena, op het plein: voor wie tussen het Ei en de mob arena inlogt. |
 | `ei_podium` | Het podium op het plein, kijkend naar het plein: daar komt de winnaar van het Ei. |
+| `ei_presentator` | Ook op het podium, naast de winnaar: daar komt de presentator (Pudding) om het Warden-ei uit te reiken, ook als hij staff is. |
 | `ei_prijskader` | Het item frame voor het Warden-ei. Zetten met `/ei prijskader` terwijl je naar het frame kijkt. |
 | `start_rood_1`, `start_rood_2`, en zo voor `blauw`, `groen`, `geel` | Twee startplekken per team in het veld, niet te dicht bij elkaar. Zetten met `/mobarena startplek <kleur> <1\|2>`. |
 | `mob_1` t/m `mob_n` | Mob-spawns in het veld, op zelf gekozen plekken. Zoveel als je wilt; de mobs van een wave gaan er om en om over. |
@@ -673,24 +674,26 @@ punten alleen `0 punten`. Loopt er Haste, Efficiency V of een bevriezing, dan st
 emmers (`UseItemCallback`) worden geannuleerd. De enige uitzondering is de TNT uit het Ei (zie
 boven).
 
-Sidebar: titel `Het Ei · top 10`, per regel de naam in de teamkleur met de punten rechts,
-bijgewerkt bij elk puntenblok. De volgorde is die van de mod, ook bij gelijke punten: wie de
-score het eerst had staat hoger. De client sorteert gelijke scores zelf op de naam van de regel,
-dus de regels heten intern `01` t/m `10` en krijgen de spelersnaam als display name. Wie nog 0
-punten heeft staat er niet in. Geen zoekhints: het Ei is van ver te zien. Timer op: de meeste
-punten wint (gelijk: wie die score het eerst had), title, adventure, en de **huldiging** op het
-plein bij de mob arena: de winnaar naar `ei_podium`, de rest verspreid over regio `ei_plein` (op
-een willekeurige vrije plek op de vloer, niet in elkaar, kijkend naar het podium; lukt dat niet,
-dan `v3`), en een tick later een gouden vuurpijl boven het podium. Het **Warden-ei** verschijnt in
-het item frame van `/ei prijskader` (punt `ei_prijskader`). Alleen de winnaar of de presentator
-(`/quiz presentator`, de spelleider) kan het eruit halen, met een rechtsklik of een klap; dan komt
-het in zijn inventory, met een chatregel `Speler7 pakt het Warden-ei`. Anderen zien `Alleen
-Speler7 of de presentator kan het Warden-ei pakken`. Staat er geen frame, dan krijgt de winnaar het
-meteen. Zonder winnaar blijft het frame leeg en het podium ook. Na een herstart weet de mod de
-winnaar niet meer; dan kan alleen de presentator het ei pakken. **De pickaxe gaat weg**: elk item met `custom_data={bootcamp_ei:1b}` verdwijnt uit
-inventory, offhand en cursor, ook bij `/ei stop` en `/bc reset`. Wie tijdens het Ei uitlogde en
-later terugkomt, raakt hem bij het inloggen kwijt. Het Ei blijft uitgehakt liggen tot de
-volgende `/ei start`; ook `/bc reset` zet het terug (zonder puntenblokken).
+Sidebar: titel `Het Ei · top 10`, per regel de naam in de teamkleur met de punten rechts, bijgewerkt
+bij elk puntenblok. De volgorde is die van de mod, ook bij gelijke punten: wie de score het eerst
+had staat hoger. De client sorteert gelijke scores zelf op de naam van de regel, dus de regels heten
+intern `01` t/m `10` en krijgen de spelersnaam als display name. Wie nog 0 punten heeft staat er
+niet in. Geen zoekhints: het Ei is van ver te zien. Timer op: de meeste punten wint (gelijk: wie die
+score het eerst had), title, adventure, en de **huldiging** op het plein bij de mob arena: de
+winnaar naar `ei_podium`, de presentator naar `ei_presentator` (ernaast, ook als hij staff is; is
+hij zelf de winnaar, dan het podium), de rest verspreid over regio `ei_plein` (op een willekeurige
+vrije plek op de vloer, niet in elkaar, kijkend naar het podium; lukt dat niet, dan `v3`), en een
+tick later een gouden vuurpijl boven het podium. Het **Warden-ei** verschijnt in het item frame van
+`/ei prijskader` (punt `ei_prijskader`). Alleen de winnaar of de presentator (`/quiz presentator`,
+de spelleider) kan het eruit halen, met een rechtsklik of een klap; dan komt het in zijn inventory,
+met een chatregel `Speler7 pakt het Warden-ei`. Anderen zien
+`Alleen Speler7 of de presentator kan het Warden-ei pakken`. Staat er geen frame, dan krijgt de
+winnaar het meteen. Zonder winnaar blijft het frame leeg en het podium ook. Na een herstart weet de
+mod de winnaar niet meer; dan kan alleen de presentator het ei pakken. **De pickaxe gaat weg**: elk
+item met `custom_data={bootcamp_ei:1b}` verdwijnt uit inventory, offhand en cursor, ook bij
+`/ei stop` en `/bc reset`. Wie tijdens het Ei uitlogde en later terugkomt, raakt hem bij het
+inloggen kwijt. Het Ei blijft uitgehakt liggen tot de volgende `/ei start`; ook `/bc reset` zet het
+terug (zonder puntenblokken).
 
 **Ronde 3, mob arena.** Eén veld (`veld`); per beurt staan er van elk team twee spelers tegelijk
 in. Geen kit: iedereen speelt met wat hij heeft. Start bij `v3`: border `mobarena`, iedereen naar

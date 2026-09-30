@@ -160,7 +160,8 @@ Clown vs All en het Rad pas bij ronde 5. Nog geen teams; iedereen is wit.
 - Timer 15 minuten, instelbaar met `/ei timer <minuten>`. Wie de meeste punten heeft, wint: title
   voor iedereen. Gelijk? Dan wint wie die score het eerst had.
 - De pickaxe gaat weer weg. **Huldiging op het plein bij de mob arena**: de winnaar staat op het
-  podium, de rest verspreid op het plein ervoor, met vuurwerk boven het podium.
+  podium met Pudding ernaast, de rest verspreid op het plein ervoor, met vuurwerk boven het
+  podium.
 - **De prijs: het Warden-ei.** Het verschijnt in een item frame op het podium. Alleen de winnaar
   of Pudding (de presentator) kan het eruit halen. Tijdens de mob arena kan de winnaar het vanaf
   de tribune inzetten: dan is de volgende wave een warden (zie ronde 3).

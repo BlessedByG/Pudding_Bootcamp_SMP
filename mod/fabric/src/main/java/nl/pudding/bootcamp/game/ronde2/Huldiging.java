@@ -34,7 +34,8 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Na het Ei: de winnaar op het podium ({@code ei_podium}), de rest verspreid over het plein
+ * Na het Ei: de winnaar op het podium ({@code ei_podium}), de presentator ernaast
+ * ({@code ei_presentator}), de rest verspreid over het plein
  * ({@code ei_plein}), vuurwerk boven het podium, en het Warden-ei in het item frame
  * ({@code ei_prijskader}). Alleen de winnaar of de presentator kan het ei eruit halen.
  */
@@ -61,13 +62,26 @@ public final class Huldiging {
 		return entity instanceof ItemFrame kader && WardenEi.is(kader.getItem());
 	}
 
-	/** Winnaar naar het podium, de rest verspreid over het plein, allemaal kijkend naar het podium. */
+	/**
+	 * Winnaar naar het podium, de presentator ernaast ({@code ei_presentator}) om de prijs uit te
+	 * reiken, ook als hij staff is, en de rest verspreid over het plein, kijkend naar het podium.
+	 */
 	static void opstellen(MinecraftServer server, UUID winnaar) {
 		Punt podium = Spel.punt("ei_podium");
 		ServerLevel wereld = Mc.wereld(server);
 		Regio plein = Spel.regio("ei_plein");
 		Set<Long> bezet = new HashSet<>();
+		ServerPlayer presentator = null;
+		for (ServerPlayer s : Mc.spelers(server)) {
+			if (Spel.isPresentator(s) && !s.getUUID().equals(winnaar) && Spel.punt("ei_presentator") != null) {
+				presentator = s;
+				Spel.naarPunt(s, "ei_presentator");
+			}
+		}
 		for (ServerPlayer s : Mc.deelnemers(server)) {
+			if (s == presentator) {
+				continue;
+			}
 			if (s.getUUID().equals(winnaar) && podium != null) {
 				Spel.naarPunt(s, "ei_podium");
 				continue;

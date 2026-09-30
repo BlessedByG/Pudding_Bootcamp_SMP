@@ -99,7 +99,7 @@ zit, maar de commander moet alleen commander zijn.
    gewone deepslate in schil of kettingen. Daarna regio `ei`, `eigebied`, de startplekken
    `ei_spawn_n` en `/ei vastleggen` (gebouwd).
 5. Het plein bij de mob arena met een podium en een item frame: punt `ei_podium` op het podium,
-   regio `ei_plein` (de vloer ervoor), `/ei prijskader` kijkend naar het frame, en `v3` op het
+   punt `ei_presentator` ernaast (voor Pudding), regio `ei_plein` (de vloer ervoor), `/ei prijskader` kijkend naar het frame, en `v3` op het
    plein.
 6. De mob arena: één veld met een kooi en een tribune. Daarna regio `veld` (in delen als dat
    moet), de tribunevloer (`tribune_mob`), per team twee startplekken
@@ -172,8 +172,8 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
       pickaxe weer Efficiency II; slime maakt de anderen misselijk; target zet met twee accounts
       iedereen op de plek van de ander.
 - [ ] `/mobarena punten`: de tabel klopt.
-- [ ] Einde van het Ei: de winnaar staat op het podium, de rest verspreid op het plein en kijkt
-      naar het podium, vuurpijl boven het podium. Het Warden-ei zit in het frame; een ander
+- [ ] Einde van het Ei: de winnaar staat op het podium, Pudding ernaast, de rest verspreid op het
+      plein en kijkt naar het podium, vuurpijl boven het podium. Het Warden-ei zit in het frame; een ander
       account kan het niet pakken, de winnaar of de presentator wel.
 - [ ] `/mobarena start` met twee accounts in twee teams: geen schema in de chat
       (`/mobarena schema` laat het alleen jou zien), beide op hun eigen startplek, gloeiend in hun

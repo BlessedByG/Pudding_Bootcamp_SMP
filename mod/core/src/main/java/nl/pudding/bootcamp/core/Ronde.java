@@ -17,7 +17,7 @@ public enum Ronde {
 			List.of("doolhof_start", "doolhof_finish", "v2")),
 	EI(2, "Het Ei", "ei", true,
 			List.of("ei", "eigebied", "ei_plein"),
-			List.of("ei_spawn_1", "v3", "ei_podium", "ei_prijskader")),
+			List.of("ei_spawn_1", "v3", "ei_podium", "ei_presentator", "ei_prijskader")),
 	MOBARENA(3, "De Mob Arena", "mobarena", false,
 			List.of("mobarena", "veld", "tribune_mob"),
 			List.of("kooi", "tribune_mob_1", "mob_1", "warden",

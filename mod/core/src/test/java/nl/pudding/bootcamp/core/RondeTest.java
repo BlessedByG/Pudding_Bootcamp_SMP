@@ -63,7 +63,7 @@ class RondeTest {
 		assertTrue(mob.contains("kooi"));
 		assertTrue(mob.contains("warden"));
 		List<String> ei = Ronde.EI.ontbreekt(Set.of("ei", "eigebied"), Set.of("ei_spawn_1", "v3"));
-		assertEquals(List.of("ei_plein", "ei_podium", "ei_prijskader"), ei);
+		assertEquals(List.of("ei_plein", "ei_podium", "ei_presentator", "ei_prijskader"), ei);
 		assertTrue(mob.contains("tribune_mob"));
 	}
 
