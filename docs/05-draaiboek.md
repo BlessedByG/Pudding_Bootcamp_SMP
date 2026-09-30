@@ -144,8 +144,8 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
 - [ ] Het gif: met twee accounts, één kiest geen team. Timer op (`/doolhof resterend 5`):
       `DE TIJD IS OM`, paarse bossbar, in het doolhof Poison en om de 2 seconden een hart eraf,
       in de finishruimte niets. Doodgaan in het gif: spullen weg behalve je steak, basiskit
-      terug, `VERGIFTIGD` in de finishruimte en het teammenu gaat open. Na je keuze
-      `DOOLHOF VOORBIJ`. `/doolhof einde` sluit het doolhof ook midden in het gif af.
+      terug, `VERGIFTIGD` in de finishruimte en je zit in het kleinste team. Was je de laatste
+      zonder team: `DOOLHOF VOORBIJ`. `/doolhof einde` sluit het doolhof ook midden in het gif af.
 - [ ] Valkist in het doolhof: de bossbar noemt alleen de totale tijd. Een trapped chest openen geeft
       de jumpscare óf `/doolhof valmobs` husks en silverfish om je heen (open er een paar: ongeveer
       de helft is elk); nog eens openen geeft een lege kist, een tweede speler krijgt hem wel. `/doolhof poortmelding uit`: de poort gaat stil
