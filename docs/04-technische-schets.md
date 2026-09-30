@@ -563,8 +563,9 @@ Dat geldt voor iedereen, ook wie al gefinisht is en terug naar binnen liep. **Wi
 doodgaat** (door het gif of anders) raakt al zijn spullen kwijt behalve het eten uit de basiskit
 (`basis.json`), krijgt de rest van de basiskit terug, gaat naar punt `doolhof_finish` in de
 finishruimte met de title `VERGIFTIGD` en een chatregel `Speler7 bezweek aan het gif`. Heeft hij
-nog geen team, dan gaat daar meteen het teammenu open; hij telt dan niet mee als iemand die de
-uitgang vond. Het gif loopt tot iedereen een team heeft; `/doolhof einde` is de noodknop.
+nog geen team, dan krijgt hij het kleinste (bij gelijk willekeurig, zodat de teams even groot
+blijven), met in de chat `en zit nu in Groen (3/5)`; hij telt niet mee als iemand die de uitgang
+vond. Het gif loopt tot iedereen een team heeft; `/doolhof einde` is de noodknop.
 
 **Einde** (iedereen een team, of `/doolhof einde`): wie nog geen team heeft gaat naar het kleinste
 team (bij gelijk: willekeurig) en ziet in de actionbar `Je zit in Groen`; iedereen ziet de title

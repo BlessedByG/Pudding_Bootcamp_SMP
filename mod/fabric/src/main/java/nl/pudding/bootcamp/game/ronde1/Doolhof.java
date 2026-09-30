@@ -519,7 +519,8 @@ public final class Doolhof extends RondeLogica {
 	/**
 	 * Dood tijdens het gif: al zijn spullen weg behalve het eten uit de basiskit, de rest van de
 	 * basiskit terug, en naar de finishruimte ({@code doolhof_finish}). Heeft hij nog geen team, dan
-	 * kiest hij er daar een; hij telt dan niet als iemand die de uitgang vond.
+	 * krijgt hij het kleinste (bij gelijk willekeurig), net als bij het einde; hij telt niet als iemand
+	 * die de uitgang vond. Was hij de laatste zonder team, dan is het doolhof voorbij.
 	 */
 	private void gifDood(MinecraftServer server, ServerPlayer speler) {
 		vergiftigd.add(speler.getUUID());
@@ -548,19 +549,34 @@ public final class Doolhof extends RondeLogica {
 			Kits.vulAan(speler, basis, stack -> eten.contains(stack.getItem()));
 		}
 		Spel.naarPunt(speler, "doolhof_finish");
-		boolean kiezen = Teams.keuze(speler) == null;
-		Mc.title(speler, Mc.tekst("VERGIFTIGD", ChatFormatting.DARK_GREEN, ChatFormatting.BOLD),
-				Mc.tekst(kiezen ? "Je spullen zijn weg · kies je team" : "Je spullen zijn weg", ChatFormatting.WHITE), 0, 60, 15);
-		Mc.chatAllen(server, Component.empty().append(Mc.tekst(Mc.naam(speler), Mc.kleur(Teams.keuze(speler))))
-				.append(Mc.tekst(" bezweek aan het gif", ChatFormatting.DARK_GREEN)));
-		if (kiezen) {
-			// Niet midden in de dood-afhandeling een menu openen: een tick later.
-			Planner.na(1, () -> {
-				if (Spel.actief() == this && Teams.keuze(speler) == null && !Teammenu.heeftOpen(speler)) {
-					Teammenu.open(speler, (s, kleur) -> teamGekozen(server, s, kleur));
-				}
-			});
+		if (Teammenu.heeftOpen(speler)) {
+			speler.closeContainer();
 		}
+		Kleur kleur = Teams.keuze(speler);
+		boolean ingedeeld = kleur == null;
+		if (ingedeeld) {
+			kleur = TeamKeuze.kleinste(Teams.aantallen(), Spel.RANDOM);
+			Teams.kies(server, speler, kleur);
+			Spel.zetRol(server, speler, Rol.SPELER);
+		}
+		Spel.status(speler).klaar = true;
+		Mc.title(speler, Mc.tekst("VERGIFTIGD", ChatFormatting.DARK_GREEN, ChatFormatting.BOLD),
+				Component.empty().append(Mc.tekst("Je spullen zijn weg · je zit in ", ChatFormatting.WHITE))
+						.append(Mc.tekst(kleur.naam(), Mc.kleur(kleur))), 0, 60, 15);
+		MutableComponent regel = Component.empty().append(Mc.tekst(Mc.naam(speler), Mc.kleur(kleur)))
+				.append(Mc.tekst(" bezweek aan het gif", ChatFormatting.DARK_GREEN));
+		if (ingedeeld) {
+			regel.append(Mc.tekst(" en zit nu in " + kleur.naam() + " (" + Teams.aantal(kleur) + "/" + Teams.maximum(server) + ")",
+					ChatFormatting.GRAY));
+		}
+		Mc.chatAllen(server, regel);
+		toonSidebar(server);
+		// Niet midden in de dood-afhandeling iedereen wegteleporteren: een tick later.
+		Planner.na(1, () -> {
+			if (Spel.actief() == this && iedereenKlaar(server)) {
+				einde(server);
+			}
+		});
 	}
 
 	/** {@code /doolhof einde}: de noodknop, bijvoorbeeld als iemand in de finish blijft staan zonder te kiezen. */

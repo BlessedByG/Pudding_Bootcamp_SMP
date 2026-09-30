@@ -110,7 +110,7 @@ plek waar de rest ook komt en hangt daar tot de ronde voorbij is:
   terug bij de start van die ronde.
 - Na de timer van het doolhof is het doolhof giftig (de finishruimte niet). Wie daar doodgaat,
   raakt zijn spullen kwijt behalve zijn eten, krijgt de basiskit terug en komt in de
-  finishruimte, waar hij zijn team kiest.
+  finishruimte. Had hij nog geen team, dan krijgt hij het kleinste (bij gelijk willekeurig).
 
 Op zo'n plek ben je een **kijker**: gewoon in adventure mode, je kunt lopen en praten, maar je
 krijgt geen schade, je komt het veld niet op (glas of tralies, en de mod zet je terug), mobs laten
