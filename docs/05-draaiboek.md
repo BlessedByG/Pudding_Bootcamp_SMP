@@ -139,8 +139,9 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
       na 10 minuten met je eigen `/doolhof hinttekst` (`/doolhof resterend 305`), teammenu op de
       finishlijn met de hoofden per team (alleen de wol kiest), vol team is grijs, de sidebar laat
       de namen per team zien, na je keuze `GEFINISHT` en je kunt terug het doolhof in (mobs
-      en vallen werken dan nog), zodra iedereen een team heeft `DOOLHOF VOORBIJ` en iedereen in de
-      finishruimte; `/doolhof naarei` zet iedereen naar `v2`. Opnieuw joinen buiten een ronde:
+      en vallen werken dan nog), zodra iedereen een team heeft `DOOLHOF VOORBIJ`: wie nog in het
+      doolhof liep staat in de finishruimte, wie er al stond blijft staan; `/doolhof naarei` zet
+      iedereen naar `v2`. Opnieuw joinen buiten een ronde:
       welkomsttitle.
 - [ ] Het gif: met twee accounts, één kiest geen team. Timer op (`/doolhof resterend 5`):
       `DE TIJD IS OM`, paarse bossbar, in het doolhof Poison en om de 2 seconden een hart eraf,

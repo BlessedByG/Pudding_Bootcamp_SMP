@@ -636,6 +636,8 @@ public final class Doolhof extends RondeLogica {
 		Spel.einde(server);
 		Bossbar.basiskamp();
 		Spel.maakSpelers(server, false);
+		// Het gif is het doolhof zonder de finishruimte: wie daar niet in staat, staat al goed.
+		Regio doolhof = Spel.regio("doolhof_gif");
 		for (ServerPlayer s : Mc.deelnemers(server)) {
 			if (Teams.keuze(s) == null) {
 				Kleur k = TeamKeuze.kleinste(Teams.aantallen(), Spel.RANDOM);
@@ -643,10 +645,12 @@ public final class Doolhof extends RondeLogica {
 				Spel.zetRol(server, s, Rol.SPELER);
 				Mc.actionbar(s, Mc.tekst("Je zit in " + k.naam(), Mc.kleur(k), ChatFormatting.BOLD));
 			}
-			// Iedereen verzamelt in de finishruimte, ook wie nog in het doolhof liep; naar het Ei pas
-			// met /doolhof naarei.
 			Spel.status(s).klaar = true;
-			Spel.naarPunt(s, "doolhof_finish");
+			// Iedereen verzamelt in de finishruimte: wie nog in het doolhof loopt gaat erheen, wie er
+			// al staat blijft staan. Naar het Ei pas met /doolhof naarei.
+			if (doolhof == null || doolhof.bevat(s.getX(), s.getZ())) {
+				Spel.naarPunt(s, "doolhof_finish");
+			}
 		}
 		Mc.titleAllen(server, Mc.tekst("DOOLHOF VOORBIJ", ChatFormatting.GOLD, ChatFormatting.BOLD),
 				Mc.tekst(gevonden + " van de " + totaal + " vonden de uitgang", ChatFormatting.WHITE), 10, 80, 20);

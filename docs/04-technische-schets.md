@@ -402,7 +402,7 @@ hij de doos om alle delen heen; bij de cirkel van `vloer` is dat het vierkant er
 |---|---|
 | `basiskamp` | Spawn en reset. |
 | `doolhof_start` | De startruimte in het midden van het doolhof; ook waar een nep-uitgang je neerzet. |
-| `doolhof_finish` | In de finishruimte: waar wie tijdens het gif doodgaat neerkomt, en waar iedereen verzamelt als het doolhof voorbij is. Binnen regio `doolhof`, niet in `doolhof_gif`. |
+| `doolhof_finish` | In de finishruimte: waar wie tijdens het gif doodgaat neerkomt, en waar wie nog in het doolhof liep heen gaat als het doolhof voorbij is. Binnen regio `doolhof`, niet in `doolhof_gif`. |
 | `v2` | Verzamelpunt bij het Ei: na `/doolhof naarei`. |
 | `ei_spawn_1` t/m `ei_spawn_n` | De startplekken aan het buiteneinde van de kettingen. Zoveel als je wilt, genummerd vanaf 1. Spelers worden er om en om over verdeeld; na een dodelijke klap kom je terug op je eigen startplek. |
 | `v3` | Verzamelpunt bij de mob arena. |
@@ -571,8 +571,8 @@ vond. Het gif loopt tot iedereen een team heeft; `/doolhof einde` is de noodknop
 **Einde** (iedereen een team, of `/doolhof einde`): wie nog geen team heeft gaat naar het kleinste
 team (bij gelijk: willekeurig) en ziet in de actionbar `Je zit in Groen`; iedereen ziet de title
 `DOOLHOF VOORBIJ` met als subtitle `14 van de 20 vonden de uitgang` (wie zelf over de finish kwam),
-en iedereen verzamelt in de finishruimte (`doolhof_finish`), ook wie gefinisht nog in het doolhof
-liep. Daar kan de host de teams bespreken; **`/doolhof naarei`** zet daarna iedereen die meedoet
+en iedereen verzamelt in de finishruimte: wie nog in het doolhof loopt (regio `doolhof_gif`) gaat naar
+`doolhof_finish`, wie al in de finishruimte staat blijft staan. Daar kan de host de teams bespreken; **`/doolhof naarei`** zet daarna iedereen die meedoet
 naar `v2` bij het Ei, met de title `OP NAAR HET EI`. Tot dat command is de finishruimte ook het
 verzamelpunt voor wie tussendoor inlogt of in de void valt; daarna `v2`. `/doolhof start` begint
 zonder teams: het doolhof is de teamkeuze, dus oude keuzes gaan weg.
