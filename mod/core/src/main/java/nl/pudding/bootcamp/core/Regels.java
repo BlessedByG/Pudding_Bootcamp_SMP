@@ -21,6 +21,9 @@ public final class Regels {
 	public static final int LAATSTE_MINUUT = 60;
 	/** R1.6 en R2.9: de laatste tien seconden groot in beeld. */
 	public static final int LAATSTE_TELLEN = 10;
+	/** R1.7: na de timer is regio {@code doolhof_gif} giftig: elke zoveel seconden zoveel halve harten, plus Poison. */
+	public static final int DOOLHOF_GIF_ELKE = 2;
+	public static final int DOOLHOF_GIF_SCHADE = 2;
 	/** R2.5: redstone-gok. */
 	public static final int EI_HASTE = 15;
 	public static final int EI_BEVRIEZING = 15;

@@ -46,6 +46,7 @@ final class DoolhofCommand {
 				min -> Spel.instellingen().checkDoolhofHint(min), min -> Spel.instellingen().zetDoolhofHint(min), null));
 		cmd.then(RondeCommands.tekst("hinttekst", "De hinttekst", () -> Spel.instellingen().hinttekst(),
 				t -> Spel.instellingen().zetHinttekst(t)));
+		cmd.then(Commands.literal("einde").executes(DoolhofCommand::einde));
 		cmd.then(Commands.literal("poortmelding")
 				.executes(DoolhofCommand::toonPoortMelding)
 				.then(Commands.literal("aan").executes(ctx -> poortMelding(ctx, true)))
@@ -58,6 +59,16 @@ final class DoolhofCommand {
 						.then(Commands.argument("max", IntegerArgumentType.integer(0, Instellingen.MAX_VAL_MOBS))
 								.executes(ctx -> valMobs(ctx, IntegerArgumentType.getInteger(ctx, "min"), IntegerArgumentType.getInteger(ctx, "max"))))));
 		return cmd;
+	}
+
+	/** Noodknop: het doolhof nu afsluiten zoals bij de timer, ook tijdens het gif. */
+	private static int einde(CommandContext<CommandSourceStack> ctx) {
+		Doolhof doolhof = RondeCommands.lopend(Doolhof.class);
+		if (doolhof == null) {
+			return BcCommand.fout(ctx, "Het doolhof loopt niet.");
+		}
+		doolhof.eindeNu(ctx.getSource().getServer());
+		return BcCommand.ok(ctx, "Doolhof voorbij: wie nog geen team had zit in het kleinste, iedereen is bij v2.");
 	}
 
 	private static int toonPoortMelding(CommandContext<CommandSourceStack> ctx) {

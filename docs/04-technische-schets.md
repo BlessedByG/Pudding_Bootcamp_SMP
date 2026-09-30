@@ -264,6 +264,7 @@ hele avond geldt (setup, spelers, noodknoppen) staat onder `/bc`.
 | Command | Doet |
 |---|---|
 | `/doolhof start\|stop\|resterend` | Ronde 1. |
+| `/doolhof einde` | Noodknop: het doolhof nu afsluiten zoals na het gif (kleinste team voor wie er nog geen heeft, iedereen naar `v2`). Bijvoorbeeld als iemand in de finishruimte blijft staan zonder te kiezen. |
 | `/doolhof timer [<minuten>]` | Hoe lang het doolhof duurt, standaard 15. |
 | `/doolhof poort [<minuten>]` | Na hoeveel minuten de poort van de uitgang opengaat, standaard 4. |
 | `/doolhof hint [<minuten>]` | Na hoeveel minuten de hint komt, standaard 10. |
@@ -388,6 +389,7 @@ hij de doos om alle delen heen; bij de cirkel van `vloer` is dat het vierkant er
 | `nep_1` t/m `nep_3` | De vakken aan het eind van de nep-gangen. |
 | `schrik_1` t/m `schrik_n` | Schrikplekken in het doolhof. Zoveel als je wilt, genummerd vanaf 1. |
 | `poort_doolhof` | De poort voor de echte uitgang, opent na `/doolhof poort` minuten. |
+| `doolhof_gif` | Het doolhof zelf, zonder de finishruimte (in delen als dat moet: `save` + `add`). Na de timer is het hier giftig. Punt `doolhof_finish` mag er niet in liggen, anders weigert `/doolhof start`. |
 | `veld_1`, `veld_2` | De twee mob-arenavelden, elk uit meerdere delen (de T-vorm: `save` voor de balk, `add` voor de poot). Een kijker die erin komt wordt teruggezet, behalve wie in de kooi van dat veld zit (de tralies houden die binnen); een speler die aan de beurt is en eruit komt ook. Voor kijkers telt een veld tot drie blokken boven de selectie (`/mobarena veldhoogte`), zodat het balkon erboven geen veld is; voor wie aan de beurt is telt alleen de kolom. |
 | `tribune_mob` | De tribune van de mob arena: selecteer de vloer waar de kijkers op staan, in delen als dat moet (`save` + `add`). Daarop telt niemand als in het veld, ook waar de selectie over een veld hangt of ermee overlapt: tot drie blokken boven de selectie (springen telt mee), niet eronder. Wie aan de beurt is en de tribune op loopt, gaat terug naar zijn startplek. `/mobarena start` weigert als een `tribune_mob_n` er niet op ligt of een startplek er wel op ligt. |
 
@@ -397,6 +399,7 @@ hij de doos om alle delen heen; bij de cirkel van `vloer` is dat het vierkant er
 |---|---|
 | `basiskamp` | Spawn en reset. |
 | `doolhof_start` | De startruimte in het midden van het doolhof; ook waar een nep-uitgang je neerzet. |
+| `doolhof_finish` | In de finishruimte: waar wie tijdens het gif doodgaat neerkomt. Binnen regio `doolhof`, niet in `doolhof_gif`. |
 | `v2` | Verzamelpunt bij het Ei: als het doolhof voorbij is. |
 | `ei_spawn_1` t/m `ei_spawn_n` | De startplekken aan het buiteneinde van de kettingen. Zoveel als je wilt, genummerd vanaf 1. Spelers worden er om en om over verdeeld; na een dodelijke klap kom je terug op je eigen startplek. |
 | `v3` | Verzamelpunt bij de mob arena. |
@@ -547,11 +550,24 @@ speler gaat een kist één keer af (een dubbele kist is één kist), daarna gaat
 open als lege kist. Staff zet niets af. De mobs verdwijnen aan het einde van het doolhof en komen na
 een crash niet terug.
 
-Timer op: wie nog geen team heeft gaat naar het kleinste team (bij gelijk: willekeurig) en ziet
-in de actionbar `Je zit in Groen`; iedereen ziet de title `DOOLHOF VOORBIJ` met als subtitle
-`14 van de 20 vonden de uitgang`, en iedereen naar `v2`, ook wie gefinisht nog in het doolhof
-loopt. Heeft iedereen al een team voordat de timer op is, dan is het doolhof meteen voorbij.
-`/doolhof start` begint zonder teams: het doolhof is de teamkeuze, dus oude keuzes gaan weg.
+**Timer op: het gif.** Heeft nog niet iedereen een team, dan is het doolhof niet meteen voorbij.
+Title voor iedereen `DE TIJD IS OM` met `Het doolhof is giftig · ga naar de finish`,
+`entity.elder_guardian.curse`, bossbar `Doolhof · de tijd is om · gif` in paars. Wie in regio
+`doolhof_gif` staat (het doolhof zelf, niet de finishruimte) krijgt elke seconde kort Poison I
+(weg zodra je eruit loopt) en om de 2 seconden een klap van 1 hart die door armor heen gaat
+(`core`: `Regels.DOOLHOF_GIF_ELKE`, `DOOLHOF_GIF_SCHADE`). Poison alleen doodt niet, de klap wel.
+Dat geldt voor iedereen, ook wie al gefinisht is en terug naar binnen liep. **Wie tijdens het gif
+doodgaat** (door het gif of anders) raakt al zijn spullen kwijt behalve het eten uit de basiskit
+(`basis.json`), krijgt de rest van de basiskit terug, gaat naar punt `doolhof_finish` in de
+finishruimte met de title `VERGIFTIGD` en een chatregel `Speler7 bezweek aan het gif`. Heeft hij
+nog geen team, dan gaat daar meteen het teammenu open; hij telt dan niet mee als iemand die de
+uitgang vond. Het gif loopt tot iedereen een team heeft; `/doolhof einde` is de noodknop.
+
+**Einde** (iedereen een team, of `/doolhof einde`): wie nog geen team heeft gaat naar het kleinste
+team (bij gelijk: willekeurig) en ziet in de actionbar `Je zit in Groen`; iedereen ziet de title
+`DOOLHOF VOORBIJ` met als subtitle `14 van de 20 vonden de uitgang` (wie zelf over de finish kwam),
+en iedereen naar `v2`, ook wie gefinisht nog in het doolhof loopt. `/doolhof start` begint zonder
+teams: het doolhof is de teamkeuze, dus oude keuzes gaan weg.
 
 **Welkom.** Wie joint terwijl er geen ronde loopt, krijgt de title `PUDDING BOOTCAMP` met als
 subtitle `Welkom, <naam>` en `block.note_block.chime`, alleen voor hem. Tijdens een ronde niet,
@@ -869,6 +885,7 @@ Eén bossbar, kort, altijd hetzelfde formaat. Persoonlijke info via de actionbar
 |---|---|---|---|
 | Basiskamp | `Pudding Bootcamp` | wit | vol |
 | 1 | `Doolhof · 04:41` | groen, de laatste minuut rood | tijd; de poort staat er niet in |
+| 1, na de timer | `Doolhof · de tijd is om · gif` | paars | vol |
 | 2 | `Het Ei · 07:12` | groen, de laatste minuut rood | tijd |
 | 3 | `Mob Arena · beurt 3/5 · wave 2` | rood | mobs over in beide arena's |
 | 4 | `Quiz · aan de beurt: Groen`, of `Quiz · draai het rad` | teamkleur, wit als niemand aan de beurt is | vol |

@@ -13,8 +13,8 @@ import java.util.Set;
 public enum Ronde {
 	BASISKAMP(0, "Basiskamp", null, false, List.of(), List.of()),
 	DOOLHOF(1, "De Doolhof", "doolhof", false,
-			List.of("doolhof", "doolhof_uit", "poort_doolhof"),
-			List.of("doolhof_start", "v2")),
+			List.of("doolhof", "doolhof_uit", "poort_doolhof", "doolhof_gif"),
+			List.of("doolhof_start", "doolhof_finish", "v2")),
 	EI(2, "Het Ei", "ei", true,
 			List.of("ei", "eigebied"),
 			List.of("ei_spawn_1", "v3")),

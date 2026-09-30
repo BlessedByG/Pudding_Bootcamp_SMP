@@ -26,6 +26,8 @@ class RegelsTest {
 		assertEquals(10, Regels.OPSTELLING);
 		assertEquals(30, Regels.KROON_UITLOG_WACHT);
 		assertEquals(15, Regels.EI_HASTE);
+		assertEquals(2, Regels.DOOLHOF_GIF_ELKE);
+		assertEquals(2, Regels.DOOLHOF_GIF_SCHADE);
 		assertEquals(15, Regels.EI_BEVRIEZING);
 		assertEquals(10, Regels.BEURT_VIEREN);
 		assertEquals(20, Regels.KRONING_VUURWERK);
