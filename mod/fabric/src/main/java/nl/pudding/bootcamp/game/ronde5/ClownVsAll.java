@@ -493,14 +493,10 @@ public final class ClownVsAll extends RondeLogica {
 		Bossbar.basiskamp();
 		toonSidebar(server);
 		if (winnaar != null) {
-			MutableComponent wie = Mc.kopEnNaam(winnaar, ChatFormatting.YELLOW, ChatFormatting.BOLD);
-			if (Spel.isClown(winnaar)) {
-				Mc.titleAllenBehalve(server, netDood, Mc.tekst("DE EINDBAAS WINT", ChatFormatting.GOLD, ChatFormatting.BOLD), wie);
-			} else {
-				MutableComponent titel = Component.empty().append(Mc.kop(winnaar)).append(Component.literal(" "))
-						.append(Mc.tekst(Mc.naam(winnaar).toUpperCase(Locale.ROOT) + " WINT KING OF THE HILL", ChatFormatting.GOLD, ChatFormatting.BOLD));
-				Mc.titleAllenBehalve(server, netDood, titel, null);
-			}
+			// Ook voor Clown dezelfde title: niks mag verraden dat hij moest winnen.
+			MutableComponent titel = Component.empty().append(Mc.kop(winnaar)).append(Component.literal(" "))
+					.append(Mc.tekst(Mc.naam(winnaar).toUpperCase(Locale.ROOT) + " WINT KING OF THE HILL", ChatFormatting.GOLD, ChatFormatting.BOLD));
+			Mc.titleAllenBehalve(server, netDood, titel, null);
 			Vuurwerk.goud(Mc.wereld(server), winnaar.getX(), winnaar.getY() + 2, winnaar.getZ());
 			Mc.heal(winnaar);
 		} else {

@@ -208,8 +208,8 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
       jager op een willekeurige plek, goede kijkrichting) en staat stil: niet lopen, niet
       schieten, niet pearlen, onderin "Wacht op het startsein" (`/clown wachttekst` past het
       aan). `/clown go`: 10 seconden, dan los. De kroonhouder ziet onderin "Jij hebt de kroon",
-      een afgevallen jager komt in de chat, en wint Clown dan staat er DE EINDBAAS WINT. De bossbar
-      zegt "King of the Hill". Beide hebben dezelfde full-diamond kit met 10 gapples, de
+      een afgevallen jager komt in de chat, en de winnaar (ook Clown) krijgt "... WINT KING OF
+      THE HILL". De bossbar zegt "King of the Hill". Beide hebben dezelfde full-diamond kit met 10 gapples, de
       kroonhouder heeft de kroon als diamond helm die niet af kan, en Strength II (jagers niks).
       Bij nog 3 over heeft iedereen Strength I, ook de kroonhouder. Jager raakt jager:
       geen schade. Kill de kroonhouder: kroon over, kroonpakket, reset. Laatste over wint.

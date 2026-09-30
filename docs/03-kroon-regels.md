@@ -93,8 +93,9 @@ Jagers kunnen elkaar dus niet in de weg zitten met zwaard of boog. Samenwerken i
 - **Geen timer.** De ronde loopt tot er nog maar één speler leeft.
 - Dat is meestal de kroonhouder die de laatste jager killt. Het kan ook een jager zijn: killt de
   laatste jager de kroonhouder, dan is die jager alleen over en wint.
-- Winnaar: `title` voor iedereen met de kop van de winnaar, vuurpijl erboven. Is het Clown, dan
-  staat er **DE EINDBAAS WINT**; anders **SPELER7 WINT KING OF THE HILL**.
+- Winnaar: `title` voor iedereen met de kop van de winnaar, vuurpijl erboven:
+  **SPELER7 WINT KING OF THE HILL**. Voor Clown precies hetzelfde, zodat niks verraadt dat hij
+  moest winnen.
 - Daarna de FFA: **iedereen behalve Clown**, ook wie af was en ook de winnaar.
 
 ## Randgevallen

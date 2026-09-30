@@ -392,8 +392,8 @@ De volledige regels staan in [03-kroon-regels.md](03-kroon-regels.md). Hier het 
 - **Geen timer.** Het gaat door tot er één over is.
 
 **Einde**
-- De laatste die overblijft wint King of the Hill. Is dat Clown, dan staat er **DE EINDBAAS WINT**
-  in beeld.
+- De laatste die overblijft wint King of the Hill: **SPELER7 WINT KING OF THE HILL** in beeld, met
+  zijn kop. Ook als het Clown is, zodat niks verraadt dat hij moest winnen.
 - Wie af is, komt in de chat: "Speler3 is af door ClownPierce · 11 over". De kroonhouder ziet
   onderin "Jij hebt de kroon · 11 jagers"; tijdens het wachten op `/clown go` ziet iedereen
   "Wacht op het startsein" (aan te passen met `/clown wachttekst`).

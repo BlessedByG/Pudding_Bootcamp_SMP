@@ -886,8 +886,8 @@ effect. Bij het einde gaat Strength er bij iedereen af.
 `Speler3 is af door ClownPierce · 11 over`, of zonder killer `Speler3 is af · 11 over`, met de
 namen in hun teamkleur (aqua, goud). De dode ziet daarnaast zijn doodtekst als title.
 
-**Winnaar**: is de laatste die overblijft de uitverkorene, dan title `DE EINDBAAS WINT` met als
-subtitle zijn kop en naam; anders title met kop en `SPELER7 WINT KING OF THE HILL`; zonder winnaar
+**Winnaar**: title met kop en `SPELER7 WINT KING OF THE HILL`, ook als het de uitverkorene is
+(geen aparte title voor Clown, die zou het rigged rad verraden); zonder winnaar
 `KING OF THE HILL IS VOORBIJ`. Vuurpijl erboven,
 `ui.toast.challenge_complete`.
 
@@ -1037,7 +1037,7 @@ langzaam draaiend. Opgeruimd als de kroonhouder kijker wordt.
 | Wachten op `/clown go` | Bossbar `King of the Hill · wacht op de start`, actionbar `/clown wachttekst` (standaard `Wacht op het startsein`). |
 | Kroonhouder | Alleen voor hem in de actionbar: `Jij hebt de kroon · 11 jagers`. |
 | Af in Clown vs All | Chatregel voor iedereen: `Speler3 is af door ClownPierce · 11 over`. De dode ziet zijn doodtekst. |
-| Winnaar Clown vs All | Wint de uitverkorene: title `DE EINDBAAS WINT` met zijn kop en naam als subtitle. Anders title met de kop van de winnaar en `SPELER7 WINT KING OF THE HILL`. Vuurpijl erboven. |
+| Winnaar Clown vs All | Title met de kop van de winnaar en `SPELER7 WINT KING OF THE HILL`, ook als het de uitverkorene is. Vuurpijl erboven. |
 | Wachten op `/ffa go` | Bossbar `FFA · wacht op de start`, actionbar `/ffa wachttekst`. |
 | Af in de FFA | Chatregel voor iedereen: `Speler3 is af door Speler7 · 11 over`. |
 | `/clown krimp`, `/ffa krimp` | Title `DE BORDER KRIMPT` in rood, subtitle `naar 20 in 60 seconden`, `event.raid.horn`. Kijkers zien de title ook, maar merken niets van de border. |
