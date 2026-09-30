@@ -926,6 +926,13 @@ In beeld tijdens de FFA:
   eerst op dat aantal kwam, hoger). Wie nog 0 kills heeft staat er niet in.
 - **Af**: chatregel voor iedereen `Speler3 is af door Speler7 · 11 over`, of zonder killer
   `Speler3 is af · 11 over`. De dode ziet zijn doodtekst.
+- **Kill in beeld** (`Arena.killInBeeld`, dezelfde als bij King of the Hill): title met kop en naam
+  van de killer in goud, subtitle `pakt Speler3 · 11 over`, 5/40/15 ticks, `entity.ravager.roar`
+  op half volume. Alleen voor wie niet (meer) vecht (tribune, Clown, staff) en voor de killer;
+  de andere vechters krijgen alleen de chatregel. Niet als er bij die kill `LAATSTE DRIE` of
+  `LAATSTE TWEE` komt, en niet bij de laatste kill.
+- **Actionbar**: elke seconde en na elke kill, voor iedereen die nog vecht, `3 kills · 11 over`
+  (`1 kill` enkelvoud), in goud. Niet tijdens het wachten op `/ffa go` en de countdown.
 - **`/ffa krimp`**: title `DE BORDER KRIMPT` in rood met subtitle `naar 20 in 60 seconden`,
   `event.raid.horn`.
 - **Laatste drie en laatste twee**: zodra er drie over zijn title `LAATSTE DRIE` met de drie
@@ -1049,6 +1056,8 @@ langzaam draaiend. Opgeruimd als de kroonhouder kijker wordt.
 | Winnaar Clown vs All | Title met de kop van de winnaar en `SPELER7 WINT KING OF THE HILL`, ook als het de uitverkorene is. Vuurpijl erboven. |
 | Wachten op `/ffa go` | Bossbar `FFA · wacht op de start`, actionbar `/ffa wachttekst`. |
 | Af in de FFA | Chatregel voor iedereen: `Speler3 is af door Speler7 · 11 over`. |
+| Kill in de FFA | Tribune, staff en de killer: title met kop en naam van de killer, subtitle `pakt Speler3 · 11 over`, zachte brul van een ravager. Niet bij LAATSTE DRIE/TWEE en niet bij de laatste kill. |
+| Vechter in de FFA | Actionbar `3 kills · 11 over`. |
 | `/clown krimp`, `/ffa krimp` | Title `DE BORDER KRIMPT` in rood, subtitle `naar 20 in 60 seconden`, `event.raid.horn`. Kijkers zien de title ook, maar merken niets van de border. |
 | Laatste drie, laatste twee | Title `LAATSTE DRIE` of `LAATSTE TWEE` in paars met de namen, `entity.wither.spawn` zacht. |
 | Kroning | Twintig seconden vuurpijlen, title `KING OF THE SMP BOOTCAMP` met de kop en de naam van de winnaar als subtitle. Daarna blijven de bossbar `Pudding Bootcamp · King: Speler7` en de zweefkroon tot `/bc reset`. |

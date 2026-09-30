@@ -195,13 +195,8 @@ public final class ClownVsAll extends RondeLogica {
 	 * zijn doodtekst ziet. Met de naam van wie de kroon nu heeft, dus niet altijd Clown.
 	 */
 	private void kroonKill(MinecraftServer server, ServerPlayer kroonhouder, ServerPlayer dode, int over) {
-		MutableComponent titel = Component.empty().append(Mc.kop(kroonhouder)).append(Component.literal(" "))
-				.append(Mc.tekst(Mc.naam(kroonhouder).toUpperCase(Locale.ROOT), ChatFormatting.GOLD, ChatFormatting.BOLD));
-		MutableComponent onder = Component.empty().append(Mc.tekst("pakt ", ChatFormatting.WHITE))
-				.append(Mc.tekst(Mc.naam(dode), ChatFormatting.AQUA))
-				.append(Mc.tekst(" · " + over + " over", ChatFormatting.GRAY));
-		Mc.titleAllenBehalve(server, netDood, titel, onder, 5, 40, 15);
-		Mc.geluidAllen(server, SoundEvents.RAVAGER_ROAR, 1f, 1f);
+		List<ServerPlayer> voor = Mc.spelers(server).stream().filter(s -> !netDood.contains(s.getUUID())).toList();
+		Arena.killInBeeld(voor, kroonhouder, dode, ChatFormatting.AQUA, over, 1f);
 	}
 
 	/**

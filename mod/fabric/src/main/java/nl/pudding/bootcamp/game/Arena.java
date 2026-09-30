@@ -12,9 +12,11 @@ import nl.pudding.bootcamp.core.Regels;
 import nl.pudding.bootcamp.core.Regio;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
-/** Wat ronde 5 en 6 in de Arena delen: de startplekken, de border, krimpen en de af-melding. */
+/** Wat ronde 5 en 6 in de Arena delen: de startplekken, de border, krimpen, de af-melding en de kill in beeld. */
 public final class Arena {
 	private Arena() {
 	}
@@ -95,5 +97,22 @@ public final class Arena {
 		}
 		regel.append(Mc.tekst(" · " + over + " over", ChatFormatting.GRAY));
 		Mc.chatAllen(server, regel);
+	}
+
+	/**
+	 * Een kill groot in beeld: kop en naam van de killer in goud, eronder {@code pakt Speler3 · 11 over},
+	 * met de brul van een ravager. Alleen voor wie in {@code voor} zit.
+	 */
+	public static void killInBeeld(Collection<ServerPlayer> voor, ServerPlayer killer, ServerPlayer dode,
+			ChatFormatting dodeKleur, int over, float volume) {
+		MutableComponent titel = Component.empty().append(Mc.kop(killer)).append(Component.literal(" "))
+				.append(Mc.tekst(Mc.naam(killer).toUpperCase(Locale.ROOT), ChatFormatting.GOLD, ChatFormatting.BOLD));
+		MutableComponent onder = Component.empty().append(Mc.tekst("pakt ", ChatFormatting.WHITE))
+				.append(Mc.tekst(Mc.naam(dode), dodeKleur))
+				.append(Mc.tekst(" · " + over + " over", ChatFormatting.GRAY));
+		for (ServerPlayer s : voor) {
+			Mc.title(s, titel, onder, 5, 40, 15);
+			Mc.geluid(s, SoundEvents.RAVAGER_ROAR, volume, 1f);
+		}
 	}
 }
