@@ -28,9 +28,9 @@ public final class SpelerStatus {
 	public int menuDicht = -1000;
 	/** Ronde 2: zijn eigen startplek. */
 	public String eiSpawn;
-	/** Ronde 3: de arena waar hij deze beurt in staat (1 of 2), of 0. */
+	/** Ronde 3: 1 als hij deze beurt in het veld staat, anders 0. */
 	public int arena;
-	/** Ronde 3: de kooi waar hij als kijker in zit (1 of 2), of 0. */
+	/** Ronde 3: 1 als hij als kijker in de kooi zit, anders 0. */
 	public int kooi;
 	/** Een tijdelijke regel vooraan in de actionbar, tot servertick {@link #meldingTot}. */
 	public Component melding;

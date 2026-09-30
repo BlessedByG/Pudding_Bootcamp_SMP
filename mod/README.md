@@ -99,7 +99,7 @@ Jar vervangen betekent server herstarten. Bewaar de jar van de vorige werkende v
 | `<wereld>/bootcamp.json` | Regio's, punten, doodteksten, grapjes van de nep-uitgangen, teamkeuzes, uitverkorene, presentator en de instellingen per ronde. Wordt na elke wijziging opgeslagen. Met de hand aanpassen mag, maar alleen als de server uit staat. Een onleesbaar bestand wordt opzij gezet als `bootcamp.json.kapot`. |
 | `<wereld>/bootcamp_ei.nbt` | Het Ei zoals je het met `/ei vastleggen` hebt vastgelegd. |
 | `config/bootcamp/kits/<naam>.json` | Een kit. Wordt bij elk gebruik opnieuw gelezen: aanpassen zonder herstart. |
-| `config/bootcamp/waves.json` | De waves van de mob arena, per arena voor 4 spelers. Wordt bij `/mobarena start` gelezen. |
+| `config/bootcamp/waves.json` | De waves van de mob arena, voor 8 spelers in één veld. Wordt bij `/mobarena start` gelezen. Een nieuwe standaard krijg je door het bestand weg te gooien. |
 | `config/bootcamp/doolhof_loot.json` | De loot-tabel van de doolhofkisten. Wordt bij `/doolhof start` gelezen. |
 
 ### Kits
@@ -165,8 +165,8 @@ blok waar je naar kijkt, tot 32 blokken). De commando's per ronde zetten de mees
 |---|---|---|
 | Algemeen | | `basiskamp` (optioneel, voor `/bc reset`) |
 | Doolhof | `doolhof`, `doolhof_uit` (de finishlijn), `doolhof_gif` (het doolhof zonder finishruimte), `poort_doolhof` (de muur, onder- en bovenhoek), `poort_start` (barrier blocks in de openingen van de startruimte, elk een deel), `nep_1..3`, `schrik_1..n` | `doolhof_start`, `doolhof_finish` (in de finishruimte), `v2` |
-| Het Ei | `ei` (het Ei als doos), `eigebied` (Ei, kettingen, startplekken) | `ei_spawn_1..n`, `v3`; daarna `/ei vastleggen` |
-| Mob arena | `mobarena` (beide arena's met tribune), `veld_1`, `veld_2` (elk `save` + `add`), `tribune_mob` (de tribunevloer) | `/mobarena startplek <1\|2> <kleur>` (8x), `mob_1_1..n`, `mob_2_1..n`, `kooi_1`, `kooi_2`, `tribune_mob_1..n` |
+| Het Ei | `ei` (het Ei als doos), `eigebied` (Ei, kettingen, startplekken), `ei_plein` (de vloer van het plein bij de mob arena) | `ei_spawn_1..n`, `v3` (op het plein), `ei_podium`, `ei_presentator` (naast de winnaar, voor Pudding), `/ei prijskader` (kijk naar het item frame); daarna `/ei vastleggen` |
+| Mob arena | `mobarena` (veld, tribune en plein), `veld` (`save` + `add`), `tribune_mob` (de tribunevloer) | `/mobarena startplek <kleur> <1\|2>` (8x), `mob_1..n`, `kooi`, `warden`, `tribune_mob_1..n` |
 | Quiz | `quiz` | `/quiz bank <kleur>` (4x), `/quiz podium`, `/quiz lamp <kleur>` (4x, kijk naar de lamp) |
 | Clown vs All, FFA | `/clown vloer <diameter>` (midden op de vloer staan), optioneel `colosseum` | `/clown troon`, `/clown jagerplek` (20x), `/clown tribune` (2 of meer, onderste ring) |
 
@@ -174,7 +174,7 @@ Daarna: `/quiz presentator <speler>` en `/clown uitverkoren <speler>`. Labels bo
 verzamelpunten: `/bc label zet <tekst>`.
 
 `/<ronde> start` weigert met één regel en verandert dan niets als er een regio, punt of kit mist
-(`ontbreekt: kooi_2, start_1_geel`), een startpunt buiten de border ligt, een tribuneplek op de vloer
+(`ontbreekt: kooi, start_geel_2`), een startpunt buiten de border ligt, een tribuneplek op de vloer
 ligt, een `tribune_mob_n` niet op regio `tribune_mob` ligt, of (mob arena, quiz) iemand geen team heeft.
 
 ## Commands
@@ -185,8 +185,8 @@ onder *Commands*.
 | Ronde | Commands |
 |---|---|
 | Doolhof | `/doolhof start\|go\|stop\|einde\|naarei\|resterend <sec>`, `wachttekst [<tekst>]`, `timer [<min>]` (15), `poort [<min>]` (4), `hint [<min>]` (10), `hinttekst [<tekst>\|-]`, `poort open\|dicht`, `startpoort open\|dicht`, `poortmelding [aan\|uit]`, `valmobs [<min> [<max>]]` (3 t/m 10) |
-| Het Ei | `/ei start\|stop\|resterend <sec>`, `timer [<min>]` (15), `blokken [<soort> <aantal>]`, `vastleggen` |
-| Mob arena | `/mobarena start\|volgende\|schema\|stop`, `wave volgende`, `startplek <1\|2> <kleur>`, `punten [<mob> <punten>]`, `veldhoogte [<blokken>]`, `aftekst [<tekst>]` |
+| Het Ei | `/ei start\|stop\|resterend <sec>`, `timer [<min>]` (15), `blokken [<soort> <aantal>]`, `vastleggen`, `prijskader` |
+| Mob arena | `/mobarena start\|volgende\|schema\|stop`, `wave volgende`, `startplek <kleur> <1\|2>`, `warden [leven\|klap\|boom <hp>]`, `punten [<mob> <punten>]`, `veldhoogte [<blokken>]`, `aftekst [<tekst>]` |
 | Quiz | `/quiz start\|stop`, `presentator [<speler>]`, `bank <kleur>`, `podium`, `lamp <kleur>`, `draai`, `goed`, `fout`, `punt <kleur> [<aantal>]`, `einde`, `winnaar <kleur>` |
 | Clown vs All | `/clown rad\|go\|start\|stop`, `uitverkoren [<speler>]`, `troon`, `jagerplek [<nr>]`, `vloer <diameter>`, `tribune [<nr>]`, `wachttekst [<tekst>]`, `kroon <speler>`, `krimp <grootte> [<sec>]` |
 | FFA | `/ffa start\|stop\|go`, `krimp <grootte> [<sec>]`, `wachttekst [<tekst>]` |
@@ -203,7 +203,7 @@ seconde worden bijgezet, zodat je met `@a[tag=...]` kunt kijken. Zelf zetten hee
 | Ronde | Commander |
 |---|---|
 | 1 Doolhof | `/doolhof start` (iedereen klaar in de startruimte), dan `/doolhof go` (countdown). Eindigt als iedereen een team heeft; na de timer wordt het doolhof giftig tot het zover is. Noodknop: `/doolhof einde`. Daarna staat iedereen in de finishruimte; `/doolhof naarei` zet iedereen bij het Ei (`v2`). |
-| 2 Het Ei | `/ei start`. Eindigt na de timer. |
+| 2 Het Ei | `/ei start`. Eindigt na de timer: de winnaar op het podium, de rest op het plein, het Warden-ei in het frame. |
 | 3 Mob arena | `/mobarena start` (beurt 1), daarna per beurt `/mobarena volgende`. Na de laatste beurt vanzelf de winnaar en, tien seconden later, iedereen zonder spullen naar zijn bank. |
 | 4 Quiz | `/quiz start`. Pudding draait met de nether star en keurt met de wol. `/quiz einde`, bij gelijkspel `/quiz winnaar <kleur>`. Tien seconden later iedereen naar de tribune van de Arena. |
 | 5 Clown vs All | `/clown rad` (of `/clown start` zonder rad), iedereen staat bevroren klaar, dan `/clown go`. |

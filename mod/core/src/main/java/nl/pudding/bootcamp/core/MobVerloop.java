@@ -4,38 +4,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Het verloop van één beurt in de mob arena: twee arena's tegelijk, dezelfde waves. Een arena is
- * klaar met een wave als haar teller 0 is; zijn beide klaar, dan na 5 seconden de volgende wave.
- * Na 120 seconden telt een wave altijd als klaar. Een arena is klaar met de beurt na de laatste
- * wave, of zodra al haar spelers af zijn; de beurt is klaar als beide arena's klaar zijn.
+ * Het verloop van één beurt in de mob arena: één veld, de waves na elkaar. Een wave is klaar als
+ * alle mobs dood zijn; dan na 5 seconden de volgende. Na 120 seconden telt een wave altijd als
+ * klaar, behalve een wave zonder limiet (de warden). De beurt is klaar na de laatste wave, of
+ * zodra alle spelers in het veld af zijn.
  *
- * <p>Roep elke seconde {@link #seconde(int[], int[])} aan, na de countdown.
+ * <p>Roep elke seconde {@link #seconde(int, int)} aan, na de countdown.
  */
 public final class MobVerloop {
 	public static final int PAUZE = 5;
 	public static final int MAX_WAVE_SECONDEN = 120;
 
 	public enum Soort {
-		/** Spawn wave {@link Gebeurtenis#wave()} in elke arena die nog niet klaar is. */
+		/** Spawn wave {@link Gebeurtenis#wave()}. */
 		START_WAVE,
 		/** De wave telt als klaar zonder dat alles dood is: haal de overgebleven mobs weg. */
 		WAVE_GEFORCEERD,
-		/** Deze arena is klaar met de beurt (al haar spelers af): haal haar mobs weg. */
-		ARENA_KLAAR,
-		/** Beide arena's klaar: de beurt is voorbij. */
+		/** De beurt is voorbij: de laatste wave is klaar, of niemand staat nog in het veld. */
 		BEURT_KLAAR
 	}
 
-	/** @param arena 1 of 2, of 0 als het om beide gaat */
-	public record Gebeurtenis(Soort soort, int arena, int wave) {
+	public record Gebeurtenis(Soort soort, int wave) {
 	}
 
 	private final int aantalWaves;
-	private final boolean[] klaar = new boolean[3];
 	private int wave;
 	private int secondenInWave;
 	private int pauze = -1;
 	private boolean geforceerd;
+	private boolean zonderLimiet;
 	private boolean beurtKlaar;
 
 	public MobVerloop(int aantalWaves) {
@@ -45,29 +42,28 @@ public final class MobVerloop {
 		this.aantalWaves = aantalWaves;
 	}
 
-	/** {@code /mobarena wave volgende}: de huidige wave telt in beide arena's als klaar. */
+	/** {@code /mobarena wave volgende}: de huidige wave telt als klaar, ook een wave zonder limiet. */
 	public void forceer() {
 		if (wave > 0 && !beurtKlaar) {
 			geforceerd = true;
 		}
 	}
 
+	/** De lopende wave is de warden: geen 120 seconden, hij loopt tot alles dood is (of {@link #forceer()}). */
+	public void zonderLimiet() {
+		zonderLimiet = true;
+	}
+
 	/**
-	 * @param mobs    levende mobs per arena, index 1 en 2 (index 0 wordt niet gebruikt)
-	 * @param spelers spelers die nog in de arena staan, index 1 en 2
+	 * @param mobs    levende mobs in het veld
+	 * @param spelers spelers die nog in het veld staan
 	 */
-	public List<Gebeurtenis> seconde(int[] mobs, int[] spelers) {
+	public List<Gebeurtenis> seconde(int mobs, int spelers) {
 		List<Gebeurtenis> uit = new ArrayList<>();
 		if (beurtKlaar) {
 			return uit;
 		}
-		for (int a = 1; a <= 2; a++) {
-			if (!klaar[a] && spelers[a] <= 0) {
-				klaar[a] = true;
-				uit.add(new Gebeurtenis(Soort.ARENA_KLAAR, a, wave));
-			}
-		}
-		if (klaar[1] && klaar[2]) {
+		if (spelers <= 0) {
 			return beurtKlaar(uit);
 		}
 		if (wave == 0) {
@@ -80,14 +76,9 @@ public final class MobVerloop {
 			return uit;
 		}
 		secondenInWave++;
-		boolean waveKlaar = true;
-		for (int a = 1; a <= 2; a++) {
-			if (!klaar[a] && mobs[a] > 0) {
-				waveKlaar = false;
-			}
-		}
-		if (!waveKlaar && (geforceerd || secondenInWave >= MAX_WAVE_SECONDEN)) {
-			uit.add(new Gebeurtenis(Soort.WAVE_GEFORCEERD, 0, wave));
+		boolean waveKlaar = mobs <= 0;
+		if (!waveKlaar && (geforceerd || (!zonderLimiet && secondenInWave >= MAX_WAVE_SECONDEN))) {
+			uit.add(new Gebeurtenis(Soort.WAVE_GEFORCEERD, wave));
 			waveKlaar = true;
 		}
 		geforceerd = false;
@@ -108,15 +99,14 @@ public final class MobVerloop {
 		secondenInWave = 0;
 		pauze = -1;
 		geforceerd = false;
-		uit.add(new Gebeurtenis(Soort.START_WAVE, 0, wave));
+		zonderLimiet = false;
+		uit.add(new Gebeurtenis(Soort.START_WAVE, wave));
 		return uit;
 	}
 
 	private List<Gebeurtenis> beurtKlaar(List<Gebeurtenis> uit) {
 		beurtKlaar = true;
-		klaar[1] = true;
-		klaar[2] = true;
-		uit.add(new Gebeurtenis(Soort.BEURT_KLAAR, 0, wave));
+		uit.add(new Gebeurtenis(Soort.BEURT_KLAAR, wave));
 		return uit;
 	}
 
@@ -129,10 +119,6 @@ public final class MobVerloop {
 		return aantalWaves;
 	}
 
-	public boolean arenaKlaar(int arena) {
-		return klaar[arena];
-	}
-
 	public boolean beurtKlaar() {
 		return beurtKlaar;
 	}
@@ -140,5 +126,10 @@ public final class MobVerloop {
 	/** Loopt de pauze van 5 seconden tussen twee waves? */
 	public boolean inPauze() {
 		return pauze >= 0;
+	}
+
+	/** Is de lopende wave de laatste? Dan komt er in deze beurt geen volgende meer. */
+	public boolean laatsteWave() {
+		return wave >= aantalWaves;
 	}
 }

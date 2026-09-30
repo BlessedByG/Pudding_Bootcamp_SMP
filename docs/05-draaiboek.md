@@ -13,7 +13,7 @@ Tijdschema, rollen en checklists voor de avond zelf. Tijden zijn een voorbeeld m
 | 20:02 | **Ronde 1: De Doolhof** (15 min, uitgang open na 4 min, hint na 10 min, teamkeuze bij de uitgang) | |
 | 20:18 | Iedereen in de finishruimte van het doolhof: teams in beeld, praatje. Dan `/doolhof naarei`: iedereen naar V2 bij het Ei. | Host, Admin 1 |
 | 20:20 | **Ronde 2: Het Ei** (15 min) | |
-| 20:36 | Winnaar van het Ei. Naar V3 bij de mob arena. | Host |
+| 20:36 | Winnaar van het Ei op het podium bij de mob arena, de rest op het plein. De winnaar pakt het Warden-ei uit het frame (of Pudding reikt het uit). | Host, Pudding |
 | 20:38 | **Pauze** (5 min). | Host |
 | 20:43 | **Ronde 3: De Mob Arena**: 5 beurten van 5 waves (wie wanneer speelt blijft een verrassing), elke beurt op het sein van Pudding (± 25 min) | Host, Admin 1 |
 | 21:08 | Winnend team. Naar de quiz. | Host |
@@ -61,9 +61,10 @@ Vooraf instellen, in minuten (blijft bewaard):
 | `/doolhof wachttekst` | "Wacht op het startsein" |
 | `/ei timer` | 15 |
 | `/ei blokken` | netherite 6, diamond 90, gold 120, redstone 10, emerald 10, tnt 10, glowstone 10, slime 10, target 5 (voorlopig; samen 271, dat moet op de deepslate passen) |
-| `/mobarena punten` | zombie 1; skeleton, spider, cave spider 2; creeper 3; witch 4; vindicator 5; evoker 8; ravager 10 |
+| `/mobarena punten` | zombie 1; skeleton, spider, cave spider 2; creeper 3; witch 4; vindicator 5; evoker 8; ravager 10; warden 50 |
 | `/mobarena aftekst` | "Af · je speelt geen beurt meer" |
 | `/mobarena veldhoogte` | 3 |
+| `/mobarena warden` | leven 200, klap 8, boom 5 (HP; 2 HP is één hartje) |
 | `/clown wachttekst` | "Wacht op het startsein" |
 | `/ffa wachttekst` | "Wacht op het startsein" |
 
@@ -77,7 +78,7 @@ Na elke bouwwijziging aan het Ei: `/ei vastleggen`.
 | **Pudding: presentator van de quiz** | 1 | Speelt verder gewoon mee in zijn team, maar presenteert de quiz vanaf het podium: leest de vragen voor, keurt met groene en rode wol, draait het rad met het derde item. Zijn team heeft in de quiz één speler minder. |
 | **Admin 1: commander** | 1 | Start elke ronde op het sein van Pudding, elke beurt van de mob arena (`/mobarena volgende`), sluit de quiz af (`/quiz einde`), draait het Rad (`/clown rad`) en geeft het startsein in Clown vs All en de FFA (`/clown go`, `/ffa go`). |
 | **Admin 2: ref** | 1 | Kijkt naar problemen: stuck spelers, disconnects, bugs met de kroon, een team dat scheef zit. Heeft het randgevallen-lijstje uit [03-kroon-regels.md](03-kroon-regels.md) bij de hand. |
-| **Camera** | 0 tot 2 | Kijker-accounts voor het hoofdbeeld: boven het doolhof, boven de mob arena's, in de quizhal, boven de Arena. |
+| **Camera** | 0 tot 2 | Kijker-accounts voor het hoofdbeeld: boven het doolhof, boven de mob arena, in de quizhal, boven de Arena. |
 | **Bouwers** | 2 tot 4 | Vooraf. Zie de bouwlijst hieronder. |
 
 Alleen de admins weten dat het Rad rigged is. Eén persoon kan host en ref combineren als je krap
@@ -97,25 +98,28 @@ zit, maar de commander moet alleen commander zijn.
 4. Het zwevende Ei met de kettingen: schil van andere blokken, binnenkant gewone deepslate, geen
    gewone deepslate in schil of kettingen. Daarna regio `ei`, `eigebied`, de startplekken
    `ei_spawn_n` en `/ei vastleggen` (gebouwd).
-5. De mob arena: twee gespiegelde arena's, elk met vier gekleurde startplekken en een kooi van
-   tralies in het midden, en een tribune (balkon). Daarna de velden (`veld_1`, `veld_2`, in
-   delen), de tribunevloer (`tribune_mob`), de startplekken (`/mobarena startplek <arena>
-   <kleur>` midden op elk gekleurd vlak), mob-spawns, kooien en tribunepunten zetten (gebouwd).
-6. De quizhal met 4 gekleurde banken, een redstone lamp bij elke bank (geen redstone ernaast) en
+5. Het plein bij de mob arena met een podium en een item frame: punt `ei_podium` op het podium,
+   punt `ei_presentator` ernaast (voor Pudding), regio `ei_plein` (de vloer ervoor), `/ei prijskader` kijkend naar het frame, en `v3` op het
+   plein.
+6. De mob arena: één veld met een kooi en een tribune. Daarna regio `veld` (in delen als dat
+   moet), de tribunevloer (`tribune_mob`), per team twee startplekken
+   (`/mobarena startplek <kleur> <1|2>`, niet te dicht bij elkaar), mob-spawns `mob_1..n`, de
+   `kooi`, punt `warden` (waar de warden uit de grond komt) en tribunepunten `tribune_mob_n`.
+7. De quizhal met 4 gekleurde banken, een redstone lamp bij elke bank (geen redstone ernaast) en
    een trap met podium. Daarna `/quiz bank <kleur>` bij elke bank, `/quiz lamp <kleur>` kijkend
    naar elke lamp en `/quiz podium` boven aan de trap (gebouwd).
-7. De Arena: colosseum met open vloer, podium in het midden, 20 redstone blocks in een cirkel,
+8. De Arena: colosseum met open vloer, podium in het midden, 20 redstone blocks in een cirkel,
    twee tribuneringen (alleen de onderste in gebruik). Daarna `/clown troon` op het podium,
    `/clown jagerplek` op elk redstone block (kijk de goede kant op), `/clown tribune` op twee
    plekken op de onderste ring, `/clown vloer <diameter>` midden in de Arena,
    en eventueel `colosseum` (gebouwd).
-8. Het resource pack: foto van Clown (jpg of png, elk formaat) en het lachje (ogg) in
+9. Het resource pack: foto van Clown (jpg of png, elk formaat) en het lachje (ogg) in
    `pack/aanleveren/`, `java pack/BouwPack.java`, de zip online zetten (uurtje, zie
    [04-technische-schets.md](04-technische-schets.md)).
-9. De mod ombouwen naar dit rondeplan ([08-taakplan.md](08-taakplan.md)), dan met de wand,
+10. De mod ombouwen naar dit rondeplan ([08-taakplan.md](08-taakplan.md)), dan met de wand,
    `/bc point` en de commando's per ronde alle regio's en punten zetten, zoals hierboven per
    zone (uurtje).
-10. Volledige testrun met 4 tot 8 testers, zodat er minstens twee teams zijn (1 avond).
+11. Volledige testrun met 4 tot 8 testers, zodat er minstens twee teams zijn (1 avond).
 
 ## Checklist: eerste test van de mod
 
@@ -168,15 +172,22 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
       pickaxe weer Efficiency II; slime maakt de anderen misselijk; target zet met twee accounts
       iedereen op de plek van de ander.
 - [ ] `/mobarena punten`: de tabel klopt.
+- [ ] Einde van het Ei: de winnaar staat op het podium, Pudding ernaast, de rest verspreid op het
+      plein en kijkt naar het podium, vuurpijl boven het podium. Het Warden-ei zit in het frame; een ander
+      account kan het niet pakken, de winnaar of de presentator wel.
 - [ ] `/mobarena start` met twee accounts in twee teams: geen schema in de chat
-      (`/mobarena schema` laat het alleen jou zien), beide op hun
-      gekleurde plek, gloeiend in hun teamkleur, rook bij de spawnpunten, waves in beide arena's
-      tegelijk, 5 seconden na beide klaar de volgende, punten per kill in de sidebar, een ravager-
-      of evokerkill in de chat, mobs negeren de tribune en de kooi. Ga dood: kooi van je arena,
-      je `/mobarena aftekst` onderin, na de beurt de tribune, in je volgende beurt blijft je plek leeg. Na wave 5: tekst
-      meteen in beeld, 10 seconden aftellen, dan pas de arena en de kooien naar de tribune; wie al
-      op de tribune stond blijft staan. `/mobarena volgende` weigert tijdens die 10 seconden.
-      Einde: winnaar, 10 seconden, daarna heeft iedereen een lege inventory en armor.
+      (`/mobarena schema` laat het alleen jou zien), beide op hun eigen startplek, gloeiend in hun
+      teamkleur, en tot `GO` kun je rondkijken maar niet lopen. Rook bij de spawnpunten, 5
+      seconden na de laatste kill de volgende wave, punten per kill in de sidebar, een ravager-
+      of evokerkill in de chat, mobs negeren de tribune en de kooi. Ga dood: de kooi, je
+      `/mobarena aftekst` onderin, na de beurt de tribune. Na wave 5: tekst meteen in beeld, 10
+      seconden aftellen, dan pas het veld en de kooi naar de tribune; wie al op de tribune stond
+      blijft staan. `/mobarena volgende` weigert tijdens die 10 seconden. Einde: winnaar, 10
+      seconden, daarna heeft iedereen een lege inventory en armor.
+- [ ] Warden-ei: vanaf het veld of de kooi weigert hij; vanaf de tribune: `WARDEN-EI` in beeld, en
+      de volgende wave is de warden, die bij punt `warden` uit de grond komt. Hij valt alleen wie
+      in het veld staat aan, het publiek krijgt geen Darkness, en hij blijft tot hij dood is
+      (`/mobarena wave volgende` als noodknop). De kill staat in de chat met 50 punten.
 - [ ] `/quiz presentator <naam>`, `/quiz start`: iedereen zonder spullen bij zijn bank, de
       presentator op het podium met alleen groene wol, rode wol en het rad-item. Rad een paar keer
       draaien: een rond rad groot in beeld dat afremt en met een vak onder het pijltje stopt (is
@@ -216,9 +227,9 @@ Minstens één keer de hele avond met 4 tot 8 testers. Let vooral op:
 - [ ] Het Ei: netherite is te minen met de diamond pickaxe. Punten kloppen. Bevriezing voelt
       niet oneerlijk lang. Terugzetten bij de start laat de server niet haperen. Stel de
       aantallen af met `/ei blokken`: genoeg te halen voor 15 minuten, maar niet overal punten.
-- [ ] Mob arena: beide arena's krijgen dezelfde wave op hetzelfde moment. Een beurt duurt 3 à 5
-      minuten en er valt genoeg te killen voor vier spelers; anders de aantallen in `waves.json`
-      bijstellen. Punten per mob voelen eerlijk (`/mobarena punten`).
+- [ ] Mob arena: een beurt met 8 spelers duurt 3 à 5 minuten en er valt genoeg te killen; anders
+      de aantallen in `waves.json` bijstellen. Punten per mob voelen eerlijk (`/mobarena punten`).
+      De warden is haalbaar maar zwaar; anders `/mobarena warden leven|klap|boom <hp>`.
 - [ ] Quiz: Pudding is vanaf het podium bij alle vier de banken te horen. Het rad is goed te
       lezen in beeld.
 - [ ] Clown vs All: jagers kunnen elkaar niet raken, ook niet met pijlen. Kroonwissel zet
@@ -228,7 +239,7 @@ Minstens één keer de hele avond met 4 tot 8 testers. Let vooral op:
 - [ ] Kijkers: tribune en kooi, geen schade, niet het veld op. Spring als kijker van de tribune
       de Arena in: je staat meteen weer op de tribune.
 - [ ] Voice: proximity werkt, de tribune is hoorbaar.
-- [ ] Serverperformance met twee arena's vol mobs.
+- [ ] Serverperformance met een vol veld (tot 20 mobs, of de warden).
 - [ ] `/bc reset` brengt alles terug naar de basiskamp-staat.
 
 ## Checklist: dag zelf

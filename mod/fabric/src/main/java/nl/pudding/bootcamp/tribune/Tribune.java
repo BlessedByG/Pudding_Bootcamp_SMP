@@ -283,21 +283,19 @@ public final class Tribune {
 	}
 
 	private static void houdVanDeVelden(MinecraftServer server) {
-		for (int arena = 1; arena <= 2; arena++) {
-			Regio veld = Spel.regio("veld_" + arena);
-			if (veld == null) {
+		Regio veld = Spel.regio("veld");
+		if (veld == null) {
+			return;
+		}
+		for (ServerPlayer s : Mc.deelnemers(server)) {
+			SpelerStatus st = Spel.status(s);
+			// Wie aan de beurt is hoort erin; wie in de kooi zit ook (de tralies houden hem binnen).
+			if (st.arena > 0 || st.kooi > 0) {
 				continue;
 			}
-			for (ServerPlayer s : Mc.deelnemers(server)) {
-				SpelerStatus st = Spel.status(s);
-				// Wie aan de beurt is hoort erin; wie in de kooi van dit veld zit ook (de tralies houden hem binnen).
-				if (st.arena > 0 || st.kooi == arena) {
-					continue;
-				}
-				if (veld.bevatSpelerTot(s.getX(), s.getY(), s.getZ(), Spel.instellingen().veldHoogte())
-						&& !opMobTribune(s.getX(), s.getY(), s.getZ())) {
-					terug(s, st, Ronde.MOBARENA);
-				}
+			if (veld.bevatSpelerTot(s.getX(), s.getY(), s.getZ(), Spel.instellingen().veldHoogte())
+					&& !opMobTribune(s.getX(), s.getY(), s.getZ())) {
+				terug(s, st, Ronde.MOBARENA);
 			}
 		}
 	}

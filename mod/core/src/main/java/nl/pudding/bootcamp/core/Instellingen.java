@@ -47,6 +47,8 @@ public final class Instellingen {
 		m.put("vindicator", 5);
 		m.put("evoker", 8);
 		m.put("ravager", 10);
+		// Alleen uit het Warden-ei van de winnaar van het Ei.
+		m.put("warden", 50);
 		return java.util.Collections.unmodifiableMap(m);
 	}
 
@@ -63,12 +65,16 @@ public final class Instellingen {
 	private final Map<String, Integer> mobPunten = new LinkedHashMap<>(MOB_PUNTEN);
 	private String aftekst = AFTEKST;
 	private int veldHoogte = VELD_HOOGTE;
+	private final EnumMap<WardenWaarde, Integer> warden = new EnumMap<>(WardenWaarde.class);
 	private String clownWachttekst = WACHTTEKST;
 	private String ffaWachttekst = WACHTTEKST;
 
 	public Instellingen() {
 		for (EiBlok b : EiBlok.values()) {
 			eiBlokken.put(b, b.standaard());
+		}
+		for (WardenWaarde w : WardenWaarde.values()) {
+			warden.put(w, w.standaard());
 		}
 	}
 
@@ -301,6 +307,58 @@ public final class Instellingen {
 	public void zetVeldHoogte(int blokken) {
 		vereis(checkVeldHoogte(blokken));
 		veldHoogte = blokken;
+	}
+
+	/** De warden uit het Warden-ei: zijn levens en zijn schade, in HP (2 HP is één hartje). */
+	public enum WardenWaarde {
+		LEVEN("leven", 200, 20, 1000),
+		KLAP("klap", 8, 0, 60),
+		BOOM("boom", 5, 0, 40);
+
+		private final String id;
+		private final int standaard;
+		private final int min;
+		private final int max;
+
+		WardenWaarde(String id, int standaard, int min, int max) {
+			this.id = id;
+			this.standaard = standaard;
+			this.min = min;
+			this.max = max;
+		}
+
+		/** Zoals in {@code /mobarena warden leven}. */
+		public String id() {
+			return id;
+		}
+
+		public int standaard() {
+			return standaard;
+		}
+
+		public int min() {
+			return min;
+		}
+
+		public int max() {
+			return max;
+		}
+	}
+
+	public int warden(WardenWaarde w) {
+		return warden.get(w);
+	}
+
+	public static String checkWarden(WardenWaarde w, int hp) {
+		if (hp < w.min() || hp > w.max()) {
+			return "de warden-" + w.id() + " moet " + w.min() + " t/m " + w.max() + " HP zijn, niet " + hp;
+		}
+		return null;
+	}
+
+	public void zetWarden(WardenWaarde w, int hp) {
+		vereis(checkWarden(w, hp));
+		warden.put(w, hp);
 	}
 
 	public String aftekst() {

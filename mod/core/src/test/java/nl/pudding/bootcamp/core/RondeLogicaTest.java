@@ -168,85 +168,85 @@ class RondeLogicaTest {
 		}
 
 		@Test
-		void vijfBeurtenIedereenEenKeerInElkeArena() {
-			MobSchema s = MobSchema.loot(teams(5, 5, 5, 5), new Random(3));
-			assertEquals(5, s.beurten());
-			assertEquals(2, s.verschuiving());
+		void vierPerTeamTweeBeurtenIedereenEenKeer() {
+			MobSchema s = MobSchema.loot(teams(4, 4, 4, 4), new Random(3));
+			assertEquals(2, s.beurten());
 			for (Kleur k : Kleur.values()) {
-				Map<UUID, Integer> arena1 = new HashMap<>();
-				Map<UUID, Integer> arena2 = new HashMap<>();
-				for (int b = 0; b < 5; b++) {
-					arena1.put(s.gepland(b, 1, k), b);
-					arena2.put(s.gepland(b, 2, k), b);
+				Set<UUID> gespeeld = new HashSet<>();
+				for (int b = 0; b < 2; b++) {
+					for (int plek = 1; plek <= MobSchema.PER_BEURT; plek++) {
+						UUID speler = s.gepland(b, plek, k);
+						assertNotNull(speler);
+						assertTrue(gespeeld.add(speler), "twee keer ingepland");
+					}
 				}
-				assertEquals(5, arena1.size());
-				assertEquals(arena1.keySet(), arena2.keySet());
-				for (UUID speler : arena1.keySet()) {
-					int een = arena1.get(speler);
-					int twee = arena2.get(speler);
-					assertTrue(Math.abs(een - twee) > 1, "twee beurten achter elkaar: " + een + " en " + twee);
-				}
+				assertEquals(4, gespeeld.size());
 			}
 		}
 
 		@Test
 		void hetVoorbeeldUitDeDocs() {
-			List<UUID> team = spelers(5);
+			List<UUID> team = spelers(4);
 			MobSchema s = MobSchema.vast(Map.of(Kleur.ROOD, team));
-			// Beurt 1: speler 1 in arena 1, speler 3 in arena 2; beurt 4: speler 4 en speler 1.
+			// Beurt 1: speler 1 en 2 van het team; beurt 2: speler 3 en 4.
 			assertEquals(team.get(0), s.gepland(0, 1, Kleur.ROOD));
-			assertEquals(team.get(2), s.gepland(0, 2, Kleur.ROOD));
-			assertEquals(team.get(3), s.gepland(3, 1, Kleur.ROOD));
-			assertEquals(team.get(0), s.gepland(3, 2, Kleur.ROOD));
-			assertEquals(team.get(1), s.gepland(4, 2, Kleur.ROOD));
+			assertEquals(team.get(1), s.gepland(0, 2, Kleur.ROOD));
+			assertEquals(team.get(2), s.gepland(1, 1, Kleur.ROOD));
+			assertEquals(team.get(3), s.gepland(1, 2, Kleur.ROOD));
+		}
+
+		@Test
+		void beurtenIsHetGrootsteTeamGedeeldDoorTweeNaarBoven() {
+			assertEquals(1, MobSchema.loot(teams(1, 2), new Random(1)).beurten());
+			assertEquals(2, MobSchema.loot(teams(3, 2), new Random(1)).beurten());
+			assertEquals(3, MobSchema.loot(teams(5, 4, 4, 4), new Random(1)).beurten());
+			assertEquals(0, MobSchema.loot(teams(), new Random(1)).beurten());
 		}
 
 		@Test
 		void kleinerTeamHeeftExtraBeurten() {
-			MobSchema s = MobSchema.loot(teams(5, 5, 4, 4), new Random(9));
-			assertEquals(5, s.beurten());
+			MobSchema s = MobSchema.loot(teams(4, 4, 3, 3), new Random(9));
+			assertEquals(2, s.beurten());
 			int leeg = 0;
-			for (int b = 0; b < 5; b++) {
-				for (int arena = 1; arena <= 2; arena++) {
-					if (s.gepland(b, arena, Kleur.GEEL) == null) {
+			for (int b = 0; b < 2; b++) {
+				for (int plek = 1; plek <= MobSchema.PER_BEURT; plek++) {
+					if (s.gepland(b, plek, Kleur.GEEL) == null) {
 						leeg++;
 					}
 				}
 			}
-			// Vier spelers, vijf beurten: in elke arena één lege plek.
-			assertEquals(2, leeg);
+			// Drie spelers, vier plekken: één lege plek.
+			assertEquals(1, leeg);
 		}
 
 		@Test
 		void extraBeurtPaktIemandDieNogMagEnNietAlSpeelt() {
-			List<UUID> rood = spelers(5);
-			List<UUID> geel = spelers(4);
+			List<UUID> rood = spelers(4);
+			List<UUID> geel = spelers(3);
 			MobSchema s = MobSchema.vast(Map.of(Kleur.ROOD, rood, Kleur.GEEL, geel));
-			// Beurt 5 (index 4): arena 1 speelt geel speler 5, die er niet is: extra beurt.
-			assertNull(s.gepland(4, 1, Kleur.GEEL));
-			UUID tweedeArena = s.gepland(4, 2, Kleur.GEEL);
-			assertNotNull(tweedeArena);
+			// Beurt 2 (index 1): geel speelt met speler 3; plek 2 is een extra beurt.
+			assertEquals(geel.get(2), s.gepland(1, 1, Kleur.GEEL));
+			assertNull(s.gepland(1, 2, Kleur.GEEL));
 			Set<UUID> af = Set.of(geel.get(0));
 			List<UUID> aanwezig = new ArrayList<>(rood);
 			aanwezig.addAll(geel);
 			Random random = new Random(5);
 			for (int i = 0; i < 50; i++) {
-				MobSchema.Plek extra = s.opstelling(4, af, aanwezig, random).stream()
-						.filter(p -> p.arena() == 1 && p.kleur() == Kleur.GEEL).findFirst().orElseThrow();
+				MobSchema.Plek extra = s.opstelling(1, af, aanwezig, random).stream()
+						.filter(p -> p.nummer() == 2 && p.kleur() == Kleur.GEEL).findFirst().orElseThrow();
 				assertTrue(extra.extra());
-				assertNotNull(extra.speler());
-				assertFalse(af.contains(extra.speler()));
-				assertFalse(extra.speler().equals(tweedeArena));
+				// Niet wie af is, niet wie al op plek 1 staat: dan blijft alleen speler 2 over.
+				assertEquals(geel.get(1), extra.speler());
 			}
 		}
 
 		@Test
 		void wieAfIsLaatZijnPlekLeeg() {
-			List<UUID> rood = spelers(5);
+			List<UUID> rood = spelers(4);
 			MobSchema s = MobSchema.vast(Map.of(Kleur.ROOD, rood));
-			UUID gepland = s.gepland(2, 1, Kleur.ROOD);
-			List<MobSchema.Plek> plekken = s.opstelling(2, Set.of(gepland), rood, new Random());
-			MobSchema.Plek p = plekken.stream().filter(x -> x.arena() == 1).findFirst().orElseThrow();
+			UUID gepland = s.gepland(1, 1, Kleur.ROOD);
+			List<MobSchema.Plek> plekken = s.opstelling(1, Set.of(gepland), rood, new Random());
+			MobSchema.Plek p = plekken.stream().filter(x -> x.nummer() == 1).findFirst().orElseThrow();
 			assertNull(p.speler());
 			assertFalse(p.extra());
 			// Een leeg team doet niet mee.
@@ -257,22 +257,16 @@ class RondeLogicaTest {
 		void extraBeurtZonderKandidaatBlijftLeeg() {
 			List<UUID> geel = spelers(1);
 			MobSchema s = MobSchema.vast(Map.of(Kleur.ROOD, spelers(3), Kleur.GEEL, geel));
-			// Geel heeft één speler; in beurt 1 speelt die in arena 1, arena 2 is extra maar er is niemand meer.
+			// Geel heeft één speler; in beurt 1 staat die op plek 1, plek 2 is extra maar er is niemand meer.
 			List<MobSchema.Plek> plekken = s.opstelling(0, Set.of(), List.of(geel.get(0)), new Random());
-			MobSchema.Plek arena2 = plekken.stream().filter(x -> x.arena() == 2 && x.kleur() == Kleur.GEEL).findFirst().orElseThrow();
-			assertTrue(arena2.extra());
-			assertNull(arena2.speler());
+			MobSchema.Plek tweede = plekken.stream().filter(x -> x.nummer() == 2 && x.kleur() == Kleur.GEEL).findFirst().orElseThrow();
+			assertTrue(tweede.extra());
+			assertNull(tweede.speler());
 		}
 	}
 
 	@Nested
 	class MobVerloopTest {
-		private final int[] geen = {0, 0, 0};
-
-		private static int[] n(int een, int twee) {
-			return new int[] {0, een, twee};
-		}
-
 		private static boolean heeft(List<MobVerloop.Gebeurtenis> g, MobVerloop.Soort s) {
 			return g.stream().anyMatch(x -> x.soort() == s);
 		}
@@ -280,81 +274,98 @@ class RondeLogicaTest {
 		@Test
 		void eersteSecondeStartWaveEen() {
 			MobVerloop v = new MobVerloop(5);
-			List<MobVerloop.Gebeurtenis> g = v.seconde(geen, n(4, 4));
+			List<MobVerloop.Gebeurtenis> g = v.seconde(0, 8);
 			assertTrue(heeft(g, MobVerloop.Soort.START_WAVE));
 			assertEquals(1, v.wave());
 		}
 
 		@Test
-		void volgendeWaveVijfSecondenNaBeideKlaar() {
+		void volgendeWaveVijfSecondenNaAllesDood() {
 			MobVerloop v = new MobVerloop(5);
-			v.seconde(geen, n(4, 4));
-			// Arena 1 is leeg, arena 2 nog niet: geen pauze.
-			v.seconde(n(0, 3), n(4, 4));
+			v.seconde(0, 8);
+			v.seconde(3, 8);
 			assertFalse(v.inPauze());
-			v.seconde(n(0, 0), n(4, 4));
+			v.seconde(0, 8);
 			assertTrue(v.inPauze());
 			for (int i = 0; i < 4; i++) {
-				assertFalse(heeft(v.seconde(geen, n(4, 4)), MobVerloop.Soort.START_WAVE));
+				assertFalse(heeft(v.seconde(0, 8), MobVerloop.Soort.START_WAVE));
 			}
-			assertTrue(heeft(v.seconde(geen, n(4, 4)), MobVerloop.Soort.START_WAVE));
+			assertTrue(heeft(v.seconde(0, 8), MobVerloop.Soort.START_WAVE));
 			assertEquals(2, v.wave());
 		}
 
 		@Test
 		void naTweeMinutenAltijdKlaar() {
 			MobVerloop v = new MobVerloop(5);
-			v.seconde(geen, n(4, 4));
+			v.seconde(0, 8);
 			for (int i = 1; i < MobVerloop.MAX_WAVE_SECONDEN; i++) {
-				assertFalse(heeft(v.seconde(n(1, 1), n(4, 4)), MobVerloop.Soort.WAVE_GEFORCEERD));
+				assertFalse(heeft(v.seconde(1, 8), MobVerloop.Soort.WAVE_GEFORCEERD));
 			}
-			assertTrue(heeft(v.seconde(n(1, 1), n(4, 4)), MobVerloop.Soort.WAVE_GEFORCEERD));
+			assertTrue(heeft(v.seconde(1, 8), MobVerloop.Soort.WAVE_GEFORCEERD));
 			assertTrue(v.inPauze());
+		}
+
+		@Test
+		void deWardenHeeftGeenLimiet() {
+			MobVerloop v = new MobVerloop(5);
+			v.seconde(0, 8);
+			v.zonderLimiet();
+			for (int i = 0; i < 3 * MobVerloop.MAX_WAVE_SECONDEN; i++) {
+				assertFalse(heeft(v.seconde(1, 8), MobVerloop.Soort.WAVE_GEFORCEERD));
+			}
+			// Het commando werkt wel.
+			v.forceer();
+			assertTrue(heeft(v.seconde(1, 8), MobVerloop.Soort.WAVE_GEFORCEERD));
+			// De volgende wave heeft weer de gewone limiet.
+			for (int i = 0; i < MobVerloop.PAUZE; i++) {
+				v.seconde(0, 8);
+			}
+			assertEquals(2, v.wave());
+			for (int i = 1; i < MobVerloop.MAX_WAVE_SECONDEN; i++) {
+				v.seconde(1, 8);
+			}
+			assertTrue(heeft(v.seconde(1, 8), MobVerloop.Soort.WAVE_GEFORCEERD));
 		}
 
 		@Test
 		void forcerenMetHetCommando() {
 			MobVerloop v = new MobVerloop(5);
-			v.seconde(geen, n(4, 4));
+			v.seconde(0, 8);
 			v.forceer();
-			assertTrue(heeft(v.seconde(n(3, 2), n(4, 4)), MobVerloop.Soort.WAVE_GEFORCEERD));
+			assertTrue(heeft(v.seconde(3, 8), MobVerloop.Soort.WAVE_GEFORCEERD));
 		}
 
 		@Test
 		void beurtKlaarNaDeLaatsteWave() {
 			MobVerloop v = new MobVerloop(2);
-			v.seconde(geen, n(4, 4));
-			v.seconde(geen, n(4, 4));
+			v.seconde(0, 8);
+			assertFalse(v.laatsteWave());
+			v.seconde(0, 8);
 			for (int i = 0; i < MobVerloop.PAUZE; i++) {
-				v.seconde(geen, n(4, 4));
+				v.seconde(0, 8);
 			}
 			assertEquals(2, v.wave());
-			List<MobVerloop.Gebeurtenis> g = v.seconde(geen, n(4, 4));
+			assertTrue(v.laatsteWave());
+			List<MobVerloop.Gebeurtenis> g = v.seconde(0, 8);
 			assertTrue(heeft(g, MobVerloop.Soort.BEURT_KLAAR));
 			assertTrue(v.beurtKlaar());
-			assertTrue(v.seconde(geen, n(4, 4)).isEmpty());
+			assertTrue(v.seconde(0, 8).isEmpty());
 		}
 
 		@Test
-		void arenaKlaarAlsIedereenAfIs() {
+		void beurtKlaarAlsIedereenAfIs() {
 			MobVerloop v = new MobVerloop(5);
-			v.seconde(geen, n(4, 4));
-			List<MobVerloop.Gebeurtenis> g = v.seconde(n(3, 3), n(0, 2));
-			assertTrue(g.stream().anyMatch(x -> x.soort() == MobVerloop.Soort.ARENA_KLAAR && x.arena() == 1));
-			assertTrue(v.arenaKlaar(1));
-			// De mobs van arena 1 tellen niet meer: arena 2 leeg is genoeg voor de pauze.
-			v.seconde(n(3, 0), n(0, 2));
-			assertTrue(v.inPauze());
-			// Ook arena 2 af: de beurt is klaar.
-			assertTrue(heeft(v.seconde(geen, n(0, 0)), MobVerloop.Soort.BEURT_KLAAR));
+			v.seconde(0, 8);
+			assertTrue(heeft(v.seconde(3, 0), MobVerloop.Soort.BEURT_KLAAR));
+			assertTrue(v.beurtKlaar());
 		}
 
 		@Test
-		void legeArenaIsMeteenKlaar() {
+		void legVeldIsMeteenKlaar() {
 			MobVerloop v = new MobVerloop(5);
-			List<MobVerloop.Gebeurtenis> g = v.seconde(geen, n(0, 3));
-			assertTrue(v.arenaKlaar(1));
-			assertTrue(heeft(g, MobVerloop.Soort.START_WAVE));
+			List<MobVerloop.Gebeurtenis> g = v.seconde(0, 0);
+			assertTrue(heeft(g, MobVerloop.Soort.BEURT_KLAAR));
+			assertFalse(heeft(g, MobVerloop.Soort.START_WAVE));
 		}
 	}
 
@@ -583,6 +594,10 @@ class RondeLogicaTest {
 			assertEquals("Wacht op het startsein", i.clownWachttekst());
 			assertEquals("Wacht op het startsein", i.ffaWachttekst());
 			assertEquals("Wacht op het startsein", i.doolhofWachttekst());
+			assertEquals(200, i.warden(Instellingen.WardenWaarde.LEVEN));
+			assertEquals(8, i.warden(Instellingen.WardenWaarde.KLAP));
+			assertEquals(5, i.warden(Instellingen.WardenWaarde.BOOM));
+			assertEquals(50, i.mobPunten("minecraft:warden"));
 			assertEquals(3, i.veldHoogte());
 			assertTrue(i.poortMelding());
 			assertEquals(3, i.valMobsMin());
@@ -639,6 +654,10 @@ class RondeLogicaTest {
 			assertNull(Instellingen.checkVeldHoogte(0));
 			assertNotNull(Instellingen.checkVeldHoogte(11));
 			assertNotNull(Instellingen.checkVeldHoogte(-1));
+			assertNull(Instellingen.checkWarden(Instellingen.WardenWaarde.LEVEN, 20));
+			assertNotNull(Instellingen.checkWarden(Instellingen.WardenWaarde.LEVEN, 19));
+			assertNotNull(Instellingen.checkWarden(Instellingen.WardenWaarde.BOOM, 41));
+			assertNull(Instellingen.checkWarden(Instellingen.WardenWaarde.KLAP, 0));
 			assertNull(Instellingen.checkValMobs(0, 0));
 			assertNull(Instellingen.checkValMobs(3, 10));
 			assertNull(Instellingen.checkValMobs(20, 20));

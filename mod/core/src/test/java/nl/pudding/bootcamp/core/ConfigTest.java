@@ -33,6 +33,7 @@ class ConfigTest {
 		c.instellingen().zetPoortMelding(false);
 		c.instellingen().zetValMobs(2, 6);
 		c.instellingen().zetDoolhofWachttekst("Nog even geduld");
+		c.instellingen().zetWarden(Instellingen.WardenWaarde.LEVEN, 300);
 
 		BootcampConfig t = BootcampConfig.uitJson(c.naarJson());
 
@@ -60,6 +61,8 @@ class ConfigTest {
 		assertEquals(2, t.instellingen().valMobsMin());
 		assertEquals(6, t.instellingen().valMobsMax());
 		assertEquals("Nog even geduld", t.instellingen().doolhofWachttekst());
+		assertEquals(300, t.instellingen().warden(Instellingen.WardenWaarde.LEVEN));
+		assertEquals(8, t.instellingen().warden(Instellingen.WardenWaarde.KLAP));
 	}
 
 	@Test

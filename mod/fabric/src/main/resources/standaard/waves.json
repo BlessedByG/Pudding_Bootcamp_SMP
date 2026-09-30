@@ -1,53 +1,56 @@
 {
   "waves": [
     {
-      "naam": "Zombies",
+      "naam": "Zombies en husks",
       "mobs": [
-        { "type": "minecraft:zombie", "aantal": 4 }
+        { "type": "minecraft:zombie", "aantal": 10 },
+        { "type": "minecraft:husk", "aantal": 4 }
       ]
     },
     {
       "naam": "Skeletons en spiders",
       "mobs": [
-        { "type": "minecraft:skeleton", "aantal": 4, "gear": { "mainhand": "minecraft:bow" } },
-        { "type": "minecraft:spider", "aantal": 3 }
+        { "type": "minecraft:skeleton", "aantal": 8, "gear": { "mainhand": "minecraft:bow" } },
+        { "type": "minecraft:spider", "aantal": 8 }
       ]
     },
     {
-      "naam": "Zombies met iron gear en creepers",
+      "naam": "Zombies met iron gear, creepers en skeletons",
       "mobs": [
         {
-          "type": "minecraft:zombie", "aantal": 4,
+          "type": "minecraft:zombie", "aantal": 8,
           "gear": {
             "head": "minecraft:iron_helmet", "chest": "minecraft:iron_chestplate",
             "legs": "minecraft:iron_leggings", "feet": "minecraft:iron_boots",
             "mainhand": "minecraft:iron_sword"
           }
         },
-        { "type": "minecraft:creeper", "aantal": 2 }
+        { "type": "minecraft:creeper", "aantal": 4 },
+        { "type": "minecraft:skeleton", "aantal": 4, "gear": { "mainhand": "minecraft:bow" } }
       ]
     },
     {
-      "naam": "Zombies, witches en cave spiders",
+      "naam": "Zombies, witches, cave spiders en vindicators",
       "mobs": [
         {
-          "type": "minecraft:zombie", "aantal": 4,
+          "type": "minecraft:zombie", "aantal": 8,
           "gear": {
             "head": "minecraft:iron_helmet", "chest": "minecraft:iron_chestplate",
             "legs": "minecraft:iron_leggings", "feet": "minecraft:iron_boots",
             "mainhand": "minecraft:iron_sword"
           }
         },
-        { "type": "minecraft:witch", "aantal": 2 },
-        { "type": "minecraft:cave_spider", "aantal": 3 }
+        { "type": "minecraft:witch", "aantal": 4 },
+        { "type": "minecraft:cave_spider", "aantal": 6 },
+        { "type": "minecraft:vindicator", "aantal": 2, "gear": { "mainhand": "minecraft:iron_axe" } }
       ]
     },
     {
-      "naam": "Ravager, vindicators en evoker",
+      "naam": "Ravagers, vindicators en evokers",
       "mobs": [
-        { "type": "minecraft:ravager", "aantal": 1 },
-        { "type": "minecraft:vindicator", "aantal": 3, "gear": { "mainhand": "minecraft:iron_axe" } },
-        { "type": "minecraft:evoker", "aantal": 1 }
+        { "type": "minecraft:ravager", "aantal": 2 },
+        { "type": "minecraft:vindicator", "aantal": 8, "gear": { "mainhand": "minecraft:iron_axe" } },
+        { "type": "minecraft:evoker", "aantal": 2 }
       ]
     }
   ]

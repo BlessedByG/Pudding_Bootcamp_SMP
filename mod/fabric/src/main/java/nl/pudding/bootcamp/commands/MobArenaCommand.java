@@ -11,6 +11,7 @@ import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.server.level.ServerPlayer;
 import nl.pudding.bootcamp.core.Instellingen;
 import nl.pudding.bootcamp.core.Kleur;
+import nl.pudding.bootcamp.core.MobSchema;
 import nl.pudding.bootcamp.core.Punt;
 import nl.pudding.bootcamp.core.Ronde;
 import nl.pudding.bootcamp.game.Spel;
@@ -29,9 +30,16 @@ final class MobArenaCommand {
 		cmd.then(Commands.literal("volgende").executes(MobArenaCommand::volgende));
 		cmd.then(Commands.literal("schema").executes(MobArenaCommand::schema));
 		cmd.then(Commands.literal("wave").then(Commands.literal("volgende").executes(MobArenaCommand::waveVolgende)));
-		cmd.then(Commands.literal("startplek").then(Commands.argument("arena", IntegerArgumentType.integer(1, 2))
-				.then(Commands.argument("kleur", StringArgumentType.word()).suggests(BcCommand.KLEUREN)
+		cmd.then(Commands.literal("startplek").then(Commands.argument("kleur", StringArgumentType.word()).suggests(BcCommand.KLEUREN)
+				.then(Commands.argument("nummer", IntegerArgumentType.integer(1, MobSchema.PER_BEURT))
 						.executes(MobArenaCommand::startplek))));
+		LiteralArgumentBuilder<CommandSourceStack> warden = Commands.literal("warden").executes(MobArenaCommand::toonWarden);
+		for (Instellingen.WardenWaarde w : Instellingen.WardenWaarde.values()) {
+			warden.then(Commands.literal(w.id())
+					.then(Commands.argument("hp", IntegerArgumentType.integer(w.min(), w.max()))
+							.executes(ctx -> zetWarden(ctx, w))));
+		}
+		cmd.then(warden);
 		cmd.then(Commands.literal("punten")
 				.executes(MobArenaCommand::puntenTabel)
 				.then(Commands.argument("mob", StringArgumentType.word())
@@ -82,15 +90,37 @@ final class MobArenaCommand {
 
 	private static int startplek(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
 		ServerPlayer speler = ctx.getSource().getPlayerOrException();
-		int arena = IntegerArgumentType.getInteger(ctx, "arena");
+		int nummer = IntegerArgumentType.getInteger(ctx, "nummer");
 		Kleur kleur = BcCommand.kleur(ctx, "kleur");
 		if (kleur == null) {
 			return BcCommand.fout(ctx, "Kies rood, blauw, groen of geel.");
 		}
-		String naam = "start_" + arena + "_" + kleur.id();
+		String naam = "start_" + kleur.id() + "_" + nummer;
 		Punt p = SetupCommands.zetPunt(speler, naam);
-		return BcCommand.bewaard(ctx, "Startplek van " + kleur.naam() + " in arena " + arena + " (" + naam + ") gezet op "
+		return BcCommand.bewaard(ctx, "Startplek " + nummer + " van " + kleur.naam() + " (" + naam + ") gezet op "
 				+ SetupCommands.beschrijfPunt(p));
+	}
+
+	private static int toonWarden(CommandContext<CommandSourceStack> ctx) {
+		Instellingen i = Spel.instellingen();
+		StringBuilder sb = new StringBuilder("De warden uit het Warden-ei (in HP, 2 HP is één hartje):");
+		for (Instellingen.WardenWaarde w : Instellingen.WardenWaarde.values()) {
+			sb.append("\n  ").append(w.id()).append(": ").append(i.warden(w)).append(" HP (")
+					.append(hartjes(i.warden(w))).append(" hartjes), standaard ").append(w.standaard());
+		}
+		sb.append("\n  punten: ").append(i.mobPunten("warden")).append(" (/mobarena punten warden <n>)");
+		return BcCommand.info(ctx, sb.toString());
+	}
+
+	private static int zetWarden(CommandContext<CommandSourceStack> ctx, Instellingen.WardenWaarde w) {
+		int hp = IntegerArgumentType.getInteger(ctx, "hp");
+		Spel.instellingen().zetWarden(w, hp);
+		return BcCommand.bewaard(ctx, "Warden-" + w.id() + ": " + hp + " HP (" + hartjes(hp) + " hartjes). Geldt voor de volgende warden.");
+	}
+
+	/** {@code 5} of {@code 2,5}. */
+	private static String hartjes(int hp) {
+		return hp % 2 == 0 ? String.valueOf(hp / 2) : (hp / 2) + ",5";
 	}
 
 	private static int toonVeldHoogte(CommandContext<CommandSourceStack> ctx) {
