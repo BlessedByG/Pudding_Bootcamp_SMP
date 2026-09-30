@@ -145,7 +145,7 @@ class KleineTests {
 			assertEquals("Mob Arena · beurt 3/5", BossbarTekst.mobarena(3, 5, 0));
 			assertEquals("Quiz · aan de beurt: Groen", BossbarTekst.quiz("Groen"));
 			assertEquals("Quiz · draai het rad", BossbarTekst.quiz(null));
-			assertEquals("Clown vs All · Kroon: Clown · 12 over", BossbarTekst.clown("Clown", 12));
+			assertEquals("King of the Hill · Kroon: Clown · 12 over", BossbarTekst.clown("Clown", 12));
 			assertEquals("FFA · 7 over", BossbarTekst.ffa(7));
 			assertEquals("Pudding Bootcamp · King: Speler7", BossbarTekst.king("Speler7"));
 		}

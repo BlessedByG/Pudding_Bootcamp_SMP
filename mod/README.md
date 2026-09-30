@@ -89,7 +89,7 @@ Jar vervangen betekent server herstarten. Bewaar de jar van de vorige werkende v
 - Gamerules: natural regeneration en PvP aan (de mod beslist zelf wie wie mag raken); mob spawning,
   mob griefing, daglichtcyclus, weer, advancement-meldingen en locator bar uit, en `random_tick_speed`
   op 0 (geplakte bladeren vergaan dan niet). De locator bar gaat
-  aan in Clown vs All.
+  aan in Clown vs All (in beeld heet die ronde King of the Hill).
 - De teams `spelers`, `rood`, `blauw`, `groen`, `geel`, `jagers`, `kroon` en `out`.
 
 ## Bestanden
@@ -127,7 +127,7 @@ Per slot een item in dezelfde syntax als `/give`; een getal achter het item is h
 |---|---|---|
 | `basis` | Start doolhof: iron armor, iron sword, 32 steak. | ja |
 | `ei` | Start Ei: diamond pickaxe met Efficiency II. De mod markeert hem en haalt hem aan het eind weer weg. | nee |
-| `jager` | Iedereen behalve Clown bij de start van Clown vs All: full diamond (Protection IV, Unbreaking III), sword en axe (Sharpness V), bow (Power V), 32 pijlen, schild, 16 gapples. | ja |
+| `jager` | Iedereen behalve Clown bij de start van Clown vs All: full diamond (Protection IV, Unbreaking III), sword en axe (Sharpness V), bow (Power V), 32 pijlen, schild, 10 gapples. | ja |
 | `boss` | Clown bij de start van Clown vs All: de jagerskit zonder helm (de kroon zit al op). | ja |
 | `kroonpakket` | Bij elke kroonwissel: 2 gapples, 2 pearls. | nee |
 | `arena` | Start FFA: de jagerskit met gewone helm en 32 gapples. | ja |

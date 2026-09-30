@@ -123,6 +123,18 @@ class RegelsTest {
 	}
 
 	@Test
+	void kroonhouderSterkerTotDeSlotstrijd() {
+		// Nog vijf over: de kroonhouder Strength II, de jagers niets.
+		assertEquals(1, Regels.kroonSterkte(5, true));
+		assertEquals(-1, Regels.kroonSterkte(5, false));
+		assertEquals(1, Regels.kroonSterkte(4, true));
+		// 1v1v1 en minder: iedereen Strength I.
+		assertEquals(0, Regels.kroonSterkte(3, true));
+		assertEquals(0, Regels.kroonSterkte(3, false));
+		assertEquals(0, Regels.kroonSterkte(2, false));
+	}
+
+	@Test
 	void ffaZonderDeUitverkorene() {
 		assertEquals(List.of(a, c), Regels.ffaDeelnemers(List.of(a, b, c), b));
 		assertEquals(List.of(a, b, c), Regels.ffaDeelnemers(List.of(a, b, c), UUID.randomUUID()));

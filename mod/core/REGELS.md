@@ -62,6 +62,7 @@ Dit is de lijst van het rondeplan van 25 september 2026 (taakplan 2). De regels 
 | R5.7 | Logt de kroonhouder uit, dan dertig seconden wachten; daarna dezelfde kroonwissel. | `Regels.bijQuit`, `KROON_UITLOG_WACHT` | `RegelsTest.quitRegels` |
 | R5.8 | Geen timer: de ronde is voorbij zodra er één over is. | `Regels.laatsteOver` | `RegelsTest.eindeBijEenOver` |
 | R5.10 | Regeerperiodes: elke kroonwissel een nieuwe periode. | `Regeerperiodes` | `RegeerperiodesTest` |
+| R5.11 | Strength: de kroonhouder II en de jagers niks, tot er nog 3 over zijn (de kroonhouder meegeteld); dan iedereen I. | `Regels.kroonSterkte`, `SLOTSTRIJD` | `RegelsTest.kroonhouderSterkerTotDeSlotstrijd` |
 | R6.1 | Iedereen behalve de uitverkorene doet mee aan de FFA, ook wie in ronde 5 af was. | `Regels.ffaDeelnemers` | `RegelsTest.ffaZonderDeUitverkorene` |
 | R6.5 | Bij drie over `LAATSTE DRIE`, bij twee `LAATSTE TWEE`. | `Regels.aftelTitle` | `RegelsTest.laatsteDrieEnTwee` |
 | R7.1 | Uitloggen: een jager in ronde 5 en een FFA-speler zijn af; wie in de mob arena aan de beurt is telt als dood; in de andere rondes gebeurt er niks. | `Regels.bijQuit` | `RegelsTest.quitRegels` |

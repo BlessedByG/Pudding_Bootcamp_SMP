@@ -353,6 +353,9 @@ team kan hardop: de andere teams horen het ook. Dat is onderdeel van het spel.
 
 ## Ronde 5: Clown vs All
 
+In beeld heet deze ronde **King of the Hill**, zodat niet opvalt dat hij rigged is. "Clown vs All"
+is alleen de naam voor de admins.
+
 De volledige regels staan in [03-kroon-regels.md](03-kroon-regels.md). Hier het overzicht.
 
 **Doel:** blijf als laatste over.
@@ -373,7 +376,7 @@ De volledige regels staan in [03-kroon-regels.md](03-kroon-regels.md). Hier het 
   tegelijk los.
 - Iedereen is sinds de mob arena zonder spullen. Nu krijgt **iedereen dezelfde kit**, Clown ook:
   volledig diamond armor (Protection IV), diamond sword en diamond axe (Sharpness V), bow
-  (Power V) met 32 pijlen, schild en 16 golden apples, alles met Unbreaking III. Het enige
+  (Power V) met 32 pijlen, schild en 10 golden apples, alles met Unbreaking III. Het enige
   verschil: Clown draagt **de kroon** als helm, een diamond helm die niet af kan.
 
 **Regels in het kort**
@@ -384,10 +387,12 @@ De volledige regels staan in [03-kroon-regels.md](03-kroon-regels.md). Hier het 
 - **Kill je de kroonhouder, dan krijg jij de kroon.** Dan begint het opnieuw: de nieuwe
   kroonhouder op het podium, iedereen die nog leeft geheald op een willekeurige startplek, stil.
   Na een automatische countdown van 10 seconden begint de jacht weer.
+- **De kroonhouder heeft Strength II**, de jagers niks. Bij de **1v1v1** (nog 3 over) krijgt
+  **iedereen Strength I**: de kroonhouder zwakker, de jagers sterker.
 - **Geen timer.** Het gaat door tot er één over is.
 
 **Einde**
-- De laatste die overblijft wint Clown vs All. Is dat Clown, dan staat er **DE EINDBAAS WINT**
+- De laatste die overblijft wint King of the Hill. Is dat Clown, dan staat er **DE EINDBAAS WINT**
   in beeld.
 - Wie af is, komt in de chat: "Speler3 is af door ClownPierce · 11 over". De kroonhouder ziet
   onderin "Jij hebt de kroon · 11 jagers"; tijdens het wachten op `/clown go` ziet iedereen

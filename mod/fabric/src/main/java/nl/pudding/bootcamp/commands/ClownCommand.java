@@ -86,7 +86,7 @@ final class ClownCommand {
 			// Het rad draait, of Clown vs All staat klaar om te starten.
 			KroonRad.stop(server);
 			Planner.wisAlles();
-			return BcCommand.ok(ctx, "Het rad gestopt; Clown vs All start niet vanzelf.");
+			return BcCommand.ok(ctx, "Het rad gestopt; King of the Hill start niet vanzelf.");
 		}
 		return RondeCommands.stop(ctx, Ronde.CLOWN);
 	}
@@ -94,7 +94,7 @@ final class ClownCommand {
 	private static int go(CommandContext<CommandSourceStack> ctx) {
 		ClownVsAll ronde = RondeCommands.lopend(ClownVsAll.class);
 		if (ronde == null) {
-			return BcCommand.fout(ctx, "Clown vs All loopt niet (/clown rad of /clown start).");
+			return BcCommand.fout(ctx, "King of the Hill loopt niet (/clown rad of /clown start).");
 		}
 		String fout = ronde.go(ctx.getSource().getServer());
 		if (fout != null) {
@@ -127,7 +127,7 @@ final class ClownCommand {
 		ServerPlayer speler = EntityArgument.getPlayer(ctx, "speler");
 		ClownVsAll ronde = RondeCommands.lopend(ClownVsAll.class);
 		if (ronde == null) {
-			return BcCommand.fout(ctx, "De kroon forceren kan alleen terwijl Clown vs All loopt.");
+			return BcCommand.fout(ctx, "De kroon forceren kan alleen terwijl King of the Hill loopt.");
 		}
 		String fout = ronde.forceer(ctx.getSource().getServer(), speler);
 		if (fout != null) {
@@ -139,7 +139,7 @@ final class ClownCommand {
 	private static int krimp(CommandContext<CommandSourceStack> ctx, int seconden) {
 		ClownVsAll ronde = RondeCommands.lopend(ClownVsAll.class);
 		if (ronde == null) {
-			return BcCommand.fout(ctx, "Clown vs All loopt niet.");
+			return BcCommand.fout(ctx, "King of the Hill loopt niet.");
 		}
 		int grootte = IntegerArgumentType.getInteger(ctx, "grootte");
 		ronde.krimp(ctx.getSource().getServer(), grootte, seconden);

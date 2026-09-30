@@ -10,7 +10,7 @@
     "minecraft:diamond_sword[minecraft:enchantments={\"minecraft:sharpness\":5,\"minecraft:unbreaking\":3}]",
     "minecraft:diamond_axe[minecraft:enchantments={\"minecraft:sharpness\":5,\"minecraft:unbreaking\":3}]",
     "minecraft:bow[minecraft:enchantments={\"minecraft:power\":5,\"minecraft:unbreaking\":3}]",
-    "minecraft:golden_apple 16"
+    "minecraft:golden_apple 10"
   ],
   "inventory": [
     "minecraft:arrow 32"

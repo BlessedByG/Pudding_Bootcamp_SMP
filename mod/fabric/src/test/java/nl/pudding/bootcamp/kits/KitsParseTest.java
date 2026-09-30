@@ -68,11 +68,12 @@ class KitsParseTest {
 		Kits.Kit boss = Kits.parse(registries, KitDef.uitJson("boss.json", lees("kits/boss.json")));
 		ItemStack zwaard = boss.items().stream().map(Kits.Gevuld::stack).filter(s -> s.is(Items.DIAMOND_SWORD)).findFirst().orElseThrow();
 		assertTrue(zwaard.isEnchanted(), "het zwaard van de bosskit hoort Sharpness V te hebben");
+		assertEquals(10, boss.items().stream().map(Kits.Gevuld::stack).filter(s -> s.is(Items.GOLDEN_APPLE)).findFirst().orElseThrow().getCount());
 		Kits.Kit arena = Kits.parse(registries, KitDef.uitJson("arena.json", lees("kits/arena.json")));
 		ItemStack gapples = arena.items().stream().map(Kits.Gevuld::stack).filter(s -> s.is(Items.GOLDEN_APPLE)).findFirst().orElseThrow();
 		assertEquals(32, gapples.getCount());
 		Kits.Kit jager = Kits.parse(registries, KitDef.uitJson("jager.json", lees("kits/jager.json")));
-		assertEquals(16, jager.items().stream().map(Kits.Gevuld::stack).filter(s -> s.is(Items.GOLDEN_APPLE)).findFirst().orElseThrow().getCount());
+		assertEquals(10, jager.items().stream().map(Kits.Gevuld::stack).filter(s -> s.is(Items.GOLDEN_APPLE)).findFirst().orElseThrow().getCount());
 		assertTrue(jager.items().stream().map(Kits.Gevuld::stack).anyMatch(s -> s.is(Items.DIAMOND_AXE) && s.isEnchanted()));
 	}
 
