@@ -164,7 +164,7 @@ blok waar je naar kijkt, tot 32 blokken). De commando's per ronde zetten de mees
 | Ronde | Regio's | Punten |
 |---|---|---|
 | Algemeen | | `basiskamp` (optioneel, voor `/bc reset`) |
-| Doolhof | `doolhof`, `doolhof_uit` (de finishlijn), `doolhof_gif` (het doolhof zonder finishruimte), `poort_doolhof` (de muur, onder- en bovenhoek), `nep_1..3`, `schrik_1..n` | `doolhof_start`, `doolhof_finish` (in de finishruimte), `v2` |
+| Doolhof | `doolhof`, `doolhof_uit` (de finishlijn), `doolhof_gif` (het doolhof zonder finishruimte), `poort_doolhof` (de muur, onder- en bovenhoek), `poort_start` (barrier blocks in de openingen van de startruimte, elk een deel), `nep_1..3`, `schrik_1..n` | `doolhof_start`, `doolhof_finish` (in de finishruimte), `v2` |
 | Het Ei | `ei` (het Ei als doos), `eigebied` (Ei, kettingen, startplekken) | `ei_spawn_1..n`, `v3`; daarna `/ei vastleggen` |
 | Mob arena | `mobarena` (beide arena's met tribune), `veld_1`, `veld_2` (elk `save` + `add`), `tribune_mob` (de tribunevloer) | `/mobarena startplek <1\|2> <kleur>` (8x), `mob_1_1..n`, `mob_2_1..n`, `kooi_1`, `kooi_2`, `tribune_mob_1..n` |
 | Quiz | `quiz` | `/quiz bank <kleur>` (4x), `/quiz podium`, `/quiz lamp <kleur>` (4x, kijk naar de lamp) |

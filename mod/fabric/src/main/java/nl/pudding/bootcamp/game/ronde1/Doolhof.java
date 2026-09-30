@@ -76,6 +76,8 @@ import java.util.Set;
  */
 public final class Doolhof extends RondeLogica {
 	public static final String POORT = "doolhof";
+	/** De openingen van de startruimte: dicht tijdens de countdown, stil open bij de start van de timer. */
+	public static final String START_POORT = "start";
 	private static final int CHECK_ELKE_TICKS = 5;
 	/** Na zoveel ticks opent het teammenu opnieuw voor wie hem zonder keuze sloot. */
 	private static final int MENU_OPNIEUW_NA = 40;
@@ -142,6 +144,8 @@ public final class Doolhof extends RondeLogica {
 	@Override
 	public void start(MinecraftServer server) {
 		Poorten.dichtAlsHijBestaat(server, POORT);
+		// Eerst dicht, dan pas iedereen de startruimte in: niemand staat in een opening.
+		Poorten.dichtAlsHijBestaat(server, START_POORT);
 		Spelregels.locatorBar(server, false);
 		// Het doolhof is de teamkeuze: een nieuw doolhof begint zonder teams.
 		Teams.wisKeuzes();
@@ -159,6 +163,7 @@ public final class Doolhof extends RondeLogica {
 		toonSidebar(server);
 		Aftelling.start(Regels.COUNTDOWN, "Het doolhof begint over", () -> {
 			timerGestart = true;
+			Poorten.openAlsHijBestaat(server, START_POORT, false);
 			Spel.startTimer(Spel.instellingen().doolhofTimer() * 60);
 			if (Spel.instellingen().doolhofPoort() == 0) {
 				poortMoment = true;

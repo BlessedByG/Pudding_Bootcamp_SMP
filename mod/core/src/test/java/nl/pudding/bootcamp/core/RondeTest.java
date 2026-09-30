@@ -55,7 +55,7 @@ class RondeTest {
 
 	@Test
 	void ontbreektNoemtAlles() {
-		assertEquals(List.of("doolhof", "doolhof_uit", "poort_doolhof", "doolhof_gif", "doolhof_start", "doolhof_finish", "v2"),
+		assertEquals(List.of("doolhof", "doolhof_uit", "poort_doolhof", "poort_start", "doolhof_gif", "doolhof_start", "doolhof_finish", "v2"),
 				Ronde.DOOLHOF.ontbreekt(Set.of(), Set.of()));
 		assertEquals(List.of("troon"), Ronde.CLOWN.ontbreekt(Set.of("vloer"), Set.of("jager_1", "tribune_1")));
 		List<String> mob = Ronde.MOBARENA.ontbreekt(Set.of("mobarena", "veld_1", "veld_2"), Set.of());

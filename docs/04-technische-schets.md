@@ -389,6 +389,7 @@ hij de doos om alle delen heen; bij de cirkel van `vloer` is dat het vierkant er
 | `nep_1` t/m `nep_3` | De vakken aan het eind van de nep-gangen. |
 | `schrik_1` t/m `schrik_n` | Schrikplekken in het doolhof. Zoveel als je wilt, genummerd vanaf 1. |
 | `poort_doolhof` | De poort voor de echte uitgang, opent na `/doolhof poort` minuten. |
+| `poort_start` | De openingen van de startruimte, elk een deel (`save` + `add`). Zet er zelf barrier blocks in (of glas): tijdens de countdown kan niemand de startruimte uit. Bij de start van de timer haalt de mod ze stil weg (geen hoorn); bij de volgende `/doolhof start` zet hij ze terug, vóór iedereen de startruimte in gaat. Weet de mod na een herstart niet meer wat er stond, dan barrier. |
 | `doolhof_gif` | Het doolhof zelf, zonder de finishruimte (in delen als dat moet: `save` + `add`). Na de timer is het hier giftig. Punt `doolhof_finish` mag er niet in liggen, anders weigert `/doolhof start`. |
 | `veld_1`, `veld_2` | De twee mob-arenavelden, elk uit meerdere delen (de T-vorm: `save` voor de balk, `add` voor de poot). Een kijker die erin komt wordt teruggezet, behalve wie in de kooi van dat veld zit (de tralies houden die binnen); een speler die aan de beurt is en eruit komt ook. Voor kijkers telt een veld tot drie blokken boven de selectie (`/mobarena veldhoogte`), zodat het balkon erboven geen veld is; voor wie aan de beurt is telt alleen de kolom. |
 | `tribune_mob` | De tribune van de mob arena: selecteer de vloer waar de kijkers op staan, in delen als dat moet (`save` + `add`). Daarop telt niemand als in het veld, ook waar de selectie over een veld hangt of ermee overlapt: tot drie blokken boven de selectie (springen telt mee), niet eronder. Wie aan de beurt is en de tribune op loopt, gaat terug naar zijn startplek. `/mobarena start` weigert als een `tribune_mob_n` er niet op ligt of een startplek er wel op ligt. |
@@ -524,8 +525,9 @@ dood geannuleerd, de speler geheald en afgehandeld volgens de ronde:
 
 Geen death-screen, geen respawn. De laatste hit komt uit `ALLOW_DAMAGE`.
 
-**Ronde 1, doolhof.** Start: iedereen naar `doolhof_start`, basiskit, poort dicht, kisten vullen,
-border `doolhof`. Countdown, dan de timer (`/doolhof timer`, standaard 15 minuten). Na
+**Ronde 1, doolhof.** Start: poort en startpoort (`poort_start`) dicht, iedereen naar
+`doolhof_start`, basiskit, kisten vullen, border `doolhof`. Countdown; dan gaat de startpoort stil
+open en loopt de timer (`/doolhof timer`, standaard 15 minuten). Na
 `/doolhof poort` minuten (standaard 4) gaat `poort_doolhof` open, met horn en title
 `DE UITGANG IS OPEN` zolang `/doolhof poortmelding` aan staat. De bossbar laat alleen de totale tijd
 zien, zodat niemand weet wanneer de uitgang opengaat. Elke 5 ticks: wie in `nep_n` staat krijgt

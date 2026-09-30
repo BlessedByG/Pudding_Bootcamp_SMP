@@ -90,8 +90,9 @@ zit, maar de commander moet alleen commander zijn.
 3. Het doolhof: startruimte in het midden, 4 gangen, 1 echte uitgang met een poort, 3
    nep-uitgangen, lege kisten, valkisten (trapped chests), schrikplekken, achter de echte uitgang
    een afgesloten ruimte met een finishlijn (`doolhof_uit`), vanwaar je terug het doolhof in kunt.
-   Daarna regio `doolhof_gif` (het doolhof zonder de finishruimte, in delen als dat moet) en punt
-   `doolhof_finish` in de finishruimte (1 tot 2 avonden).
+   Daarna regio `doolhof_gif` (het doolhof zonder de finishruimte, in delen als dat moet), punt
+   `doolhof_finish` in de finishruimte, en barrier blocks in de openingen van de startruimte,
+   geselecteerd als `poort_start` (elke opening een deel) (1 tot 2 avonden).
 4. Het zwevende Ei met de kettingen: schil van andere blokken, binnenkant gewone deepslate, geen
    gewone deepslate in schil of kettingen. Daarna regio `ei`, `eigebied`, de startplekken
    `ei_spawn_n` en `/ei vastleggen` (gebouwd).
@@ -132,8 +133,9 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
 - [ ] `/doolhof timer`, `/doolhof poort`, `/doolhof hint` en `/ei timer` zonder getal: 15, 4,
       10 en 15. Zet er een om en weer terug; een hint na het einde wordt
       geweigerd. Na een herstart staan ze er nog.
-- [ ] `/doolhof start`: kisten gevuld, nep-uitgang zet je terug met knal en grapje, schrikplek
-      werkt één keer, poort open na 4 minuten (`/doolhof resterend 665` om te versnellen), hint
+- [ ] `/doolhof start`: tijdens de countdown kom je de startruimte niet uit, bij de start van de
+      timer zijn de openingen weg; kisten gevuld, nep-uitgang zet je terug met knal en grapje,
+      schrikplek werkt één keer, poort open na 4 minuten (`/doolhof resterend 665` om te versnellen), hint
       na 10 minuten met je eigen `/doolhof hinttekst` (`/doolhof resterend 305`), teammenu op de
       finishlijn met de hoofden per team (alleen de wol kiest), vol team is grijs, de sidebar laat
       de namen per team zien, na je keuze `GEFINISHT` en je kunt terug het doolhof in (mobs
