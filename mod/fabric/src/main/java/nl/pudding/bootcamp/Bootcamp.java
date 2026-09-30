@@ -20,6 +20,7 @@ import nl.pudding.bootcamp.game.ronde2.Ei;
 import nl.pudding.bootcamp.game.ronde2.EiOpslag;
 import nl.pudding.bootcamp.game.ronde3.MobArena;
 import nl.pudding.bootcamp.game.ronde4.Quiz;
+import nl.pudding.bootcamp.game.ronde7.Finale;
 import nl.pudding.bootcamp.rad.KroonRad;
 import nl.pudding.bootcamp.setup.Wand;
 import nl.pudding.bootcamp.teams.Teams;
@@ -49,6 +50,7 @@ public final class Bootcamp implements ModInitializer {
 		Ei.init();
 		EiOpslag.init();
 		Quiz.init();
+		Finale.init();
 		Poorten.init();
 		SpelerReset.init();
 		Teams.init();

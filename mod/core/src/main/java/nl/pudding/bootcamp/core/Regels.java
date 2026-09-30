@@ -160,6 +160,23 @@ public final class Regels {
 		return uit;
 	}
 
+	/**
+	 * R6.6: de finale is de winnaar van King of the Hill tegen de winnaar van de FFA. Won dezelfde
+	 * speler allebei, dan speelt hij tegen de nummer twee van de FFA (wie als laatste afviel).
+	 * Namen worden zonder hoofdletters vergeleken.
+	 *
+	 * @return de twee namen, King of the Hill eerst; leeg als er nog iemand ontbreekt
+	 */
+	public static List<String> finalisten(String kingOfTheHill, String ffa, String ffaTweede) {
+		if (kingOfTheHill == null || ffa == null) {
+			return List.of();
+		}
+		if (!kingOfTheHill.equalsIgnoreCase(ffa)) {
+			return List.of(kingOfTheHill, ffa);
+		}
+		return ffaTweede == null || ffaTweede.equalsIgnoreCase(ffa) ? List.of() : List.of(ffa, ffaTweede);
+	}
+
 	/** R6.5: bij drie en bij twee over een title. */
 	public static String aftelTitle(int over) {
 		return switch (over) {
@@ -177,7 +194,9 @@ public final class Regels {
 		/** Telt als dood: uit de ronde. */
 		DOOD,
 		/** De kroonhouder is weg: dertig seconden aftellen, dan gaat de kroon door. */
-		KROON_WACHT
+		KROON_WACHT,
+		/** De finale stopt zonder winnaar; de commander start hem opnieuw. */
+		RONDE_STOPT
 	}
 
 	/**
@@ -194,6 +213,7 @@ public final class Regels {
 				default -> QuitActie.NIKS;
 			};
 			case FFA -> rol == Rol.FFA ? QuitActie.DOOD : QuitActie.NIKS;
+			case FINALE -> rol == Rol.FFA ? QuitActie.RONDE_STOPT : QuitActie.NIKS;
 			default -> QuitActie.NIKS;
 		};
 	}
@@ -234,7 +254,7 @@ public final class Regels {
 			case MOBARENA -> JoinActie.MOB_TRIBUNE;
 			case QUIZ -> JoinActie.QUIZ_BANK;
 			case CLOWN -> rol == Rol.KROON && kroonWachtLoopt ? JoinActie.KROON_TERUG : JoinActie.KIJKER_TRIBUNE;
-			case FFA -> JoinActie.KIJKER_TRIBUNE;
+			case FFA, FINALE -> JoinActie.KIJKER_TRIBUNE;
 		};
 	}
 }

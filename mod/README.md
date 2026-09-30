@@ -1,8 +1,8 @@
 # bootcamp-mod
 
 Server-side Fabric-mod voor de Pudding Bootcamp SMP op Minecraft 26.2. Spelers hebben alleen
-Simple Voice Chat nodig en krijgen bij het joinen vanzelf het resource pack. De mod doet de zes
-rondes (doolhof, Ei, mob arena, quiz, Clown vs All, FFA), de teams en het teammenu, de kroon, het
+Simple Voice Chat nodig en krijgen bij het joinen vanzelf het resource pack. De mod doet de zeven
+rondes (doolhof, Ei, mob arena, quiz, Clown vs All, FFA, finale), de teams en het teammenu, de kroon, het
 Rad, het quiz-rad, de tribune voor wie af is, de jumpscare, de bossbar en de visuals. Voice is puur
 proximity en gaat buiten de mod om.
 
@@ -96,7 +96,7 @@ Jar vervangen betekent server herstarten. Bewaar de jar van de vorige werkende v
 
 | Bestand | Wat |
 |---|---|
-| `<wereld>/bootcamp.json` | Regio's, punten, doodteksten, grapjes van de nep-uitgangen, teamkeuzes, uitverkorene, presentator en de instellingen per ronde. Wordt na elke wijziging opgeslagen. Met de hand aanpassen mag, maar alleen als de server uit staat. Een onleesbaar bestand wordt opzij gezet als `bootcamp.json.kapot`. |
+| `<wereld>/bootcamp.json` | Regio's, punten, doodteksten, grapjes van de nep-uitgangen, teamkeuzes, uitverkorene, presentator, de uitslag voor de finale (winnaar King of the Hill, winnaar en nummer twee van de FFA) en de instellingen per ronde. Wordt na elke wijziging opgeslagen. Met de hand aanpassen mag, maar alleen als de server uit staat. Een onleesbaar bestand wordt opzij gezet als `bootcamp.json.kapot`. |
 | `<wereld>/bootcamp_ei.nbt` | Het Ei zoals je het met `/ei vastleggen` hebt vastgelegd. |
 | `config/bootcamp/kits/<naam>.json` | Een kit. Wordt bij elk gebruik opnieuw gelezen: aanpassen zonder herstart. |
 | `config/bootcamp/waves.json` | De waves van de mob arena, voor 8 spelers in één veld. Wordt bij `/mobarena start` gelezen. Een nieuwe standaard krijg je door het bestand weg te gooien. |
@@ -169,6 +169,7 @@ blok waar je naar kijkt, tot 32 blokken). De commando's per ronde zetten de mees
 | Mob arena | `mobarena` (veld, tribune en plein), `veld` (`save` + `add`), `tribune_mob` (de tribunevloer) | `/mobarena startplek <kleur> <1\|2>` (8x), `mob_1..n`, `kooi`, `warden`, `tribune_mob_1..n` |
 | Quiz | `quiz` | `/quiz bank <kleur>` (4x), `/quiz podium`, `/quiz lamp <kleur>` (4x, kijk naar de lamp), `/quiz vuurwerk <kleur> <1\|2>` (8x, kijk naar de dispenser) |
 | Clown vs All, FFA | `/clown vloer <diameter>` (midden op de vloer staan), optioneel `colosseum` | `/clown troon`, `/clown jagerplek` (20x), `/clown tribune` (2 of meer, onderste ring) |
+| Finale | (de vloer en tribune van hierboven) | `/finale plek 1` (winnaar King of the Hill), `/finale plek 2` (winnaar FFA) |
 
 Daarna: `/quiz presentator <speler>` en `/clown uitverkoren <speler>`. Labels boven de
 verzamelpunten: `/bc label zet <tekst>`.
@@ -190,6 +191,7 @@ onder *Commands*.
 | Quiz | `/quiz start\|stop`, `presentator [<speler>]`, `bank <kleur>`, `podium`, `lamp <kleur>`, `vuurwerk <kleur> <1\|2>`, `draai`, `goed`, `fout`, `punt <kleur> [<aantal>]`, `einde`, `winnaar <kleur>` |
 | Clown vs All | `/clown rad\|go\|start\|stop`, `uitverkoren [<speler>]`, `troon`, `jagerplek [<nr>]`, `vloer <diameter>`, `tribune [<nr>]`, `wachttekst [<tekst>]`, `kroon <speler>`, `krimp <grootte> [<sec>]` |
 | FFA | `/ffa start\|stop\|go`, `krimp <grootte> [<sec>]`, `wachttekst [<tekst>]` |
+| Finale | `/finale start\|stop\|go`, `plek 1\|2`, `spelers [<speler1> <speler2>]`, `krimp <grootte> [<sec>]`, `wachttekst [<tekst>]` |
 | Algemeen | `/bc wand`, `region save\|add\|show\|list\|del`, `point set\|block\|tp\|list\|del`, `label zet\|weg`, `status`, `kit <naam> [<speler>]`, `team <speler> <kleur\|weg>`, `schrik <speler>`, `kijker <speler> aan\|uit`, `doodtekst lijst\|nieuw <tekst>\|weg <nr>\|standaard`, `reset` |
 
 **Staff** is wie in creative of spectator staat: de mod blijft van ze af (geen teleport, geen kit,
@@ -207,7 +209,8 @@ seconde worden bijgezet, zodat je met `@a[tag=...]` kunt kijken. Zelf zetten hee
 | 3 Mob arena | `/mobarena start` (beurt 1), daarna per beurt `/mobarena volgende`. Na de laatste beurt vanzelf de winnaar en, tien seconden later, iedereen zonder spullen naar zijn bank. |
 | 4 Quiz | `/quiz start`. Pudding draait met de nether star, keurt met de wol en geeft of pakt punten met de emerald. `/quiz einde`, bij gelijkspel `/quiz winnaar <kleur>`. Tien seconden later iedereen naar de tribune van de Arena. |
 | 5 Clown vs All | `/clown rad` (of `/clown start` zonder rad), iedereen staat bevroren klaar, dan `/clown go`. |
-| 6 FFA | `/ffa start`, dan `/ffa go`. De kroning volgt vanzelf. |
+| 6 FFA | `/ffa start`, dan `/ffa go`. De winnaar staat daarna in beeld en gaat door naar de finale. |
+| 7 Finale | `/finale start` (de winnaar van King of the Hill tegen die van de FFA; `/finale spelers` laat zien wie), dan `/finale go`. De kroning volgt vanzelf. Logt een finalist uit, dan stopt de finale: opnieuw `/finale start` en `/finale go` als hij terug is. |
 
 Tussen twee rondes in is er geen border en geen PvP. Gaat er in een ronde iets mis in de mod zelf,
 dan breekt die ronde zichzelf af met een melding in de chat en de fout in de console; de server

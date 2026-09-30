@@ -182,7 +182,7 @@ public final class Tribune {
 				Kleur k = Teams.keuze(speler);
 				yield k != null && Spel.punt("quiz_" + k.id()) != null ? "quiz_" + k.id() : "v3";
 			}
-			case QUIZ, CLOWN, FFA -> volgendTribunepunt(Ronde.CLOWN);
+			case QUIZ, CLOWN, FFA, FINALE -> volgendTribunepunt(Ronde.CLOWN);
 		};
 	}
 
@@ -340,6 +340,9 @@ public final class Tribune {
 		SpelerStatus st = Spel.status(speler);
 		if (st.rol != Rol.KIJKER) {
 			return Mc.naam(speler) + " is geen kijker";
+		}
+		if (Spel.loopt() && Spel.ronde() == Ronde.FINALE) {
+			return "in de finale doen alleen de twee finalisten mee; zet ze met /finale spelers en start opnieuw";
 		}
 		st.dood = false;
 		st.kooi = 0;

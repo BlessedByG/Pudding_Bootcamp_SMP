@@ -16,6 +16,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import nl.pudding.bootcamp.Mc;
+import nl.pudding.bootcamp.config.ConfigStore;
 import nl.pudding.bootcamp.core.BossbarTekst;
 import nl.pudding.bootcamp.core.Punt;
 import nl.pudding.bootcamp.core.Regeerperiodes;
@@ -502,6 +503,9 @@ public final class ClownVsAll extends RondeLogica {
 				winnaar = jagers.get(0);
 			}
 		}
+		// Voor de finale: de winnaar van King of the Hill.
+		ConfigStore.get().zetWinnaarKing(winnaar == null ? null : Mc.naam(winnaar));
+		ConfigStore.bewaar();
 		Regeerperiodes.Periode langste = regeerperiodes.langste();
 		Spel.einde(server);
 		Bossbar.basiskamp();

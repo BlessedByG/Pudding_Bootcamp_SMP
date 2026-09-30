@@ -7,6 +7,7 @@ public final class BossbarTekst {
 	public static final String DOOLHOF_WACHT = "Doolhof · wacht op de start";
 	public static final String CLOWN_WACHT = "King of the Hill · wacht op de start";
 	public static final String FFA_WACHT = "FFA · wacht op de start";
+	public static final String FINALE_WACHT = "De Finale · wacht op de start";
 
 	private BossbarTekst() {
 	}
@@ -45,6 +46,10 @@ public final class BossbarTekst {
 
 	public static String ffa(int over) {
 		return "FFA · " + over + " over";
+	}
+
+	public static String finale(String een, String twee) {
+		return "De Finale · " + een + " tegen " + twee;
 	}
 
 	public static String king(String naam) {

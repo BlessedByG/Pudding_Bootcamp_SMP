@@ -65,13 +65,13 @@ fi
 echo "== 5. Elk command uit docs/04 staat in het commands-package"
 CMD_DIR=fabric/src/main/java/nl/pudding/bootcamp/commands
 if [ -d "$CMD_DIR" ]; then
-	for c in bc doolhof ei mobarena quiz clown ffa \
+	for c in bc doolhof ei mobarena quiz clown ffa finale \
 		wand region save add show list del point set block tp label zet weg status kit team schrik kijker aan uit reset \
 		doodtekst lijst nieuw standaard \
 		start stop resterend timer poort open dicht hint hinttekst blokken vastleggen \
 		volgende schema wave startplek punten veldhoogte aftekst poortmelding valmobs startpoort naarei prijskader warden vuurwerk \
 		presentator bank podium lamp draai goed fout punt einde winnaar \
-		rad go uitverkoren troon jagerplek vloer tribune wachttekst kroon krimp; do
+		rad go uitverkoren troon jagerplek vloer tribune wachttekst kroon krimp plek spelers; do
 		grep -rq "\"$c\"" "$CMD_DIR" || { fout "command-literal \"$c\" ontbreekt"; MIST=1; }
 	done
 	[ "${MIST:-0}" -eq 0 ] && ok "alle literals aanwezig"

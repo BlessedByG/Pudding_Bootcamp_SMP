@@ -41,6 +41,7 @@ public final class BcCommand {
 		dispatcher.register(QuizCommand.maak());
 		dispatcher.register(ClownCommand.maak());
 		dispatcher.register(FfaCommand.maak());
+		dispatcher.register(FinaleCommand.maak());
 	}
 
 	/** Een commando dat alleen ops (level 2) zien en kunnen gebruiken. */

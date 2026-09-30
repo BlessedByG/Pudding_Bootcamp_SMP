@@ -29,7 +29,7 @@ Twee dingen houden het toch strak:
  │ quizhal, 4 banken│   │ colosseum, vloer Ø 70   │   │ arena 1 │ arena 2  │
  │ podium Pudding   │   │ tribunes rondom         │   │ gespiegeld, kooi   │
  │                  │   │ 5 CLOWN VS ALL          │   │ in het midden      │
- └──────────────────┘   │ 6 FFA · kroning         │   │ V3 = bij de poort  │
+ └──────────────────┘   │ 6 FFA · 7 FINALE        │   │ V3 = bij de poort  │
                         │ 20 startplekken jagers  │   └────────────────────┘
                         └────────────┬────────────┘
                                      │
@@ -59,7 +59,8 @@ Twee dingen houden het toch strak:
 | Mob arena | De quiz: iedereen bij de bank van zijn team, Pudding op het podium |
 | Quiz | De tribune van de Arena, voor het Rad; na het Rad de vloer op |
 | Clown vs All | Blijft in de Arena: wie af is zit al op de tribune |
-| FFA | Kroning op het podium in het midden van de Arena, iedereen op de tribune |
+| FFA | Blijft in de Arena: de winnaar op de vloer, de rest op de tribune |
+| Finale | Kroning op het podium in het midden van de Arena, iedereen op de tribune |
 
 Lopen is er niet bij: teleporteren, en elke ronde start op het sein van Pudding.
 
@@ -73,6 +74,7 @@ Lopen is er niet bij: teleporteren, en elke ronde start op het sein van Pudding.
 | 4 De Quiz | de quizhal | nee |
 | 5 Clown vs All | de hele Arena inclusief tribunes | alleen als de commander `/clown krimp` doet |
 | 6 De FFA | de hele Arena | alleen als de commander `/ffa krimp` doet |
+| 7 De Finale | de hele Arena | alleen als de commander `/finale krimp` doet |
 
 Krimpt de border, dan komt de tribune erbuiten. Kijkers krijgen daar geen schade van en zien de
 border niet; dat regelt de mod. Levende spelers buiten de border krijgen wel schade, dus altijd
@@ -106,7 +108,7 @@ plek waar de rest ook komt en hangt daar tot de ronde voorbij is:
   finishruimte, en met `/doolhof naarei` gaat iedereen samen naar V2.
 - Dood in de mob arena: de rest van die beurt in de kooi in het veld, daarna op de
   tribune. Wie niet aan de beurt is, staat ook op de tribune.
-- Af in Clown vs All of de FFA: naar de tribune van de Arena.
+- Af in Clown vs All, de FFA of de finale: naar de tribune van de Arena.
 - Doodgaan in het doolhof of het Ei kan eigenlijk niet; gebeurt het toch, dan sta je geheald
   terug bij de start van die ronde.
 - Na de timer van het doolhof is het doolhof giftig (de finishruimte niet). Wie daar doodgaat,

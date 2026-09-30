@@ -141,6 +141,16 @@ class RegelsTest {
 	}
 
 	@Test
+	void finaleKingOfTheHillTegenFfa() {
+		assertEquals(List.of("clownpierce", "speler7"), Regels.finalisten("clownpierce", "speler7", "speler2"));
+		// Dezelfde winnaar (hoofdletters tellen niet): tegen de nummer twee van de FFA.
+		assertEquals(List.of("Speler7", "speler2"), Regels.finalisten("speler7", "Speler7", "speler2"));
+		assertTrue(Regels.finalisten("speler7", "speler7", null).isEmpty());
+		assertTrue(Regels.finalisten(null, "speler7", "speler2").isEmpty());
+		assertTrue(Regels.finalisten("clownpierce", null, null).isEmpty());
+	}
+
+	@Test
 	void laatsteDrieEnTwee() {
 		assertEquals("LAATSTE DRIE", Regels.aftelTitle(3));
 		assertEquals("LAATSTE TWEE", Regels.aftelTitle(2));
@@ -154,6 +164,8 @@ class RegelsTest {
 		assertEquals(Regels.QuitActie.KROON_WACHT, Regels.bijQuit(Ronde.CLOWN, Rol.KROON, false));
 		assertEquals(Regels.QuitActie.NIKS, Regels.bijQuit(Ronde.CLOWN, Rol.KIJKER, false));
 		assertEquals(Regels.QuitActie.DOOD, Regels.bijQuit(Ronde.FFA, Rol.FFA, false));
+		assertEquals(Regels.QuitActie.RONDE_STOPT, Regels.bijQuit(Ronde.FINALE, Rol.FFA, false));
+		assertEquals(Regels.QuitActie.NIKS, Regels.bijQuit(Ronde.FINALE, Rol.KIJKER, false));
 		assertEquals(Regels.QuitActie.DOOD, Regels.bijQuit(Ronde.MOBARENA, Rol.SPELER, true));
 		assertEquals(Regels.QuitActie.NIKS, Regels.bijQuit(Ronde.MOBARENA, Rol.SPELER, false));
 		for (Ronde r : List.of(Ronde.BASISKAMP, Ronde.DOOLHOF, Ronde.EI, Ronde.QUIZ)) {
@@ -172,6 +184,7 @@ class RegelsTest {
 		assertEquals(Regels.JoinActie.KIJKER_TRIBUNE, Regels.bijJoin(Ronde.CLOWN, Rol.KROON, false, false));
 		assertEquals(Regels.JoinActie.KIJKER_TRIBUNE, Regels.bijJoin(Ronde.CLOWN, Rol.JAGER, false, false));
 		assertEquals(Regels.JoinActie.KIJKER_TRIBUNE, Regels.bijJoin(Ronde.FFA, null, false, false));
+		assertEquals(Regels.JoinActie.KIJKER_TRIBUNE, Regels.bijJoin(Ronde.FINALE, Rol.FFA, false, false));
 		assertEquals(Regels.JoinActie.NIKS, Regels.bijJoin(Ronde.FFA, Rol.STAFF, false, false));
 		assertEquals(Regels.JoinActie.NIKS, Regels.bijJoin(Ronde.BASISKAMP, Rol.SPELER, false, false));
 	}

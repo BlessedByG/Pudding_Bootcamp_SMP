@@ -526,6 +526,8 @@ class RondeLogicaTest {
 			assertTrue(PvpRegel.mag(Ronde.CLOWN, false, Rol.JAGER, Rol.KROON));
 			assertFalse(PvpRegel.mag(Ronde.CLOWN, false, Rol.JAGER, Rol.JAGER));
 			assertTrue(PvpRegel.mag(Ronde.FFA, false, Rol.FFA, Rol.FFA));
+			assertTrue(PvpRegel.mag(Ronde.FINALE, false, Rol.FFA, Rol.FFA));
+			assertFalse(PvpRegel.mag(Ronde.FINALE, false, Rol.KIJKER, Rol.FFA));
 		}
 
 		@Test

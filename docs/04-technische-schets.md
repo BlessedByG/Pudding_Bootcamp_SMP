@@ -12,7 +12,7 @@ getest moet worden, in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
 
 > **Versie en status.** Minecraft 26.2; Fabric Loader, Fabric API en de Fabric-versie van Simple
 > Voice Chat zijn er voor. **Deze doc beschrijft het rondeplan van 25 september 2026** (doolhof,
-> Ei, mob arena, quiz, Clown vs All, FFA). De code in `mod/` is op 28 en 29 september 2026 naar dit
+> Ei, mob arena, quiz, Clown vs All, FFA, en sinds 1 oktober de finale). De code in `mod/` is op 28 en 29 september 2026 naar dit
 > plan omgebouwd (taakplan 2, [08-taakplan.md](08-taakplan.md)): hij bouwt, alle tests zijn groen,
 > maar hij is nog niet in-game gedraaid. Wat er afwijkt van deze doc, staat hieronder bij het
 > onderwerp en in [mod/BOUWLOG.md](../mod/BOUWLOG.md). Een naam uit 26.2 opzoeken:
@@ -100,6 +100,7 @@ mogen elkaar toch niet raken. Bron is de speler, ook via een pijl of andere proj
 | 0 t/m 4 | nooit (de mob arena is PvE: alleen spelers tegen mobs) |
 | 5 Clown vs All | alleen als aanvaller of slachtoffer de kroonhouder is |
 | 6 FFA | altijd |
+| 7 Finale | altijd (alleen de twee finalisten doen mee) |
 | Tussen twee rondes, en tijdens elke opstelling of countdown | nooit |
 
 ## Teams
@@ -119,7 +120,7 @@ De teamkeuze wordt bewaard per speler (naam) in het geheugen van de mod en in `b
 zodat een herstart tussen ronde 1 en 5 de teams niet kwijtraakt. `/bc team <speler> <kleur>`
 zet iemand met de hand in een team; `/bc team <speler> weg` haalt de keuze weg. Bij ronde 5 gaat
 iedereen uit zijn teamkleur naar `jagers`; de keuze blijft bewaard, maar wordt niet meer
-gebruikt. In ronde 6 zit iedereen zonder team.
+gebruikt. In ronde 6 en de finale zit iedereen zonder team.
 
 **Maximum per team**: 5, of meer als er meer dan 20 spelers zijn: `max(5, ceil(spelers / 4))`,
 met spelers = iedereen die meedoet op het moment dat de eerste kiest.
@@ -223,7 +224,7 @@ Waar een jumpscare vandaan komt:
 |---|---|---|
 | `config` | Regio's, punten, teamkeuzes, grapjes opslaan en laden, JSON in `<wereld>/bootcamp.json`. | Gson, `ServerLifecycleEvents` |
 | `kits` | Kits uit JSON-bestanden lezen en op spelers zetten; de loot-tabel van het doolhof. | `ItemParser` (dezelfde syntax als `/give`) |
-| `commands` | `/bc` en de commando's per ronde (`/doolhof`, `/ei`, `/mobarena`, `/quiz`, `/clown`, `/ffa`). | Brigadier, `CommandRegistrationCallback` |
+| `commands` | `/bc` en de commando's per ronde (`/doolhof`, `/ei`, `/mobarena`, `/quiz`, `/clown`, `/ffa`, `/finale`). | Brigadier, `CommandRegistrationCallback` |
 | `setup` | De wand, `region show` met particles. | `AttackBlockCallback`, `UseBlockCallback` |
 | `game` | Spelstatus, timer, de zes rondes als klassen met `start/tick/onDeath/end`, de PvP-regel. | `ServerTickEvents.END_SERVER_TICK`, `ALLOW_DAMAGE` |
 | `teams` | Vier teamkleuren, het teammenu, de maximumregel. | `ChestMenu`, `SimpleContainer` |
@@ -313,10 +314,16 @@ hele avond geldt (setup, spelers, noodknoppen) staat onder `/bc`.
 | `/clown wachttekst [<tekst>]` | De tekst in de actionbar terwijl iedereen stil staat en wacht op `/clown go`, standaard `Wacht op het startsein`. Zonder tekst: de huidige laten zien. Bewaard in `bootcamp.json`. |
 | `/clown kroon <speler>` | Kroonwissel forceren (de noodknop van de ref). Voor `/clown go` (het rad landde op de verkeerde naam) zonder reset: de oude kroonhouder wordt jager op de plek van de nieuwe en iedereen blijft wachten op `/clown go`. Daarna een gewone kroonwissel met reset. |
 | `/clown krimp <grootte> [<seconden>]` | De border laten krimpen als het stilvalt. Standaard in 60 seconden. Iedereen ziet `DE BORDER KRIMPT`. |
-| `/ffa start\|stop` | Ronde 6, met de kroning aan het eind. `start` zet iedereen bevroren klaar. Geen timer. |
+| `/ffa start\|stop` | Ronde 6. `start` zet iedereen bevroren klaar. Geen timer. De winnaar gaat door naar de finale. |
 | `/ffa go` | Start de countdown van 10 seconden; daarna is iedereen los. |
 | `/ffa krimp <grootte> [<seconden>]` | De border laten krimpen als het stilvalt. Standaard in 60 seconden. Zonder dit commando blijft de hele vloer vrij. Iedereen ziet `DE BORDER KRIMPT`. |
 | `/ffa wachttekst [<tekst>]` | De tekst in de actionbar terwijl iedereen wacht op `/ffa go`, standaard `Wacht op het startsein`. Zonder tekst: de huidige laten zien. Bewaard in `bootcamp.json`. |
+| `/finale start\|stop` | Ronde 7: de winnaar van King of the Hill tegen de winnaar van de FFA, één tegen één, met de kroning aan het eind. `start` zet ze allebei bevroren klaar op `finale_1` en `finale_2`, de rest op de tribune. Geen timer. |
+| `/finale go` | Start de countdown van 10 seconden; daarna zijn ze los. |
+| `/finale plek 1\|2` | Zet `finale_1` (de winnaar van King of the Hill) of `finale_2` (de winnaar van de FFA) op je positie, met je kijkrichting. |
+| `/finale spelers [<speler1> <speler2>]` | Zonder namen: de uitslag (winnaar King of the Hill, winnaar en nummer twee van de FFA) en wie de finale speelt. Met namen: de twee finalisten met de hand, `speler1` op `finale_1`. Noodknop, en om te testen. |
+| `/finale krimp <grootte> [<seconden>]` | De border laten krimpen als het stilvalt. Standaard in 60 seconden. |
+| `/finale wachttekst [<tekst>]` | De tekst in de actionbar terwijl de finalisten wachten op `/finale go`, standaard `Wacht op het startsein`. Zonder tekst: de huidige laten zien. Bewaard in `bootcamp.json`. |
 
 **Algemeen:**
 
@@ -357,6 +364,7 @@ ronde. Een nieuw aantal puntenblokken geldt vanaf de volgende `/ei start`.
 | `/mobarena warden` | leven 200, klap 8, boom 5 (HP) | leven 20 tot 1000, klap 0 tot 60, boom 0 tot 40 |
 | `/clown wachttekst` | `Wacht op het startsein` | tot 60 tekens |
 | `/ffa wachttekst` | `Wacht op het startsein` | tot 60 tekens |
+| `/finale wachttekst` | `Wacht op het startsein` | tot 60 tekens |
 
 Buiten de grenzen weigert het commando met één regel (`de hint (16 min) valt na het einde
 (15 min)`). Loopt de ronde al, dan geldt een nieuwe waarde meteen. Een poort of hint die al
@@ -429,6 +437,7 @@ hij de doos om alle delen heen; bij de cirkel van `vloer` is dat het vierkant er
 | `quizvuurwerk_<kleur>_1`, `quizvuurwerk_<kleur>_2` (blokken) | Twee dispensers bij elke bank, 8 in totaal. Zetten met `/quiz vuurwerk <kleur> <1\|2>`; `/quiz start` weigert als er een mist of geen dispenser is. |
 | `troon` | Het kleine podium in het midden van de Arena, waar de kroonhouder spawnt. Zetten met `/clown troon`. |
 | `jager_1` t/m `jager_n` | De startplekken van de jagers: in de Arena de 20 redstone blocks in een cirkel. Zetten met `/clown jagerplek`, bovenop het blok en kijkend waar de speler heen moet kijken; de kijkrichting gaat mee met de teleport. |
+| `finale_1`, `finale_2` | De startplekken van de finale in de Arena: 1 voor de winnaar van King of the Hill, 2 voor de winnaar van de FFA. Zetten met `/finale plek 1` en `/finale plek 2`, met de kijkrichting. |
 | `tribune_1` t/m `tribune_n` | De plekken op de tribune van de Arena waar de mod iemand neerzet die af is (en iedereen voor het Rad), alleen op de **onderste ring** (de bovenste is decoratie). De mod verdeelt mensen om en om over deze plekken; daarna lopen ze vrij over de tribune. Er gaat meestal maar één tegelijk af, dus twee plekken is genoeg (minimaal één). Zetten met `/clown tribune`. |
 
 Worldborder: `ServerLevel.getWorldBorder()`, center en grootte uit de regio, krimpen met
@@ -916,7 +925,7 @@ Clown als kijker naar `tribune_n`. Dan de opstelling zonder countdown: iedereen 
 in ronde 5, ook schieten en pearls geblokkeerd) tot de commander `/ffa go` doet; bossbar
 `FFA · wacht op de start`, actionbar `/ffa wachttekst` (standaard `Wacht op het startsein`). Na
 `/ffa go` 10 seconden countdown, dan los. **Geen timer**: elke seconde, is er nog maar één
-levende deelnemer, dan is die King of the SMP Bootcamp. De border staat om `colosseum` (of het
+levende deelnemer, dan wint die de FFA. De border staat om `colosseum` (of het
 vierkant om `vloer`) en krimpt alleen met `/ffa krimp <grootte> [<seconden>]`, rond het midden
 van de vloer.
 
@@ -939,7 +948,29 @@ In beeld tijdens de FFA:
   namen, bij twee `LAATSTE TWEE` met `Speler7 tegen Speler2`, in paars, met
   `entity.wither.spawn` zacht.
 
-**Kroning**: iedereen naar de tribune, de winnaar naar `troon` (het podium) met de kroon en de
+**Einde van de FFA**: title met kop en `SPELER7 WINT DE FFA`, vuurpijl, toast-geluid; de winnaar
+blijft op de vloer. De mod bewaart de winnaar en de nummer twee (wie als laatste afviel of
+uitlogde) in `bootcamp.json` onder `uitslag`, voor de finale. De sidebar met de kills blijft staan
+tot de finale begint.
+
+**Ronde 7, de finale.** In de Arena van ronde 5 en 6. De finalisten komen uit `uitslag`
+(R6.6): de winnaar van King of the Hill (bewaard aan het einde van ronde 5) tegen de winnaar van
+de FFA; is dat dezelfde, dan de winnaar tegen de nummer twee van de FFA. `/finale spelers <a> <b>`
+zet ze met de hand (als winnaar van King of the Hill en van de FFA, zonder nummer twee). `/finale
+start` weigert als er geen twee finalisten zijn, als een van beiden niet online is of in creative
+of spectator staat, of als `arena.json` niet klopt. Bij de start: iedereen anders als kijker naar
+`tribune_n`; de twee finalisten rol `FFA`, adventure, effecten weg, full hp, `arena.json`, de
+winnaar van King of the Hill naar `finale_1` en de ander naar `finale_2` (met kijkrichting). De
+sidebar gaat weg. Title voor iedereen `DE FINALE` met als subtitle `[kop] ClownPierce tegen [kop]
+Speler7`, `event.raid.horn`. Dan bevroren tot `/finale go`: bossbar `De Finale · wacht op de
+start` (rood), actionbar `/finale wachttekst`. Na `/finale go` 10 seconden countdown, dan los;
+bossbar `De Finale · ClownPierce tegen Speler7`. Border om `colosseum` (of `vloer`), krimpt alleen
+met `/finale krimp`. Een dode finalist wordt kijker met een doodtekst, chatregel `Speler7 is af
+door ClownPierce · 1 over`, en de ander krijgt meteen de kroning. Logt een finalist uit (R7.1),
+dan stopt de finale zonder winnaar met een rode chatregel voor iedereen; de commander start hem
+opnieuw. `/bc kijker <speler> uit` werkt niet tijdens de finale. `/bc reset` wist de uitslag.
+
+**Kroning** (na de finale): iedereen naar de tribune, de winnaar naar `troon` (het podium) met de kroon en de
 zweefkroon, twintig seconden vuurpijlen, title `KING OF THE SMP BOOTCAMP` met de kop en de naam
 als subtitle. Daarna blijft de bossbar `Pudding Bootcamp · King: Speler7` (goud) staan en blijft
 de zweefkroon boven de winnaar, tot `/bc reset`.
@@ -992,11 +1023,12 @@ Eén bossbar, kort, altijd hetzelfde formaat. Persoonlijke info via de actionbar
 | 4 | `Quiz · aan de beurt: Groen`, of `Quiz · draai het rad` | teamkleur, wit als niemand aan de beurt is | vol |
 | 5 | `King of the Hill · Kroon: Clown · 12 over` | geel | spelers over |
 | 6 | `FFA · 7 over` | paars | spelers over |
+| 7 | `De Finale · ClownPierce tegen Speler7` | rood | vol |
 | Na de kroning | `Pudding Bootcamp · King: Speler7` | goud | vol |
 
 **Sidebar**: ronde 1 de teams met aantallen en namen (`Rood 3/5` met de spelers eronder), ronde 2 de top 10 op punten, ronde 3
 de teamstand in punten (`Rood 47`), ronde 4 de quizpunten, ronde 5 de regeerperiodes, ronde 6 de
-kills.
+kills (die blijven staan tot de finale begint; in de finale geen sidebar).
 
 **Actionbar in ronde 3**, voor wie aan de beurt is: na een kill twee seconden `+3 · Rood 47` (wat
 je kreeg en de stand van je team).
@@ -1058,9 +1090,12 @@ langzaam draaiend. Opgeruimd als de kroonhouder kijker wordt.
 | Af in de FFA | Chatregel voor iedereen: `Speler3 is af door Speler7 · 11 over`. |
 | Kill in de FFA | Tribune, staff en de killer: title met kop en naam van de killer, subtitle `pakt Speler3 · 11 over`, zachte brul van een ravager. Niet bij LAATSTE DRIE/TWEE en niet bij de laatste kill. |
 | Vechter in de FFA | Actionbar `3 kills · 11 over`. |
+| Winnaar FFA | Title met de kop van de winnaar en `SPELER7 WINT DE FFA`, vuurpijl, toast-geluid. |
+| Start finale | Title `DE FINALE` voor iedereen, subtitle met koppen `ClownPierce tegen Speler7`, `event.raid.horn`. |
+| Wachten op `/finale go` | Bossbar `De Finale · wacht op de start`, actionbar `/finale wachttekst`. |
 | `/clown krimp`, `/ffa krimp` | Title `DE BORDER KRIMPT` in rood, subtitle `naar 20 in 60 seconden`, `event.raid.horn`. Kijkers zien de title ook, maar merken niets van de border. |
 | Laatste drie, laatste twee | Title `LAATSTE DRIE` of `LAATSTE TWEE` in paars met de namen, `entity.wither.spawn` zacht. |
-| Kroning | Twintig seconden vuurpijlen, title `KING OF THE SMP BOOTCAMP` met de kop en de naam van de winnaar als subtitle. Daarna blijven de bossbar `Pudding Bootcamp · King: Speler7` en de zweefkroon tot `/bc reset`. |
+| Kroning (na de finale) | Twintig seconden vuurpijlen, title `KING OF THE SMP BOOTCAMP` met de kop en de naam van de winnaar als subtitle. Daarna blijven de bossbar `Pudding Bootcamp · King: Speler7` en de zweefkroon tot `/bc reset`. |
 
 ## Zo is dit gevibecode
 

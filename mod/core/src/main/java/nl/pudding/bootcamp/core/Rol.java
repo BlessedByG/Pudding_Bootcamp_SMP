@@ -8,7 +8,7 @@ public enum Rol {
 	JAGER,
 	/** Ronde 5: draagt de kroon. */
 	KROON,
-	/** Ronde 6: iedereen tegen iedereen. */
+	/** Ronde 6: iedereen tegen iedereen; in de finale de twee finalisten. */
 	FFA,
 	/** Af: op de tribune of in de kooi, geen schade, inventory leeg. */
 	KIJKER,

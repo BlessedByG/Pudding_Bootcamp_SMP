@@ -68,6 +68,7 @@ public final class Instellingen {
 	private final EnumMap<WardenWaarde, Integer> warden = new EnumMap<>(WardenWaarde.class);
 	private String clownWachttekst = WACHTTEKST;
 	private String ffaWachttekst = WACHTTEKST;
+	private String finaleWachttekst = WACHTTEKST;
 
 	public Instellingen() {
 		for (EiBlok b : EiBlok.values()) {
@@ -385,6 +386,14 @@ public final class Instellingen {
 
 	public void zetFfaWachttekst(String tekst) {
 		ffaWachttekst = tekstOfStandaard(tekst, WACHTTEKST);
+	}
+
+	public String finaleWachttekst() {
+		return finaleWachttekst;
+	}
+
+	public void zetFinaleWachttekst(String tekst) {
+		finaleWachttekst = tekstOfStandaard(tekst, WACHTTEKST);
 	}
 
 	// Gedeeld
