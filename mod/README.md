@@ -184,7 +184,7 @@ onder *Commands*.
 
 | Ronde | Commands |
 |---|---|
-| Doolhof | `/doolhof start\|stop\|einde\|resterend <sec>`, `timer [<min>]` (15), `poort [<min>]` (4), `hint [<min>]` (10), `hinttekst [<tekst>\|-]`, `poort open\|dicht`, `poortmelding [aan\|uit]`, `valmobs [<min> [<max>]]` (3 t/m 10) |
+| Doolhof | `/doolhof start\|stop\|einde\|resterend <sec>`, `timer [<min>]` (15), `poort [<min>]` (4), `hint [<min>]` (10), `hinttekst [<tekst>\|-]`, `poort open\|dicht`, `startpoort open\|dicht`, `poortmelding [aan\|uit]`, `valmobs [<min> [<max>]]` (3 t/m 10) |
 | Het Ei | `/ei start\|stop\|resterend <sec>`, `timer [<min>]` (15), `blokken [<soort> <aantal>]`, `vastleggen` |
 | Mob arena | `/mobarena start\|volgende\|schema\|stop`, `wave volgende`, `startplek <1\|2> <kleur>`, `punten [<mob> <punten>]`, `veldhoogte [<blokken>]`, `aftekst [<tekst>]` |
 | Quiz | `/quiz start\|stop`, `presentator [<speler>]`, `bank <kleur>`, `podium`, `lamp <kleur>`, `draai`, `goed`, `fout`, `punt <kleur> [<aantal>]`, `einde`, `winnaar <kleur>` |

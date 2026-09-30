@@ -270,6 +270,7 @@ hele avond geldt (setup, spelers, noodknoppen) staat onder `/bc`.
 | `/doolhof hint [<minuten>]` | Na hoeveel minuten de hint komt, standaard 10. |
 | `/doolhof hinttekst [<tekst>]` | Wat er in de hint staat (subtitle onder `HINT`), bijvoorbeeld `De echte gang begint bij de lantaarn`. Bewaard in `bootcamp.json`. Zonder tekst: de huidige laten zien. Is er nooit een tekst gezet, dan rekent de mod een windrichting uit: `De uitgang ligt aan de noordkant`. `/doolhof hinttekst -` wist hem weer. |
 | `/doolhof poort open\|dicht` | De poort met de hand bedienen. |
+| `/doolhof startpoort open\|dicht` | De startpoort (`poort_start`) met de hand bedienen, om te testen. Open gaat stil, zoals bij de start van de timer. Dicht zet terug wat er stond. |
 | `/doolhof poortmelding [aan\|uit]` | Of iedereen de raid-hoorn hoort en de title `DE UITGANG IS OPEN` ziet als de uitgang opengaat, standaard `aan`. Met `uit` gaat de poort stil open (de wolkjes in de poort komen er wel). Geldt ook voor `/doolhof poort open`. Zonder argument: de huidige stand. Bewaard in `bootcamp.json`. |
 | `/doolhof valmobs [<min> [<max>]]` | Hoeveel mobs (husks en silverfish door elkaar) er uit een valkist komen: elke keer willekeurig van `<min>` t/m `<max>`, standaard 3 t/m 10. Met één getal altijd zoveel; `0` is alleen de jumpscare. Bewaard in `bootcamp.json`. |
 | `/ei start\|stop\|resterend` | Ronde 2. |
