@@ -331,6 +331,7 @@ hele avond geldt (setup, spelers, noodknoppen) staat onder `/bc`.
 | `/bc team <speler> <rood\|blauw\|groen\|geel\|weg>` | Noodknop: iemand in een team zetten of de keuze weghalen. Mag boven het maximum. |
 | `/bc schrik <speler>` | Een jumpscare, met de hand. |
 | `/bc kijker <speler> aan\|uit` | Noodknop: iemand met de hand op de tribune zetten of eraf halen. |
+| `/bc doodtekst lijst\|nieuw <tekst>\|weg <nr>\|standaard` | De doodteksten bekijken, er een bijzetten, er een weghalen (op nummer uit de lijst; er blijft er minstens één) of de standaard zes terugzetten. Wordt meteen opgeslagen. |
 | `/bc reset` | Alles terug naar de basiskamp-staat via het reset-register; ook alle teamkeuzes weg en het Ei teruggezet. Instellingen blijven. |
 
 **Instellingen.** De timers (`/doolhof timer`, `/ei timer`), de momenten in het doolhof
@@ -443,15 +444,16 @@ bevat.
 |---|---|---|
 | `basis.json` | Start ronde 1, iedereen: iron armor, iron sword, 32 steak. | true |
 | `ei.json` | Start ronde 2: diamond pickaxe met Efficiency II erbij. Alleen voor het Ei: de mod geeft alles uit deze kit `custom_data={bootcamp_ei:1b}` en haalt het aan het einde van ronde 2 weer weg. | false |
-| `jager.json` | Iedereen behalve Clown bij de start van ronde 5: volledig diamond armor (Protection IV, Unbreaking III), diamond sword (Sharpness V, Unbreaking III), diamond axe (Sharpness V, Unbreaking III), bow (Power V, Unbreaking III), 32 pijlen, schild (Unbreaking III), 16 golden apples. | true |
+| `jager.json` | Iedereen behalve Clown bij de start van ronde 5: volledig diamond armor (Protection IV, Unbreaking III), diamond sword (Sharpness V, Unbreaking III), diamond axe (Sharpness V, Unbreaking III), bow (Power V, Unbreaking III), 32 pijlen, schild (Unbreaking III), 10 golden apples. | true |
 | `boss.json` | Clown bij de start van ronde 5: precies de jagerskit, maar zonder helm (de kroon zit al op zijn hoofd). De twee bestanden zijn standaard gelijk; ze mogen later uit elkaar lopen. | true |
 | `kroonpakket.json` | Bij elke kroonwissel erbij: 2 gapples, 2 pearls. | false |
 
 **De kroon** is een diamond helm met dezelfde enchants als de kit (Protection IV, Unbreaking III)
 plus Curse of Binding en de naam `Kroon` in goud, herkenbaar aan
-`custom_data={bootcamp_kroon:1b}`. De kroonhouder is dus niet zwakker dan de jagers; dat hij de
-kroon heeft zie je aan Glowing en de zwevende gouden kroon boven zijn hoofd.
-| `arena.json` | Start ronde 6, iedereen: dezelfde kit als `jager.json` (met gewone diamond helm), maar met 32 golden apples in plaats van 16. | true |
+`custom_data={bootcamp_kroon:1b}`. De uitrusting is gelijk; wel heeft de kroonhouder Strength II
+(zie ronde 5). Dat hij de kroon heeft zie je aan Glowing en de zwevende gouden kroon boven zijn
+hoofd.
+| `arena.json` | Start ronde 6, iedereen: dezelfde kit als `jager.json` (met gewone diamond helm), maar met 32 golden apples in plaats van 10. | true |
 
 Formaat: per slot een item in dezelfde syntax als `/give`, zodat enchantments en andere
 components gewoon werken. Een getal achter het item is het aantal.
@@ -857,19 +859,26 @@ doel. `/clown start` slaat het rad over en geeft de kroon meteen aan de uitverko
 **Spelerskoppen in tekst**: een tekstcomponent van het type `object` met een spelerskop (sinds
 Minecraft 1.21.9, dus ook in 26.2), op naam of UUID van de speler. De client tekent de kop met de
 echte skin; er hoeft niets in het resource pack. Gebruikt in het Rad, `DE KROON`, `NIEUWE KROON`,
-de winnaar van het Ei, de winnaar van Clown vs All en de kroning. Controleren in de eerste test;
+de winnaar van het Ei, de winnaar van King of the Hill en de kroning. Controleren in de eerste test;
 werkt het in 26.2 anders dan gedacht, dan valt de mod terug op alleen de naam.
 
-**Ronde 5, Clown vs All.** Iedereen uit zijn teamkleur en van de tribune de vloer op. Clown naar
+**Ronde 5, Clown vs All** (in beeld overal **King of the Hill**: `Ronde.CLOWN` heeft die naam, zodat
+niemand merkt dat het rigged is). Iedereen uit zijn teamkleur en van de tribune de vloer op. Clown naar
 `troon` (het podium in het midden), eerst de kroon, dan `boss.json`, Glowing, team `kroon`. De
 rest `jager.json`, team `jagers`, **willekeurig verdeeld over `jager_1..n`**, één per plek (zijn
 er meer jagers dan plekken, dan delen ze om en om), met de kijkrichting van de plek. Iedereen
 heeft dezelfde uitrusting; alleen de helm van Clown is de kroon. Dan **Opstelling zonder
 countdown**: iedereen bevroren, ook Clown, tot de commander `/clown go` doet; bossbar
-`Clown vs All · wacht op de start`, en in de actionbar van iedereen op de vloer, elke seconde,
+`King of the Hill · wacht op de start`, en in de actionbar van iedereen op de vloer, elke seconde,
 de tekst van `/clown wachttekst` (standaard `Wacht op het startsein`). Border `colosseum` (of
 `vloer`), geen timer, locator bar aan met alleen de kroonhouder zichtbaar. Elke seconde: is er
 nog maar één levende deelnemer, dan einde.
+
+**Strength** (R5.11, `Regels.kroonSterkte`): de mod zet het elke seconde, en meteen bij de start, een
+kroonwissel of een jager die afvalt. Zijn er meer dan `SLOTSTRIJD` (3) levende deelnemers, dan heeft
+de kroonhouder Strength II (oneindig) en de jagers niks; bij 3 of minder heeft iedereen Strength I.
+Omlaag van II naar I gaat via weghalen en opnieuw geven, want vanilla houdt anders het sterkste
+effect. Bij het einde gaat Strength er bij iedereen af.
 
 **Actionbar van de kroonhouder**: zolang niemand stil hoeft te staan, elke seconde
 `Jij hebt de kroon · 11 jagers`, alleen voor hem.
@@ -878,13 +887,19 @@ nog maar één levende deelnemer, dan einde.
 `Speler3 is af door ClownPierce · 11 over`, of zonder killer `Speler3 is af · 11 over`, met de
 namen in hun teamkleur (aqua, goud). De dode ziet daarnaast zijn doodtekst als title.
 
-**Winnaar**: is de laatste die overblijft de uitverkorene, dan title `DE EINDBAAS WINT` met als
-subtitle zijn kop en naam; anders title met kop en `SPELER7 WINT CLOWN VS ALL`. Vuurpijl erboven,
+**Kill van de kroonhouder** (`kroonKill`): doodt de kroonhouder een jager en is de ronde daarna
+niet voorbij, dan krijgt iedereen behalve de dode een title: kop en naam van de kroonhouder in
+hoofdletters (goud), subtitle `pakt Speler3 · 11 over`, 5/40/15 ticks, en `entity.ravager.roar`.
+
+**Winnaar**: title met kop en `SPELER7 WINT KING OF THE HILL`, ook als het de uitverkorene is
+(geen aparte title voor Clown, die zou het rigged rad verraden); zonder winnaar
+`KING OF THE HILL IS VOORBIJ`. Vuurpijl erboven,
 `ui.toast.challenge_complete`.
 
 **Kroonwissel** (`Kroon.wissel(oude, nieuwe)`): oude wordt kijker op de tribune; nieuwe naar
 `troon`, heal, honger vol, alles op volle durability, de kroon als helm (oude helm naar de
-inventory), `kroonpakket.json`, Glowing, zweefkroon (geen Resistance); dan
+inventory), `kroonpakket.json`, Glowing, Strength II (vanaf de 1v1v1 I), zweefkroon (geen
+Resistance); dan
 `Opstelling(10)`: deze countdown loopt **vanzelf**, zonder `/clown go`.
 
 **Opstelling**: alle levende jagers heal en opnieuw willekeurig naar `jager_1..n` (met kijkrichting),
@@ -939,7 +954,10 @@ Geen spectator mode, geen tp-items, geen vliegen.
 - Mobs laten kijkers met rust (zie ronde 3).
 - Niet op de locator bar, geen Glowing.
 - Bij de dood een title met een willekeurige doodtekst, alleen voor de dode zelf. De lijst staat
-  in `bootcamp.json`.
+  in `bootcamp.json` en gaat in-game met `/bc doodtekst`. Standaard zes: `Grote L gepakt!`,
+  `Kleine L gepakt`, `Had je nou maar beter je best gedaan`, `Gelukkig is dit de CSMP niet..`,
+  `Dag 1...`, `Op de lijst..`. Staat in een oude `bootcamp.json` nog precies de oude standaard
+  (drie teksten), dan maakt de mod er bij het laden de nieuwe zes van.
 
 Waar kijkers heen gaan: ronde 3 bij een dood naar `kooi` tot het einde van die
 beurt, en anders naar `tribune_mob_n`; ronde 5 en 6 naar `tribune_n`. Clown zit tijdens de FFA ook op de
@@ -965,7 +983,7 @@ Eén bossbar, kort, altijd hetzelfde formaat. Persoonlijke info via de actionbar
 | 2 | `Het Ei · 07:12` | groen, de laatste minuut rood | tijd |
 | 3 | `Mob Arena · beurt 2/2 · wave 2` | rood | mobs over in het veld |
 | 4 | `Quiz · aan de beurt: Groen`, of `Quiz · draai het rad` | teamkleur, wit als niemand aan de beurt is | vol |
-| 5 | `Clown vs All · Kroon: Clown · 12 over` | geel | spelers over |
+| 5 | `King of the Hill · Kroon: Clown · 12 over` | geel | spelers over |
 | 6 | `FFA · 7 over` | paars | spelers over |
 | Na de kroning | `Pudding Bootcamp · King: Speler7` | goud | vol |
 
@@ -1023,11 +1041,12 @@ langzaam draaiend. Opgeruimd als de kroonhouder kijker wordt.
 | Quiz gelijkspel | Title `GELIJKSPEL`, subtitle `Rood en Geel · Pudding kiest`. |
 | Het Rad | In beeld: kop en naam van wie onder het pijltje staat als title, de rij van vijf koppen met namen als subtitle, `note_block.hat` per stap. Aan het eind `entity.ender_dragon.growl`, totem-particles, title `DE KROON` met kop en naam. |
 | Kroonwissel | `entity.lightning_bolt.thunder` (geen echte bliksem), flash-particle, title `NIEUWE KROON` met kop en naam. |
-| Winnaar ronde | `ui.toast.challenge_complete`, vuurpijl, title met naam of team. Bij het Ei en Clown vs All met de kop van de winnaar. |
-| Wachten op `/clown go` | Bossbar `Clown vs All · wacht op de start`, actionbar `/clown wachttekst` (standaard `Wacht op het startsein`). |
+| Winnaar ronde | `ui.toast.challenge_complete`, vuurpijl, title met naam of team. Bij het Ei en King of the Hill met de kop van de winnaar. |
+| Wachten op `/clown go` | Bossbar `King of the Hill · wacht op de start`, actionbar `/clown wachttekst` (standaard `Wacht op het startsein`). |
 | Kroonhouder | Alleen voor hem in de actionbar: `Jij hebt de kroon · 11 jagers`. |
 | Af in Clown vs All | Chatregel voor iedereen: `Speler3 is af door ClownPierce · 11 over`. De dode ziet zijn doodtekst. |
-| Winnaar Clown vs All | Wint de uitverkorene: title `DE EINDBAAS WINT` met zijn kop en naam als subtitle. Anders title met de kop van de winnaar en `SPELER7 WINT CLOWN VS ALL`. Vuurpijl erboven. |
+| Kill van de kroonhouder | Iedereen behalve de dode: title met kop en naam van de kroonhouder, subtitle `pakt Speler3 · 11 over`, brul van een ravager. Niet bij de laatste kill. |
+| Winnaar Clown vs All | Title met de kop van de winnaar en `SPELER7 WINT KING OF THE HILL`, ook als het de uitverkorene is. Vuurpijl erboven. |
 | Wachten op `/ffa go` | Bossbar `FFA · wacht op de start`, actionbar `/ffa wachttekst`. |
 | Af in de FFA | Chatregel voor iedereen: `Speler3 is af door Speler7 · 11 over`. |
 | `/clown krimp`, `/ffa krimp` | Title `DE BORDER KRIMPT` in rood, subtitle `naar 20 in 60 seconden`, `event.raid.horn`. Kijkers zien de title ook, maar merken niets van de border. |

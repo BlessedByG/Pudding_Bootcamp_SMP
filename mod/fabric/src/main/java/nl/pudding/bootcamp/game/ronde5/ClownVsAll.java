@@ -7,6 +7,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
@@ -44,9 +46,10 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Ronde 5: Clown vs All. Eén leven voor iedereen. Kill de kroonhouder en je krijgt de kroon; elke
- * kroonwissel is een reset van de jacht. Geen timer: de laatste die overblijft wint. De regels
- * staan in docs/03.
+ * Ronde 5: Clown vs All, in beeld King of the Hill. Eén leven voor iedereen. Kill de kroonhouder en
+ * je krijgt de kroon; elke kroonwissel is een reset van de jacht. De kroonhouder heeft Strength II;
+ * zijn er nog drie of minder over, dan heeft iedereen Strength I. Geen timer: de laatste die
+ * overblijft wint. De regels staan in docs/03.
  */
 public final class ClownVsAll extends RondeLogica {
 	private static final int GOUD = 0xFFD700;
@@ -118,6 +121,7 @@ public final class ClownVsAll extends RondeLogica {
 		List<ServerPlayer> iedereen = new ArrayList<>(jagers);
 		iedereen.add(clown);
 		Opstelling.wacht(server, iedereen);
+		sterkte(server);
 	}
 
 	/** {@code /clown go}: de countdown van tien seconden, daarna is iedereen los. */
@@ -171,13 +175,33 @@ public final class ClownVsAll extends RondeLogica {
 			} else if (rol == Rol.JAGER) {
 				Spel.status(speler).dood = true;
 				Tribune.maakKijker(server, speler, Tribune.Spullen.LEGEN, true);
+				int over = over(server);
 				Arena.afMelding(server, Mc.naam(speler), ChatFormatting.AQUA,
-						killer == null ? null : Mc.naam(killer), ChatFormatting.GOLD, over(server));
+						killer == null ? null : Mc.naam(killer), ChatFormatting.GOLD, over);
+				// Bij de laatste kill komt de winnaar in beeld, niet de kill.
+				if (killer != null && Spel.status(killer).rol == Rol.KROON && !Regels.laatsteOver(over)) {
+					kroonKill(server, killer, speler, over);
+				}
+				sterkte(server);
 				controleerEinde(server);
 			}
 		} finally {
 			netDood.clear();
 		}
+	}
+
+	/**
+	 * Een kill van de kroonhouder is een prestatie: groot in beeld voor iedereen behalve de dode, die
+	 * zijn doodtekst ziet. Met de naam van wie de kroon nu heeft, dus niet altijd Clown.
+	 */
+	private void kroonKill(MinecraftServer server, ServerPlayer kroonhouder, ServerPlayer dode, int over) {
+		MutableComponent titel = Component.empty().append(Mc.kop(kroonhouder)).append(Component.literal(" "))
+				.append(Mc.tekst(Mc.naam(kroonhouder).toUpperCase(Locale.ROOT), ChatFormatting.GOLD, ChatFormatting.BOLD));
+		MutableComponent onder = Component.empty().append(Mc.tekst("pakt ", ChatFormatting.WHITE))
+				.append(Mc.tekst(Mc.naam(dode), ChatFormatting.AQUA))
+				.append(Mc.tekst(" · " + over + " over", ChatFormatting.GRAY));
+		Mc.titleAllenBehalve(server, netDood, titel, onder, 5, 40, 15);
+		Mc.geluidAllen(server, SoundEvents.RAVAGER_ROAR, 1f, 1f);
 	}
 
 	/**
@@ -244,6 +268,7 @@ public final class ClownVsAll extends RondeLogica {
 		Mc.geluidAllen(server, SoundEvents.LIGHTNING_BOLT_THUNDER, 1f, 1f);
 		Mc.particles(Mc.wereld(server), ColorParticleOption.create(ParticleTypes.FLASH, GOUD), nieuw.getX(), nieuw.getY() + 1, nieuw.getZ(), 1, 0, 0);
 		toonSidebar(server);
+		sterkte(server);
 
 		if (jagers.isEmpty()) {
 			// De killer was de laatste jager: hij is als enige over.
@@ -405,8 +430,39 @@ public final class ClownVsAll extends RondeLogica {
 				Mc.actionbar(k, Mc.tekst("Jij hebt de kroon · " + jagers + (jagers == 1 ? " jager" : " jagers"), ChatFormatting.GOLD));
 			}
 		}
+		// Ook na een heal (die haalt effecten weg) of /bc kijker: elke seconde opnieuw gelijkgezet.
+		sterkte(server);
 		// Niet alleen bij een dood: ook als de ref de laatste jager met /bc kijker van de vloer haalt.
 		controleerEinde(server);
+	}
+
+	/**
+	 * De Strength van R5.10: de kroonhouder Strength II, de jagers niets; met nog drie of minder over
+	 * iedereen Strength I. Wie af is heeft niets.
+	 */
+	private void sterkte(MinecraftServer server) {
+		int over = over(server);
+		for (ServerPlayer s : Mc.deelnemers(server)) {
+			SpelerStatus st = Spel.status(s);
+			boolean doetMee = !st.dood && (st.rol == Rol.KROON || st.rol == Rol.JAGER);
+			zetSterkte(s, doetMee ? Regels.kroonSterkte(over, st.rol == Rol.KROON) : -1);
+		}
+	}
+
+	private static void zetSterkte(ServerPlayer s, int niveau) {
+		MobEffectInstance nu = s.getEffect(MobEffects.STRENGTH);
+		if (niveau < 0) {
+			if (nu != null) {
+				s.removeEffect(MobEffects.STRENGTH);
+			}
+			return;
+		}
+		if (nu != null && nu.getAmplifier() == niveau && nu.isInfiniteDuration()) {
+			return;
+		}
+		// Van II naar I kan niet met alleen een nieuw effect: vanilla houdt dan de sterkste.
+		s.removeEffect(MobEffects.STRENGTH);
+		Mc.effect(s, MobEffects.STRENGTH, -1, niveau);
 	}
 
 	private List<ServerPlayer> opDeVloer(MinecraftServer server) {
@@ -456,18 +512,14 @@ public final class ClownVsAll extends RondeLogica {
 		Bossbar.basiskamp();
 		toonSidebar(server);
 		if (winnaar != null) {
-			MutableComponent wie = Mc.kopEnNaam(winnaar, ChatFormatting.YELLOW, ChatFormatting.BOLD);
-			if (Spel.isClown(winnaar)) {
-				Mc.titleAllenBehalve(server, netDood, Mc.tekst("DE EINDBAAS WINT", ChatFormatting.GOLD, ChatFormatting.BOLD), wie);
-			} else {
-				MutableComponent titel = Component.empty().append(Mc.kop(winnaar)).append(Component.literal(" "))
-						.append(Mc.tekst(Mc.naam(winnaar).toUpperCase(Locale.ROOT) + " WINT CLOWN VS ALL", ChatFormatting.GOLD, ChatFormatting.BOLD));
-				Mc.titleAllenBehalve(server, netDood, titel, null);
-			}
+			// Ook voor Clown dezelfde title: niks mag verraden dat hij moest winnen.
+			MutableComponent titel = Component.empty().append(Mc.kop(winnaar)).append(Component.literal(" "))
+					.append(Mc.tekst(Mc.naam(winnaar).toUpperCase(Locale.ROOT) + " WINT KING OF THE HILL", ChatFormatting.GOLD, ChatFormatting.BOLD));
+			Mc.titleAllenBehalve(server, netDood, titel, null);
 			Vuurwerk.goud(Mc.wereld(server), winnaar.getX(), winnaar.getY() + 2, winnaar.getZ());
 			Mc.heal(winnaar);
 		} else {
-			Mc.titleAllen(server, Mc.tekst("CLOWN VS ALL IS VOORBIJ", ChatFormatting.GOLD, ChatFormatting.BOLD), null);
+			Mc.titleAllen(server, Mc.tekst("KING OF THE HILL IS VOORBIJ", ChatFormatting.GOLD, ChatFormatting.BOLD), null);
 		}
 		Mc.geluidAllen(server, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 1f, 1f);
 		if (langste != null) {
@@ -483,6 +535,9 @@ public final class ClownVsAll extends RondeLogica {
 
 	@Override
 	public void end(MinecraftServer server) {
+		for (ServerPlayer s : Mc.deelnemers(server)) {
+			s.removeEffect(MobEffects.STRENGTH);
+		}
 		Sidebar.weg(server);
 	}
 }

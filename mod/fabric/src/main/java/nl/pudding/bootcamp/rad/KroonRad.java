@@ -26,7 +26,7 @@ import java.util.UUID;
 /**
  * Het Rad van ronde 5, in beeld: een rij spelerskoppen met namen die langs een pijltje schuift,
  * steeds langzamer, en stopt op de uitverkorene. De volgorde, de startpositie en het aantal rondes
- * zijn echt willekeurig, de landing niet. Drie seconden na DE KROON begint Clown vs All.
+ * zijn echt willekeurig, de landing niet. Drie seconden na DE KROON begint Clown vs All (in beeld: King of the Hill).
  */
 public final class KroonRad {
 	private static Rad rad;
@@ -62,7 +62,7 @@ public final class KroonRad {
 		// Het rad mag niet landen op een ronde die daarna weigert te starten.
 		String ronde5 = Spel.controleer(server, Ronde.CLOWN);
 		if (ronde5 != null) {
-			return "Clown vs All kan straks niet starten, " + ronde5;
+			return "King of the Hill kan straks niet starten, " + ronde5;
 		}
 		Planner.wisAlles();
 		Quiz.lampenUit(server);
@@ -148,7 +148,7 @@ public final class KroonRad {
 		Planner.naSeconden(Regels.NA_HET_RAD, () -> {
 			String fout = Spel.start(server, Ronde.CLOWN);
 			if (fout != null) {
-				Mc.chatAllen(server, Mc.tekst("[bootcamp] Clown vs All start niet, " + fout, ChatFormatting.RED));
+				Mc.chatAllen(server, Mc.tekst("[bootcamp] King of the Hill start niet, " + fout, ChatFormatting.RED));
 			}
 		});
 	}

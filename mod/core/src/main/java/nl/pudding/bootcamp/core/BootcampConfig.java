@@ -201,6 +201,11 @@ public final class BootcampConfig {
 				}
 			}
 			leesTeksten(root, "doodteksten", c.doodteksten);
+			if (c.doodteksten.equals(Doodteksten.OUDE_STANDAARD)) {
+				// Nooit aangepast: dan krijgt ook een oude wereld de nieuwe teksten.
+				c.doodteksten.clear();
+				c.doodteksten.addAll(Doodteksten.STANDAARD);
+			}
 			leesTeksten(root, "grapjes", c.grapjes);
 			if (root.has("teams")) {
 				for (Map.Entry<String, JsonElement> e : root.getAsJsonObject("teams").entrySet()) {

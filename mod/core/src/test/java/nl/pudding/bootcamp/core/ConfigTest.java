@@ -2,6 +2,8 @@ package nl.pudding.bootcamp.core;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -78,6 +80,15 @@ class ConfigTest {
 		assertFalse(c.isUitverkoren("iemand"));
 		assertEquals(15, c.instellingen().doolhofTimer());
 		assertNull(c.instellingen().hinttekst());
+	}
+
+	@Test
+	void oudeStandaardDoodtekstenWordenDeNieuwe() {
+		BootcampConfig oud = BootcampConfig.uitJson("{\"doodteksten\":[\"Grote L gepakt!\",\"Had je nou maar beter je best gedaan\",\"Gelukkig is dit niet de CSMP\"]}");
+		assertEquals(Doodteksten.STANDAARD, oud.doodteksten());
+		// Zelf aangepast blijft aangepast, ook als de oude teksten erin staan.
+		BootcampConfig eigen = BootcampConfig.uitJson("{\"doodteksten\":[\"Grote L gepakt!\",\"Weg ermee\"]}");
+		assertEquals(List.of("Grote L gepakt!", "Weg ermee"), eigen.doodteksten());
 	}
 
 	@Test

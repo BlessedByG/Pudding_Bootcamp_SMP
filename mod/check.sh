@@ -67,6 +67,7 @@ CMD_DIR=fabric/src/main/java/nl/pudding/bootcamp/commands
 if [ -d "$CMD_DIR" ]; then
 	for c in bc doolhof ei mobarena quiz clown ffa \
 		wand region save add show list del point set block tp label zet weg status kit team schrik kijker aan uit reset \
+		doodtekst lijst nieuw standaard \
 		start stop resterend timer poort open dicht hint hinttekst blokken vastleggen \
 		volgende schema wave startplek punten veldhoogte aftekst poortmelding valmobs startpoort naarei prijskader warden vuurwerk \
 		presentator bank podium lamp draai goed fout punt einde winnaar \

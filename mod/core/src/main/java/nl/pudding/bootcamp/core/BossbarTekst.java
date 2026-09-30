@@ -5,7 +5,7 @@ public final class BossbarTekst {
 	public static final String BASISKAMP = "Pudding Bootcamp";
 	public static final String QUIZ_DRAAI = "Quiz · draai het rad";
 	public static final String DOOLHOF_WACHT = "Doolhof · wacht op de start";
-	public static final String CLOWN_WACHT = "Clown vs All · wacht op de start";
+	public static final String CLOWN_WACHT = "King of the Hill · wacht op de start";
 	public static final String FFA_WACHT = "FFA · wacht op de start";
 
 	private BossbarTekst() {
@@ -35,12 +35,12 @@ public final class BossbarTekst {
 	}
 
 	public static String clown(String kroon, int over) {
-		return "Clown vs All · Kroon: " + kroon + " · " + over + " over";
+		return "King of the Hill · Kroon: " + kroon + " · " + over + " over";
 	}
 
 	/** De kroonhouder is uitgelogd: de mod telt af tot de kroon doorgaat. */
 	public static String kroonWeg(String kroon, int wachtSeconden) {
-		return "Clown vs All · " + kroon + " is weg · kroon door over " + Tijd.mmss(wachtSeconden);
+		return "King of the Hill · " + kroon + " is weg · kroon door over " + Tijd.mmss(wachtSeconden);
 	}
 
 	public static String ffa(int over) {

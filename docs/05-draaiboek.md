@@ -18,8 +18,8 @@ Tijdschema, rollen en checklists voor de avond zelf. Tijden zijn een voorbeeld m
 | 20:43 | **Ronde 3: De Mob Arena**: 5 beurten van 5 waves (wie wanneer speelt blijft een verrassing), elke beurt op het sein van Pudding (± 25 min) | Host, Admin 1 |
 | 21:08 | Winnend team. Naar de quiz. | Host |
 | 21:10 | **Ronde 4: De Quiz** (± 15 min, Pudding presenteert en bepaalt) | Pudding, Admin 1 |
-| 21:25 | Winnend team. Naar de Arena. Host legt Clown vs All uit. "Het lot beslist wie de kroon krijgt." Het Rad landt op Clown. | Host, Admin 1 |
-| 21:28 | **Ronde 5: Clown vs All** (iedereen stil tot `/clown go`, dan 10 sec countdown, geen timer, reken op 10 tot 20 min) | Admin 1 |
+| 21:25 | Winnend team. Naar de Arena. Host legt King of the Hill uit (zo heet de ronde in beeld; zeg nooit "Clown vs All"). "Het lot beslist wie de kroon krijgt." Het Rad landt op Clown. | Host, Admin 1 |
+| 21:28 | **Ronde 5: King of the Hill** (intern Clown vs All; iedereen stil tot `/clown go`, dan 10 sec countdown, geen timer, reken op 10 tot 20 min) | Admin 1 |
 | 21:45 | Winnaar. Iedereen behalve Clown de vloer op. | Admin 1 |
 | 21:47 | **Ronde 6: De FFA** (iedereen stil tot `/ffa go`, dan 10 sec countdown, geen timer, reken op 5 tot 10 min) | Admin 1 |
 | 21:58 | **Kroning** op het podium in het midden van de Arena, tribunes vol. | Host |
@@ -208,16 +208,21 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
       jager op een willekeurige plek, goede kijkrichting) en staat stil: niet lopen, niet
       schieten, niet pearlen, onderin "Wacht op het startsein" (`/clown wachttekst` past het
       aan). `/clown go`: 10 seconden, dan los. De kroonhouder ziet onderin "Jij hebt de kroon",
-      een afgevallen jager komt in de chat, en wint Clown dan staat er DE EINDBAAS WINT. Beide hebben dezelfde full-diamond kit met 16
-      gapples, de kroonhouder heeft de kroon als diamond helm die niet af kan. Jager raakt jager:
+      een afgevallen jager komt in de chat, en de winnaar (ook Clown) krijgt "... WINT KING OF
+      THE HILL". De bossbar zegt "King of the Hill". Beide hebben dezelfde full-diamond kit met 10 gapples, de
+      kroonhouder heeft de kroon als diamond helm die niet af kan, en Strength II (jagers niks).
+      Bij nog 3 over heeft iedereen Strength I, ook de kroonhouder. Killt de kroonhouder een
+      jager, dan ziet de rest zijn kop en naam groot met "pakt Speler3 · n over" en een brul. Jager raakt jager:
       geen schade. Kill de kroonhouder: kroon over, kroonpakket, reset. Laatste over wint.
 - [ ] `/ffa start`: iedereen behalve Clown op een willekeurige plek, Clown op de tribune,
-      iedereen stil. Kit: dezelfde als Clown vs All met 32 gapples, gewone diamond helm.
+      iedereen stil. Kit: dezelfde als King of the Hill met 32 gapples, gewone diamond helm.
       Onderin "Wacht op het startsein". `/ffa go`: 10 seconden, dan raakt iedereen iedereen.
       Kills rechts, wie af is in de chat. `/ffa krimp 20`: DE BORDER KRIMPT en de border krimpt.
       Bij drie en twee over LAATSTE DRIE en LAATSTE TWEE. Laatste over: kroning op het podium,
       iedereen op de tribune, vuurwerk, KING OF THE SMP BOOTCAMP met de kop van de winnaar; de
       bossbar "King: <naam>" en de zwevende kroon blijven tot `/bc reset`.
+- [ ] `/bc doodtekst lijst` toont de zes teksten; `nieuw`, `weg <nr>` en `standaard` werken en
+      blijven na een herstart staan.
 - [ ] `/bc reset`: alles terug, ook de teams.
 - [ ] Alles wat niet klopt in één bericht terug, met de console-regels erbij.
 
@@ -238,7 +243,8 @@ Minstens één keer de hele avond met 4 tot 8 testers. Let vooral op:
 - [ ] Quiz: Pudding is vanaf het podium bij alle vier de banken te horen. Het rad is goed te
       lezen in beeld.
 - [ ] Clown vs All: jagers kunnen elkaar niet raken, ook niet met pijlen. Kroonwissel zet
-      iedereen goed terug. Rad landt op de uitverkorene; draai hem vijf keer.
+      iedereen goed terug. Rad landt op de uitverkorene; draai hem vijf keer. Voelt Strength II voor
+      de kroonhouder te sterk of te zwak, en de 10 gapples genoeg?
 - [ ] FFA: iedereen behalve Clown staat op de vloer. Kijk hoe lang een potje duurt met 32
       gapples, en bij welke grootte `/ffa krimp` het afmaakt.
 - [ ] Kijkers: tribune en kooi, geen schade, niet het veld op. Spring als kijker van de tribune

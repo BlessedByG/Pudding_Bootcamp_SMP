@@ -1,5 +1,8 @@
 # De kroon: regels van Clown vs All
 
+In beeld heet de ronde **King of the Hill**. De spelers zien nergens "Clown vs All" (bossbar,
+titles, chat), zodat niemand op het idee komt dat het rad rigged is.
+
 Ronde 5. De kroon is een diamond helm met dezelfde enchants als de kit plus Curse of Binding (kan
 niet af), met daarboven een zwevende gouden kroon en het Glowing-effect.
 Wie de kroon heeft is de **kroonhouder** en is voor iedereen zichtbaar door alles heen. De rest
@@ -24,7 +27,7 @@ zijn **jagers**. Alles speelt in de Arena: een colosseum met tribunes waar wie a
    krijgt de kroon, de kit en Glowing.
 5. Iedereen heeft na de mob arena al alles ingeleverd. **Iedereen krijgt dezelfde kit**, jagers en
    Clown: volledig diamond armor (Protection IV), diamond sword en axe (Sharpness V), bow (Power V)
-   met 32 pijlen, schild en 16 golden apples, alles met Unbreaking III. Bij Clown is de helm de
+   met 32 pijlen, schild en 10 golden apples, alles met Unbreaking III. Bij Clown is de helm de
    kroon. De jagers worden **willekeurig verdeeld over de 20 startplekken** in de cirkel (één
    blijft leeg), elk met de kijkrichting van zijn plek.
 6. **Iedereen staat stil**, ook Clown: rondkijken en je inventory sorteren kan; lopen, springen,
@@ -43,13 +46,28 @@ zijn **jagers**. Alles speelt in de Arena: een colosseum met tribunes waar wie a
 
 Jagers kunnen elkaar dus niet in de weg zitten met zwaard of boog. Samenwerken is de enige optie.
 
+## Strength
+
+- **De kroonhouder heeft Strength II**, de jagers niks. Het effect gaat mee met de kroon: bij een
+  wissel verliest de oude kroonhouder het en krijgt de nieuwe het.
+- **Vanaf de 1v1v1** (nog 3 over, de kroonhouder meegeteld) krijgt **iedereen Strength I**, ook de
+  kroonhouder. De kroonhouder gaat dus van II naar I en de jagers van niks naar I. Zo blijft het
+  tot het einde, ook als de kroon daarna nog wisselt.
+- De mod zet het elke seconde goed, dus melk drinken verandert er niks aan. Na de ronde gaat
+  de Strength eraf.
+
 ## Eén leven
 
 - Ga je dood, door de kroonhouder of door een val, dan ben je **af** en ga je de tribune op. Geen
   respawns.
-- Wie doodgaat ziet groot in beeld een van de doodteksten: **Grote L gepakt!**, **Had je nou maar
-  beter je best gedaan**, **Gelukkig is dit niet de CSMP**. Willekeurig, alleen voor de dode
-  zelf. De rest ziet een chatregel: "Speler3 is af door ClownPierce · 11 over".
+- Wie doodgaat ziet groot in beeld een van de doodteksten: **Grote L gepakt!**, **Kleine L
+  gepakt**, **Had je nou maar beter je best gedaan**, **Gelukkig is dit de CSMP niet..**, **Dag
+  1...** of **Op de lijst..**. Willekeurig, alleen voor de dode zelf. Aan te passen met
+  `/bc doodtekst`. De rest ziet een chatregel: "Speler3 is af door ClownPierce · 11 over".
+- **Een kill van de kroonhouder is een prestatie** en komt groot in beeld bij iedereen behalve de
+  dode: de kop en de naam van wie de kroon op dat moment heeft (niet altijd Clown), met eronder
+  "pakt Speler3 · 11 over", en de brul van een ravager. Bij de laatste kill niet: dan komt de
+  winnaar in beeld.
 
 ## De kroon wisselt: elke wissel is een reset
 
@@ -62,7 +80,8 @@ Jagers kunnen elkaar dus niet in de weg zitten met zwaard of boog. Samenwerken i
   - wordt full hp geheald, honger vol,
   - krijgt al zijn armor en wapens gerepareerd,
   - krijgt het kroonpakketje: 2 gapples + 2 ender pearls,
-  - krijgt Glowing (geen Resistance of ander extra effect),
+  - krijgt Glowing en Strength II (vanaf de 1v1v1 Strength I zoals iedereen), geen Resistance of
+    ander extra effect,
   - krijgt de kroon als helm; de oude helm gaat naar de inventory.
 - Iedereen krijgt een `title`: **NIEUWE KROON** met de kop en de naam. Bossbar update.
 - **10 seconden** countdown, die start vanzelf (geen `/clown go` nodig). Dan is iedereen los.
@@ -79,8 +98,9 @@ Jagers kunnen elkaar dus niet in de weg zitten met zwaard of boog. Samenwerken i
 - **Geen timer.** De ronde loopt tot er nog maar één speler leeft.
 - Dat is meestal de kroonhouder die de laatste jager killt. Het kan ook een jager zijn: killt de
   laatste jager de kroonhouder, dan is die jager alleen over en wint.
-- Winnaar: `title` voor iedereen met de kop van de winnaar, vuurpijl erboven. Is het Clown, dan
-  staat er **DE EINDBAAS WINT**; anders **SPELER7 WINT CLOWN VS ALL**.
+- Winnaar: `title` voor iedereen met de kop van de winnaar, vuurpijl erboven:
+  **SPELER7 WINT KING OF THE HILL**. Voor Clown precies hetzelfde, zodat niks verraadt dat hij
+  moest winnen.
 - Daarna de FFA: **iedereen behalve Clown**, ook wie af was en ook de winnaar.
 
 ## Randgevallen
@@ -101,7 +121,7 @@ Jagers kunnen elkaar dus niet in de weg zitten met zwaard of boog. Samenwerken i
 
 ## Display voor de stream
 
-- **Bossbar:** `Clown vs All · Kroon: <naam> · 12 over`.
+- **Bossbar:** `King of the Hill · Kroon: <naam> · 12 over`.
 - **Sidebar:** de regeerperiodes: `Clown 4:12 · Speler X 0:38`. Leuk als eretitel achteraf.
 - **Tab-list:** kroonhouder in goud, jagers in aqua, wie af is in grijs.
 - **Locator bar:** aan, alleen de kroonhouder is zichtbaar.

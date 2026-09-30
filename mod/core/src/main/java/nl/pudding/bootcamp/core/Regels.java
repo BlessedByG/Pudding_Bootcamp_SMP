@@ -128,6 +128,22 @@ public final class Regels {
 		return Optional.of(levendeJagers.get(random.nextInt(levendeJagers.size())));
 	}
 
+	/** R5.11: vanaf zoveel spelers over (de kroonhouder meegeteld) krijgt iedereen Strength I. */
+	public static final int SLOTSTRIJD = 3;
+
+	/**
+	 * R5.11: de Strength in King of the Hill. De kroonhouder heeft Strength II, de jagers niets;
+	 * zijn er nog {@link #SLOTSTRIJD} of minder over, dan heeft iedereen Strength I.
+	 *
+	 * @return het niveau (0 is Strength I, 1 is Strength II), of -1 voor geen Strength
+	 */
+	public static int kroonSterkte(int over, boolean kroonhouder) {
+		if (over <= SLOTSTRIJD) {
+			return 0;
+		}
+		return kroonhouder ? 1 : -1;
+	}
+
 	/** R5.8 en R6.2: geen timer, de ronde is voorbij zodra er nog één (of niemand) leeft. */
 	public static boolean laatsteOver(int levend) {
 		return levend <= 1;

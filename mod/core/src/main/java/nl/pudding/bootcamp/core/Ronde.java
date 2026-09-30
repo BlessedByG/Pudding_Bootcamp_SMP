@@ -29,7 +29,8 @@ public enum Ronde {
 					"quizlamp_rood", "quizlamp_blauw", "quizlamp_groen", "quizlamp_geel", "tribune_1",
 					"quizvuurwerk_rood_1", "quizvuurwerk_rood_2", "quizvuurwerk_blauw_1", "quizvuurwerk_blauw_2",
 					"quizvuurwerk_groen_1", "quizvuurwerk_groen_2", "quizvuurwerk_geel_1", "quizvuurwerk_geel_2")),
-	CLOWN(5, "Clown vs All", "clown", false,
+	// In beeld heet ronde 5 King of the Hill: dat Clown de kroon krijgt, hoeft niemand te merken.
+	CLOWN(5, "King of the Hill", "clown", false,
 			List.of("vloer"),
 			List.of("troon", "jager_1", "tribune_1")),
 	FFA(6, "De FFA", "ffa", false,
