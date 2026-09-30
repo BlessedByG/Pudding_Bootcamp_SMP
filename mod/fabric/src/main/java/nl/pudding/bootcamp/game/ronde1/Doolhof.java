@@ -87,6 +87,8 @@ public final class Doolhof extends RondeLogica {
 	private boolean poortMoment;
 	private boolean hintGegeven;
 	private boolean timerGestart;
+	/** Na {@code /doolhof start}: iedereen staat klaar en wacht op {@code /doolhof go}. */
+	private boolean wachtOpGo;
 	private int spelersBijStart;
 	/** Wie de basiskit al kreeg; wie later binnenkomt krijgt hem bij het inloggen. */
 	private final java.util.Set<java.util.UUID> gestart = new java.util.HashSet<>();
@@ -164,6 +166,16 @@ public final class Doolhof extends RondeLogica {
 		Valkisten.ruimOp(server);
 		Border.zet(server, Spel.regio("doolhof"));
 		toonSidebar(server);
+		// De countdown pas na /doolhof go; tot dan houdt de startpoort iedereen in de startruimte.
+		wachtOpGo = true;
+	}
+
+	/** {@code /doolhof go}: de countdown; daarna gaat de startpoort open en loopt de timer. */
+	public String go(MinecraftServer server) {
+		if (!wachtOpGo) {
+			return timerGestart ? "het doolhof loopt al" : "de countdown loopt al";
+		}
+		wachtOpGo = false;
 		Aftelling.start(Regels.COUNTDOWN, "Het doolhof begint over", () -> {
 			timerGestart = true;
 			Poorten.openAlsHijBestaat(server, START_POORT, false);
@@ -173,6 +185,7 @@ public final class Doolhof extends RondeLogica {
 				poortOpen(server);
 			}
 		});
+		return null;
 	}
 
 	/**
@@ -364,6 +377,13 @@ public final class Doolhof extends RondeLogica {
 		Teammenu.ververs(server);
 		// Ook /bc team en wie in- of uitlogt (hoofd erbij of eraf).
 		toonSidebar(server);
+		if (wachtOpGo) {
+			Bossbar.zet(BossbarTekst.DOOLHOF_WACHT, BossEvent.BossBarColor.GREEN, 1f);
+			for (ServerPlayer s : Spel.levend(server, Rol.SPELER)) {
+				Mc.actionbar(s, Mc.tekst(Spel.instellingen().doolhofWachttekst(), ChatFormatting.YELLOW));
+			}
+			return;
+		}
 		if (gifLoopt) {
 			gif(server);
 			return;
@@ -659,6 +679,9 @@ public final class Doolhof extends RondeLogica {
 
 	@Override
 	public String statusRegel(MinecraftServer server) {
+		if (wachtOpGo) {
+			return "iedereen staat klaar, wacht op /doolhof go";
+		}
 		return "poort " + (poortOpen ? "open" : "dicht") + ", hint " + (hintGegeven ? "geweest" : "nog niet")
 				+ (gifLoopt ? ", de tijd is om: het gif loopt" : "");
 	}

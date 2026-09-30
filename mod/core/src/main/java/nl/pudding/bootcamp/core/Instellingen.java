@@ -57,6 +57,7 @@ public final class Instellingen {
 	private boolean poortMelding = true;
 	private int valMobsMin = VAL_MOBS_MIN;
 	private int valMobsMax = VAL_MOBS_MAX;
+	private String doolhofWachttekst = WACHTTEKST;
 	private int eiTimer = EI_TIMER;
 	private final EnumMap<EiBlok, Integer> eiBlokken = new EnumMap<>(EiBlok.class);
 	private final Map<String, Integer> mobPunten = new LinkedHashMap<>(MOB_PUNTEN);
@@ -187,6 +188,15 @@ public final class Instellingen {
 		vereis(checkValMobs(min, max));
 		valMobsMin = min;
 		valMobsMax = max;
+	}
+
+	/** In de actionbar zolang het doolhof op {@code /doolhof go} wacht. */
+	public String doolhofWachttekst() {
+		return doolhofWachttekst;
+	}
+
+	public void zetDoolhofWachttekst(String tekst) {
+		doolhofWachttekst = tekstOfStandaard(tekst, WACHTTEKST);
 	}
 
 	/** {@code null}, leeg of {@code -} wist de tekst. */

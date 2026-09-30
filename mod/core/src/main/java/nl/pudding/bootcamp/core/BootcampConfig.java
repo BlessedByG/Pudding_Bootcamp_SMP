@@ -304,6 +304,7 @@ public final class BootcampConfig {
 		valmobs.add(i.valMobsMin());
 		valmobs.add(i.valMobsMax());
 		doolhof.add("valmobs", valmobs);
+		doolhof.addProperty("wachttekst", i.doolhofWachttekst());
 		if (i.hinttekst() != null) {
 			doolhof.addProperty("hinttekst", i.hinttekst());
 		}
@@ -350,6 +351,9 @@ public final class BootcampConfig {
 			if (d.has("valmobs")) {
 				JsonArray v = d.getAsJsonArray("valmobs");
 				wrap("instellingen.doolhof.valmobs", () -> i.zetValMobs(v.get(0).getAsInt(), v.get(1).getAsInt()));
+			}
+			if (d.has("wachttekst")) {
+				wrap("instellingen.doolhof.wachttekst", () -> i.zetDoolhofWachttekst(d.get("wachttekst").getAsString()));
 			}
 		}
 		if (o.has("ei")) {

@@ -582,6 +582,7 @@ class RondeLogicaTest {
 			assertEquals("Af · je speelt geen beurt meer", i.aftekst());
 			assertEquals("Wacht op het startsein", i.clownWachttekst());
 			assertEquals("Wacht op het startsein", i.ffaWachttekst());
+			assertEquals("Wacht op het startsein", i.doolhofWachttekst());
 			assertEquals(3, i.veldHoogte());
 			assertTrue(i.poortMelding());
 			assertEquals(3, i.valMobsMin());

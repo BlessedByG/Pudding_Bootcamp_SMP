@@ -9,7 +9,7 @@ Tijdschema, rollen en checklists voor de avond zelf. Tijden zijn een voorbeeld m
 | 19:15 | Staff online. Wereldbackup maken. `/bc reset` draaien. Poort, teleports en `/bc schrik` op een testaccount even testen. | Admins |
 | 19:40 | Whitelist open. Spelers spawnen in het basiskamp en krijgen het resource pack. Voice-test: iedereen zegt wat, loopt weg en komt terug. | Iedereen |
 | 19:55 | Host legt de regels uit, zonder Clown vs All te verklappen. | Host |
-| 20:00 | **Intro op stream.** Iedereen naar de startruimte van het doolhof, countdown. | Host, Admin 1 |
+| 20:00 | **Intro op stream.** `/doolhof start`: iedereen naar de startruimte van het doolhof. Op het sein `/doolhof go`: countdown. | Host, Admin 1 |
 | 20:02 | **Ronde 1: De Doolhof** (15 min, uitgang open na 4 min, hint na 10 min, teamkeuze bij de uitgang) | |
 | 20:18 | Iedereen in de finishruimte van het doolhof: teams in beeld, praatje. Dan `/doolhof naarei`: iedereen naar V2 bij het Ei. | Host, Admin 1 |
 | 20:20 | **Ronde 2: Het Ei** (15 min) | |
@@ -38,7 +38,7 @@ Wat de commander en de ref per ronde typen. Het volledige overzicht staat in
 
 | Ronde | Starten | Tijdens de ronde |
 |---|---|---|
-| 1 De Doolhof | `/doolhof start` | `/doolhof poort open`, `/doolhof resterend <sec>`, noodknop `/doolhof einde`; na afloop `/doolhof naarei` |
+| 1 De Doolhof | `/doolhof start`, dan `/doolhof go` op het sein van Pudding | `/doolhof poort open`, `/doolhof resterend <sec>`, noodknop `/doolhof einde`; na afloop `/doolhof naarei` |
 | 2 Het Ei | `/ei start` | `/ei resterend <sec>` |
 | 3 De Mob Arena | `/mobarena start` | `/mobarena volgende` (elke volgende beurt), `/mobarena schema`, `/mobarena wave volgende` |
 | 4 De Quiz | `/quiz start` | Pudding doet het met de drie items; noodknoppen `/quiz draai`, `/quiz goed`, `/quiz fout`, `/quiz punt <kleur> [-1]`. Einde: `/quiz einde` (bij gelijke stand `/quiz winnaar <kleur>`) |
@@ -58,6 +58,7 @@ Vooraf instellen, in minuten (blijft bewaard):
 | `/doolhof hinttekst` | geen: dan noemt de mod de windrichting. Zet je eigen hint, bijvoorbeeld "De echte gang begint bij de lantaarn". |
 | `/doolhof poortmelding` | aan: hoorn en title als de uitgang opengaat. `uit` voor een stille poort. |
 | `/doolhof valmobs` | willekeurig 3 t/m 10 mobs per valkist |
+| `/doolhof wachttekst` | "Wacht op het startsein" |
 | `/ei timer` | 15 |
 | `/ei blokken` | netherite 6, diamond 90, gold 120, redstone 10, emerald 10, tnt 10, glowstone 10, slime 10, target 5 (voorlopig; samen 271, dat moet op de deepslate passen) |
 | `/mobarena punten` | zombie 1; skeleton, spider, cave spider 2; creeper 3; witch 4; vindicator 5; evoker 8; ravager 10 |
@@ -133,8 +134,9 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
 - [ ] `/doolhof timer`, `/doolhof poort`, `/doolhof hint` en `/ei timer` zonder getal: 15, 4,
       10 en 15. Zet er een om en weer terug; een hint na het einde wordt
       geweigerd. Na een herstart staan ze er nog.
-- [ ] `/doolhof start`: tijdens de countdown kom je de startruimte niet uit, bij de start van de
-      timer zijn de openingen weg; kisten gevuld, nep-uitgang zet je terug met knal en grapje,
+- [ ] `/doolhof start`: iedereen in de startruimte, bossbar `Doolhof · wacht op de start` en de
+      wachttekst onderin, geen countdown. `/doolhof go`: de countdown. Je komt de startruimte niet
+      uit tot de timer begint, dan zijn de openingen weg; kisten gevuld, nep-uitgang zet je terug met knal en grapje,
       schrikplek werkt één keer, poort open na 4 minuten (`/doolhof resterend 665` om te versnellen), hint
       na 10 minuten met je eigen `/doolhof hinttekst` (`/doolhof resterend 305`), teammenu op de
       finishlijn met de hoofden per team (alleen de wol kiest), vol team is grijs, de sidebar laat
