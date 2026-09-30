@@ -24,6 +24,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RedstoneLampBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import nl.pudding.bootcamp.Mc;
@@ -57,9 +58,10 @@ import java.util.Locale;
 
 /**
  * Ronde 4: de quiz. Iedereen zonder spullen bij de bank van zijn team, de presentator op het podium
- * met drie items: groene wol (goed), rode wol (fout) en een nether star (het rad draaien). Het rad
- * is een echt rond rad in beeld, uit het resource pack; het team waar het op landt is aan de beurt
- * en de lamp bij hun bank brandt.
+ * met vier items: groene wol (goed), rode wol (fout), een nether star (het rad draaien) en een
+ * emerald (het puntenmenu, {@link PuntenMenu}). Het rad is een echt rond rad in beeld, uit het
+ * resource pack; het team waar het op landt is aan de beurt en de lamp bij hun bank brandt. Bij een
+ * goed antwoord schieten de twee dispensers bij de bank van dat team een vuurpijl in de teamkleur.
  */
 public final class Quiz extends RondeLogica {
 	public static final Identifier RAD_FONT = Identifier.fromNamespaceAndPath("bootcamp", "rad");
@@ -67,6 +69,8 @@ public final class Quiz extends RondeLogica {
 	private static final int STIL_NA_LANDING = 40;
 	/** Binnen zoveel ticks na een klik met een quiz-item telt een volgende klik niet. */
 	private static final int KLIK_PAUZE = 5;
+	/** Zoveel dispensers met vuurwerk staan er bij elke bank. */
+	public static final int VUURWERK_PER_BANK = 2;
 	private static int laatsteKlik = -1000;
 
 	private enum Fase {
@@ -119,6 +123,10 @@ public final class Quiz extends RondeLogica {
 			case "goed" -> quiz.goed(server);
 			case "fout" -> quiz.fout(server);
 			case "draai" -> quiz.draai(server);
+			case "punten" -> {
+				PuntenMenu.open(speler, quiz);
+				yield null;
+			}
 			default -> null;
 		};
 		if (fout != null) {
@@ -156,7 +164,17 @@ public final class Quiz extends RondeLogica {
 		for (Kleur k : Kleur.values()) {
 			punten.add("quiz_" + k.id());
 		}
-		return Spel.buitenRegio("quiz", punten);
+		punten.addAll(vuurwerkPunten());
+		String fout = Spel.buitenRegio("quiz", punten);
+		if (fout != null) {
+			return fout;
+		}
+		for (String naam : vuurwerkPunten()) {
+			if (!Mc.wereld(server).getBlockState(blok(naam)).is(Blocks.DISPENSER)) {
+				return "punt " + naam + " is geen dispenser (/quiz vuurwerk <kleur> <1|2>, kijkend naar de dispenser)";
+			}
+		}
+		return null;
 	}
 
 	@Override
@@ -199,7 +217,8 @@ public final class Quiz extends RondeLogica {
 		return List.of(
 				item(Items.WOOL.lime(), "Goed", ChatFormatting.GREEN, "goed"),
 				item(Items.WOOL.red(), "Fout", ChatFormatting.RED, "fout"),
-				item(Items.NETHER_STAR, "Draai het rad", ChatFormatting.GOLD, "draai"));
+				item(Items.NETHER_STAR, "Draai het rad", ChatFormatting.GOLD, "draai"),
+				item(Items.EMERALD, "Punten geven of afpakken", ChatFormatting.AQUA, "punten"));
 	}
 
 	private static void geefItems(ServerPlayer presentator) {
@@ -216,7 +235,7 @@ public final class Quiz extends RondeLogica {
 	private static void controleerItems(MinecraftServer server) {
 		ServerPlayer p = Spel.presentator(server);
 		if (p != null) {
-			for (String actie : List.of("goed", "fout", "draai")) {
+			for (String actie : List.of("goed", "fout", "draai", "punten")) {
 				if (!p.getInventory().contains(s -> actie.equals(Items26.tagWaarde(s, Items26.QUIZ_TAG)))) {
 					geefItems(p);
 					break;
@@ -310,6 +329,9 @@ public final class Quiz extends RondeLogica {
 		}
 		Mc.titleAllen(server, Mc.tekst("GOED!", ChatFormatting.GREEN, ChatFormatting.BOLD), Mc.tekst(stand.goedTekst(), Mc.kleur(k)), 0, 40, 10);
 		Mc.geluidAllen(server, SoundEvents.NOTE_BLOCK_BELL, 1f, 1f);
+		for (int n = 1; n <= VUURWERK_PER_BANK; n++) {
+			Vuurwerk.uitDispenser(Mc.wereld(server), blok(vuurwerkPunt(k, n)), k.rgb());
+		}
 		toonSidebar(server);
 		return null;
 	}
@@ -331,6 +353,51 @@ public final class Quiz extends RondeLogica {
 		lamp(server, k, false);
 		bossbar();
 		return null;
+	}
+
+	/** De stand van een team, voor het puntenmenu. */
+	int punten(Kleur k) {
+		return stand.punten(k);
+	}
+
+	/**
+	 * Uit het puntenmenu: punten erbij of eraf voor elk team, ook als het niet aan de beurt is, en
+	 * onder 0 mag. Iedereen ziet het in de chat, met een geluid.
+	 */
+	void menuPunt(MinecraftServer server, ServerPlayer presentator, Kleur k, int aantal) {
+		if (fase != Fase.SPELEN) {
+			return;
+		}
+		stand.punt(k, aantal);
+		Mc.chatAllen(server, Component.empty().append(Mc.tekst(Mc.naam(presentator) + ": ", ChatFormatting.GOLD))
+				.append(Mc.tekst((aantal > 0 ? "+" : "") + aantal + " voor " + k.naam(), Mc.kleur(k), ChatFormatting.BOLD))
+				.append(Mc.tekst(" (" + stand.punten(k) + ")", ChatFormatting.GRAY)));
+		if (aantal > 0) {
+			Mc.geluidAllen(server, SoundEvents.NOTE_BLOCK_PLING, 1f, 1.5f);
+		} else {
+			Mc.geluidAllen(server, SoundEvents.NOTE_BLOCK_BASS, 1f, 0.7f);
+		}
+		toonSidebar(server);
+	}
+
+	/** {@code quizvuurwerk_rood_1}, {@code quizvuurwerk_rood_2}, ... voor elke kleur. */
+	public static String vuurwerkPunt(Kleur k, int nummer) {
+		return "quizvuurwerk_" + k.id() + "_" + nummer;
+	}
+
+	private static List<String> vuurwerkPunten() {
+		List<String> uit = new ArrayList<>();
+		for (Kleur k : Kleur.values()) {
+			for (int n = 1; n <= VUURWERK_PER_BANK; n++) {
+				uit.add(vuurwerkPunt(k, n));
+			}
+		}
+		return uit;
+	}
+
+	private static BlockPos blok(String punt) {
+		BlokPos b = Spel.punt(punt).blokPos();
+		return new BlockPos(b.x(), b.y(), b.z());
 	}
 
 	/** {@code /quiz punt <kleur> [<aantal>]}: om een verkeerde klik recht te zetten. */

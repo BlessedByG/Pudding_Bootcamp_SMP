@@ -298,8 +298,13 @@ wie in de buurt staat.
 - Iedereen staat bij de bank van zijn team, zonder spullen: alles is na de mob arena ingeleverd.
 - **Bij elke bank staat een lamp.** Die van het team dat aan de beurt is, brandt.
 - **Pudding presenteert** en zit dus niet bij zijn eigen team. Dat team heeft in de quiz één
-  speler minder: pech. Pudding krijgt als enige iets: drie items in de hotbar, **groene wol**
-  (goed), **rode wol** (fout) en een item om **het rad te draaien**. Na de quiz zijn die weer weg.
+  speler minder: pech. Pudding krijgt als enige iets: vier items in de hotbar, **groene wol**
+  (goed), **rode wol** (fout), een item om **het rad te draaien** en een **emerald voor het
+  puntenmenu**. Na de quiz zijn die weer weg.
+- **Het puntenmenu**: per team knoppen −2, −1, +1 en +2. Pudding kan er elk team punten mee
+  geven of afpakken, ook als het niet aan de beurt is: wie bij Pudding slijmt, verdient er
+  misschien een bij. Iedereen ziet het in de chat: "Pudding: +2 voor Rood (7)". Onder 0 kan.
+- **Bij elke bank staan twee dispensers** voor het vuurwerk.
 - Adventure, geen schade, geen timer.
 
 **Het rad**
@@ -313,7 +318,8 @@ wie in de buurt staat.
 1. Pudding draait het rad. In beeld: **ROOD IS AAN DE BEURT**, en de lamp bij de rode bank gaat
    aan.
 2. Pudding leest een vraag voor. Het team overlegt en geeft antwoord.
-3. **Goed?** Pudding klikt de groene wol: **GOED!** in beeld en een punt voor dat team. Het team
+3. **Goed?** Pudding klikt de groene wol: **GOED!** in beeld, een punt voor dat team, en uit de
+   twee dispensers bij hun bank een vuurpijl in de teamkleur. Het team
    krijgt de volgende vraag. Vanaf twee op rij staat de reeks erbij: "+1 Rood · 3 op rij".
 4. **Fout?** Pudding klikt de rode wol: **FOUT!** in beeld, geen punt, de lamp gaat uit. Dan
    draait Pudding het rad

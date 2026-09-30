@@ -7,8 +7,11 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.block.Blocks;
 import nl.pudding.bootcamp.config.ConfigStore;
+import nl.pudding.bootcamp.core.BlokPos;
 import nl.pudding.bootcamp.core.Kleur;
 import nl.pudding.bootcamp.core.Punt;
 import nl.pudding.bootcamp.core.Ronde;
@@ -43,6 +46,9 @@ final class QuizCommand {
 		}));
 		cmd.then(Commands.literal("lamp").then(Commands.argument("kleur", StringArgumentType.word()).suggests(BcCommand.KLEUREN)
 				.executes(QuizCommand::lamp)));
+		cmd.then(Commands.literal("vuurwerk").then(Commands.argument("kleur", StringArgumentType.word()).suggests(BcCommand.KLEUREN)
+				.then(Commands.argument("nummer", IntegerArgumentType.integer(1, Quiz.VUURWERK_PER_BANK))
+						.executes(QuizCommand::vuurwerk))));
 		cmd.then(Commands.literal("draai").executes(ctx -> actie(ctx, (q, s) -> q.draai(s), "Het rad draait.")));
 		cmd.then(Commands.literal("goed").executes(ctx -> actie(ctx, (q, s) -> q.goed(s), "Goed.")));
 		cmd.then(Commands.literal("fout").executes(ctx -> actie(ctx, (q, s) -> q.fout(s), "Fout.")));
@@ -89,6 +95,27 @@ final class QuizCommand {
 			return BcCommand.fout(ctx, "Kijk naar de lamp (binnen 32 blokken).");
 		}
 		return BcCommand.bewaard(ctx, "Lamp van " + k.naam() + " (quizlamp_" + k.id() + ") gezet op " + SetupCommands.beschrijfPunt(p));
+	}
+
+	/** Een dispenser bij de bank van een team, waar bij een goed antwoord een vuurpijl uit komt. */
+	private static int vuurwerk(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+		ServerPlayer speler = ctx.getSource().getPlayerOrException();
+		Kleur k = BcCommand.kleur(ctx, "kleur");
+		if (k == null) {
+			return BcCommand.fout(ctx, "Kies rood, blauw, groen of geel.");
+		}
+		String naam = Quiz.vuurwerkPunt(k, IntegerArgumentType.getInteger(ctx, "nummer"));
+		Punt p = SetupCommands.zetBlokPunt(speler, naam);
+		if (p == null) {
+			return BcCommand.fout(ctx, "Kijk naar de dispenser (binnen 32 blokken).");
+		}
+		BlokPos b = p.blokPos();
+		if (!speler.level().getBlockState(new BlockPos(b.x(), b.y(), b.z())).is(Blocks.DISPENSER)) {
+			ConfigStore.get().punten().remove(naam);
+			return BcCommand.fout(ctx, "Dat blok is geen dispenser.");
+		}
+		return BcCommand.bewaard(ctx, "Vuurwerk " + IntegerArgumentType.getInteger(ctx, "nummer") + " van " + k.naam() + " (" + naam
+				+ ") gezet op " + SetupCommands.beschrijfPunt(p) + ". De pijl vliegt de kant op waar de dispenser naartoe wijst.");
 	}
 
 	private static int punt(CommandContext<CommandSourceStack> ctx, int aantal) {

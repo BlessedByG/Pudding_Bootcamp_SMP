@@ -102,7 +102,7 @@ public final class Teammenu extends ChestMenu {
 		return kop;
 	}
 
-	private static Item wol(Kleur k) {
+	public static Item wol(Kleur k) {
 		return switch (k) {
 			case ROOD -> Items.WOOL.red();
 			case BLAUW -> Items.WOOL.blue();
