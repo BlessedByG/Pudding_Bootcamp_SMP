@@ -3,8 +3,10 @@ package nl.pudding.bootcamp.core;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
@@ -62,15 +64,42 @@ class RegelsTest {
 	}
 
 	@Test
-	void valkistGokIsVijftigVijftig() {
+	void valkistGokIsKwartKwartHelft() {
 		Random random = new Random(2);
+		Map<Regels.Val, Integer> telling = new EnumMap<>(Regels.Val.class);
+		for (int i = 0; i < 20_000; i++) {
+			telling.merge(Regels.valkistGok(random, true), 1, Integer::sum);
+		}
+		assertTrue(telling.get(Regels.Val.SCHRIK) > 4_700 && telling.get(Regels.Val.SCHRIK) < 5_300, "schrik " + telling);
+		assertTrue(telling.get(Regels.Val.KLOP) > 4_700 && telling.get(Regels.Val.KLOP) < 5_300, "klop " + telling);
+		assertTrue(telling.get(Regels.Val.MOBS) > 9_600 && telling.get(Regels.Val.MOBS) < 10_400, "mobs " + telling);
+	}
+
+	@Test
+	void valkistZonderMobsIsSchrikOfKlop() {
+		Random random = new Random(3);
 		int schrik = 0;
 		for (int i = 0; i < 10_000; i++) {
-			if (Regels.valkistGok(random) == Regels.Val.SCHRIK) {
+			Regels.Val v = Regels.valkistGok(random, false);
+			assertTrue(v != Regels.Val.MOBS);
+			if (v == Regels.Val.SCHRIK) {
 				schrik++;
 			}
 		}
 		assertTrue(schrik > 4_700 && schrik < 5_300, "schrik " + schrik);
+	}
+
+	@Test
+	void schrikFotoVastOfWillekeurig() {
+		Random random = new Random(4);
+		assertEquals(3, Regels.schrikFoto(3, random));
+		Set<Integer> gezien = new HashSet<>();
+		for (int i = 0; i < 500; i++) {
+			int foto = Regels.schrikFoto(0, random);
+			assertTrue(foto >= 1 && foto <= Regels.SCHRIK_FOTOS, "foto " + foto);
+			gezien.add(foto);
+		}
+		assertEquals(Regels.SCHRIK_FOTOS, gezien.size());
 	}
 
 	@Test

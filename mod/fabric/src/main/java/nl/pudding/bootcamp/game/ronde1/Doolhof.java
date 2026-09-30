@@ -273,7 +273,8 @@ public final class Doolhof extends RondeLogica {
 			for (String n : schrik) {
 				if (!st.schrikGehad.contains(n) && Spel.regio(n).bevat(s.getX(), s.getZ())) {
 					st.schrikGehad.add(n);
-					Schrik.op(s);
+					// Per plek een vaste foto of willekeurig: /doolhof schrik.
+					Schrik.op(s, Spel.instellingen().schrikFoto(n));
 				}
 			}
 		}

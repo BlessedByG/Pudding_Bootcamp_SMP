@@ -61,6 +61,7 @@ Vooraf instellen, in minuten (blijft bewaard):
 | `/doolhof hinttekst` | geen: dan noemt de mod de windrichting. Zet je eigen hint, bijvoorbeeld "De echte gang begint bij de lantaarn". |
 | `/doolhof poortmelding` | aan: hoorn en title als de uitgang opengaat. `uit` voor een stille poort. |
 | `/doolhof valmobs` | willekeurig 3 t/m 10 mobs per valkist |
+| `/doolhof schrik` | elke schrikplek een willekeurige foto; `/doolhof schrik <nr> <1..5>` voor een vaste |
 | `/doolhof wachttekst` | "Wacht op het startsein" |
 | `/ei timer` | 15 |
 | `/ei blokken` | netherite 6, diamond 90, gold 120, redstone 10, emerald 10, tnt 10, glowstone 10, slime 10, target 5 (voorlopig; samen 271, dat moet op de deepslate passen) |
@@ -120,8 +121,9 @@ zit, maar de commander moet alleen commander zijn.
    plekken op de onderste ring, `/clown vloer <diameter>` midden in de Arena,
    en eventueel `colosseum` (gebouwd). Voor de finale `/finale plek 1` en `/finale plek 2` op de
    vloer, bijvoorbeeld tegenover elkaar en kijkend naar elkaar.
-9. Het resource pack: foto van Clown (jpg of png, elk formaat) en het lachje (ogg) in
-   `pack/aanleveren/`, `java pack/BouwPack.java`, de zip online zetten (uurtje, zie
+9. Het resource pack: de vijf jumpscare-foto's (`schrik_1.png` t/m `schrik_5.png`), het
+   schrikgeluid (`schrik.ogg`) en de 8D-klop (`klop.ogg`) in `pack/aanleveren/`,
+   `java pack/BouwPack.java`, de zip online zetten (uurtje, zie
    [04-technische-schets.md](04-technische-schets.md)).
 10. De mod ombouwen naar dit rondeplan ([08-taakplan.md](08-taakplan.md)), dan met de wand,
    `/bc point` en de commando's per ronde alle regio's en punten zetten, zoals hierboven per
@@ -136,8 +138,8 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
 
 - [ ] Jar in `mods/`, samen met Fabric API en de voice-mod. In de console `Pudding Bootcamp
       geladen` en dat de standaardbestanden in `config/bootcamp/` zijn geschreven.
-- [ ] Resource pack wordt aangeboden bij het joinen. `/bc schrik <naam>`: foto vult het scherm,
-      lachje klinkt.
+- [ ] Resource pack wordt aangeboden bij het joinen. `/bc schrik <naam> 1` t/m `5`: elke foto vult
+      het scherm, het schrikgeluid klinkt. `/bc klop <naam>`: de klop gaat van oor naar oor.
 - [ ] `/bc wand`, een regio opslaan, `/bc region show`, `/bc point set`, `/bc point tp`,
       `/bc status`, `/bc kit basis`.
 - [ ] Een T-vormige regio: `/bc region save test`, tweede selectie, `/bc region add test`.
@@ -162,8 +164,8 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
       terug, `VERGIFTIGD` in de finishruimte en je zit in het kleinste team. Was je de laatste
       zonder team: `DOOLHOF VOORBIJ`. `/doolhof einde` sluit het doolhof ook midden in het gif af.
 - [ ] Valkist in het doolhof: de bossbar noemt alleen de totale tijd. Een trapped chest openen geeft
-      de jumpscare óf `/doolhof valmobs` husks en silverfish om je heen (open er een paar: ongeveer
-      de helft is elk); nog eens openen geeft een lege kist, een tweede speler krijgt hem wel. `/doolhof poortmelding uit`: de poort gaat stil
+      de jumpscare (willekeurige foto), de 8D-klop, of `/doolhof valmobs` husks en silverfish om je
+      heen (open er een paar: ongeveer een kwart jumpscare, een kwart klop, de helft mobs); nog eens openen geeft een lege kist, een tweede speler krijgt hem wel. `/doolhof poortmelding uit`: de poort gaat stil
       open. Na `/doolhof stop` zijn de mobs weg.
 - [ ] `/ei vastleggen`, `/ei blokken`: het overzicht noemt het aantal deepslate-plekken.
 - [ ] `/ei start`: spelers verdeeld over de startplekken, punten per block, alles wat je vindt in

@@ -18,6 +18,7 @@ import nl.pudding.bootcamp.config.Standaardbestanden;
 import nl.pudding.bootcamp.core.BootcampConfig;
 import nl.pudding.bootcamp.core.Doodteksten;
 import nl.pudding.bootcamp.core.Kleur;
+import nl.pudding.bootcamp.core.Regels;
 import nl.pudding.bootcamp.core.Rol;
 import nl.pudding.bootcamp.game.Reset;
 import nl.pudding.bootcamp.game.Spel;
@@ -36,7 +37,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Stream;
 
-/** {@code /bc status|kit|team|schrik|kijker|reset|doodtekst}: wat voor de hele avond geldt, plus de noodknoppen. */
+/** {@code /bc status|kit|team|schrik|klop|kijker|reset|doodtekst}: wat voor de hele avond geldt, plus de noodknoppen. */
 final class AlgemeenCommands {
 	private AlgemeenCommands() {
 	}
@@ -72,7 +73,11 @@ final class AlgemeenCommands {
 		bc.then(Commands.literal("team").then(Commands.argument("speler", StringArgumentType.word()).suggests(BcCommand.ONLINE)
 				.then(Commands.argument("kleur", StringArgumentType.word()).suggests(TEAMS).executes(AlgemeenCommands::team))));
 		bc.then(Commands.literal("schrik").then(Commands.argument("speler", EntityArgument.player())
-				.executes(AlgemeenCommands::schrik)));
+				.executes(ctx -> schrik(ctx, 0))
+				.then(Commands.argument("foto", IntegerArgumentType.integer(1, Regels.SCHRIK_FOTOS))
+						.executes(ctx -> schrik(ctx, IntegerArgumentType.getInteger(ctx, "foto"))))));
+		bc.then(Commands.literal("klop").then(Commands.argument("speler", EntityArgument.player())
+				.executes(AlgemeenCommands::klop)));
 		bc.then(Commands.literal("kijker").then(Commands.argument("speler", EntityArgument.player())
 				.then(Commands.literal("aan").executes(ctx -> kijker(ctx, true)))
 				.then(Commands.literal("uit").executes(ctx -> kijker(ctx, false)))));
@@ -158,10 +163,17 @@ final class AlgemeenCommands {
 		return BcCommand.ok(ctx, naam + " " + wat + ".");
 	}
 
-	private static int schrik(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+	/** @param foto 1 t/m 5, of 0 voor een willekeurige */
+	private static int schrik(CommandContext<CommandSourceStack> ctx, int foto) throws CommandSyntaxException {
 		ServerPlayer speler = EntityArgument.getPlayer(ctx, "speler");
-		Schrik.op(speler);
-		return BcCommand.info(ctx, "Jumpscare naar " + Mc.naam(speler) + ".");
+		Schrik.op(speler, foto);
+		return BcCommand.info(ctx, "Jumpscare naar " + Mc.naam(speler) + (foto == 0 ? " (willekeurige foto)." : " (foto " + foto + ")."));
+	}
+
+	private static int klop(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+		ServerPlayer speler = EntityArgument.getPlayer(ctx, "speler");
+		Schrik.klop(speler);
+		return BcCommand.info(ctx, "8D-klop naar " + Mc.naam(speler) + ".");
 	}
 
 	private static int kijker(CommandContext<CommandSourceStack> ctx, boolean aan) throws CommandSyntaxException {

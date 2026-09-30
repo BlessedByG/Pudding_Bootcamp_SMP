@@ -8,6 +8,7 @@ import net.minecraft.SharedConstants;
 import net.minecraft.client.gui.font.providers.GlyphProviderDefinition;
 import net.minecraft.server.Bootstrap;
 import nl.pudding.bootcamp.core.QuizRad;
+import nl.pudding.bootcamp.core.Regels;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -46,7 +47,9 @@ class PackFontTest {
 
 	@Test
 	void schrik() throws IOException {
-		controleer("schrik.json", Schrik.TEKST);
+		for (int foto = 1; foto <= Regels.SCHRIK_FOTOS; foto++) {
+			controleer("schrik_" + foto + ".json", Schrik.TEKST);
+		}
 	}
 
 	@Test

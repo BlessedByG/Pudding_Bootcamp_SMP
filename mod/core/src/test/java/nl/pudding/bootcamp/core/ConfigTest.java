@@ -37,6 +37,9 @@ class ConfigTest {
 		c.instellingen().zetVeldHoogte(1);
 		c.instellingen().zetPoortMelding(false);
 		c.instellingen().zetValMobs(2, 6);
+		c.instellingen().zetSchrikFoto("schrik_2", 4);
+		c.instellingen().zetSchrikFoto("schrik_3", 1);
+		c.instellingen().zetSchrikFoto("schrik_3", 0);
 		c.instellingen().zetDoolhofWachttekst("Nog even geduld");
 		c.instellingen().zetWarden(Instellingen.WardenWaarde.LEVEN, 300);
 
@@ -69,6 +72,9 @@ class ConfigTest {
 		assertFalse(t.instellingen().poortMelding());
 		assertEquals(2, t.instellingen().valMobsMin());
 		assertEquals(6, t.instellingen().valMobsMax());
+		assertEquals(4, t.instellingen().schrikFoto("schrik_2"));
+		assertEquals(0, t.instellingen().schrikFoto("schrik_3"));
+		assertEquals(1, t.instellingen().schrikFotos().size());
 		assertEquals("Nog even geduld", t.instellingen().doolhofWachttekst());
 		assertEquals(300, t.instellingen().warden(Instellingen.WardenWaarde.LEVEN));
 		assertEquals(8, t.instellingen().warden(Instellingen.WardenWaarde.KLAP));

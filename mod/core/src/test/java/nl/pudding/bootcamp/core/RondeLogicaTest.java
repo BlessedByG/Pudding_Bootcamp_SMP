@@ -666,6 +666,10 @@ class RondeLogicaTest {
 			assertNotNull(Instellingen.checkValMobs(-1, 3));
 			assertNotNull(Instellingen.checkValMobs(3, 21));
 			assertNotNull(Instellingen.checkValMobs(10, 3));
+			assertNull(Instellingen.checkSchrikFoto(0));
+			assertNull(Instellingen.checkSchrikFoto(5));
+			assertNotNull(Instellingen.checkSchrikFoto(6));
+			assertNotNull(Instellingen.checkSchrikFoto(-1));
 		}
 	}
 }

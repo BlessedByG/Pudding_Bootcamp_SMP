@@ -1,0 +1,9 @@
+{
+  "providers": [
+    {"type": "bitmap", "file": "bootcamp:font/schrik_1_0_0.png", "height": 34, "ascent": 34, "chars": ["\uE000"]},
+    {"type": "bitmap", "file": "bootcamp:font/schrik_1_0_1.png", "height": 34, "ascent": 34, "chars": ["\uE001"]},
+    {"type": "bitmap", "file": "bootcamp:font/schrik_1_1_0.png", "height": 34, "ascent": 0, "chars": ["\uE010"]},
+    {"type": "bitmap", "file": "bootcamp:font/schrik_1_1_1.png", "height": 34, "ascent": 0, "chars": ["\uE011"]},
+    {"type": "space", "advances": {"\uE002": 1, "\uE003": 1, "\uE004": 1, "\uE005": 1, "\uE012": 1, "\uE013": 1, "\uE014": 1, "\uE015": 1, "\uF801": -1, "\uF802": -56}}
+  ]
+}

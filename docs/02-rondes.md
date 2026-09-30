@@ -58,7 +58,10 @@ Clown vs All en het Rad pas bij ronde 5. Nog geen teams; iedereen is wit.
   de hand te vullen. Denk aan losse diamond armor pieces, een enchanted sword, een boog met
   pijlen, een gapple. Geen ender pearls: zonder plafond gooi je die zo over de haag.
 - 2 of 3 **schrikplekken** in het doolhof: loop je erdoor, dan krijg je de jumpscare. Per plek één
-  keer per speler.
+  keer per speler. Per plek kies je een vaste foto of een willekeurige (`/doolhof schrik`).
+- **Valkisten** (trapped chests) zonder loot. Wie er een opent: 25% een jumpscare met een
+  willekeurige foto, 25% een 8D-klop in je koptelefoon, 50% mobs om je heen. Per kist één keer
+  per speler.
 
 **Nep-uitgang**
 - Loop je een nep-uitgang in, dan: een creeper-explosie (particles en geluid, geen schade), groot
@@ -66,8 +69,8 @@ Clown vs All en het Rad pas bij ronde 5. Nog geen teams; iedereen is wit.
   en je staat weer in de startruimte in het midden. De grapjes staan in de config.
 
 **Jumpscare**
-- Een foto van Clown schermvullend in beeld met het lachje van Clown erbij, een paar tellen. Daarvoor
-  gebruikt de server een resource pack; zie [04-technische-schets.md](04-technische-schets.md).
+- Een van de vijf foto's schermvullend in beeld met het schrikgeluid erbij, een paar tellen.
+  Daarvoor gebruikt de server een resource pack; zie [04-technische-schets.md](04-technische-schets.md).
 
 **De uitgang**
 - De uitgang is een poort die pas **na 4 minuten** (instelbaar) opengaat. Tot die tijd kun je de echte gang

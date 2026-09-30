@@ -82,15 +82,33 @@ public final class Regels {
 	// Ronde 1
 
 	public enum Val {
-		/** De jumpscare voor wie hem opent. */
+		/** De jumpscare met een willekeurige foto, voor wie hem opent. */
 		SCHRIK,
+		/** De 8D-klop, alleen voor wie hem opent. */
+		KLOP,
 		/** Husks en silverfish om hem heen. */
 		MOBS
 	}
 
-	/** R1.4: wat een valkist in het doolhof doet, 50/50. */
-	public static Val valkistGok(RandomGenerator random) {
-		return random.nextBoolean() ? Val.SCHRIK : Val.MOBS;
+	/**
+	 * R1.4: wat een valkist in het doolhof doet: 25% de jumpscare, 25% de 8D-klop, 50% mobs. Staan
+	 * de mobs uit ({@code /doolhof valmobs 0}), dan de jumpscare of de klop, 50/50.
+	 */
+	public static Val valkistGok(RandomGenerator random, boolean metMobs) {
+		int gok = random.nextInt(metMobs ? 4 : 2);
+		return gok == 0 ? Val.SCHRIK : gok == 1 ? Val.KLOP : Val.MOBS;
+	}
+
+	/** R1.6: zoveel jumpscare-foto's zitten er in het resource pack (font {@code schrik_1} t/m {@code schrik_5}). */
+	public static final int SCHRIK_FOTOS = 5;
+
+	/**
+	 * R1.6: welke foto een jumpscare laat zien.
+	 *
+	 * @param ingesteld 1 t/m {@link #SCHRIK_FOTOS} voor een vaste foto, 0 voor willekeurig
+	 */
+	public static int schrikFoto(int ingesteld, RandomGenerator random) {
+		return ingesteld >= 1 && ingesteld <= SCHRIK_FOTOS ? ingesteld : 1 + random.nextInt(SCHRIK_FOTOS);
 	}
 
 	// Ronde 2

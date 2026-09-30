@@ -33,10 +33,12 @@ import java.util.zip.ZipOutputStream;
  *
  * Alleen de JDK is nodig. Het programma:
  * <ol>
- * <li>leest de foto van Clown uit {@code pack/aanleveren/} (jpg, jpeg of png, elk formaat) en
- * schaalt hem naar 476 pixels hoog (of zo breed als past, tot 1428 pixels), met behoud van de
- * verhouding; zonder foto tekent het een placeholder;</li>
- * <li>zet het lachje ({@code clown_lach.ogg}) erbij als het er is;</li>
+ * <li>leest de vijf jumpscare-foto's {@code schrik_1} t/m {@code schrik_5} uit
+ * {@code pack/aanleveren/} (jpg, jpeg of png, elk formaat) en schaalt ze naar 476 pixels hoog (of zo
+ * breed als past, tot 1428 pixels), met behoud van de verhouding; een foto die er niet is, wordt een
+ * placeholder;</li>
+ * <li>zet de geluiden {@code schrik.ogg} (de jumpscare) en {@code klop.ogg} (de 8D-klop uit de
+ * valkisten) erbij als ze er zijn;</li>
  * <li>tekent het quiz-rad: 64 standen van 484 x 484, elk 5,625 graden verder met de klok mee
  * gedraaid, 16 vakken in de teamkleuren, pijltje vast bovenin;</li>
  * <li>knipt de foto en elke stand van het rad in tegels (zie hieronder) en schrijft de fonts en
@@ -76,6 +78,8 @@ public class BouwPack {
 	static final int SCHRIK_KOLOMMEN = 6;
 	static final int SCHRIK_EENHEDEN = 34;
 	static final int SCHRIK_PX_PER_EENHEID = 7;
+	/** Zoveel jumpscare-foto's, elk in een eigen font {@code schrik_1} t/m {@code schrik_5} (Regels.SCHRIK_FOTOS in de mod). */
+	static final int FOTOS = 5;
 
 	/**
 	 * Het quiz-rad: 484 x 484 pixels, 2 x 2 tegels van 22 eenheden (242 pixels, 11 per eenheid), dus
@@ -107,61 +111,70 @@ public class BouwPack {
 		Files.createDirectories(assets.resolve("font"));
 		Files.createDirectories(aanleveren);
 
-		// 1. De foto van Clown, in tegels
-		Path foto = zoekFoto(aanleveren);
-		BufferedImage bron;
-		if (foto != null) {
-			bron = ImageIO.read(foto.toFile());
-			if (bron == null) {
-				throw new IllegalStateException(foto + " is geen jpg of png die Java kan lezen. Sla hem opnieuw op als png.");
-			}
-		} else {
-			bron = placeholder();
-		}
-		BufferedImage clown = schaalFoto(bron);
-		System.out.println(foto != null
-				? "Foto: " + foto.getFileName() + " (" + bron.getWidth() + " x " + bron.getHeight() + ") -> " + clown.getWidth() + " x " + clown.getHeight()
-				: "Foto: geen clown.jpg of clown.png in " + aanleveren + ", dus een placeholder.");
-		FontJson schrik = new FontJson();
-		int tegelPx = SCHRIK_EENHEDEN * SCHRIK_PX_PER_EENHEID;
-		int kolommen = (clown.getWidth() + tegelPx - 1) / tegelPx;
-		for (int r = 0; r < 2; r++) {
-			for (int c = 0; c < SCHRIK_KOLOMMEN; c++) {
-				int code = SCHRIK_EERSTE + r * SCHRIK_RIJ_STAP + c;
-				if (c >= kolommen) {
-					// Deze foto heeft deze kolom niet nodig: +1, samen met de -1 erachter niks.
-					schrik.spatie(code, 1);
-					continue;
+		// 1. De jumpscare-foto's, elk in tegels in een eigen font (schrik_1 t/m schrik_5)
+		Files.deleteIfExists(assets.resolve("font").resolve("schrik.json"));
+		for (int nr = 1; nr <= FOTOS; nr++) {
+			Path foto = zoekFoto(aanleveren, "schrik_" + nr);
+			BufferedImage bron;
+			if (foto != null) {
+				bron = ImageIO.read(foto.toFile());
+				if (bron == null) {
+					throw new IllegalStateException(foto + " is geen jpg of png die Java kan lezen. Sla hem opnieuw op als png.");
 				}
-				int b = Math.min(tegelPx, clown.getWidth() - c * tegelPx);
-				String naam = "clown_" + r + "_" + c + ".png";
-				schrijfTegel(clown.getSubimage(c * tegelPx, r * tegelPx, b, tegelPx), fontTex.resolve(naam));
-				schrik.tegel("bootcamp:font/" + naam, SCHRIK_EENHEDEN, r == 0 ? SCHRIK_EENHEDEN : 0, code);
+			} else {
+				bron = placeholder("foto " + nr + " volgt");
 			}
+			BufferedImage beeld = schaalFoto(bron);
+			System.out.println(foto != null
+					? "Foto " + nr + ": " + foto.getFileName() + " (" + bron.getWidth() + " x " + bron.getHeight() + ") -> " + beeld.getWidth() + " x " + beeld.getHeight()
+					: "Foto " + nr + ": geen schrik_" + nr + ".png of .jpg in " + aanleveren + ", dus een placeholder.");
+			FontJson schrik = new FontJson();
+			int tegelPx = SCHRIK_EENHEDEN * SCHRIK_PX_PER_EENHEID;
+			int kolommen = (beeld.getWidth() + tegelPx - 1) / tegelPx;
+			for (int r = 0; r < 2; r++) {
+				for (int c = 0; c < SCHRIK_KOLOMMEN; c++) {
+					int code = SCHRIK_EERSTE + r * SCHRIK_RIJ_STAP + c;
+					if (c >= kolommen) {
+						// Deze foto heeft deze kolom niet nodig: +1, samen met de -1 erachter niks.
+						schrik.spatie(code, 1);
+						continue;
+					}
+					int b = Math.min(tegelPx, beeld.getWidth() - c * tegelPx);
+					String naam = "schrik_" + nr + "_" + r + "_" + c + ".png";
+					schrijfTegel(beeld.getSubimage(c * tegelPx, r * tegelPx, b, tegelPx), fontTex.resolve(naam));
+					schrik.tegel("bootcamp:font/" + naam, SCHRIK_EENHEDEN, r == 0 ? SCHRIK_EENHEDEN : 0, code);
+				}
+			}
+			schrik.spatie(TERUG_EEN, -1);
+			schrik.spatie(TERUG_RIJ, -beeld.getWidth() / SCHRIK_PX_PER_EENHEID);
+			schrijf(assets.resolve("font").resolve("schrik_" + nr + ".json"), schrik.json());
 		}
-		schrik.spatie(TERUG_EEN, -1);
-		schrik.spatie(TERUG_RIJ, -clown.getWidth() / SCHRIK_PX_PER_EENHEID);
-		schrijf(assets.resolve("font").resolve("schrik.json"), schrik.json());
 
-		// 2. Het lachje
-		Path lach = aanleveren.resolve("clown_lach.ogg");
+		// 2. De geluiden: de jumpscare en de 8D-klop (stereo blijft stereo: Minecraft speelt dat
+		// zonder richting af, dus het 8D-effect blijft)
 		Path sounds = assets.resolve("sounds");
 		Path soundsJson = assets.resolve("sounds.json");
-		if (Files.exists(lach)) {
-			Files.createDirectories(sounds);
-			Files.copy(lach, sounds.resolve("clown_lach.ogg"), StandardCopyOption.REPLACE_EXISTING);
-			schrijf(soundsJson, """
-					{
-					  "clown_lach": {
-					    "sounds": ["bootcamp:clown_lach"]
-					  }
-					}
-					""");
-			System.out.println("Lachje: clown_lach.ogg erbij.");
-		} else {
-			Files.deleteIfExists(sounds.resolve("clown_lach.ogg"));
+		leeg(sounds);
+		List<String> geluiden = new ArrayList<>();
+		for (String[] g : new String[][] {{"schrik", "Jumpscare", "false"}, {"klop", "8D-klop", "true"}}) {
+			Path ogg = aanleveren.resolve(g[0] + ".ogg");
+			if (Files.exists(ogg)) {
+				Files.createDirectories(sounds);
+				Files.copy(ogg, sounds.resolve(g[0] + ".ogg"), StandardCopyOption.REPLACE_EXISTING);
+				// Een lang geluid streamt, dan hoeft het niet helemaal in het geheugen.
+				geluiden.add("  \"" + g[0] + "\": {\"sounds\": [{\"name\": \"bootcamp:" + g[0] + "\", \"stream\": " + g[2] + "}]}");
+				System.out.println(g[1] + ": " + g[0] + ".ogg erbij.");
+			} else if (Files.exists(aanleveren.resolve(g[0] + ".wav"))) {
+				System.out.println(g[1] + ": " + g[0] + ".wav gevonden, maar Minecraft speelt alleen ogg vorbis. Zet hem om naar "
+						+ g[0] + ".ogg (Audacity: Bestand > Exporteren > Exporteren als OGG); tot dan is het stil.");
+			} else {
+				System.out.println(g[1] + ": geen " + g[0] + ".ogg in " + aanleveren + "; tot dan is het stil.");
+			}
+		}
+		if (geluiden.isEmpty()) {
 			Files.deleteIfExists(soundsJson);
-			System.out.println("Lachje: geen clown_lach.ogg in " + aanleveren + "; de jumpscare is dan stil.");
+		} else {
+			schrijf(soundsJson, "{\n" + String.join(",\n", geluiden) + "\n}\n");
 		}
 
 		// 3. Het quiz-rad, elke stand in 2 x 2 tegels
@@ -289,9 +302,9 @@ public class BouwPack {
 		throw new IllegalStateException("Draai dit vanuit de repo (java pack/BouwPack.java) of vanuit de map pack/.");
 	}
 
-	static Path zoekFoto(Path map) {
-		for (String naam : List.of("clown.png", "clown.jpg", "clown.jpeg", "clown.PNG", "clown.JPG", "clown.JPEG")) {
-			Path p = map.resolve(naam);
+	static Path zoekFoto(Path map, String basis) {
+		for (String ext : List.of(".png", ".jpg", ".jpeg", ".PNG", ".JPG", ".JPEG")) {
+			Path p = map.resolve(basis + ext);
 			if (Files.exists(p)) {
 				return p;
 			}
@@ -326,8 +339,8 @@ public class BouwPack {
 		return uit;
 	}
 
-	/** Tot de foto er is: een clownsgezicht met "foto volgt". */
-	static BufferedImage placeholder() {
+	/** Tot de foto er is: een clownsgezicht met een tekst eronder. */
+	static BufferedImage placeholder(String tekst) {
 		int n = 512;
 		BufferedImage beeld = new BufferedImage(n, n, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = mooi(beeld);
@@ -347,7 +360,6 @@ public class BouwPack {
 		g.draw(new Arc2D.Double(166, 250, 180, 110, 200, 140, Arc2D.OPEN));
 		g.setColor(Color.WHITE);
 		g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 40));
-		String tekst = "foto volgt";
 		FontMetrics fm = g.getFontMetrics();
 		g.drawString(tekst, (n - fm.stringWidth(tekst)) / 2, 480);
 		g.dispose();
