@@ -5,8 +5,8 @@ import java.util.random.RandomGenerator;
 /**
  * Een rad dat rondloopt, steeds langzamer, en altijd op het doelslot stopt. De startpositie en het
  * aantal rondes zijn echt willekeurig; de landing ligt vast. Het Rad van ronde 5 loopt over de
- * deelnemers (rigged op de uitverkorene), het quiz-rad over de 64 standen van het plaatje uit het
- * pack (met een willekeurig doel).
+ * deelnemers (rigged op de uitverkorene). Het quiz-rad loopt op de maat van zijn geluid: zie
+ * {@link QuizDraai}.
  *
  * <p>Tick-gestuurd: roep elke servertick {@link #tick()} aan.
  */
@@ -22,8 +22,6 @@ public final class Rad {
 
 	/** Het Rad van ronde 5: 2 ticks per stap, de laatste 25 stappen oplopend naar 30. */
 	public static final Ritme KROON = new Ritme(2, 30, 25);
-	/** Het quiz-rad: 1 tick per stand, de laatste 40 standen oplopend naar 6. */
-	public static final Ritme QUIZ = new Ritme(1, 6, 40);
 
 	public static final int SNELSTE_STAP = KROON.snelste();
 	public static final int TRAAGSTE_STAP = KROON.traagste();

@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FontDescription;
@@ -12,6 +13,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.InteractionResult;
@@ -33,9 +35,9 @@ import nl.pudding.bootcamp.core.BlokPos;
 import nl.pudding.bootcamp.core.BossbarTekst;
 import nl.pudding.bootcamp.core.Kleur;
 import nl.pudding.bootcamp.core.Punt;
+import nl.pudding.bootcamp.core.QuizDraai;
 import nl.pudding.bootcamp.core.QuizRad;
 import nl.pudding.bootcamp.core.QuizStand;
-import nl.pudding.bootcamp.core.Rad;
 import nl.pudding.bootcamp.core.Regels;
 import nl.pudding.bootcamp.core.Rol;
 import nl.pudding.bootcamp.core.Ronde;
@@ -65,8 +67,9 @@ import java.util.Locale;
  */
 public final class Quiz extends RondeLogica {
 	public static final Identifier RAD_FONT = Identifier.fromNamespaceAndPath("bootcamp", "rad");
-	/** Zo lang blijft het rad stil op het gekozen vak voordat het team in beeld komt. */
-	private static final int STIL_NA_LANDING = 40;
+	/** Het geluid van een draai (spinwheel): het rad volgt zijn tikjes, zie {@link QuizDraai}. */
+	private static final Identifier RAD_GELUID_ID = Identifier.fromNamespaceAndPath("bootcamp", "rad");
+	private static final Holder<SoundEvent> RAD_GELUID = Holder.direct(SoundEvent.createVariableRangeEvent(RAD_GELUID_ID));
 	/** Binnen zoveel ticks na een klik met een quiz-item telt een volgende klik niet. */
 	private static final int KLIK_PAUZE = 5;
 	/** Zoveel dispensers met vuurwerk staan er bij elke bank. */
@@ -78,9 +81,12 @@ public final class Quiz extends RondeLogica {
 	}
 
 	private final QuizStand stand = new QuizStand();
-	private Rad rad;
-	/** Servertick waarop de landing bekend wordt; -1 als er niks geland is. */
-	private int bekendOp = -1;
+	/** De lopende draai, of {@code null}. */
+	private QuizDraai draai;
+	/** Wanneer de draai (en het geluid) begon, in {@link System#nanoTime()}: echte tijd, ook als de server hapert. */
+	private long draaiStart;
+	/** De stand die nu in beeld staat; -1 voor geen. */
+	private int getoond = -1;
 	private Fase fase = Fase.SPELEN;
 
 	public static void init() {
@@ -259,15 +265,19 @@ public final class Quiz extends RondeLogica {
 		if (fase != Fase.SPELEN) {
 			return "de quiz is voorbij";
 		}
-		if (rad != null || bekendOp >= 0) {
+		if (draai != null) {
 			return "het rad draait al";
 		}
 		stand.draai();
 		for (Kleur k : Kleur.values()) {
 			lamp(server, k, false);
 		}
-		rad = QuizRad.draai(Spel.RANDOM);
-		toonStand(server, rad.pos(), rad.wacht() + 2);
+		draai = QuizDraai.willekeurig(Spel.RANDOM);
+		draaiStart = System.nanoTime();
+		getoond = -1;
+		// Geluid en rad starten op dezelfde tick: het rad volgt de tikjes van het geluid.
+		Mc.geluidAllen(server, RAD_GELUID, 1f, 1f);
+		toonDraai(server, 0);
 		Bossbar.zet(BossbarTekst.quiz(null), BossEvent.BossBarColor.WHITE, 1f);
 		return null;
 	}
@@ -276,43 +286,45 @@ public final class Quiz extends RondeLogica {
 		return Component.literal(QuizRad.glyph(stand)).withStyle(s -> s.withFont(new FontDescription.Resource(RAD_FONT)).withoutShadow());
 	}
 
-	private static void toonStand(MinecraftServer server, int stand, int blijf) {
-		Mc.titleAllen(server, glyph(stand), null, 0, blijf, 0);
+	/** Het plaatje van nu, alleen als de stand veranderd is; hij blijft staan tot de uitslag. */
+	private void toonDraai(MinecraftServer server, double seconden) {
+		int s = draai.stand(seconden);
+		if (s != getoond) {
+			getoond = s;
+			int totUitslag = (int) Math.ceil((QuizDraai.UITSLAG - seconden) * QuizDraai.TICKS_PER_SECONDE);
+			Mc.titleAllen(server, glyph(s), null, 0, Math.max(20, totUitslag + 5), 0);
+		}
 	}
 
 	@Override
 	public void tick(MinecraftServer server) {
-		if (rad != null) {
-			switch (rad.tick()) {
-				case NIKS -> {
-				}
-				case STAP -> {
-					toonStand(server, rad.pos(), rad.wacht() + 2);
-					if (QuizRad.isVakgrens(rad.pos())) {
-						float toon = 0.8f + 0.8f * Math.min(1f, rad.rest() / 40f);
-						Mc.geluidAllen(server, SoundEvents.NOTE_BLOCK_HAT, 1f, toon);
-					}
-				}
-				case GELAND -> {
-					toonStand(server, rad.pos(), STIL_NA_LANDING + 5);
-					bekendOp = server.getTickCount() + STIL_NA_LANDING;
-				}
-			}
+		if (draai == null) {
+			return;
 		}
-		if (bekendOp >= 0 && server.getTickCount() >= bekendOp) {
-			bekendOp = -1;
-			Kleur k = QuizRad.kleurBijStand(rad.pos());
-			rad = null;
-			stand.geland(k);
-			Mc.geluidAllen(server, SoundEvents.PLAYER_LEVELUP, 1f, 1f);
-			Mc.titleAllen(server, Mc.tekst(k.naam().toUpperCase(Locale.ROOT) + " IS AAN DE BEURT", Mc.kleur(k), ChatFormatting.BOLD), null, 0, 50, 15);
-			lamp(server, k, true);
-			bossbar();
+		double seconden = (System.nanoTime() - draaiStart) / 1e9;
+		if (!draai.uitslag(seconden)) {
+			toonDraai(server, seconden);
+			return;
+		}
+		// Het plingeltje in het geluid is het geluid van de uitslag.
+		Kleur k = draai.kleur();
+		draai = null;
+		stand.geland(k);
+		Mc.titleAllen(server, Mc.tekst(k.naam().toUpperCase(Locale.ROOT) + " IS AAN DE BEURT", Mc.kleur(k), ChatFormatting.BOLD), null, 0, 50, 15);
+		lamp(server, k, true);
+		bossbar();
+	}
+
+	/** Een draai die nog loopt stopt, ook zijn geluid (bij {@code /quiz winnaar} en {@code /quiz stop}). */
+	private void stopDraai(MinecraftServer server) {
+		if (draai != null) {
+			draai = null;
+			Mc.stopGeluidAllen(server, RAD_GELUID_ID);
 		}
 	}
 
 	private boolean draait() {
-		return rad != null || bekendOp >= 0;
+		return draai != null;
 	}
 
 	/** {@code /quiz goed} en de groene wol. */
@@ -445,8 +457,7 @@ public final class Quiz extends RondeLogica {
 			return "de quiz is al voorbij";
 		}
 		fase = Fase.VIEREN;
-		rad = null;
-		bekendOp = -1;
+		stopDraai(server);
 		for (Kleur l : Kleur.values()) {
 			lamp(server, l, l == k);
 		}
@@ -572,6 +583,7 @@ public final class Quiz extends RondeLogica {
 
 	@Override
 	public void end(MinecraftServer server) {
+		stopDraai(server);
 		for (Kleur k : Kleur.values()) {
 			lamp(server, k, false);
 		}

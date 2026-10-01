@@ -257,7 +257,8 @@ Minstens één keer de hele avond met 4 tot 8 testers. Let vooral op:
       de aantallen in `waves.json` bijstellen. Punten per mob voelen eerlijk (`/mobarena punten`).
       De warden is haalbaar maar zwaar; anders `/mobarena warden leven|klap|boom <hp>`.
 - [ ] Quiz: Pudding is vanaf het podium bij alle vier de banken te horen. Het rad is goed te
-      lezen in beeld.
+      lezen in beeld. Draai een paar keer: de tikjes van het geluid lopen gelijk met de vakken aan
+      het eind, het rad staat stil voor het plingeltje en het team komt in beeld op het plingeltje.
 - [ ] Clown vs All: jagers kunnen elkaar niet raken, ook niet met pijlen. Kroonwissel zet
       iedereen goed terug. Rad landt op de uitverkorene; draai hem vijf keer. Voelt Strength II voor
       de kroonhouder te sterk of te zwak, en de 10 gapples genoeg?

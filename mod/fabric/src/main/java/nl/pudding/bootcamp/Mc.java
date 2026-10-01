@@ -14,6 +14,8 @@ import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
 import net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
+import net.minecraft.network.protocol.game.ClientboundStopSoundPacket;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -211,6 +213,14 @@ public final class Mc {
 
 	public static void geluidAllen(MinecraftServer server, SoundEvent geluid, float volume, float toonhoogte) {
 		geluidAllen(server, BuiltInRegistries.SOUND_EVENT.wrapAsHolder(geluid), volume, toonhoogte);
+	}
+
+	/** Stopt een geluid bij iedereen, bijvoorbeeld van een draai die wordt afgebroken. */
+	public static void stopGeluidAllen(MinecraftServer server, Identifier geluid) {
+		ClientboundStopSoundPacket pakket = new ClientboundStopSoundPacket(geluid, SoundSource.MASTER);
+		for (ServerPlayer s : spelers(server)) {
+			s.connection.send(pakket);
+		}
 	}
 
 	/** Particles die iedereen ziet, ook van ver. */

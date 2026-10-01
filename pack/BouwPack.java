@@ -37,8 +37,8 @@ import java.util.zip.ZipOutputStream;
  * {@code pack/aanleveren/} (jpg, jpeg of png, elk formaat) en schaalt ze naar 476 pixels hoog (of zo
  * breed als past, tot 1428 pixels), met behoud van de verhouding; een foto die er niet is, wordt een
  * placeholder;</li>
- * <li>zet de geluiden {@code schrik.ogg} (de jumpscare) en {@code klop.ogg} (de 8D-klop uit de
- * valkisten) erbij als ze er zijn;</li>
+ * <li>zet de geluiden {@code schrik.ogg} (de jumpscare), {@code klop.ogg} (de 8D-klop uit de
+ * valkisten) en {@code rad.ogg} (een draai van het quiz-rad) erbij als ze er zijn;</li>
  * <li>tekent het quiz-rad: 64 standen van 484 x 484, elk 5,625 graden verder met de klok mee
  * gedraaid, 16 vakken in de teamkleuren, pijltje vast bovenin;</li>
  * <li>knipt de foto en elke stand van het rad in tegels (zie hieronder) en schrijft de fonts en
@@ -150,13 +150,13 @@ public class BouwPack {
 			schrijf(assets.resolve("font").resolve("schrik_" + nr + ".json"), schrik.json());
 		}
 
-		// 2. De geluiden: de jumpscare en de 8D-klop (stereo blijft stereo: Minecraft speelt dat
+		// 2. De geluiden: de jumpscare, de 8D-klop en het quiz-rad (stereo blijft stereo: Minecraft speelt dat
 		// zonder richting af, dus het 8D-effect blijft)
 		Path sounds = assets.resolve("sounds");
 		Path soundsJson = assets.resolve("sounds.json");
 		leeg(sounds);
 		List<String> geluiden = new ArrayList<>();
-		for (String[] g : new String[][] {{"schrik", "Jumpscare", "false"}, {"klop", "8D-klop", "true"}}) {
+		for (String[] g : new String[][] {{"schrik", "Jumpscare", "false"}, {"klop", "8D-klop", "true"}, {"rad", "Quiz-rad", "false"}}) {
 			Path ogg = aanleveren.resolve(g[0] + ".ogg");
 			if (Files.exists(ogg)) {
 				Files.createDirectories(sounds);

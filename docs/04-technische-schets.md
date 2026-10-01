@@ -150,6 +150,7 @@ Het pack staat in `pack/` in deze repo. **Aanleveren** gaat in `pack/aanleveren/
 | `schrik_1.png` t/m `schrik_5.png` (ook `.jpg` of `.jpeg`) | De vijf jumpscare-foto's; in de mod heten ze foto 1 t/m 5. **Elk formaat en elke verhouding**: vierkant, liggend of staand, zo groot als je wilt. Een webp eerst omzetten naar png. |
 | `schrik.ogg` | Het geluid bij elke jumpscare, ogg vorbis. **Zonder stilte aan het begin** (anders komt het geluid na de foto) en zo hard als je hem wilt: Minecraft speelt nooit harder dan het bestand zelf. Het huidige bestand is 0,362 s ingekort en 12 dB harder gemaakt, zie `pack/aanleveren/LEESMIJ.txt`. |
 | `klop.ogg` | De 8D-klop uit de valkisten, ogg vorbis. **Stereo laten**: Minecraft speelt een stereogeluid zonder richting af, dus het 8D-effect in het bestand blijft. |
+| `rad.ogg` | Het geluid van een draai van het quiz-rad (spinwheel, 11,1 s), ogg vorbis. **Niet inkorten**: de tijdlijn van het rad (`QuizDraai`) is op dit bestand gemeten; een ander geluid betekent de tikjes opnieuw meten. |
 
 Minecraft speelt alleen ogg vorbis. Een wav of mp3 eerst omzetten, met Audacity (Bestand >
 Exporteren > Exporteren als OGG) of `ffmpeg -i in.wav -c:a libvorbis -q:a 5 uit.ogg`. BouwPack
@@ -161,7 +162,7 @@ en het werkt ook op Windows zonder Git Bash. Het programma:
 1. leest de vijf foto's (jpg of png) en schaalt ze naar 476 pixels hoog, met behoud van de
    verhouding (een heel brede foto wordt kleiner, tot 1428 pixels breed); een foto die er niet is,
    wordt een placeholder met "foto N volgt";
-2. zet `schrik.ogg` en `klop.ogg` erbij (de klop streamt, want die is lang; de jumpscare laadt al
+2. zet `schrik.ogg`, `klop.ogg` en `rad.ogg` erbij (de klop streamt, want die is lang; de jumpscare laadt al
    bij het laden van het pack, `preload`, anders laadt Minecraft hem pas bij de eerste keer en komt
    die te laat);
 3. tekent **het quiz-rad** (Java2D, niets aan te leveren): 64 standen van 484 × 484, elk 5,625°
@@ -195,15 +196,15 @@ opnieuw uploaden, nieuwe SHA-1 invullen, server herstarten.
 ```
 pack/
   aanleveren/schrik_1.png … schrik_5.png      wat je aanlevert (jpg of png, elk formaat)
-  aanleveren/schrik.ogg, aanleveren/klop.ogg
+  aanleveren/schrik.ogg, klop.ogg, rad.ogg
   BouwPack.java                               bouwt het pack en de zip
   pack.mcmeta
   assets/bootcamp/font/schrik_N.json          per foto: per tegel een bitmap-provider, plus de spaties
   assets/bootcamp/textures/font/schrik_N_R_C.png de tegels van foto N (rij R, kolom C), gemaakt door BouwPack
   assets/bootcamp/font/rad.json               per tegel een bitmap-provider (64 standen × 4), plus de spaties
   assets/bootcamp/textures/font/rad_SS_R_C.png de tegels van stand SS van het quiz-rad
-  assets/bootcamp/sounds.json                 bootcamp:schrik en bootcamp:klop
-  assets/bootcamp/sounds/schrik.ogg, klop.ogg gekopieerd uit aanleveren/
+  assets/bootcamp/sounds.json                 bootcamp:schrik, bootcamp:klop en bootcamp:rad
+  assets/bootcamp/sounds/*.ogg                gekopieerd uit aanleveren/
 ```
 
 De foto's en geluiden in `aanleveren/` staan niet in git (de repo is public); wat BouwPack maakt
@@ -836,14 +837,19 @@ volgorde waarin twee buren (ook rondom) nooit dezelfde kleur hebben:
 `rood blauw groen geel blauw rood geel groen rood groen blauw geel groen geel rood blauw`.
 
 Het pack heeft 64 standen van het rad (elk 2 × 2 tegels, zie *Resource pack*), elk 5,625° verder
-gedraaid: vier per vak, en elk vierde plaatje heeft een vak precies onder het pijltje. Het draaien is
-`core`-`Rad` over die 64 standen: doel = de middenstand van een willekeurig vak (dus elk team
-25%), `rest` = de standen tot het doel plus 64 × (2 of 3). Per stap een title met de tegels van
-die stand, fade 0, lang genoeg blijven tot de volgende stap; de wachttijd loopt op van 1 naar 6
-ticks naarmate `rest` kleiner wordt, dus het rad remt echt af. Elke keer dat er een vakgrens
-onder het pijltje door gaat (om de vier standen): `note_block.hat` voor iedereen in de hal. Bij
-de landing blijft het laatste plaatje twee seconden staan, dan `entity.player.levelup` en title
-`ROOD IS AAN DE BEURT` in de teamkleur; bossbar `Quiz · aan de beurt: Rood`, en `quizlamp_rood`
+gedraaid: vier per vak, en elk vierde plaatje heeft een vak precies onder het pijltje. Een draai is
+`core`-`QuizDraai` (R4.3): het geluid `bootcamp:rad` (spinwheel, 11,1 s, `preload`) start voor
+iedereen op dezelfde tick als het rad, en het rad volgt een vaste tijdlijn die op dat geluid is
+gemeten. Van 0,05 tot 0,75 s komt het op snelheid; tot 4,48 s draait het ongeveer anderhalve stand
+per tick (sneller kan niet netjes: vanaf twee standen per tick, een half vak, lijkt een rad op 20
+beelden per seconde achteruit te draaien); dan gaat er bij elk van de laatste 20 tikjes van het
+geluid (4,48 s tot 9,18 s) precies een vakgrens onder het pijltje door; daarna remt het
+gelijkmatig af naar het midden van het laatste vak en staat stil op 9,68 s. In totaal 204 standen,
+ruim drie rondes. Het doel is een willekeurig vak (elk team 25%); de start volgt daaruit. De stand
+volgt de echte tijd sinds de draai, niet het aantal ticks: hapert de server, dan loopt het rad toch
+gelijk met het geluid, dat bij de spelers gewoon doorspeelt. Elke tick waarop de stand verandert een title met de tegels van die stand, fade 0, blijven tot de uitslag.
+Bij het plingeltje (10,17 s, tick 203) de title `ROOD IS AAN DE BEURT` in de teamkleur (het
+plingeltje zelf is het geluid van de uitslag); bossbar `Quiz · aan de beurt: Rood`, en `quizlamp_rood`
 gaat aan (`LIT=true`). Terwijl het rad draait, doen draai, goed en fout niets. De lampen doen
 niet mee aan het draaien.
 
@@ -1097,7 +1103,7 @@ langzaam draaiend. Opgeruimd als de kroonhouder kijker wordt.
 | Af in de mob arena | Doodtekst als title, daarna 5 seconden `/mobarena aftekst` in de actionbar. |
 | Speler sneuvelt | Alleen de dode ziet een willekeurige doodtekst als title. Geen geluid, geen chatregel. |
 | Beurt klaar | Meteen de title `BEURT 3 KLAAR` met de stand van de teams, 10 seconden in beeld, met `ui.toast.challenge_complete`. Aftelling in de actionbar voor wie in een arena of kooi staat; daarna pas naar de tribune. |
-| Quiz-rad | Een echt rond rad groot in beeld (plaatjes uit het pack), alleen kleuren, pijltje bovenin; het draait en remt af, `note_block.hat` per vak dat het pijltje passeert. Twee seconden stil op het gekozen vak, dan `entity.player.levelup` en `ROOD IS AAN DE BEURT`. |
+| Quiz-rad | Een echt rond rad groot in beeld (plaatjes uit het pack), alleen kleuren, pijltje bovenin. Het geluid `bootcamp:rad` loopt mee: bij elk tikje aan het eind een vak, stil op 9,7 s, en bij het plingeltje (10,2 s) `ROOD IS AAN DE BEURT`. `/quiz winnaar` of `/quiz stop` tijdens een draai stopt ook het geluid. |
 | Quiz goed | Title `GOED!` in groen met `+1 Rood`, vanaf twee op rij `+1 Rood · 3 op rij`, `block.note_block.bell`, een vuurpijl in de teamkleur uit elk van de twee dispensers bij de bank. De lamp bij de bank blijft aan. |
 | Puntenmenu | Chatregel `Pudding: +2 voor Rood (7)`, `note_block.pling` (erbij) of `note_block.bass` (eraf). |
 | Quiz fout | Title `FOUT!` in rood, `entity.villager.no`. De lamp bij de bank gaat uit, de reeks op nul. |
