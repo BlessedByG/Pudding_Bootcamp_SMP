@@ -142,11 +142,12 @@ Clown vs All en het Rad pas bij ronde 5. Nog geen teams; iedereen is wit.
 | Gold block | **5 punten** | 120 |
 | Iron block | **1 punt.** Heel veel, zodat je steeds iets vindt. Niet in de chat, alleen voor jou. | 2000 |
 | Redstone block | **Gok.** Of jij krijgt 10 seconden Haste, of iedereen behalve jij staat 15 seconden stil. 50/50. | 10 |
-| Emerald block | **Jumpscare** bij een willekeurige andere speler. | 10 |
+| Emerald block | **Jumpscare.** Je kiest in een kistmenu (met de koppen van de anderen) wie hem krijgt. | 10 |
+| Lapis block | **Terug naar de start.** Je kiest in een kistmenu wie terug moet naar zijn eigen startplek. | 30 |
 
 - De aantallen stel je in met `/ei blokken <soort> <aantal>`. Afstemmen in de testrun: het Ei
   heeft zo'n 28.000 blokken deepslate, en met 20 spelers in 15 minuten kan het grotendeels leeg.
-  Alle blokken samen (standaard 2271) moeten in de deepslate van het Ei passen; anders weigert
+  Alle blokken samen (standaard 2301) moeten in de deepslate van het Ei passen; anders weigert
   `/ei start`.
 
 **Regels**
@@ -163,8 +164,8 @@ Clown vs All en het Rad pas bij ronde 5. Nog geen teams; iedereen is wit.
   kan. Iedereen ziet in beeld wie het deed, en onderin telt het af hoe lang je nog stil staat.
   Bij Haste telt het ook af.
 - **Netherite** meldt de mod in de chat: "Speler7 hakte netherite (+50)".
-- **Emerald**: de hakker ziet naar wie de jumpscare ging, en de ander ziet na de schrik van wie
-  hij kwam.
+- **Emerald** en **lapis**: het kiesmenu blijft terugkomen tot je iemand kiest. Iedereen ziet groot
+  wie naar wie (`JUMPSCARE` of `TERUG NAAR START`); de ander ziet daarna van wie het kwam.
 - De laatste minuut wordt de bossbar rood, en de laatste 10 seconden tellen groot af. Breekt iemand anders tijdens een bevriezing weer een
   redstone block en valt die ook op bevriezen, dan begint de bevriezing opnieuw, nu met die
   speler als enige die los is.

@@ -231,8 +231,8 @@ Waar een jumpscare vandaan komt:
   vaste foto of willekeurig: `/doolhof schrik <nr> <1..5|random>`, standaard willekeurig.
 - Doolhof: een valkist (trapped chest) openen, één keer per kist per speler: 25% de jumpscare met
   een willekeurige foto, 25% de 8D-klop, 50% mobs (R1.4).
-- Het Ei: een emerald block, bij een willekeurige andere levende deelnemer, met een willekeurige
-  foto; iedereen ziet groot wie naar wie.
+- Het Ei: een emerald block, bij de deelnemer die de hakker in een kistmenu kiest, met een
+  willekeurige foto; iedereen ziet groot wie naar wie.
 
 ## Modules
 
@@ -296,7 +296,7 @@ hele avond geldt (setup, spelers, noodknoppen) staat onder `/bc`.
 | `/doolhof valmobs [<min> [<max>]]` | Hoeveel mobs (husks en silverfish door elkaar) er uit een valkist komen: elke keer willekeurig van `<min>` t/m `<max>`, standaard 3 t/m 10. Met één getal altijd zoveel; `0` is alleen de jumpscare of de klop (50/50). Bewaard in `bootcamp.json`. |
 | `/ei start\|stop\|resterend` | Ronde 2. |
 | `/ei timer [<minuten>]` | Hoe lang het Ei duurt, standaard 15. |
-| `/ei blokken [<soort> <aantal>]` | Hoeveel blokken van een soort (`netherite`, `diamond`, `gold`, `iron`, `redstone`, `emerald`, `tnt`, `glowstone`, `slime`, `target`) de mod in het Ei strooit. Zonder argumenten: het overzicht, met het aantal deepslate-plekken in het Ei. |
+| `/ei blokken [<soort> <aantal>]` | Hoeveel blokken van een soort (`netherite`, `diamond`, `gold`, `iron`, `redstone`, `emerald`, `lapis`, `tnt`, `glowstone`, `slime`, `target`) de mod in het Ei strooit. Zonder argumenten: het overzicht, met het aantal deepslate-plekken in het Ei. |
 | `/ei prijskader` | Het item frame waar je naar kijkt (binnen 5 blokken) wordt het frame voor het Warden-ei: daar verschijnt het als het Ei voorbij is. Slaat punt `ei_prijskader` op. |
 | `/ei vastleggen` | Legt het Ei vast zoals het nu gebouwd is: alle blokken in regio `ei`. Eén keer na het bouwen, en opnieuw na elke bouwwijziging. Niet tijdens ronde 2. Antwoord: `Ei vastgelegd: 54.000 blokken, waarvan 27.812 deepslate.` |
 | `/mobarena start` | Ronde 3: loot het schema (geheim, niet in de chat) en start beurt 1. |
@@ -379,7 +379,7 @@ ronde. Een nieuw aantal puntenblokken geldt vanaf de volgende `/ei start`.
 | `/doolhof valmobs` | 3 t/m 10 | 0 tot 20, min niet boven max |
 | `/doolhof schrik` | per plek willekeurig | foto 1 t/m 5, of random |
 | `/ei timer` | 15 | 5 tot 60 |
-| `/ei blokken` | netherite 6, diamond 90, gold 120, iron 2000, redstone 10, emerald 10, tnt 10, glowstone 10, slime 10, target 5 (voorlopig; samen 2271) | 0 of meer; samen niet meer dan de deepslate-plekken in het Ei |
+| `/ei blokken` | netherite 6, diamond 90, gold 120, iron 2000, redstone 10, emerald 10, lapis 30, tnt 10, glowstone 10, slime 10, target 5 (voorlopig; samen 2301) | 0 of meer; samen niet meer dan de deepslate-plekken in het Ei |
 | `/mobarena punten` | zombie 1; skeleton, spider, cave spider 2; creeper 3; witch 4; vindicator 5; evoker 8; ravager 10; elk ander type 1 | 0 tot 100 |
 | `/mobarena aftekst` | `Af · je speelt geen beurt meer` | tot 60 tekens |
 | `/mobarena veldhoogte` | 3 blokken | 0 tot 10 |
@@ -693,11 +693,18 @@ Speler3 schrikken`).
   `door <naam>`, `block.glass.break`. Een nieuwe bevriezing vervangt een lopende. Bij beide
   telt de actionbar de resterende seconden af (`Haste · 7`, `Bevroren · 12`) en klinkt een pling
   als het voorbij is.
-- emerald: jumpscare bij een willekeurige andere deelnemer in het Ei. Groot in beeld voor
+- emerald: de breker kiest in een kistmenu (`KiesMenu`: de koppen van de andere levende
+  deelnemers, met hun naam in de teamkleur) wie de jumpscare krijgt. Doet hij het menu dicht
+  zonder te kiezen, dan komt het elke seconde terug tot hij kiest; twee vondsten vlak na elkaar
+  geven twee menu's na elkaar. Groot in beeld voor
   iedereen: title `Speler7 → Speler3` (namen in teamkleur) met subtitle `JUMPSCARE`. De ander
   staat dan zelf in de foto; hij krijgt dezelfde title zodra de foto wegvaagt, plus drie
   seconden `Met dank aan Speler7` in de actionbar. De breker ziet ook `Jumpscare naar Speler3`
   in de actionbar.
+- lapis: dezelfde soort keuze, `Wie stuur je terug naar de start?`. De gekozene gaat naar zijn
+  eigen startplek (`ei_spawn_n`) met `entity.enderman.teleport`. Iedereen ziet de title
+  `Speler7 → Speler3` met `TERUG NAAR START` in blauw, een chatregel `Speler7 stuurde Speler3
+  terug naar de start`, en beiden zien het in hun actionbar.
 - TNT: een TNT in je inventory (gemarkeerd als Ei-item, dus aan het eind weer weg), title `TNT`
   met `zet hem neer: hij gaat meteen af`. Neerzetten (rechtsklik op een blok) zet geen blok maar
   een brandende TNT op die plek, zonder zwaartekracht zodat hij ook aan de zijkant van het Ei
@@ -1137,7 +1144,8 @@ langzaam draaiend. Opgeruimd als de kroonhouder kijker wordt.
 | Ei: punten | `entity.experience_orb.pickup`, actionbar met wat je erbij kreeg, je score en je plek. |
 | Ei: netherite | `+50` in paars in de actionbar, chatregel voor iedereen: `Speler7 hakte netherite (+50)`. |
 | Ei: redstone | Haste (15 seconden): `block.beacon.power_select`, title `HASTE` voor de hakker. Bevriezing: title `BEVROREN` met `door <naam>`, `block.glass.break`. Aftellen in de actionbar, pling als het voorbij is. |
-| Ei: emerald | Iedereen ziet de title `Speler7 → Speler3` met `JUMPSCARE`; de ander krijgt eerst de jumpscare, dan die title en `Met dank aan Speler7`; de hakker ziet ook `Jumpscare naar Speler3`. |
+| Ei: emerald | Kistmenu: wie laat je schrikken? Daarna ziet iedereen de title `Speler7 → Speler3` met `JUMPSCARE`; de ander krijgt eerst de jumpscare, dan die title en `Met dank aan Speler7`; de hakker ziet ook `Jumpscare naar Speler3`. |
+| Ei: lapis | Kistmenu: wie stuur je terug naar de start? De gekozene gaat terug naar zijn startplek; iedereen ziet `Speler7 → Speler3` met `TERUG NAAR START`. |
 | Ei: TNT | Title `TNT` voor de hakker; neergezet `entity.tnt.primed`, na 4 seconden de knal met `explosion_emitter`. |
 | Ei: glowstone | Title `TURBO`, `block.beacon.activate`, `Efficiency V · 8` in de actionbar, pling als het voorbij is. |
 | Ei: slime | Title `MISSELIJK` met `door <naam>` voor de anderen, `entity.slime.squish`. |

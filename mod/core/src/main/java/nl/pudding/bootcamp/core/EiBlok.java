@@ -14,8 +14,10 @@ public enum EiBlok {
 	IRON("iron", "minecraft:iron_block", 1, 2000),
 	/** Geen punten: 50/50 Haste voor de hakker of een bevriezing voor de rest. */
 	REDSTONE("redstone", "minecraft:redstone_block", 0, 10),
-	/** Geen punten: een jumpscare bij een ander. */
+	/** Geen punten: kies uit een kistmenu wie een jumpscare krijgt. */
 	EMERALD("emerald", "minecraft:emerald_block", 0, 10),
+	/** Geen punten: kies uit een kistmenu wie terug moet naar zijn startplek. */
+	LAPIS("lapis", "minecraft:lapis_block", 0, 30),
 	/** Geen punten: een TNT in je inventory die meteen afgaat als je hem neerzet en deepslate wegblaast. */
 	TNT("tnt", "minecraft:tnt", 0, 10),
 	/** Geen punten: even Efficiency V op je pickaxe en Haste II. */

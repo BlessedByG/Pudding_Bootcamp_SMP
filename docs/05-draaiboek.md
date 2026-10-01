@@ -64,7 +64,7 @@ Vooraf instellen, in minuten (blijft bewaard):
 | `/doolhof schrik` | elke schrikplek een willekeurige foto; `/doolhof schrik <nr> <1..5>` voor een vaste |
 | `/doolhof wachttekst` | "Wacht op het startsein" |
 | `/ei timer` | 15 |
-| `/ei blokken` | netherite 6, diamond 90, gold 120, iron 2000, redstone 10, emerald 10, tnt 10, glowstone 10, slime 10, target 5 (voorlopig; samen 2271, dat moet op de deepslate passen) |
+| `/ei blokken` | netherite 6, diamond 90, gold 120, iron 2000, redstone 10, emerald 10, lapis 30, tnt 10, glowstone 10, slime 10, target 5 (voorlopig; samen 2301, dat moet op de deepslate passen) |
 | `/mobarena punten` | zombie 1; skeleton, spider, cave spider 2; creeper 3; witch 4; vindicator 5; evoker 8; ravager 10; warden 50 |
 | `/mobarena aftekst` | "Af · je speelt geen beurt meer" |
 | `/mobarena veldhoogte` | 3 |
@@ -178,7 +178,8 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
 - [ ] `/ei vastleggen`, `/ei blokken`: het overzicht noemt het aantal deepslate-plekken.
 - [ ] `/ei start`: spelers verdeeld over de startplekken, punten per block, alles wat je vindt in
       de chat, redstone (beide uitkomsten met aftellen onderin, een paar keer breken), emerald geeft
-      de ander een jumpscare en iedereen ziet groot wie naar wie, laatste minuut rood met aftellen,
+      een kistmenu (kies wie de jumpscare krijgt; dichtdoen en het komt terug) en iedereen ziet groot
+      wie naar wie, lapis idem maar de gekozene gaat terug naar zijn startplek, laatste minuut rood met aftellen,
       niets valt als item, kettingen en wereld niet te breken, niets neer te zetten behalve de TNT,
       dood = terug op je eigen startplek, winnaar bij de timer, daarna is de pickaxe weg (ook na
       `/ei stop`). Dan nog een keer `/ei start`: het Ei is weer heel en de blokken liggen ergens
