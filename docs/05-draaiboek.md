@@ -202,8 +202,9 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
       seconden aftellen, dan pas het veld en de kooi naar de tribune; wie al op de tribune stond
       blijft staan. `/mobarena volgende` weigert tijdens die 10 seconden. Einde: winnaar, 10
       seconden, daarna heeft iedereen een lege inventory en armor.
-- [ ] Warden-ei: vanaf het veld of de kooi weigert hij; vanaf de tribune: `WARDEN-EI` in beeld, en
-      de volgende wave is de warden, die bij punt `warden` uit de grond komt. Hij valt alleen wie
+- [ ] Warden-ei: vanaf het veld of de kooi weigert hij; vanaf de tribune tijdens een beurt: `WARDEN-EI`
+      in beeld en de warden komt meteen bij punt `warden` uit de grond (tussen twee beurten of
+      tijdens de countdown weigert hij); de wave is pas klaar als hij dood is. Hij valt alleen wie
       in het veld staat aan, het publiek krijgt geen Darkness, en hij blijft tot hij dood is
       (`/mobarena wave volgende` als noodknop). De kill staat in de chat met 50 punten.
 - [ ] `/quiz presentator <naam>`, `/quiz start`: iedereen zonder spullen bij zijn bank, de

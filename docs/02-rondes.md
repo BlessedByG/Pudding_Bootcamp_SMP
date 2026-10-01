@@ -185,7 +185,7 @@ Clown vs All en het Rad pas bij ronde 5. Nog geen teams; iedereen is wit.
   podium.
 - **De prijs: het Warden-ei.** Het verschijnt in een item frame op het podium. Alleen de winnaar
   of Pudding (de presentator) kan het eruit halen. Tijdens de mob arena kan de winnaar het vanaf
-  de tribune inzetten: dan is de volgende wave een warden (zie ronde 3).
+  de tribune inzetten: dan komt er meteen een warden in het veld (zie ronde 3).
 
 **Voice:** proximity. Op het Ei hoor je wie naast je hakt.
 
@@ -251,11 +251,11 @@ punten wint.
 **Het Warden-ei**
 - De winnaar van het Ei kan het ei **vanaf de tribune** inzetten, dus niet als hij zelf aan de
   beurt is en niet vanuit de kooi. Iedereen ziet dat hij het doet.
-- **De volgende wave is dan een warden** in plaats van de geplande wave: hij komt uit de grond in
-  het veld. Hij is zwakker dan een gewone warden (200 HP, klap 4 hartjes, sonic boom 2,5 hartje),
+- **De warden komt dan meteen** uit de grond in het veld, bovenop de wave die loopt. Die wave is
+  pas klaar als de warden ook dood is. Hij is zwakker dan een gewone warden (200 HP, klap 4 hartjes, sonic boom 2,5 hartje),
   haalbaar maar zwaar, en blijft tot hij dood is. Het team dat hem doodt krijgt 50 punten.
-- Ingezet tijdens de laatste wave of tussen twee beurten? Dan is het wave 1 van de volgende beurt.
-  Komt er geen wave meer, dan houdt hij het ei.
+- Inzetten kan alleen terwijl er gevochten wordt (na de countdown van een beurt). Tussen twee
+  beurten of tijdens de countdown houdt hij het ei; ook als er al een warden rondloopt.
 
 **Punten**
 - Kill je een mob, dan krijgt je team punten. Wie de laatste klap gaf telt, ook met een pijl.

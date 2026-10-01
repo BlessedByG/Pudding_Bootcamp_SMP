@@ -795,21 +795,21 @@ niemand schade en is er niets meer om te killen. Daarna wacht de mod op `/mobare
 naam `Warden-ei`. Vanilla spawnt er nooit een warden mee: rechtsklik in de lucht, op een blok of op
 een entity wordt altijd afgevangen. Inzetten kan alleen tijdens de mob arena, als deelnemer op de
 tribune (regio `tribune_mob`): niet wie zelf aan de beurt is, niet vanuit de kooi, niet als staff.
-Dan is het ei op, iedereen ziet `WARDEN-EI` met `Speler7 zet hem in: de volgende wave is de warden`
-(`entity.warden.roar`) en een chatregel. **De volgende wave die start, is de warden** in plaats van
-de geplande wave; die vervalt. Tijdens een wave of de pauze erna is dat de volgende wave van deze
-beurt; in de laatste wave of tussen twee beurten wave 1 van de volgende beurt. Is er geen volgende
-wave meer, dan weigert hij en houdt de speler het ei. Wie het ei heeft en in het veld sneuvelt,
+Alleen terwijl er gevochten wordt (fase waves, ook in de pauze tussen twee waves; niet tijdens de
+countdown of tussen twee beurten), en niet als er al een warden rondloopt: dan weigert hij en houdt
+de speler het ei. Anders is het ei op, iedereen ziet `WARDEN-EI` met `Speler7 zet hem in: de warden
+komt eraan`, `entity.warden.emerge`, een chatregel, en **de warden komt meteen** uit de grond, bovenop
+de lopende wave. Zolang hij leeft, is die wave niet klaar en heeft hij geen limiet van 120 seconden
+(ook als er in de pauze nog een nieuwe wave start); de beurt eindigt dus pas als de warden dood is,
+of met `/mobarena wave volgende`. Wie het ei heeft en in het veld sneuvelt,
 houdt het (de rest van zijn spullen is hij kwijt); een ongebruikt ei gaat aan het einde van de mob
 arena weg met de rest.
 
-**De warden-wave**: title `WAVE 3` met `De warden van Speler7`, `entity.warden.emerge`. De warden
-komt met de graaf-animatie uit de grond op punt `warden` (spawnreden `TRIGGERED`), met de levens
+**De warden** komt met de graaf-animatie uit de grond op punt `warden` (spawnreden `TRIGGERED`), met de levens
 en klap uit `/mobarena warden` (standaard 200 HP, klap 8 = 4 hartjes); zijn sonic boom doet de
 ingestelde schade (standaard 5 = 2,5 hartje) in plaats van 10. Hij kiest zijn doel met woede: de mod
 wist woede op wie niet aan de beurt is en zet hem op de dichtstbijzijnde speler in het veld, en
-houdt hem boven de grond zolang de wave loopt. Het publiek krijgt geen Darkness. De wave heeft
-**geen tijdslimiet**: hij loopt tot de warden dood is, of tot `/mobarena wave volgende`. Een kill
+houdt hem boven de grond zolang hij leeft. Het publiek krijgt geen Darkness. Een kill
 op de warden is `/mobarena punten warden` waard (standaard 50) en komt in de chat.
 
 **Punten**: `ServerLivingEntityEvents.AFTER_DEATH` op een mob met `bootcamp_mob`. De killer is
@@ -1155,8 +1155,7 @@ langzaam draaiend. Opgeruimd als de kroonhouder kijker wordt.
 | Start mob arena | `ui.toast.challenge_complete`; het schema blijft geheim. Bij elke beurt de title `BEURT 3` voor iedereen, zonder subtitle. |
 | Spelers in de mob arena | Glowing in hun teamkleur tijdens hun beurt. |
 | Nieuwe wave | Rookwolk en `block.fire.extinguish` op de spawnpunten, dan title `WAVE 3` in rood, `event.raid.horn`. |
-| Warden-ei ingezet | Title `WARDEN-EI` met `Speler7 zet hem in: de volgende wave is de warden`, `entity.warden.roar`, chatregel. |
-| Warden-wave | Title `WAVE 3` in donker-aqua met `De warden van Speler7`, `entity.warden.emerge`; de warden komt uit de grond. |
+| Warden-ei ingezet | Title `WARDEN-EI` met `Speler7 zet hem in: de warden komt eraan`, `entity.warden.emerge`, chatregel; de warden komt meteen uit de grond, bovenop de lopende wave. |
 | Mob gekild (ronde 3) | `entity.experience_orb.pickup` voor de killer, actionbar met de punten. Evoker en ravager ook als chatregel voor iedereen. |
 | Af in de mob arena | Doodtekst als title, daarna 5 seconden `/mobarena aftekst` in de actionbar. |
 | Speler sneuvelt | Alleen de dode ziet een willekeurige doodtekst als title. Geen geluid, geen chatregel. |

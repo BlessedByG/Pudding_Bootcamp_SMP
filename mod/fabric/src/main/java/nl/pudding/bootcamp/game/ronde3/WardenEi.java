@@ -25,8 +25,8 @@ import nl.pudding.bootcamp.tribune.Tribune;
 
 /**
  * Het Warden-ei: de prijs voor de winnaar van het Ei. Een warden spawn egg met een eigen vlag; vanilla
- * spawnt er nooit een warden mee. Wie hem tijdens de mob arena vanaf de tribune inzet, maakt van de
- * volgende wave de warden ({@link MobArena#wardenInzetten}). Er bestaat er maar één.
+ * spawnt er nooit een warden mee. Wie hem tijdens een beurt van de mob arena vanaf de tribune inzet,
+ * zet meteen een warden in het veld ({@link MobArena#wardenInzetten}). Er bestaat er maar één.
  */
 public final class WardenEi {
 	/** De vlag op het ei, en de tag op de warden die eruit komt. */
