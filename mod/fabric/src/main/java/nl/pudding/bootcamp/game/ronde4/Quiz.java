@@ -56,11 +56,13 @@ import nl.pudding.bootcamp.visuals.Vuurwerk;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Ronde 4: de quiz. Iedereen zonder spullen bij de bank van zijn team, de presentator op het podium
- * met vier items: groene wol (goed), rode wol (fout), een nether star (het rad draaien) en een
- * emerald (het puntenmenu, {@link PuntenMenu}). Het rad is een echt rond rad in beeld, uit het
+ * met vijf items: groene wol (goed), rode wol (fout), een nether star (het rad draaien), een
+ * emerald (het puntenmenu, {@link PuntenMenu}) en een barrier (de quiz beëindigen, met een tweede
+ * bevestiging in {@link EindeMenu}). Het rad is een echt rond rad in beeld, uit het
  * resource pack; het team waar het op landt is aan de beurt en de lamp bij hun bank brandt. Bij een
  * goed antwoord schieten de twee dispensers bij de bank van dat team een vuurpijl in de teamkleur.
  */
@@ -131,6 +133,10 @@ public final class Quiz extends RondeLogica {
 			case "arena" -> quiz.naarArena(server);
 			case "punten" -> {
 				PuntenMenu.open(speler, quiz);
+				yield null;
+			}
+			case "einde" -> {
+				EindeMenu.open(speler, quiz);
 				yield null;
 			}
 			default -> null;
@@ -219,12 +225,18 @@ public final class Quiz extends RondeLogica {
 		return stack;
 	}
 
-	private static List<ItemStack> quizItems() {
-		return List.of(
-				item(Items.WOOL.lime(), "Goed", ChatFormatting.GREEN, "goed"),
-				item(Items.WOOL.red(), "Fout", ChatFormatting.RED, "fout"),
-				item(Items.NETHER_STAR, "Draai het rad", ChatFormatting.GOLD, "draai"),
-				item(Items.EMERALD, "Punten geven of afpakken", ChatFormatting.AQUA, "punten"));
+	/**
+	 * De items van de presentator met hun plek in de hotbar (0 t/m 8), in de volgorde van een vraag:
+	 * links het rad (toets 1), dan goed en fout naast elkaar (3 en 4), het puntenmenu (6), en de
+	 * barrier apart helemaal rechts (9), zodat je hem niet per ongeluk pakt.
+	 */
+	private static Map<Integer, ItemStack> quizItems() {
+		return Map.of(
+				0, item(Items.NETHER_STAR, "Draai het rad", ChatFormatting.GOLD, "draai"),
+				2, item(Items.WOOL.lime(), "Goed", ChatFormatting.GREEN, "goed"),
+				3, item(Items.WOOL.red(), "Fout", ChatFormatting.RED, "fout"),
+				5, item(Items.EMERALD, "Punten geven of afpakken", ChatFormatting.AQUA, "punten"),
+				8, item(Items.BARRIER, "Quiz beëindigen", ChatFormatting.DARK_RED, "einde"));
 	}
 
 	/** Na de quiz: alleen nog de ender pearl waarmee de presentator iedereen naar de Arena stuurt. */
@@ -237,10 +249,7 @@ public final class Quiz extends RondeLogica {
 	private static void geefItems(ServerPlayer presentator) {
 		Items26.haalWeg(presentator, Items26.QUIZ_TAG);
 		Inventory inv = presentator.getInventory();
-		List<ItemStack> items = quizItems();
-		for (int i = 0; i < items.size(); i++) {
-			inv.setItem(i, items.get(i));
-		}
+		quizItems().forEach(inv::setItem);
 		presentator.inventoryMenu.broadcastChanges();
 	}
 
@@ -248,7 +257,7 @@ public final class Quiz extends RondeLogica {
 	private void controleerItems(MinecraftServer server) {
 		ServerPlayer p = Spel.presentator(server);
 		if (p != null) {
-			List<String> nodig = fase == Fase.SPELEN ? List.of("goed", "fout", "draai", "punten") : List.of("arena");
+			List<String> nodig = fase == Fase.SPELEN ? List.of("goed", "fout", "draai", "punten", "einde") : List.of("arena");
 			for (String actie : nodig) {
 				if (!p.getInventory().contains(s -> actie.equals(Items26.tagWaarde(s, Items26.QUIZ_TAG)))) {
 					if (fase == Fase.SPELEN) {

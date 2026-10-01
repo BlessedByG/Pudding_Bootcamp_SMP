@@ -302,9 +302,10 @@ wie in de buurt staat.
 - Iedereen staat bij de bank van zijn team, zonder spullen: alles is na de mob arena ingeleverd.
 - **Bij elke bank staat een lamp.** Die van het team dat aan de beurt is, brandt.
 - **Pudding presenteert** en zit dus niet bij zijn eigen team. Dat team heeft in de quiz één
-  speler minder: pech. Pudding krijgt als enige iets: vier items in de hotbar, **groene wol**
-  (goed), **rode wol** (fout), een item om **het rad te draaien** en een **emerald voor het
-  puntenmenu**. Na de quiz zijn die weer weg.
+  speler minder: pech. Pudding krijgt als enige iets: vijf items in de hotbar, een item om **het rad te
+  draaien** (toets 1), **groene wol** (goed, 3), **rode wol** (fout, 4), een **emerald voor het
+  puntenmenu** (6) en apart rechts een **barrier om de quiz te beëindigen** (9), met een tweede
+  bevestiging in een kistmenu. Na de quiz zijn die weer weg.
 - **Het puntenmenu**: per team knoppen −2, −1, +1 en +2. Pudding kan er elk team punten mee
   geven of afpakken, ook als het niet aan de beurt is: wie bij Pudding slijmt, verdient er
   misschien een bij. Iedereen ziet het in de chat: "Pudding: +2 voor Rood (7)". Onder 0 kan.

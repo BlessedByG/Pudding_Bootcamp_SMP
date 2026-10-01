@@ -812,15 +812,21 @@ op de tribune stond. Iedereen weer speler, geheald, zonder spullen naar de quiz.
 **Ronde 4, quiz.** Weigert zonder presentator (`/quiz presentator`). Start: iedereen naar
 `quiz_<kleur>` van zijn team, border `quiz`, geen schade, geen timer. Sidebar `Quiz` met de vier
 teams op 0. Iedereen heeft een lege inventory (ingeleverd na de mob arena). De presentator gaat
-naar `quiz_podium` en telt in de quiz niet mee voor zijn team; hij krijgt als enige iets: vier
-items in hotbar-slot 1 t/m 4, herkenbaar aan `custom_data={bootcamp_quiz:"..."}`:
+naar `quiz_podium` en telt in de quiz niet mee voor zijn team; hij krijgt als enige iets: vijf
+items in de hotbar, in de volgorde van een vraag en met ruimte tussen de groepen, herkenbaar aan
+`custom_data={bootcamp_quiz:"..."}`:
 
-| Slot | Item | Rechtsklik doet |
+| Slot (toets) | Item | Rechtsklik doet |
 |---|---|---|
-| 1 | Groene wol, naam `Goed` | hetzelfde als `/quiz goed` |
-| 2 | Rode wol, naam `Fout` | hetzelfde als `/quiz fout` |
-| 3 | Nether star, naam `Draai het rad` | hetzelfde als `/quiz draai` |
-| 4 | Emerald, naam `Punten geven of afpakken` | opent het puntenmenu |
+| 1 | Nether star, naam `Draai het rad` | hetzelfde als `/quiz draai` |
+| 3 | Groene wol, naam `Goed` | hetzelfde als `/quiz goed` |
+| 4 | Rode wol, naam `Fout` | hetzelfde als `/quiz fout` |
+| 6 | Emerald, naam `Punten geven of afpakken` | opent het puntenmenu |
+| 9 | Barrier, naam `Quiz beëindigen` | opent de bevestiging: `Ja, de quiz is klaar` (hetzelfde als `/quiz einde`) of `Nee, verder met de quiz`, met de stand ertussen |
+
+Na de winnaar heeft hij alleen nog de ender pearl `Iedereen naar de Arena` in slot 1 (zie *Einde*).
+Bij een gelijke stand na `Ja` krijgt hij in de chat dat het nog niet klaar is: een beslisvraag en
+een punt met de emerald, of de commander kiest met `/quiz winnaar`.
 
 **Het puntenmenu** is een kistmenu met een rij per team: vooraan de wol met de stand
 (`Rood · 5`), daarachter knoppen `−2`, `−1`, `+1` en `+2` (gekleurde glazen panelen). Een klik
