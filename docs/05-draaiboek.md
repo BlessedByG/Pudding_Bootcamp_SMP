@@ -113,7 +113,9 @@ zit, maar de commander moet alleen commander zijn.
 7. De quizhal met 4 gekleurde banken, een redstone lamp bij elke bank (geen redstone ernaast),
    twee dispensers bij elke bank (de kant op gericht waar het vuurwerk heen moet) en een trap met
    podium. Daarna `/quiz bank <kleur>` bij elke bank, `/quiz lamp <kleur>` kijkend naar elke lamp (zo vaak als er lampen
-   bij die bank staan; `/quiz lamp <kleur> wis` om opnieuw te beginnen),
+   bij die bank staan; `/quiz lamp <kleur> wis` om opnieuw te beginnen), en alle andere redstone lampen
+   binnen regio `quiz` doen vanzelf mee aan de lichtshow (bij `/quiz start` zie je hoeveel er gevonden
+   zijn),
    `/quiz vuurwerk <kleur> <1|2>` kijkend naar elke dispenser (8 keer) en `/quiz podium` boven
    aan de trap (gebouwd).
 8. De Arena: colosseum met open vloer, podium in het midden, 20 redstone blocks in een cirkel,

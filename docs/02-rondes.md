@@ -301,6 +301,10 @@ wie in de buurt staat.
   presenteert, en in het midden een rond vloerontwerp met een vraagteken (decor).
 - Iedereen staat bij de bank van zijn team, zonder spullen: alles is na de mob arena ingeleverd.
 - **Bij elke bank staan een of meer lampen.** Die van het team dat aan de beurt is, branden.
+- **De andere redstone lampen in de hal** (het decor) doen een lichtshow: vier lichtbalken lopen
+  rustig met de klok mee rond. Draait het rad, dan draaien ze mee (eerst snel, dan steeds
+  trager), en op het plingeltje knipperen ze mee met het gekozen vak. De mod vindt ze zelf in de
+  regio van de quizhal; frog lights en andere lichtbronnen doen niet mee.
 - **Pudding presenteert** en zit dus niet bij zijn eigen team. Dat team heeft in de quiz één
   speler minder: pech. Pudding krijgt als enige iets: vijf items in de hotbar, een item om **het rad te
   draaien** (toets 1), **groene wol** (goed, 3), **rode wol** (fout, 4), een **emerald voor het

@@ -18,6 +18,43 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /** De kleine onderdelen bij elkaar; de namen van de geneste klassen staan in REGELS.md. */
 class KleineTests {
 	@Nested
+	class LichtshowTest {
+		@Test
+		void hoekMetDeKlokMeeVanafHetNoorden() {
+			// Noorden is -z, oosten +x, zuiden +z, westen -x.
+			assertEquals(0.0, Lichtshow.hoek(0, -5), 1e-9);
+			assertEquals(0.25, Lichtshow.hoek(5, 0), 1e-9);
+			assertEquals(0.5, Lichtshow.hoek(0, 5), 1e-9);
+			assertEquals(0.75, Lichtshow.hoek(-5, 0), 1e-9);
+		}
+
+		@Test
+		void balkenSchuivenMetDeKlokMee() {
+			// Een lamp die nu brandt, brandt straks iets verder met de klok mee.
+			// Exacte binaire breuken, zodat afronding geen rol speelt op de rand van een balk.
+			for (int i = 0; i < 128; i++) {
+				for (int j = 0; j < 64; j++) {
+					double hoek = (i + 0.5) / 128;
+					double rond = j / 64.0;
+					assertEquals(Lichtshow.aan(hoek, rond), Lichtshow.aan(hoek + 0.125, rond + 0.125), hoek + " " + rond);
+				}
+			}
+			// Ongeveer AAN van de lampen brandt tegelijk, verdeeld over vier balken.
+			int aan = 0;
+			int wissel = 0;
+			boolean vorige = Lichtshow.aan(0.999, 0.3);
+			for (int i = 0; i < 1000; i++) {
+				boolean nu = Lichtshow.aan(i / 1000.0, 0.3);
+				aan += nu ? 1 : 0;
+				wissel += nu != vorige ? 1 : 0;
+				vorige = nu;
+			}
+			assertEquals(400, aan, 2);
+			assertEquals(2 * Lichtshow.BALKEN, wissel);
+		}
+	}
+
+	@Nested
 	class DoodtekstenTest {
 		@Test
 		void kiestUitDeLijst() {

@@ -34,6 +34,7 @@ import nl.pudding.bootcamp.config.ConfigStore;
 import nl.pudding.bootcamp.core.BlokPos;
 import nl.pudding.bootcamp.core.BossbarTekst;
 import nl.pudding.bootcamp.core.Kleur;
+import nl.pudding.bootcamp.core.Lichtshow;
 import nl.pudding.bootcamp.core.Punt;
 import nl.pudding.bootcamp.core.QuizDraai;
 import nl.pudding.bootcamp.core.QuizRad;
@@ -90,6 +91,11 @@ public final class Quiz extends RondeLogica {
 	private int getoond = -1;
 	/** De lampen van het gekozen team zijn al aan (op het plingeltje). */
 	private boolean lampAan;
+	/** De decorlampen van de hal (R4.6), gezocht bij de start. */
+	private Decorlampen decor;
+	/** Hoe ver de lichtshow rond is, in rondjes; en waar hij was toen het rad begon te draaien. */
+	private double decorRond;
+	private double decorBijDraai;
 	private Fase fase = Fase.SPELEN;
 
 	public static void init() {
@@ -114,6 +120,7 @@ public final class Quiz extends RondeLogica {
 			for (Kleur k : Kleur.values()) {
 				lamp(server, k, false);
 			}
+			Decorlampen.zoek(server).allemaal(Mc.wereld(server), false);
 		});
 	}
 
@@ -197,6 +204,8 @@ public final class Quiz extends RondeLogica {
 		for (Kleur k : Kleur.values()) {
 			lamp(server, k, false);
 		}
+		decor = Decorlampen.zoek(server);
+		Mc.chatOps(server, Mc.tekst("[bootcamp] Quiz: " + decor.aantal() + " decorlampen gevonden in regio quiz.", ChatFormatting.GRAY));
 		for (ServerPlayer s : Mc.deelnemers(server)) {
 			// Iedereen heeft na de mob arena alles ingeleverd.
 			s.getInventory().clearContent();
@@ -299,6 +308,7 @@ public final class Quiz extends RondeLogica {
 		draaiStart = System.nanoTime();
 		getoond = -1;
 		lampAan = false;
+		decorBijDraai = decorRond;
 		// Geluid en rad starten op dezelfde tick: het rad volgt de tikjes van het geluid.
 		Mc.geluidAllen(server, RAD_GELUID, 1f, 1f);
 		toonDraai(server, 0);
@@ -338,17 +348,24 @@ public final class Quiz extends RondeLogica {
 
 	@Override
 	public void tick(MinecraftServer server) {
+		ServerLevel wereld = Mc.wereld(server);
 		if (draai == null) {
+			// Tussen de draaien: de decorlampen lopen rustig rond.
+			decorRond += Lichtshow.RUST / QuizDraai.TICKS_PER_SECONDE;
+			decor.toon(wereld, decorRond);
 			return;
 		}
 		double seconden = (System.nanoTime() - draaiStart) / 1e9;
 		if (!draai.uitslag(seconden)) {
+			// De decorlampen draaien mee met het rad.
+			decor.toon(wereld, decorBijDraai + QuizDraai.rondjes(seconden));
 			toonDraai(server, seconden);
 			return;
 		}
 		Kleur k = draai.kleur();
 		if (!draai.tekst(seconden)) {
-			// Het plingeltje: het gekozen vak knippert en de lampen van dat team gaan aan.
+			// Het plingeltje: het gekozen vak en de decorlampen knipperen, de lampen van dat team gaan aan.
+			decor.allemaal(wereld, draai.oplichten(seconden));
 			if (!lampAan) {
 				lampAan = true;
 				lamp(server, k, true);
@@ -356,7 +373,8 @@ public final class Quiz extends RondeLogica {
 			toonOplicht(server, seconden);
 			return;
 		}
-		// Het geluid is uitgeklonken: het team groot in beeld.
+		// Het geluid is uitgeklonken: het team groot in beeld, en de decorlampen lopen weer rustig verder.
+		decorRond = decorBijDraai + QuizDraai.rondjes(seconden);
 		draai = null;
 		stand.geland(k);
 		Mc.titleAllen(server, Mc.tekst(k.naam().toUpperCase(Locale.ROOT) + " IS AAN DE BEURT", Mc.kleur(k), ChatFormatting.BOLD), null, 0, 50, 15);
@@ -651,6 +669,9 @@ public final class Quiz extends RondeLogica {
 	@Override
 	public void end(MinecraftServer server) {
 		stopDraai(server);
+		if (decor != null) {
+			decor.allemaal(Mc.wereld(server), false);
+		}
 		for (Kleur k : Kleur.values()) {
 			lamp(server, k, false);
 		}

@@ -95,6 +95,11 @@ public final class QuizDraai {
 		return VOOR_DE_TIKJES + QuizRad.PER_VAK * laatste + LAATSTE_SNELHEID * na - rem * na * na / 2;
 	}
 
+	/** Hoeveel rondjes het rad gedraaid is, zoveel seconden na de draai: de decorlampen draaien mee. */
+	public static double rondjes(double seconden) {
+		return afstand(seconden) / QuizRad.STANDEN;
+	}
+
 	/**
 	 * De stand van het plaatje, zoveel seconden na de draai. In seconden en niet in ticks: hapert de
 	 * server, dan loopt het rad toch gelijk met het geluid, dat bij de spelers gewoon doorspeelt.

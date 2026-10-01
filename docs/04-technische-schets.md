@@ -456,6 +456,7 @@ hij de doos om alle delen heen; bij de cirkel van `vloer` is dat het vierkant er
 | `quiz_rood`, `quiz_blauw`, `quiz_groen`, `quiz_geel` | De vier banken in de quizhal. Zetten met `/quiz bank <kleur>`. |
 | `quiz_podium` | Het podium boven aan de trap, waar de presentator staat. Zetten met `/quiz podium`. |
 | `quizlamp_<kleur>_1` t/m `_n` (blokken) | De lampen bij elke bank, minstens één per team. Gedoofde redstone lampen, geen redstone ernaast. Zetten met `/quiz lamp <kleur>` (telkens een erbij). Een oude `quizlamp_<kleur>` (van voor 1 oktober) wordt bij het laden vanzelf `quizlamp_<kleur>_1`. |
+| (decorlampen) | Geen punten: alle andere redstone lampen in regio `quiz` doen mee aan de lichtshow (R4.6). Bij `/quiz start` krijgen de ops in de chat hoeveel er gevonden zijn. |
 | `quizvuurwerk_<kleur>_1`, `quizvuurwerk_<kleur>_2` (blokken) | Twee dispensers bij elke bank, 8 in totaal. Zetten met `/quiz vuurwerk <kleur> <1\|2>`; `/quiz start` weigert als er een mist of geen dispenser is. |
 | `troon` | Het kleine podium in het midden van de Arena, waar de kroonhouder spawnt. Zetten met `/clown troon`. |
 | `jager_1` t/m `jager_n` | De startplekken van de jagers: in de Arena de 20 redstone blocks in een cirkel. Zetten met `/clown jagerplek`, bovenop het blok en kijkend waar de speler heen moet kijken; de kijkrichting gaat mee met de teleport. |
@@ -863,7 +864,18 @@ plingeltje (10,17 s, tick 203) gaan alle lampen van dat team aan (`quizlamp_rood
 een eigen plaatje uit het pack (`QuizRad.glyphOplicht`, U+E200 + 4 × vak): het rad op de eindstand
 van dat vak, met dat vak 30% lichter en een witte rand. Als het geluid uitklinkt (11,1 s, tick
 222) de title `ROOD IS AAN DE BEURT` in de teamkleur en bossbar `Quiz · aan de beurt: Rood`; pas
-dan is de draai klaar. Terwijl het rad draait of knippert, doen draai, goed en fout niets. De lampen doen
+dan is de draai klaar. Terwijl het rad draait of knippert, doen draai, goed en fout niets.
+
+**Decorlampen** (R4.6, `Decorlampen`, `core`: `Lichtshow`): bij `/quiz start` zoekt de mod alle
+redstone lampen in regio `quiz` behalve de banklampen (hooguit 4 miljoen blokken doorzoeken) en
+meldt het aantal aan de ops. Elke lamp krijgt zijn hoek rond het midden van de regio, met de klok
+mee vanaf het noorden. Vier lichtbalken van elk 40% lopen rond: tussen de draaien een rondje per
+16 seconden; tijdens een draai draaien ze precies mee met het rad (`QuizDraai.rondjes`); op het
+plingeltje gaan ze allemaal tegelijk aan en uit met het knipperende vak, en daarna lopen ze rustig
+verder vanaf waar het rad stopte. Alleen lampen die echt veranderen krijgen een nieuw blok (zonder
+de buren bij te werken), en elke seconde zet de mod alles nog eens goed. Na de quiz en bij `/bc
+reset` gaan ze uit. De hal donkerder maken kan de mod niet (binnen, frog lights): wil je dat de
+lampen meer opvallen, vervang dan wat frog lights door redstone lampen; die doen dan mee. De lampen doen
 niet mee aan het draaien.
 
 **Goed**: alleen als er een team aan de beurt is: +1 voor dat team in de sidebar, title `GOED!`
