@@ -433,8 +433,8 @@ De volledige regels staan in [03-kroon-regels.md](03-kroon-regels.md). Hier het 
 - Wie af is, komt in de chat: "Speler3 is af door ClownPierce · 11 over". De kroonhouder ziet
   onderin "Jij hebt de kroon · 11 jagers"; tijdens het wachten op `/clown go` ziet iedereen
   "Wacht op het startsein" (aan te passen met `/clown wachttekst`).
-- Clown doet niet mee aan de FFA, ook niet na een overwinning. Iedereen anders wel, ook wie
-  af was. De winnaar van King of the Hill speelt daarna de finale tegen de winnaar van de FFA.
+- Daarna doet iedereen mee aan de FFA, ook Clown en ook wie af was. De winnaar van King of the
+  Hill speelt daarna de finale tegen de winnaar van de FFA.
 
 **Voice:** proximity. De tribune is publiek: de vloer hoort de doden.
 
@@ -448,9 +448,9 @@ De volledige regels staan in [03-kroon-regels.md](03-kroon-regels.md). Hier het 
 the Hill.
 
 **Setup**
-- Dezelfde Arena als Clown vs All. Iedereen behalve Clown, full hp, **willekeurig verdeeld over de
-  20 startplekken**, met de kijkrichting van de plek. Ook wie in Clown vs All af was, en de
-  winnaar ervan. Clown zit op de tribune.
+- Dezelfde Arena als Clown vs All. **Iedereen doet mee, ook Clown**, full hp, **willekeurig
+  verdeeld over de 20 startplekken**, met de kijkrichting van de plek. Ook wie in Clown vs All af
+  was, en de winnaar ervan.
 - Iedereen krijgt dezelfde **FFA-kit**: dezelfde als bij Clown vs All, maar met **32 golden
   apples**. Dus volledig diamond armor (Protection IV), diamond sword en axe (Sharpness V), bow
   (Power V) met 32 pijlen, schild, alles met Unbreaking III, en 32 gapples. Een gewone diamond
@@ -479,7 +479,7 @@ the Hill.
   King of the Hill won (zie de finale).
 - De kills rechts blijven staan tot de finale begint.
 
-**Voice:** proximity. Clown zit op de tribune en mag meejoelen.
+**Voice:** proximity. De tribune is publiek: de vloer hoort de doden.
 
 ---
 
@@ -491,8 +491,8 @@ tegen één. Wie wint is **King of the SMP Bootcamp**.
 **Wie speelt**
 - De winnaar van King of the Hill (meestal Clown) tegen de winnaar van de FFA. De mod onthoudt
   beide winnaars, ook na een herstart van de server.
-- Won dezelfde speler King of the Hill én de FFA (een jager die King of the Hill won), dan speelt
-  hij tegen de **nummer twee van de FFA**: wie daar als laatste afviel.
+- Won dezelfde speler King of the Hill én de FFA (bijvoorbeeld Clown, die ook FFA speelt), dan
+  speelt hij tegen de **nummer twee van de FFA**: wie daar als laatste afviel.
 - Klopt er iets niet, of wil je testen: `/finale spelers <speler1> <speler2>` zet de twee met de
   hand. `/finale spelers` laat zien wie het nu zijn.
 

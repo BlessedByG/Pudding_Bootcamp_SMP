@@ -180,12 +180,6 @@ class RegelsTest {
 	}
 
 	@Test
-	void ffaZonderDeUitverkorene() {
-		assertEquals(List.of(a, c), Regels.ffaDeelnemers(List.of(a, b, c), b));
-		assertEquals(List.of(a, b, c), Regels.ffaDeelnemers(List.of(a, b, c), UUID.randomUUID()));
-	}
-
-	@Test
 	void finaleKingOfTheHillTegenFfa() {
 		assertEquals(List.of("clownpierce", "speler7"), Regels.finalisten("clownpierce", "speler7", "speler2"));
 		// Dezelfde winnaar (hoofdletters tellen niet): tegen de nummer twee van de FFA.

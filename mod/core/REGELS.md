@@ -68,7 +68,7 @@ Dit is de lijst van het rondeplan van 25 september 2026 (taakplan 2). De regels 
 | R5.8 | Geen timer: de ronde is voorbij zodra er één over is. | `Regels.laatsteOver` | `RegelsTest.eindeBijEenOver` |
 | R5.10 | Regeerperiodes: elke kroonwissel een nieuwe periode. | `Regeerperiodes` | `RegeerperiodesTest` |
 | R5.11 | Strength: de kroonhouder II en de jagers niks, tot er nog 3 over zijn (de kroonhouder meegeteld); dan iedereen I. | `Regels.kroonSterkte`, `SLOTSTRIJD` | `RegelsTest.kroonhouderSterkerTotDeSlotstrijd` |
-| R6.1 | Iedereen behalve de uitverkorene doet mee aan de FFA, ook wie in ronde 5 af was. | `Regels.ffaDeelnemers` | `RegelsTest.ffaZonderDeUitverkorene` |
+| R6.1 | Iedereen behalve staff doet mee aan de FFA, ook de uitverkorene en wie in ronde 5 af was. | `Ffa.start` (fabric) | testrun |
 | R6.5 | Bij drie over `LAATSTE DRIE`, bij twee `LAATSTE TWEE`. | `Regels.aftelTitle` | `RegelsTest.laatsteDrieEnTwee` |
 | R6.6 | De finale: de winnaar van King of the Hill tegen de winnaar van de FFA; won dezelfde speler allebei, dan tegen de nummer twee van de FFA. Zonder twee namen geen finale. | `Regels.finalisten` | `RegelsTest.finaleKingOfTheHillTegenFfa` |
 | R7.1 | Uitloggen: een jager in ronde 5 en een FFA-speler zijn af; wie in de mob arena aan de beurt is telt als dood; logt een finalist uit, dan pauzeert de finale tot de staff kiest (combat log of crash); in de andere rondes gebeurt er niks. | `Regels.bijQuit` | `RegelsTest.quitRegels` |

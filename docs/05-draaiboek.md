@@ -20,7 +20,7 @@ Tijdschema, rollen en checklists voor de avond zelf. Tijden zijn een voorbeeld m
 | 21:10 | **Ronde 4: De Quiz** (± 15 min, Pudding presenteert en bepaalt) | Pudding, Admin 1 |
 | 21:25 | Winnend team. Naar de Arena. Host legt King of the Hill uit (zo heet de ronde in beeld; zeg nooit "Clown vs All"). "Het lot beslist wie de kroon krijgt." Het Rad landt op Clown. | Host, Admin 1 |
 | 21:28 | **Ronde 5: King of the Hill** (intern Clown vs All; iedereen stil tot `/clown go`, dan 10 sec countdown, geen timer, reken op 10 tot 20 min) | Admin 1 |
-| 21:45 | Winnaar. Iedereen behalve Clown de vloer op. | Admin 1 |
+| 21:45 | Winnaar. Iedereen de vloer op, ook Clown. | Admin 1 |
 | 21:47 | **Ronde 6: De FFA** (iedereen stil tot `/ffa go`, dan 10 sec countdown, geen timer, reken op 5 tot 10 min) | Admin 1 |
 | 21:58 | Winnaar FFA. `/finale spelers`: wie speelt de finale? Host kondigt aan: de winnaar van King of the Hill tegen de winnaar van de FFA. | Host, Admin 1 |
 | 22:00 | **Ronde 7: De Finale** (1 tegen 1, stil tot `/finale go`, dan 10 sec countdown, geen timer, reken op 2 tot 5 min) | Admin 1 |
@@ -234,8 +234,7 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
       Bij nog 3 over heeft iedereen Strength I, ook de kroonhouder. Killt de kroonhouder een
       jager, dan ziet de rest zijn kop en naam groot met "pakt Speler3 · n over" en een brul. Jager raakt jager:
       geen schade. Kill de kroonhouder: kroon over, kroonpakket, reset. Laatste over wint.
-- [ ] `/ffa start`: iedereen behalve Clown op een willekeurige plek, Clown op de tribune,
-      iedereen stil. Kit: dezelfde als King of the Hill met 32 gapples, gewone diamond helm.
+- [ ] `/ffa start`: iedereen op een willekeurige plek, ook Clown, iedereen stil. Kit: dezelfde als King of the Hill met 32 gapples, gewone diamond helm.
       Onderin "Wacht op het startsein". `/ffa go`: 10 seconden, dan raakt iedereen iedereen.
       Kills rechts, wie af is in de chat, onderin "n kills · n over" voor wie vecht. Een kill
       komt groot in beeld bij de tribune en de killer (zachte brul), niet bij de andere
@@ -275,7 +274,7 @@ Minstens één keer de hele avond met 4 tot 8 testers. Let vooral op:
 - [ ] Clown vs All: jagers kunnen elkaar niet raken, ook niet met pijlen. Kroonwissel zet
       iedereen goed terug. Rad landt op de uitverkorene; draai hem vijf keer. Voelt Strength II voor
       de kroonhouder te sterk of te zwak, en de 10 gapples genoeg?
-- [ ] FFA: iedereen behalve Clown staat op de vloer. Kijk hoe lang een potje duurt met 32
+- [ ] FFA: iedereen staat op de vloer, ook Clown. Kijk hoe lang een potje duurt met 32
       gapples, en bij welke grootte `/ffa krimp` het afmaakt.
 - [ ] Kijkers: tribune en kooi, geen schade, niet het veld op. Spring als kijker van de tribune
       de Arena in: je staat meteen weer op de tribune.

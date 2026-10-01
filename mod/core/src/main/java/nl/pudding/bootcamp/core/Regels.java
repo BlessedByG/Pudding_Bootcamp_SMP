@@ -1,6 +1,5 @@
 package nl.pudding.bootcamp.core;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -177,17 +176,6 @@ public final class Regels {
 	/** R5.8 en R6.2: geen timer, de ronde is voorbij zodra er nog één (of niemand) leeft. */
 	public static boolean laatsteOver(int levend) {
 		return levend <= 1;
-	}
-
-	/** R6.1: iedereen behalve de uitverkorene doet mee aan de FFA, ook wie in ronde 5 af was. */
-	public static List<UUID> ffaDeelnemers(List<UUID> spelers, UUID uitverkorene) {
-		List<UUID> uit = new ArrayList<>();
-		for (UUID s : spelers) {
-			if (!s.equals(uitverkorene)) {
-				uit.add(s);
-			}
-		}
-		return uit;
 	}
 
 	/**

@@ -37,8 +37,8 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Ronde 6: de FFA in de Arena. Iedereen behalve de uitverkorene, ook wie in Clown vs All af was,
- * met dezelfde kit. Geen timer: de laatste die overblijft wint en speelt de finale tegen de winnaar
+ * Ronde 6: de FFA in de Arena. Iedereen, ook de uitverkorene en wie in Clown vs All af was, met
+ * dezelfde kit. Geen timer: de laatste die overblijft wint en speelt de finale tegen de winnaar
  * van King of the Hill. De kroning komt na de finale.
  */
 public final class Ffa extends RondeLogica {
@@ -59,35 +59,19 @@ public final class Ffa extends RondeLogica {
 
 	@Override
 	public String magStarten(MinecraftServer server) {
-		if (deelnemers(server).size() < 2) {
-			return "er zijn minstens twee spelers nodig (iedereen behalve de uitverkorene en staff)";
+		if (Mc.deelnemers(server).size() < 2) {
+			return "er zijn minstens twee spelers nodig (iedereen behalve staff)";
 		}
 		String fout = Kits.controleer(server, "arena");
 		return fout != null ? fout : Arena.controleerPlekken();
-	}
-
-	/** Iedereen behalve de uitverkorene, ook wie in ronde 5 af was. */
-	private static List<ServerPlayer> deelnemers(MinecraftServer server) {
-		List<ServerPlayer> online = Mc.deelnemers(server);
-		ServerPlayer clown = Spel.clown(server);
-		List<UUID> mee = Regels.ffaDeelnemers(online.stream().map(ServerPlayer::getUUID).toList(),
-				clown == null ? null : clown.getUUID());
-		return online.stream().filter(s -> mee.contains(s.getUUID())).toList();
 	}
 
 	@Override
 	public void start(MinecraftServer server) {
 		Spelregels.locatorBar(server, false);
 		Kroon.wisHits();
-		List<ServerPlayer> vechters = deelnemers(server);
-
-		// Clown kijkt vanaf de tribune.
-		for (ServerPlayer s : Mc.deelnemers(server)) {
-			if (!vechters.contains(s)) {
-				Spel.status(s).dood = true;
-				Tribune.maakKijker(server, s, Tribune.Spullen.LEGEN, false);
-			}
-		}
+		// R6.1: iedereen behalve staff, ook de uitverkorene en wie in ronde 5 af was.
+		List<ServerPlayer> vechters = Mc.deelnemers(server);
 		for (ServerPlayer s : vechters) {
 			SpelerStatus st = Spel.status(s);
 			st.dood = false;

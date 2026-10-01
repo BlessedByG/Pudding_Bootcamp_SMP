@@ -1003,9 +1003,9 @@ de laatste vijf als title plus pling, dan los met een groene GO en de raid horn.
 staat alles blokkeert waarmee je beweegt of schiet: bogen, crossbows, tridents, pearls, wind
 charges en chorus fruit. Eten (gapples) mag. Tijdens een opstelling doet niemand elkaar schade.
 
-**Ronde 6, FFA en kroning.** In de Arena van ronde 5. Iedereen behalve Clown, ook wie af was,
-willekeurig naar `jager_1..n` (één per plek, met kijkrichting), full hp, `arena.json`, geen team;
-Clown als kijker naar `tribune_n`. Dan de opstelling zonder countdown: iedereen bevroren (zoals
+**Ronde 6, FFA en kroning.** In de Arena van ronde 5. Iedereen behalve staff, ook Clown en wie af
+was, willekeurig naar `jager_1..n` (één per plek, met kijkrichting), full hp, `arena.json`, geen
+team. Dan de opstelling zonder countdown: iedereen bevroren (zoals
 in ronde 5, ook schieten en pearls geblokkeerd) tot de commander `/ffa go` doet; bossbar
 `FFA · wacht op de start`, actionbar `/ffa wachttekst` (standaard `Wacht op het startsein`). Na
 `/ffa go` 10 seconden countdown, dan los. **Geen timer**: elke seconde, is er nog maar één
@@ -1021,7 +1021,7 @@ In beeld tijdens de FFA:
   `Speler3 is af · 11 over`. De dode ziet zijn doodtekst.
 - **Kill in beeld** (`Arena.killInBeeld`, dezelfde als bij King of the Hill): title met kop en naam
   van de killer in goud, subtitle `pakt Speler3 · 11 over`, 5/40/15 ticks, `entity.ravager.roar`
-  op half volume. Alleen voor wie niet (meer) vecht (tribune, Clown, staff) en voor de killer;
+  op half volume. Alleen voor wie niet (meer) vecht (tribune, staff) en voor de killer;
   de andere vechters krijgen alleen de chatregel. Niet als er bij die kill `LAATSTE DRIE` of
   `LAATSTE TWEE` komt, en niet bij de laatste kill.
 - **Actionbar**: elke seconde en na elke kill, voor iedereen die nog vecht, `3 kills · 11 over`
@@ -1088,8 +1088,7 @@ Geen spectator mode, geen tp-items, geen vliegen.
   (drie teksten), dan maakt de mod er bij het laden de nieuwe zes van.
 
 Waar kijkers heen gaan: ronde 3 bij een dood naar `kooi` tot het einde van die
-beurt, en anders naar `tribune_mob_n`; ronde 5 en 6 naar `tribune_n`. Clown zit tijdens de FFA ook op de
-tribune.
+beurt, en anders naar `tribune_mob_n`; ronde 5 en 6 naar `tribune_n`.
 
 **Staff** gebruikt spectator of creative voor de camera; de mod dwingt daar niks af.
 

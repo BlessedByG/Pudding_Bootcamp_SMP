@@ -101,7 +101,7 @@ Jagers kunnen elkaar dus niet in de weg zitten met zwaard of boog. Samenwerken i
 - Winnaar: `title` voor iedereen met de kop van de winnaar, vuurpijl erboven:
   **SPELER7 WINT KING OF THE HILL**. Voor Clown precies hetzelfde, zodat niks verraadt dat hij
   moest winnen.
-- Daarna de FFA: **iedereen behalve Clown**, ook wie af was en ook de winnaar. De winnaar van
+- Daarna de FFA: **iedereen, ook Clown**, ook wie af was en ook de winnaar. De winnaar van
   King of the Hill (meestal Clown) speelt daarna **de finale** tegen de winnaar van de FFA.
 
 ## Randgevallen
