@@ -137,17 +137,21 @@ Clown vs All en het Rad pas bij ronde 5. Nog geen teams; iedereen is wit.
 
 | Block | Wat het doet | Aantal |
 |---|---|---|
-| Netherite block | **50 punten.** Kost met een diamond pickaxe een paar tellen: je staat even stil. | 6 |
-| Diamond block | **10 punten** | 90 |
-| Gold block | **5 punten** | 120 |
+| Netherite block | **50 punten.** Kost met een diamond pickaxe een paar tellen: je staat even stil. | 10 |
+| Diamond block | **10 punten** | 150 |
+| Gold block | **5 punten** | 200 |
 | Iron block | **1 punt.** Heel veel, zodat je steeds iets vindt. Niet in de chat, alleen voor jou. | 2000 |
-| Redstone block | **Gok.** Of jij krijgt 10 seconden Haste, of iedereen behalve jij staat 15 seconden stil. 50/50. | 10 |
-| Emerald block | **Jumpscare.** Je kiest in een kistmenu (met de koppen van de anderen) wie hem krijgt. | 10 |
+| Redstone block | **Gok.** Of jij krijgt 15 seconden Haste, of iedereen behalve jij staat 15 seconden stil. 50/50. | 20 |
+| Emerald block | **Jumpscare.** Je kiest in een kistmenu (met de koppen van de anderen) wie hem krijgt. | 30 |
 | Lapis block | **Terug naar de start.** Je kiest in een kistmenu wie terug moet naar zijn eigen startplek. | 30 |
+| TNT | **Een TNT** in je inventory: zet hem neer en hij gaat meteen af, en blaast de deepslate om zich heen weg. | 20 |
+| Glowstone | **Turbo:** 10 seconden Efficiency V op je pickaxe en Haste II. | 20 |
+| Slime block | **Misselijk:** alle anderen 15 seconden Nausea. | 30 |
+| Target block | **Husselen:** iedereen staat ineens op de plek van een ander. | 30 |
 
 - De aantallen stel je in met `/ei blokken <soort> <aantal>`. Afstemmen in de testrun: het Ei
   heeft zo'n 28.000 blokken deepslate, en met 20 spelers in 15 minuten kan het grotendeels leeg.
-  Alle blokken samen (standaard 2301) moeten in de deepslate van het Ei passen; anders weigert
+  Alle blokken samen (standaard 2540) moeten in de deepslate van het Ei passen; anders weigert
   `/ei start`.
 
 **Regels**

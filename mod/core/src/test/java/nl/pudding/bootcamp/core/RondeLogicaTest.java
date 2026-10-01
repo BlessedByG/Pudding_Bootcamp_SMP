@@ -123,7 +123,7 @@ class RondeLogicaTest {
 					assertTrue(alle.add(i), "plek " + i + " dubbel");
 				}
 			}
-			assertEquals(2301, alle.size());
+			assertEquals(2540, alle.size());
 		}
 
 		@Test
@@ -629,8 +629,8 @@ class RondeLogicaTest {
 			assertEquals(4, i.doolhofPoort());
 			assertEquals(10, i.doolhofHint());
 			assertEquals(15, i.eiTimer());
-			assertEquals(6, i.eiBlokken(EiBlok.NETHERITE));
-			assertEquals(2301, i.eiTotaal());
+			assertEquals(10, i.eiBlokken(EiBlok.NETHERITE));
+			assertEquals(2540, i.eiTotaal());
 			assertEquals(30, i.eiBlokken(EiBlok.LAPIS));
 			assertEquals(2000, i.eiBlokken(EiBlok.IRON));
 			assertEquals("Af · je speelt geen beurt meer", i.aftekst());
@@ -674,7 +674,7 @@ class RondeLogicaTest {
 		void eiBlokkenPassenOpDeDeepslate() {
 			Instellingen i = new Instellingen();
 			assertNull(i.checkEiBlokken(EiBlok.DIAMOND, 100, 3000));
-			// 2301 - 90 + 900 = 3111 > 3000.
+			// 2540 - 150 + 900 = 3290 > 3000.
 			assertNotNull(i.checkEiBlokken(EiBlok.DIAMOND, 900, 3000));
 			// Niet vastgelegd: niet te controleren.
 			assertNull(i.checkEiBlokken(EiBlok.DIAMOND, 900, -1));

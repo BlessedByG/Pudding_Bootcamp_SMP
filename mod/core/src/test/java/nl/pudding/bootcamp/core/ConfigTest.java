@@ -65,7 +65,7 @@ class ConfigTest {
 		assertEquals(4, t.instellingen().doolhofPoort());
 		assertEquals("De echte gang begint bij de lantaarn", t.instellingen().hinttekst());
 		assertEquals(9, t.instellingen().eiBlokken(EiBlok.NETHERITE));
-		assertEquals(90, t.instellingen().eiBlokken(EiBlok.DIAMOND));
+		assertEquals(150, t.instellingen().eiBlokken(EiBlok.DIAMOND));
 		assertEquals(12, t.instellingen().mobPunten("ravager"));
 		assertEquals("Weg!", t.instellingen().aftekst());
 		assertEquals(1, t.instellingen().veldHoogte());

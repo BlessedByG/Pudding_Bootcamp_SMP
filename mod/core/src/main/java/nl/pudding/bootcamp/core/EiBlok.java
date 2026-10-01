@@ -7,25 +7,25 @@ import java.util.Locale;
  * netherite, diamond, gold en iron geven punten; de rest doet iets.
  */
 public enum EiBlok {
-	NETHERITE("netherite", "minecraft:netherite_block", 50, 6),
-	DIAMOND("diamond", "minecraft:diamond_block", 10, 90),
-	GOLD("gold", "minecraft:gold_block", 5, 120),
+	NETHERITE("netherite", "minecraft:netherite_block", 50, 10),
+	DIAMOND("diamond", "minecraft:diamond_block", 10, 150),
+	GOLD("gold", "minecraft:gold_block", 5, 200),
 	/** Een punt, maar heel veel: zo vind je steeds iets. Niet in de chat, anders loopt die over. */
 	IRON("iron", "minecraft:iron_block", 1, 2000),
 	/** Geen punten: 50/50 Haste voor de hakker of een bevriezing voor de rest. */
-	REDSTONE("redstone", "minecraft:redstone_block", 0, 10),
+	REDSTONE("redstone", "minecraft:redstone_block", 0, 20),
 	/** Geen punten: kies uit een kistmenu wie een jumpscare krijgt. */
-	EMERALD("emerald", "minecraft:emerald_block", 0, 10),
+	EMERALD("emerald", "minecraft:emerald_block", 0, 30),
 	/** Geen punten: kies uit een kistmenu wie terug moet naar zijn startplek. */
 	LAPIS("lapis", "minecraft:lapis_block", 0, 30),
 	/** Geen punten: een TNT in je inventory die meteen afgaat als je hem neerzet en deepslate wegblaast. */
-	TNT("tnt", "minecraft:tnt", 0, 10),
+	TNT("tnt", "minecraft:tnt", 0, 20),
 	/** Geen punten: even Efficiency V op je pickaxe en Haste II. */
-	GLOWSTONE("glowstone", "minecraft:glowstone", 0, 10),
+	GLOWSTONE("glowstone", "minecraft:glowstone", 0, 20),
 	/** Geen punten: Nausea voor alle anderen. */
-	SLIME("slime", "minecraft:slime_block", 0, 10),
+	SLIME("slime", "minecraft:slime_block", 0, 30),
 	/** Geen punten: iedereen wisselt willekeurig van plek. */
-	TARGET("target", "minecraft:target", 0, 5);
+	TARGET("target", "minecraft:target", 0, 30);
 
 	/** Het blok waar de puntenblokken op komen: gewone deepslate, geen varianten. */
 	public static final String DEEPSLATE = "minecraft:deepslate";

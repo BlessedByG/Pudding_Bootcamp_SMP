@@ -379,7 +379,7 @@ ronde. Een nieuw aantal puntenblokken geldt vanaf de volgende `/ei start`.
 | `/doolhof valmobs` | 3 t/m 10 | 0 tot 20, min niet boven max |
 | `/doolhof schrik` | per plek willekeurig | foto 1 t/m 5, of random |
 | `/ei timer` | 15 | 5 tot 60 |
-| `/ei blokken` | netherite 6, diamond 90, gold 120, iron 2000, redstone 10, emerald 10, lapis 30, tnt 10, glowstone 10, slime 10, target 5 (voorlopig; samen 2301) | 0 of meer; samen niet meer dan de deepslate-plekken in het Ei |
+| `/ei blokken` | netherite 10, diamond 150, gold 200, iron 2000, redstone 20, emerald 30, lapis 30, tnt 20, glowstone 20, slime 30, target 30 (samen 2540) | 0 of meer; samen niet meer dan de deepslate-plekken in het Ei |
 | `/mobarena punten` | zombie 1; skeleton, spider, cave spider 2; creeper 3; witch 4; vindicator 5; evoker 8; ravager 10; elk ander type 1 | 0 tot 100 |
 | `/mobarena aftekst` | `Af · je speelt geen beurt meer` | tot 60 tekens |
 | `/mobarena veldhoogte` | 3 blokken | 0 tot 10 |

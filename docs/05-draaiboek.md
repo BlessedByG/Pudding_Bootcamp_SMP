@@ -64,7 +64,7 @@ Vooraf instellen, in minuten (blijft bewaard):
 | `/doolhof schrik` | elke schrikplek een willekeurige foto; `/doolhof schrik <nr> <1..5>` voor een vaste |
 | `/doolhof wachttekst` | "Wacht op het startsein" |
 | `/ei timer` | 15 |
-| `/ei blokken` | netherite 6, diamond 90, gold 120, iron 2000, redstone 10, emerald 10, lapis 30, tnt 10, glowstone 10, slime 10, target 5 (voorlopig; samen 2301, dat moet op de deepslate passen) |
+| `/ei blokken` | netherite 10, diamond 150, gold 200, iron 2000, redstone 20, emerald 30, lapis 30, tnt 20, glowstone 20, slime 30, target 30 (samen 2540, dat moet op de deepslate passen) |
 | `/mobarena punten` | zombie 1; skeleton, spider, cave spider 2; creeper 3; witch 4; vindicator 5; evoker 8; ravager 10; warden 50 |
 | `/mobarena aftekst` | "Af · je speelt geen beurt meer" |
 | `/mobarena veldhoogte` | 3 |
