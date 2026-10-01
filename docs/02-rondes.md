@@ -279,8 +279,9 @@ punten wint.
 - Sidebar: de teamstand. Actionbar: wat je net kreeg en de stand van je team
   (`+3 · Rood 47`). Bossbar: `Mob Arena · beurt 1/2 · wave 2`.
 - Wie aan de beurt is, **gloeit in zijn teamkleur**: kijkers en streams zien meteen wie van welk
-  team is. Een kill op een evoker, ravager of de warden komt in de chat: "Speler7 killde de
-  ravager (+10)".
+  team is. Bij elke kill komt er een wolk en een ring van deeltjes in de **teamkleur van de
+  killer** om de mob heen; hoe groter de mob, hoe meer deeltjes. Een kill op een evoker, ravager
+  of de warden komt in de chat: "Speler7 killde de ravager (+10)".
 
 **Doodgaan**
 - Ga je dood, dan ga je **in de kooi** en kijk je de rest van die beurt vanaf daar. Doodtekst

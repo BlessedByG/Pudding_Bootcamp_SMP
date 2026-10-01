@@ -196,8 +196,9 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
 - [ ] `/mobarena start` met twee accounts in twee teams: geen schema in de chat
       (`/mobarena schema` laat het alleen jou zien), beide op hun eigen startplek, gloeiend in hun
       teamkleur, en tot `GO` kun je rondkijken maar niet lopen. Rook bij de spawnpunten, 5
-      seconden na de laatste kill de volgende wave, punten per kill in de sidebar, een ravager-
-      of evokerkill in de chat, mobs negeren de tribune en de kooi. Ga dood: de kooi, je
+      seconden na de laatste kill de volgende wave, bij elke kill een wolk en ring in de
+      teamkleur van de killer, punten per kill in de sidebar, een ravager- of evokerkill in de
+      chat, mobs negeren de tribune en de kooi. Ga dood: de kooi, je
       `/mobarena aftekst` onderin, na de beurt de tribune. Na wave 5: tekst meteen in beeld, 10
       seconden aftellen, dan pas het veld en de kooi naar de tribune; wie al op de tribune stond
       blijft staan. `/mobarena volgende` weigert tijdens die 10 seconden. Einde: winnaar, 10

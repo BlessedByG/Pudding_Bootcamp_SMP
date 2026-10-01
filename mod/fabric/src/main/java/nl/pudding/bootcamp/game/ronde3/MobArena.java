@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -702,6 +703,7 @@ public final class MobArena extends RondeLogica {
 		}
 		String type = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType()).toString();
 		int erbij = punten.kill(team, type, Spel.instellingen());
+		killDeeltjes(mob, team);
 		Mc.geluid(killer, SoundEvents.EXPERIENCE_ORB_PICKUP, 1f, 1f);
 		Spel.melding(killer, Component.empty()
 				.append(Mc.tekst("+" + erbij, ChatFormatting.GREEN, ChatFormatting.BOLD))
@@ -713,6 +715,29 @@ public final class MobArena extends RondeLogica {
 					.append(Mc.tekst(" killde de " + kort + " (+" + erbij + ")", ChatFormatting.GOLD)));
 		}
 		toonSidebar(server);
+	}
+
+	/**
+	 * Deeltjes in de teamkleur van de killer rond de mob: een wolk zo groot als de mob en een ring om
+	 * zijn voeten. Grotere mobs krijgen er meer. Iedereen ziet ze, ook de tribune.
+	 */
+	private static void killDeeltjes(LivingEntity mob, Kleur team) {
+		if (!(mob.level() instanceof ServerLevel wereld)) {
+			return;
+		}
+		DustParticleOptions stof = new DustParticleOptions(team.rgb(), 1.5f);
+		double breed = mob.getBbWidth();
+		double hoog = mob.getBbHeight();
+		int wolk = (int) Math.min(80, 16 + breed * hoog * 12);
+		wereld.sendParticles(stof, true, true, mob.getX(), mob.getY() + hoog / 2, mob.getZ(), wolk,
+				breed / 2 + 0.2, hoog / 2, breed / 2 + 0.2, 0);
+		double straal = Math.max(0.8, breed / 2 + 0.5);
+		int ring = (int) Math.min(48, Math.round(straal * 16));
+		for (int i = 0; i < ring; i++) {
+			double hoek = Math.PI * 2 * i / ring;
+			wereld.sendParticles(stof, true, true, mob.getX() + Math.cos(hoek) * straal, mob.getY() + 0.1,
+					mob.getZ() + Math.sin(hoek) * straal, 1, 0, 0, 0, 0);
+		}
 	}
 
 	/** Gesneuveld: kijker in de kooi tot het einde van de beurt, af voor de rest. Het Warden-ei houdt hij. */

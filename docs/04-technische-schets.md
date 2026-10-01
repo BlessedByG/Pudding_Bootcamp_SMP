@@ -818,7 +818,10 @@ de speler die de laatste klap gaf, ook via een pijl of andere projectile; vanill
 raakte. Punten uit `/mobarena punten` naar het team van die speler, plus één kill voor de
 tiebreak. Zonder speler (magma, val) geen punten. Een kill op een **evoker, ravager of de warden**
 komt als chatregel voor iedereen: `Speler7 killde de ravager (+10)`, met de naam in de teamkleur.
-Andere kills alleen in de actionbar van de killer.
+Andere kills alleen in de actionbar van de killer. Elke kill met punten geeft deeltjes rond de
+mob (`MobArena.killDeeltjes`): `DustParticleOptions` in de `Kleur.rgb()` van het team van de killer,
+grootte 1.5, een wolk binnen de hitbox (16 + breedte × hoogte × 12, hooguit 80) en een ring om de
+voeten (straal minstens 0.8, 16 per blok straal, hooguit 48), voor iedereen zichtbaar, ook van ver.
 
 **Af**: wie in de mob arena sneuvelt, ziet eerst de doodtekst als title en daarna in de actionbar
 de tekst van `/mobarena aftekst` (standaard `Af · je speelt geen beurt meer`), vijf seconden lang.
