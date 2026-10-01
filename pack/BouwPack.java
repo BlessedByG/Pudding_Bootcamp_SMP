@@ -95,8 +95,8 @@ public class BouwPack {
 	 * De naaf van het rad (op de tekening van 512 x 512): een donkere ring met daarin de schijf met het
 	 * logo uit {@code aanleveren/logo.png}, rechtop, ook als het rad draait (zie {@link #naaf}).
 	 */
-	static final double NAAF = 82;
-	static final double NAAF_SCHIJF = 75;
+	static final double NAAF = 49;
+	static final double NAAF_SCHIJF = 44;
 	/**
 	 * Tot zover van het midden reikt het puddingkje, in halve breedtes van het logo: het blaadje
 	 * linksboven steekt net buiten de cirkel die in het vierkant past (gemeten: 1,056).
