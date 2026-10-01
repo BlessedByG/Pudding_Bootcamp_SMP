@@ -296,7 +296,7 @@ hele avond geldt (setup, spelers, noodknoppen) staat onder `/bc`.
 | `/doolhof valmobs [<min> [<max>]]` | Hoeveel mobs (husks en silverfish door elkaar) er uit een valkist komen: elke keer willekeurig van `<min>` t/m `<max>`, standaard 3 t/m 10. Met één getal altijd zoveel; `0` is alleen de jumpscare of de klop (50/50). Bewaard in `bootcamp.json`. |
 | `/ei start\|stop\|resterend` | Ronde 2. |
 | `/ei timer [<minuten>]` | Hoe lang het Ei duurt, standaard 15. |
-| `/ei blokken [<soort> <aantal>]` | Hoeveel blokken van een soort (`netherite`, `diamond`, `gold`, `redstone`, `emerald`, `tnt`, `glowstone`, `slime`, `target`) de mod in het Ei strooit. Zonder argumenten: het overzicht, met het aantal deepslate-plekken in het Ei. |
+| `/ei blokken [<soort> <aantal>]` | Hoeveel blokken van een soort (`netherite`, `diamond`, `gold`, `iron`, `redstone`, `emerald`, `tnt`, `glowstone`, `slime`, `target`) de mod in het Ei strooit. Zonder argumenten: het overzicht, met het aantal deepslate-plekken in het Ei. |
 | `/ei prijskader` | Het item frame waar je naar kijkt (binnen 5 blokken) wordt het frame voor het Warden-ei: daar verschijnt het als het Ei voorbij is. Slaat punt `ei_prijskader` op. |
 | `/ei vastleggen` | Legt het Ei vast zoals het nu gebouwd is: alle blokken in regio `ei`. Eén keer na het bouwen, en opnieuw na elke bouwwijziging. Niet tijdens ronde 2. Antwoord: `Ei vastgelegd: 54.000 blokken, waarvan 27.812 deepslate.` |
 | `/mobarena start` | Ronde 3: loot het schema (geheim, niet in de chat) en start beurt 1. |
@@ -379,7 +379,7 @@ ronde. Een nieuw aantal puntenblokken geldt vanaf de volgende `/ei start`.
 | `/doolhof valmobs` | 3 t/m 10 | 0 tot 20, min niet boven max |
 | `/doolhof schrik` | per plek willekeurig | foto 1 t/m 5, of random |
 | `/ei timer` | 15 | 5 tot 60 |
-| `/ei blokken` | netherite 6, diamond 90, gold 120, redstone 10, emerald 10, tnt 10, glowstone 10, slime 10, target 5 (voorlopig; samen 271) | 0 of meer; samen niet meer dan de deepslate-plekken in het Ei |
+| `/ei blokken` | netherite 6, diamond 90, gold 120, iron 2000, redstone 10, emerald 10, tnt 10, glowstone 10, slime 10, target 5 (voorlopig; samen 2271) | 0 of meer; samen niet meer dan de deepslate-plekken in het Ei |
 | `/mobarena punten` | zombie 1; skeleton, spider, cave spider 2; creeper 3; witch 4; vindicator 5; evoker 8; ravager 10; elk ander type 1 | 0 tot 100 |
 | `/mobarena aftekst` | `Af · je speelt geen beurt meer` | tot 60 tekens |
 | `/mobarena veldhoogte` | 3 blokken | 0 tot 10 |
@@ -679,11 +679,12 @@ doos van meer dan 250.000 blokken weigert hij: dat is een verkeerde selectie.
 **Breken** (`PlayerBlockBreakEvents.BEFORE`): buiten regio `ei` geannuleerd. Binnen `ei` breekt
 elk blok zonder drop (`level.removeBlock`, event geannuleerd). De gestrooide blokken geven punten
 of een effect, alleen op de plekken waar de mod ze strooide: glowstone of slime als versiering in
-de schil doet niets. **Alles wat iemand vindt staat in de chat**, met de naam in de teamkleur
+de schil doet niets. **Alles wat iemand vindt staat in de chat** (behalve iron, daarvan is er te veel), met de naam in de teamkleur
 (`Speler7 hakte diamond (+10)`, `Speler7 hakte redstone: iedereen bevroren`, `Speler7 liet
 Speler3 schrikken`).
 
-- netherite +50, diamond +10, gold +5: `entity.experience_orb.pickup`, en twee seconden lang
+- netherite +50, diamond +10, gold +5, iron +1: `entity.experience_orb.pickup` (bij iron iets hoger), en
+  twee seconden lang
   `+10 · 85 punten · #4` in de actionbar. Bij netherite staat de `+50` in paars.
 - redstone: 50/50. **Haste**: Haste II 15 seconden voor de breker, `block.beacon.power_select`,
   title `HASTE` met subtitle `15 seconden sneller hakken`, alleen voor hem. **Bevriezing**:

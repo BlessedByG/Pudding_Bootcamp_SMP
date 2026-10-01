@@ -4,12 +4,14 @@ import java.util.Locale;
 
 /**
  * De blokken die de mod in het Ei strooit: wat ze waard zijn en hoeveel er standaard komen. Alleen
- * netherite, diamond en gold geven punten; de rest doet iets.
+ * netherite, diamond, gold en iron geven punten; de rest doet iets.
  */
 public enum EiBlok {
 	NETHERITE("netherite", "minecraft:netherite_block", 50, 6),
 	DIAMOND("diamond", "minecraft:diamond_block", 10, 90),
 	GOLD("gold", "minecraft:gold_block", 5, 120),
+	/** Een punt, maar heel veel: zo vind je steeds iets. Niet in de chat, anders loopt die over. */
+	IRON("iron", "minecraft:iron_block", 1, 2000),
 	/** Geen punten: 50/50 Haste voor de hakker of een bevriezing voor de rest. */
 	REDSTONE("redstone", "minecraft:redstone_block", 0, 10),
 	/** Geen punten: een jumpscare bij een ander. */

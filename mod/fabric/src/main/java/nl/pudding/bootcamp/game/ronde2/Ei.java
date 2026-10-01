@@ -239,7 +239,7 @@ public final class Ei extends RondeLogica {
 		}
 		MinecraftServer server = speler.level().getServer();
 		switch (blok) {
-			case NETHERITE, DIAMOND, GOLD -> punten(server, speler, blok);
+			case NETHERITE, DIAMOND, GOLD, IRON -> punten(server, speler, blok);
 			case REDSTONE -> redstone(server, speler);
 			case EMERALD -> emerald(server, speler);
 			case TNT -> tnt(server, speler);
@@ -250,7 +250,7 @@ public final class Ei extends RondeLogica {
 		return false;
 	}
 
-	/** Alles wat iemand vindt, staat in de chat. */
+	/** Wat iemand vindt, staat in de chat (behalve iron: daarvan is er te veel). */
 	private static void chat(MinecraftServer server, ServerPlayer speler, Component wat) {
 		Mc.chatAllen(server, Component.empty().append(naam(speler)).append(wat));
 	}
@@ -260,13 +260,16 @@ public final class Ei extends RondeLogica {
 		stand.voegToe(speler.getUUID(), erbij);
 		plus.put(speler.getUUID(), erbij);
 		plusTot.put(speler.getUUID(), server.getTickCount() + PLUS_TICKS);
-		Mc.geluid(speler, SoundEvents.EXPERIENCE_ORB_PICKUP, 1f, 1f);
-		ChatFormatting kleur = switch (blok) {
-			case NETHERITE -> ChatFormatting.LIGHT_PURPLE;
-			case DIAMOND -> ChatFormatting.AQUA;
-			default -> ChatFormatting.GOLD;
-		};
-		chat(server, speler, Mc.tekst(" hakte " + blok.id() + " (+" + erbij + ")", kleur));
+		// Iron is er zoveel dat hij alleen voor de hakker klinkt (iets hoger) en niet in de chat komt.
+		Mc.geluid(speler, SoundEvents.EXPERIENCE_ORB_PICKUP, 1f, blok == EiBlok.IRON ? 1.4f : 1f);
+		if (blok != EiBlok.IRON) {
+			ChatFormatting kleur = switch (blok) {
+				case NETHERITE -> ChatFormatting.LIGHT_PURPLE;
+				case DIAMOND -> ChatFormatting.AQUA;
+				default -> ChatFormatting.GOLD;
+			};
+			chat(server, speler, Mc.tekst(" hakte " + blok.id() + " (+" + erbij + ")", kleur));
+		}
 		actionbar(server, speler);
 		toonSidebar(server);
 	}

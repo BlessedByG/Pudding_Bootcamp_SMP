@@ -123,7 +123,7 @@ class RondeLogicaTest {
 					assertTrue(alle.add(i), "plek " + i + " dubbel");
 				}
 			}
-			assertEquals(271, alle.size());
+			assertEquals(2271, alle.size());
 		}
 
 		@Test
@@ -148,6 +148,8 @@ class RondeLogicaTest {
 			assertEquals(50, EiBlok.NETHERITE.punten());
 			assertEquals(10, EiBlok.DIAMOND.punten());
 			assertEquals(5, EiBlok.GOLD.punten());
+			assertEquals(1, EiBlok.IRON.punten());
+			assertEquals(EiBlok.IRON, EiBlok.vanBlok("minecraft:iron_block"));
 			assertEquals(EiBlok.EMERALD, EiBlok.vanBlok("minecraft:emerald_block"));
 			assertNull(EiBlok.vanBlok(EiBlok.DEEPSLATE));
 			assertEquals(EiBlok.REDSTONE, EiBlok.vanId("Redstone"));
@@ -626,7 +628,8 @@ class RondeLogicaTest {
 			assertEquals(10, i.doolhofHint());
 			assertEquals(15, i.eiTimer());
 			assertEquals(6, i.eiBlokken(EiBlok.NETHERITE));
-			assertEquals(271, i.eiTotaal());
+			assertEquals(2271, i.eiTotaal());
+			assertEquals(2000, i.eiBlokken(EiBlok.IRON));
 			assertEquals("Af · je speelt geen beurt meer", i.aftekst());
 			assertEquals("Wacht op het startsein", i.clownWachttekst());
 			assertEquals("Wacht op het startsein", i.ffaWachttekst());
@@ -667,12 +670,12 @@ class RondeLogicaTest {
 		@Test
 		void eiBlokkenPassenOpDeDeepslate() {
 			Instellingen i = new Instellingen();
-			assertNull(i.checkEiBlokken(EiBlok.DIAMOND, 100, 1000));
-			// 271 - 90 + 900 = 1081 > 1000.
-			assertNotNull(i.checkEiBlokken(EiBlok.DIAMOND, 900, 1000));
+			assertNull(i.checkEiBlokken(EiBlok.DIAMOND, 100, 3000));
+			// 2271 - 90 + 900 = 3081 > 3000.
+			assertNotNull(i.checkEiBlokken(EiBlok.DIAMOND, 900, 3000));
 			// Niet vastgelegd: niet te controleren.
 			assertNull(i.checkEiBlokken(EiBlok.DIAMOND, 900, -1));
-			assertNotNull(i.checkEiBlokken(EiBlok.DIAMOND, -1, 1000));
+			assertNotNull(i.checkEiBlokken(EiBlok.DIAMOND, -1, 3000));
 		}
 
 		@Test

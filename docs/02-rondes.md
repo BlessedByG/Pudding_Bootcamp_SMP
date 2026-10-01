@@ -140,11 +140,14 @@ Clown vs All en het Rad pas bij ronde 5. Nog geen teams; iedereen is wit.
 | Netherite block | **50 punten.** Kost met een diamond pickaxe een paar tellen: je staat even stil. | 6 |
 | Diamond block | **10 punten** | 90 |
 | Gold block | **5 punten** | 120 |
+| Iron block | **1 punt.** Heel veel, zodat je steeds iets vindt. Niet in de chat, alleen voor jou. | 2000 |
 | Redstone block | **Gok.** Of jij krijgt 10 seconden Haste, of iedereen behalve jij staat 15 seconden stil. 50/50. | 10 |
 | Emerald block | **Jumpscare** bij een willekeurige andere speler. | 10 |
 
 - De aantallen stel je in met `/ei blokken <soort> <aantal>`. Afstemmen in de testrun: het Ei
   heeft zo'n 28.000 blokken deepslate, en met 20 spelers in 15 minuten kan het grotendeels leeg.
+  Alle blokken samen (standaard 2271) moeten in de deepslate van het Ei passen; anders weigert
+  `/ei start`.
 
 **Regels**
 - **Alleen het Ei is te breken**: de schil en de binnenkant. De kettingen en de rest van de wereld
