@@ -64,6 +64,22 @@ class RegelsTest {
 	}
 
 	@Test
+	void gifVerdubbeltElkeMinuut() {
+		// De eerste minuut 1 hartje (2 halve) per klap, daarna 2, 4, 8 en 16 hartjes.
+		assertEquals(2, Regels.gifSchade(0));
+		assertEquals(2, Regels.gifSchade(59));
+		assertEquals(4, Regels.gifSchade(60));
+		assertEquals(8, Regels.gifSchade(120));
+		assertEquals(16, Regels.gifSchade(180));
+		assertEquals(32, Regels.gifSchade(240));
+		// Daarna niet verder: 16 hartjes is toch al dood.
+		assertEquals(32, Regels.gifSchade(3600));
+		assertEquals(1, Regels.gifKeer(-5));
+		assertEquals("Doolhof · de tijd is om · gif", BossbarTekst.doolhofGif(1));
+		assertEquals("Doolhof · de tijd is om · gif x4", BossbarTekst.doolhofGif(4));
+	}
+
+	@Test
 	void valkistGokIsKwartKwartHelft() {
 		Random random = new Random(2);
 		Map<Regels.Val, Integer> telling = new EnumMap<>(Regels.Val.class);

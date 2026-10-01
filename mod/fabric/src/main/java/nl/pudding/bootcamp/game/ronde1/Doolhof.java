@@ -100,6 +100,8 @@ public final class Doolhof extends RondeLogica {
 	private static boolean naarEi;
 	private boolean gifLoopt;
 	private int gifSeconden;
+	/** De chatregel dat iedereen een team heeft maar er nog iemand binnen loopt, is al geweest. */
+	private boolean wachtenGemeld;
 	/** Wie zelf over de finish kwam; wie in het gif doodging en daarna koos, telt niet mee. */
 	private final java.util.Set<java.util.UUID> gevonden = new java.util.HashSet<>();
 	private final java.util.Set<java.util.UUID> vergiftigd = new java.util.HashSet<>();
@@ -298,7 +300,7 @@ public final class Doolhof extends RondeLogica {
 			} else if (Teams.keuze(s) != null) {
 				// Al een kleur (van /bc team, of van voor een herstart): meteen gefinisht.
 				finish(s);
-				if (iedereenKlaar(server)) {
+				if (klaarVoorEinde(server)) {
 					einde(server);
 					return true;
 				}
@@ -336,7 +338,7 @@ public final class Doolhof extends RondeLogica {
 				.append(Mc.tekst(" zit in " + kleur.naam() + " (" + Teams.aantal(kleur) + "/" + Teams.maximum(server) + ")", ChatFormatting.GRAY)));
 		finish(speler);
 		toonSidebar(server);
-		if (iedereenKlaar(server)) {
+		if (klaarVoorEinde(server)) {
 			einde(server);
 		}
 	}
@@ -357,6 +359,19 @@ public final class Doolhof extends RondeLogica {
 	private static boolean iedereenKlaar(MinecraftServer server) {
 		List<ServerPlayer> spelers = Spel.levend(server, Rol.SPELER);
 		return !spelers.isEmpty() && spelers.stream().allMatch(s -> Spel.status(s).klaar);
+	}
+
+	/**
+	 * R1.9: het doolhof is pas voorbij als iedereen een team heeft én niemand meer in het doolhof
+	 * (regio {@code doolhof_gif}) loopt. Niemand wordt weggehaald: wie met een team terug naar
+	 * binnen ging, loopt zelf naar de finish of gaat dood in het gif.
+	 */
+	private static boolean klaarVoorEinde(MinecraftServer server) {
+		if (!iedereenKlaar(server)) {
+			return false;
+		}
+		Regio binnen = Spel.regio("doolhof_gif");
+		return binnen == null || Spel.levend(server, Rol.SPELER).stream().noneMatch(s -> binnen.bevat(s.getX(), s.getZ()));
 	}
 
 	/**
@@ -384,6 +399,16 @@ public final class Doolhof extends RondeLogica {
 				Mc.actionbar(s, Mc.tekst(Spel.instellingen().doolhofWachttekst(), ChatFormatting.YELLOW));
 			}
 			return;
+		}
+		// Iedereen een team en niemand meer in het doolhof: voorbij. Wie met een team nog binnen liep,
+		// wordt niet weggehaald: hij loopt zelf naar de finish, of gaat dood in het gif.
+		if (timerGestart && klaarVoorEinde(server)) {
+			einde(server);
+			return;
+		}
+		if (timerGestart && !wachtenGemeld && iedereenKlaar(server)) {
+			wachtenGemeld = true;
+			Mc.chatAllen(server, Mc.tekst("Iedereen heeft een team. Het doolhof is voorbij zodra niemand er meer in loopt.", ChatFormatting.GRAY));
 		}
 		if (gifLoopt) {
 			gif(server);
@@ -486,11 +511,11 @@ public final class Doolhof extends RondeLogica {
 
 	/**
 	 * Timer op: het doolhof is niet meteen voorbij. Regio {@code doolhof_gif} wordt giftig, tot
-	 * iedereen een team heeft (of {@code /doolhof einde}).
+	 * iedereen een team heeft en niemand er meer in loopt (of {@code /doolhof einde}).
 	 */
 	@Override
 	public void timerOp(MinecraftServer server) {
-		if (iedereenKlaar(server)) {
+		if (klaarVoorEinde(server)) {
 			einde(server);
 			return;
 		}
@@ -504,11 +529,14 @@ public final class Doolhof extends RondeLogica {
 	/**
 	 * Elke seconde van het gif: wie in regio {@code doolhof_gif} staat krijgt Poison, en om de
 	 * {@link Regels#DOOLHOF_GIF_ELKE} seconden een klap die door armor heen gaat. Poison alleen doodt
-	 * niet; de klap wel.
+	 * niet; de klap wel. Na elke minuut gif is de klap twee keer zo hard (R1.8), en wie binnen staat
+	 * ziet dat groot in beeld.
 	 */
 	private void gif(MinecraftServer server) {
 		gifSeconden++;
-		Bossbar.zet(BossbarTekst.doolhofGif(), BossEvent.BossBarColor.PURPLE, 1f);
+		int keer = Regels.gifKeer(gifSeconden);
+		boolean sterker = keer > Regels.gifKeer(gifSeconden - 1);
+		Bossbar.zet(BossbarTekst.doolhofGif(keer), BossEvent.BossBarColor.PURPLE, 1f);
 		Regio gif = Spel.regio("doolhof_gif");
 		if (gif == null) {
 			return;
@@ -521,8 +549,14 @@ public final class Doolhof extends RondeLogica {
 			}
 			// Kort, en elke seconde opnieuw: wie het gif uit loopt, is er zo weer van af.
 			Mc.effect(s, MobEffects.POISON, 3, 0);
+			if (sterker) {
+				int hartjes = Regels.gifSchade(gifSeconden) / 2;
+				Mc.title(s, Mc.tekst("HET GIF WORDT STERKER", ChatFormatting.DARK_GREEN, ChatFormatting.BOLD),
+						Mc.tekst(hartjes + " hartjes per klap · ga naar de finish", ChatFormatting.YELLOW), 0, 40, 10);
+				Mc.geluid(s, SoundEvents.ELDER_GUARDIAN_CURSE, 1f, 1f);
+			}
 			if (klap) {
-				s.hurtServer(wereld, wereld.damageSources().magic(), Regels.DOOLHOF_GIF_SCHADE);
+				s.hurtServer(wereld, wereld.damageSources().magic(), Regels.gifSchade(gifSeconden));
 			}
 		}
 	}
@@ -597,7 +631,7 @@ public final class Doolhof extends RondeLogica {
 		toonSidebar(server);
 		// Niet midden in de dood-afhandeling iedereen wegteleporteren: een tick later.
 		Planner.na(1, () -> {
-			if (Spel.actief() == this && iedereenKlaar(server)) {
+			if (Spel.actief() == this && klaarVoorEinde(server)) {
 				einde(server);
 			}
 		});

@@ -78,18 +78,26 @@ Clown vs All en het Rad pas bij ronde 5. Nog geen teams; iedereen is wit.
 - Wie door de uitgang komt, krijgt een menu met 4 kleuren: **rood, blauw, groen, geel**. Klik een
   kleur en je zit in dat team: je naam krijgt die kleur. **Een team is vol bij 5**; een vol team
   staat grijs in het menu en kun je niet kiezen. Clown kiest ook gewoon een kleur, als teamlid.
-- Menu dicht zonder te kiezen? Dan komt het terug. Wie gekozen heeft gaat naar verzamelpunt 2 bij
-  het Ei en wacht daar op de rest.
+- Menu dicht zonder te kiezen? Dan komt het terug. Wie gekozen heeft, blijft gewoon in het doolhof:
+  je mag terug naar binnen om anderen te helpen of meer loot te zoeken, of wachten in de finishruimte.
 
 **Regels**
 - Alles wat je vindt mag je houden, tot het einde van de mob arena.
 - Doodgaan kan eigenlijk niet. Gebeurt het toch, dan sta je geheald terug in de startruimte.
 
 **Einde**
-- Timer 15 minuten. Na de timer gaat iedereen die nog binnen zit naar verzamelpunt 2 en komt in
-  het team met de minste spelers. Wie buiten stond maar niet koos ook. Iedereen ziet
-  **DOOLHOF VOORBIJ** met hoeveel spelers de uitgang vonden; wie in een team is gezet, ziet in
-  welk.
+- Timer 15 minuten. Daarna wordt het doolhof (zonder de finishruimte) **giftig**: Poison en om de
+  2 seconden een klap van 1 hartje, door armor heen. **Na elke minuut gif is de klap twee keer zo
+  hard** (2, 4, 8, 16 hartjes); wie binnen staat, ziet dan HET GIF WORDT STERKER. Wie in het gif
+  doodgaat, raakt zijn spullen kwijt (zijn eten houdt hij, de basiskit krijgt hij terug), komt in
+  de finishruimte en, als hij nog geen team had, in het kleinste team.
+- Het doolhof is voorbij als **iedereen een team heeft en niemand er meer in loopt**. Niemand
+  wordt weggehaald: wie met een team nog binnen liep, loopt zelf naar de finishruimte of gaat dood
+  in het gif. Heeft iedereen een team maar loopt er nog iemand binnen, dan staat dat in de chat.
+  Loopt er nog iemand binnen als de timer afloopt, dan begint het gif gewoon. Iedereen ziet daarna
+  **DOOLHOF VOORBIJ** met hoeveel spelers de uitgang vonden, en met `/doolhof naarei` gaat iedereen
+  naar het Ei. `/doolhof einde` sluit het meteen af (wie nog binnen staat gaat dan wel naar de
+  finishruimte, met zijn spullen).
 - De timer, het openen van de poort en het moment van de hint zijn instelbaar met
   `/doolhof timer`, `/doolhof poort` en `/doolhof hint`, in minuten (zie
   [04-technische-schets.md](04-technische-schets.md)).

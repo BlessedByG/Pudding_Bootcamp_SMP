@@ -24,6 +24,18 @@ public final class Regels {
 	/** R1.7: na de timer is regio {@code doolhof_gif} giftig: elke zoveel seconden zoveel halve harten, plus Poison. */
 	public static final int DOOLHOF_GIF_ELKE = 2;
 	public static final int DOOLHOF_GIF_SCHADE = 2;
+	/** R1.8: na elke minuut in het gif verdubbelt de klap, tot hooguit zoveel keer. */
+	public static final int DOOLHOF_GIF_MAX_KEER = 16;
+
+	/** R1.8: hoe vaak zo hard als de eerste minuut: 1, 2, 4, 8, 16, en dan blijft het 16. */
+	public static int gifKeer(int gifSeconden) {
+		return Math.min(DOOLHOF_GIF_MAX_KEER, 1 << Math.min(30, Math.max(0, gifSeconden) / 60));
+	}
+
+	/** R1.8: de klap van het gif in halve harten, na zoveel seconden gif. */
+	public static int gifSchade(int gifSeconden) {
+		return DOOLHOF_GIF_SCHADE * gifKeer(gifSeconden);
+	}
 	/** R2.5: redstone-gok. */
 	public static final int EI_HASTE = 15;
 	public static final int EI_BEVRIEZING = 15;

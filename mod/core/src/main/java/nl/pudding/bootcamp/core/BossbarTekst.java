@@ -21,6 +21,11 @@ public final class BossbarTekst {
 		return "Doolhof · de tijd is om · gif";
 	}
 
+	/** Met hoe sterk het gif nu is: {@code gif x4} na twee minuten. */
+	public static String doolhofGif(int keer) {
+		return keer <= 1 ? doolhofGif() : doolhofGif() + " x" + keer;
+	}
+
 	public static String ei(int seconden) {
 		return "Het Ei · " + Tijd.mmss(seconden);
 	}
