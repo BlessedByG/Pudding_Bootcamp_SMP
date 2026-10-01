@@ -76,7 +76,7 @@ Clown vs All en het Rad pas bij ronde 5. Nog geen teams; iedereen is wit.
 - De uitgang is een poort die pas **na 4 minuten** (instelbaar) opengaat. Tot die tijd kun je de echte gang
   vinden, maar niet eruit. De bossbar telt af tot de poort open is.
 - Wie door de uitgang komt, krijgt een menu met 4 kleuren: **rood, blauw, groen, geel**. Klik een
-  kleur en je zit in dat team: je naam krijgt die kleur. **Een team is vol bij 5**; een vol team
+  kleur en je zit in dat team: je naam krijgt die kleur. **Een team is vol bij 4** (bij meer dan 16 spelers iets meer, zodat iedereen past); een vol team
   staat grijs in het menu en kun je niet kiezen. Clown kiest ook gewoon een kleur, als teamlid.
 - Menu dicht zonder te kiezen? Dan komt het terug. Wie gekozen heeft, blijft gewoon in het doolhof:
   je mag terug naar binnen om anderen te helpen of meer loot te zoeken, of wachten in de finishruimte.

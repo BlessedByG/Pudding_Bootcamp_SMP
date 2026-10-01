@@ -122,12 +122,12 @@ zet iemand met de hand in een team; `/bc team <speler> weg` haalt de keuze weg. 
 iedereen uit zijn teamkleur naar `jagers`; de keuze blijft bewaard, maar wordt niet meer
 gebruikt. In ronde 6 en de finale zit iedereen zonder team.
 
-**Maximum per team**: 5, of meer als er meer dan 20 spelers zijn: `max(5, ceil(spelers / 4))`,
+**Maximum per team**: 4, of meer als er meer dan 16 spelers zijn: `max(4, ceil(spelers / 4))`,
 met spelers = iedereen die meedoet op het moment dat de eerste kiest.
 
 **Het teammenu** is een vanilla kistmenu (`ChestMenu`, 4 rijen, `MenuType.GENERIC_9x4`) met een
 `SimpleContainer`, een rij per kleur. Vooraan een gekleurd wolblok met de teamnaam en het aantal
-(`Rood · 3/5`); een vol team is grijze wol. Daarachter de hoofden van wie er al in zit, met hun skin
+(`Rood · 3/4`); een vol team is grijze wol. Daarachter de hoofden van wie er al in zit, met hun skin
 (online met hun eigen profiel, offline op naam) en hun naam in de teamkleur; zijn het er meer dan
 acht, dan zeven hoofden en `+3 meer`. Elke seconde bijgewerkt. Items verplaatsen kan niet (het menu
 annuleert elke klik en handelt hem zelf af). **Alleen een klik op de wol** zet je in het team en
@@ -135,7 +135,7 @@ sluit het menu; een klik op een hoofd doet niets. Je blijft waar je bent (zie ro
 menu zonder keuze terwijl je op de finishlijn (`doolhof_uit`) staat, dan opent het na 2 seconden
 opnieuw. Allemaal server-side, geen client-mod nodig.
 
-**De sidebar in het doolhof** (`Teams`) laat per kleur `Rood 3/5` zien (vet, in de teamkleur) en
+**De sidebar in het doolhof** (`Teams`) laat per kleur `Rood 3/4` zien (vet, in de teamkleur) en
 daaronder wie erin zit, met het hoofd ervoor als hij online is. De sidebar heeft maar 15 regels
 (`core`: `TeamOverzicht`): past het niet met één naam per regel, dan komen er twee, drie of meer naast
 elkaar, zo weinig als kan. Elke seconde bekeken (ook `/bc team` en wie in- of uitlogt), alleen
@@ -598,7 +598,7 @@ tick gecontroleerd) staat zonder team krijgt het teammenu. Na `/doolhof hint` mi
 voor wie nog binnen is de title `HINT` met als subtitle `/doolhof hinttekst` (of de windrichting).
 **Finish**: achter de echte uitgang ligt een afgesloten ruimte met de finishlijn. Wie een kleur
 kiest krijgt de title `GEFINISHT` met `Je zit in Rood`, een chatregel
-voor iedereen (`Speler7 zit in Rood (3/5)`) en blijft waar hij is. Wie gefinisht is doet gewoon mee
+voor iedereen (`Speler7 zit in Rood (3/4)`) en blijft waar hij is. Wie gefinisht is doet gewoon mee
 als hij terug naar binnen loopt, om anderen te helpen of meer loot te zoeken: loot, mobs, valkisten,
 schrikplekken en nep-uitgangen werken ook voor hem, en doodgaan zet hem terug in de startruimte.
 Zijn team houdt hij. Logt hij uit en weer in, dan gaat hij verder waar hij was. **Valkisten**: een
@@ -633,7 +633,7 @@ doodgaat** (door het gif of anders) raakt al zijn spullen kwijt behalve het eten
 (`basis.json`), krijgt de rest van de basiskit terug, gaat naar punt `doolhof_finish` in de
 finishruimte met de title `VERGIFTIGD` en een chatregel `Speler7 bezweek aan het gif`. Heeft hij
 nog geen team, dan krijgt hij het kleinste (bij gelijk willekeurig, zodat de teams even groot
-blijven), met in de chat `en zit nu in Groen (3/5)`; hij telt niet mee als iemand die de uitgang
+blijven), met in de chat `en zit nu in Groen (3/4)`; hij telt niet mee als iemand die de uitgang
 vond. Het gif loopt tot iedereen een team heeft en niemand er meer in loopt; `/doolhof einde` is
 de noodknop.
 
@@ -1105,7 +1105,7 @@ Eén bossbar, kort, altijd hetzelfde formaat. Persoonlijke info via de actionbar
 | 7 | `De Finale · ClownPierce tegen Speler7` | rood | vol |
 | Na de kroning | `Pudding Bootcamp · King: Speler7` | goud | vol |
 
-**Sidebar**: ronde 1 de teams met aantallen en namen (`Rood 3/5` met de spelers eronder), ronde 2 de top 10 op punten, ronde 3
+**Sidebar**: ronde 1 de teams met aantallen en namen (`Rood 3/4` met de spelers eronder), ronde 2 de top 10 op punten, ronde 3
 de teamstand in punten (`Rood 47`), ronde 4 de quizpunten, ronde 5 de regeerperiodes, ronde 6 de
 kills (die blijven staan tot de finale begint; in de finale geen sidebar).
 
@@ -1132,7 +1132,7 @@ langzaam draaiend. Opgeruimd als de kroonhouder kijker wordt.
 | Doolhof voorbij | Title `DOOLHOF VOORBIJ`, subtitle `14 van de 20 vonden de uitgang`; wie in een team is gezet ziet in de actionbar `Je zit in Groen`. |
 | Jumpscare | Een van de vijf foto's schermvullend (vast per schrikplek, of willekeurig), `bootcamp:schrik`. |
 | 8D-klop | Alleen het geluid `bootcamp:klop`, stereo, alleen voor wie de valkist opende. |
-| Team gekozen | `entity.player.levelup`, je naam in de teamkleur, chatregel voor iedereen: `<naam> zit in Rood (3/5)`. |
+| Team gekozen | `entity.player.levelup`, je naam in de teamkleur, chatregel voor iedereen: `<naam> zit in Rood (3/4)`. |
 | Ei: punten | `entity.experience_orb.pickup`, actionbar met wat je erbij kreeg, je score en je plek. |
 | Ei: netherite | `+50` in paars in de actionbar, chatregel voor iedereen: `Speler7 hakte netherite (+50)`. |
 | Ei: redstone | Haste (15 seconden): `block.beacon.power_select`, title `HASTE` voor de hakker. Bevriezing: title `BEVROREN` met `door <naam>`, `block.glass.break`. Aftellen in de actionbar, pling als het voorbij is. |

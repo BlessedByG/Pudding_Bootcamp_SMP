@@ -33,8 +33,10 @@ class RondeLogicaTest {
 	@Nested
 	class TeamKeuzeTest {
 		@Test
-		void maximumIsVijfOfMeer() {
-			assertEquals(5, TeamKeuze.maximum(0));
+		void maximumIsVierOfMeer() {
+			assertEquals(4, TeamKeuze.maximum(0));
+			assertEquals(4, TeamKeuze.maximum(16));
+			assertEquals(5, TeamKeuze.maximum(17));
 			assertEquals(5, TeamKeuze.maximum(20));
 			assertEquals(6, TeamKeuze.maximum(21));
 			assertEquals(6, TeamKeuze.maximum(24));
@@ -43,8 +45,8 @@ class RondeLogicaTest {
 
 		@Test
 		void volBijHetMaximum() {
-			assertFalse(TeamKeuze.vol(4, 5));
-			assertTrue(TeamKeuze.vol(5, 5));
+			assertFalse(TeamKeuze.vol(3, 4));
+			assertTrue(TeamKeuze.vol(4, 4));
 		}
 
 		@Test
