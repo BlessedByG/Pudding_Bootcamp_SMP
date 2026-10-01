@@ -86,8 +86,10 @@ public final class Quiz extends RondeLogica {
 	private QuizDraai draai;
 	/** Wanneer de draai (en het geluid) begon, in {@link System#nanoTime()}: echte tijd, ook als de server hapert. */
 	private long draaiStart;
-	/** De stand die nu in beeld staat; -1 voor geen. */
+	/** Het plaatje dat nu in beeld staat: een stand (0 t/m 63), 100 + vak voor een opgelicht vak, -1 voor geen. */
 	private int getoond = -1;
+	/** De lampen van het gekozen team zijn al aan (op het plingeltje). */
+	private boolean lampAan;
 	private Fase fase = Fase.SPELEN;
 
 	public static void init() {
@@ -296,6 +298,7 @@ public final class Quiz extends RondeLogica {
 		draai = QuizDraai.willekeurig(Spel.RANDOM);
 		draaiStart = System.nanoTime();
 		getoond = -1;
+		lampAan = false;
 		// Geluid en rad starten op dezelfde tick: het rad volgt de tikjes van het geluid.
 		Mc.geluidAllen(server, RAD_GELUID, 1f, 1f);
 		toonDraai(server, 0);
@@ -312,9 +315,25 @@ public final class Quiz extends RondeLogica {
 		int s = draai.stand(seconden);
 		if (s != getoond) {
 			getoond = s;
-			int totUitslag = (int) Math.ceil((QuizDraai.UITSLAG - seconden) * QuizDraai.TICKS_PER_SECONDE);
-			Mc.titleAllen(server, glyph(s), null, 0, Math.max(20, totUitslag + 5), 0);
+			Mc.titleAllen(server, glyph(s), null, 0, totDeTekst(seconden), 0);
 		}
+	}
+
+	/** Op het plingeltje: het gekozen vak afwisselend opgelicht en gewoon, tot het team in beeld komt. */
+	private void toonOplicht(MinecraftServer server, double seconden) {
+		int vak = draai.vak();
+		int nu = draai.oplichten(seconden) ? 100 + vak : draai.stand(seconden);
+		if (nu != getoond) {
+			getoond = nu;
+			String tekst = nu >= 100 ? QuizRad.glyphOplicht(vak) : QuizRad.glyph(nu);
+			Component beeld = Component.literal(tekst).withStyle(s -> s.withFont(new FontDescription.Resource(RAD_FONT)).withoutShadow());
+			Mc.titleAllen(server, beeld, null, 0, totDeTekst(seconden), 0);
+		}
+	}
+
+	/** Ticks tot het team in beeld komt, plus wat marge: zo lang blijft een plaatje van het rad staan. */
+	private static int totDeTekst(double seconden) {
+		return Math.max(20, (int) Math.ceil((QuizDraai.TEKST - seconden) * QuizDraai.TICKS_PER_SECONDE) + 5);
 	}
 
 	@Override
@@ -327,12 +346,20 @@ public final class Quiz extends RondeLogica {
 			toonDraai(server, seconden);
 			return;
 		}
-		// Het plingeltje in het geluid is het geluid van de uitslag.
 		Kleur k = draai.kleur();
+		if (!draai.tekst(seconden)) {
+			// Het plingeltje: het gekozen vak knippert en de lampen van dat team gaan aan.
+			if (!lampAan) {
+				lampAan = true;
+				lamp(server, k, true);
+			}
+			toonOplicht(server, seconden);
+			return;
+		}
+		// Het geluid is uitgeklonken: het team groot in beeld.
 		draai = null;
 		stand.geland(k);
 		Mc.titleAllen(server, Mc.tekst(k.naam().toUpperCase(Locale.ROOT) + " IS AAN DE BEURT", Mc.kleur(k), ChatFormatting.BOLD), null, 0, 50, 15);
-		lamp(server, k, true);
 		bossbar();
 	}
 
@@ -528,18 +555,19 @@ public final class Quiz extends RondeLogica {
 		}
 	}
 
-	/** De lamp bij de bank van dit team: een redstone lamp, aan of uit zonder de buren bij te werken. */
+	/**
+	 * De lampen bij de bank van dit team ({@code quizlamp_rood_1}, {@code _2}, ...): redstone lampen,
+	 * aan of uit zonder de buren bij te werken.
+	 */
 	private static void lamp(MinecraftServer server, Kleur k, boolean aan) {
-		Punt p = Spel.punt("quizlamp_" + k.id());
-		if (p == null) {
-			return;
-		}
 		ServerLevel wereld = Mc.wereld(server);
-		BlokPos b = p.blokPos();
-		BlockPos pos = new BlockPos(b.x(), b.y(), b.z());
-		BlockState nu = wereld.getBlockState(pos);
-		if (nu.hasProperty(RedstoneLampBlock.LIT) && nu.getValue(RedstoneLampBlock.LIT) != aan) {
-			wereld.setBlock(pos, nu.setValue(RedstoneLampBlock.LIT, aan), Block.UPDATE_CLIENTS);
+		for (String naam : Ronde.allemaal("quizlamp_" + k.id() + "_", ConfigStore.get().punten().keySet())) {
+			BlokPos b = Spel.punt(naam).blokPos();
+			BlockPos pos = new BlockPos(b.x(), b.y(), b.z());
+			BlockState nu = wereld.getBlockState(pos);
+			if (nu.hasProperty(RedstoneLampBlock.LIT) && nu.getValue(RedstoneLampBlock.LIT) != aan) {
+				wereld.setBlock(pos, nu.setValue(RedstoneLampBlock.LIT, aan), Block.UPDATE_CLIENTS);
+			}
 		}
 	}
 

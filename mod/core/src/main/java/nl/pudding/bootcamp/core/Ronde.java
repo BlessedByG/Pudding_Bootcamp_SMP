@@ -26,7 +26,7 @@ public enum Ronde {
 	QUIZ(4, "De Quiz", "quiz", false,
 			List.of("quiz"),
 			List.of("quiz_rood", "quiz_blauw", "quiz_groen", "quiz_geel", "quiz_podium",
-					"quizlamp_rood", "quizlamp_blauw", "quizlamp_groen", "quizlamp_geel", "tribune_1",
+					"quizlamp_rood_1", "quizlamp_blauw_1", "quizlamp_groen_1", "quizlamp_geel_1", "tribune_1",
 					"quizvuurwerk_rood_1", "quizvuurwerk_rood_2", "quizvuurwerk_blauw_1", "quizvuurwerk_blauw_2",
 					"quizvuurwerk_groen_1", "quizvuurwerk_groen_2", "quizvuurwerk_geel_1", "quizvuurwerk_geel_2")),
 	// In beeld heet ronde 5 King of the Hill: dat Clown de kroon krijgt, hoeft niemand te merken.
@@ -132,6 +132,25 @@ public enum Ronde {
 		List<String> uit = new ArrayList<>();
 		for (int i = 1; punten.contains(prefix + i); i++) {
 			uit.add(prefix + i);
+		}
+		return uit;
+	}
+
+	/**
+	 * Alle punten van een genummerde reeks, ook na een gat ({@code quizlamp_rood_1}, {@code _3}), op
+	 * volgorde van hun nummer.
+	 */
+	public static List<String> allemaal(String prefix, Set<String> punten) {
+		List<Integer> nummers = new ArrayList<>();
+		for (String p : punten) {
+			if (p.startsWith(prefix) && p.length() > prefix.length() && p.substring(prefix.length()).chars().allMatch(Character::isDigit)) {
+				nummers.add(Integer.parseInt(p.substring(prefix.length())));
+			}
+		}
+		nummers.sort(null);
+		List<String> uit = new ArrayList<>();
+		for (int n : nummers) {
+			uit.add(prefix + n);
 		}
 		return uit;
 	}

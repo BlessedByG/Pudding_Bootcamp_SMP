@@ -169,7 +169,7 @@ blok waar je naar kijkt, tot 32 blokken). De commando's per ronde zetten de mees
 | Doolhof | `doolhof`, `doolhof_uit` (de finishlijn), `doolhof_gif` (het doolhof zonder finishruimte), `poort_doolhof` (de muur, onder- en bovenhoek), `poort_start` (barrier blocks in de openingen van de startruimte, elk een deel), `nep_1..3`, `schrik_1..n` | `doolhof_start`, `doolhof_finish` (in de finishruimte), `v2` |
 | Het Ei | `ei` (het Ei als doos), `eigebied` (Ei, kettingen, startplekken), `ei_plein` (de vloer van het plein bij de mob arena) | `ei_spawn_1..n`, `v3` (op het plein), `ei_podium`, `ei_presentator` (naast de winnaar, voor Pudding), `/ei prijskader` (kijk naar het item frame); daarna `/ei vastleggen` |
 | Mob arena | `mobarena` (veld, tribune en plein), `veld` (`save` + `add`), `tribune_mob` (de tribunevloer) | `/mobarena startplek <kleur> <1\|2>` (8x), `mob_1..n`, `kooi`, `warden`, `tribune_mob_1..n` |
-| Quiz | `quiz` | `/quiz bank <kleur>` (4x), `/quiz podium`, `/quiz lamp <kleur>` (4x, kijk naar de lamp), `/quiz vuurwerk <kleur> <1\|2>` (8x, kijk naar de dispenser) |
+| Quiz | `quiz` | `/quiz bank <kleur>` (4x), `/quiz podium`, `/quiz lamp <kleur>` (per lamp, kijk naar de lamp; `wis` om opnieuw), `/quiz vuurwerk <kleur> <1\|2>` (8x, kijk naar de dispenser) |
 | Clown vs All, FFA | `/clown vloer <diameter>` (midden op de vloer staan), optioneel `colosseum` | `/clown troon`, `/clown jagerplek` (20x), `/clown tribune` (2 of meer, onderste ring) |
 | Finale | (de vloer en tribune van hierboven) | `/finale plek 1` (winnaar King of the Hill), `/finale plek 2` (winnaar FFA) |
 
@@ -190,7 +190,7 @@ onder *Commands*.
 | Doolhof | `/doolhof start\|go\|stop\|einde\|naarei\|resterend <sec>`, `wachttekst [<tekst>]`, `timer [<min>]` (15), `poort [<min>]` (4), `hint [<min>]` (10), `hinttekst [<tekst>\|-]`, `poort open\|dicht`, `startpoort open\|dicht`, `poortmelding [aan\|uit]`, `valmobs [<min> [<max>]]` (3 t/m 10), `schrik [<nr> [<1..5\|random>]]` (foto per schrikplek) |
 | Het Ei | `/ei start\|stop\|resterend <sec>`, `timer [<min>]` (15), `blokken [<soort> <aantal>]`, `vastleggen`, `prijskader` |
 | Mob arena | `/mobarena start\|volgende\|schema\|stop`, `wave volgende`, `startplek <kleur> <1\|2>`, `warden [leven\|klap\|boom <hp>]`, `punten [<mob> <punten>]`, `veldhoogte [<blokken>]`, `aftekst [<tekst>]` |
-| Quiz | `/quiz start\|stop`, `presentator [<speler>]`, `bank <kleur>`, `podium`, `lamp <kleur>`, `vuurwerk <kleur> <1\|2>`, `draai`, `goed`, `fout`, `punt <kleur> [<aantal>]`, `einde`, `winnaar <kleur>`, `naararena` |
+| Quiz | `/quiz start\|stop`, `presentator [<speler>]`, `bank <kleur>`, `podium`, `lamp <kleur> [<nr>\|wis]`, `vuurwerk <kleur> <1\|2>`, `draai`, `goed`, `fout`, `punt <kleur> [<aantal>]`, `einde`, `winnaar <kleur>`, `naararena` |
 | Clown vs All | `/clown rad\|go\|start\|stop`, `uitverkoren [<speler>]`, `troon`, `jagerplek [<nr>]`, `vloer <diameter>`, `tribune [<nr>]`, `wachttekst [<tekst>]`, `kroon <speler>`, `krimp <grootte> [<sec>]` |
 | FFA | `/ffa start\|stop\|go`, `krimp <grootte> [<sec>]`, `wachttekst [<tekst>]` |
 | Finale | `/finale start\|stop\|go`, `combatlog`, `crash`, `plek 1\|2`, `spelers [<speler1> <speler2>]`, `krimp <grootte> [<sec>]`, `wachttekst [<tekst>]` |

@@ -85,4 +85,10 @@ class RondeTest {
 		assertEquals(1, Ronde.volgendVrij("tribune_", punten));
 		assertTrue(Ronde.reeks("tribune_", punten).isEmpty());
 	}
+
+	@Test
+	void allemaalOokNaEenGat() {
+		Set<String> punten = Set.of("quizlamp_rood_3", "quizlamp_rood_1", "quizlamp_rood_10", "quizlamp_rood", "quizlamp_rood_x", "quizlamp_blauw_1");
+		assertEquals(List.of("quizlamp_rood_1", "quizlamp_rood_3", "quizlamp_rood_10"), Ronde.allemaal("quizlamp_rood_", punten));
+	}
 }

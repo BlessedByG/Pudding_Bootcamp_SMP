@@ -13,7 +13,8 @@ import java.util.random.RandomGenerator;
  * vakgrens onder het pijltje door;</li>
  * <li>na het laatste tikje schuift het rad af remmend naar het midden van het laatste vak en staat
  * stil ({@link #STIL}, rond 9,68 s);</li>
- * <li>bij het plingeltje ({@link #PLING}, 10,17 s) komt de uitslag.</li>
+ * <li>bij het plingeltje ({@link #PLING}, 10,17 s) knippert het gekozen vak en gaan de lampen aan;</li>
+ * <li>als het geluid uitklinkt ({@link #TEKST}, 11,1 s) komt het team groot in beeld.</li>
  * </ol>
  * Het doelvak is willekeurig (elk team 25%); de start volgt uit het doel, zodat het rad er altijd
  * precies op landt.
@@ -49,6 +50,8 @@ public final class QuizDraai {
 	public static final int UITSLAG_TICK = (int) Math.round(PLING * TICKS_PER_SECONDE);
 	/** Vanaf zoveel seconden na de draai komt de uitslag (de tick van het plingeltje). */
 	public static final double UITSLAG = (double) UITSLAG_TICK / TICKS_PER_SECONDE;
+	/** Het geluid klinkt uit (het bestand duurt 11,14 s): dan komt het team groot in beeld. Op een hele tick. */
+	public static final double TEKST = 222.0 / TICKS_PER_SECONDE;
 
 	private final int vak;
 	private final int start;
@@ -105,9 +108,26 @@ public final class QuizDraai {
 		return seconden >= STIL;
 	}
 
-	/** Is het zoveel seconden na de draai tijd voor de uitslag (het plingeltje)? */
+	/** Is het zoveel seconden na de draai tijd voor de uitslag (het plingeltje)? Dan gaan de lampen aan. */
 	public boolean uitslag(double seconden) {
 		return seconden >= UITSLAG - 1e-9;
+	}
+
+	/**
+	 * Licht het gekozen vak op? Op het plingeltje knippert het: aan, uit, aan, uit, en dan blijft het
+	 * aan tot de tekst. In seconden na de uitslag, de grenzen op hele ticks.
+	 */
+	public boolean oplichten(double seconden) {
+		double na = seconden - UITSLAG;
+		if (na < -1e-9) {
+			return false;
+		}
+		return na < 0.15 - 1e-9 || (na >= 0.25 - 1e-9 && na < 0.40 - 1e-9) || na >= 0.50 - 1e-9;
+	}
+
+	/** Is het geluid uitgeklonken, zodat het team groot in beeld komt ({@code ROOD IS AAN DE BEURT})? */
+	public boolean tekst(double seconden) {
+		return seconden >= TEKST - 1e-9;
 	}
 
 	public int vak() {

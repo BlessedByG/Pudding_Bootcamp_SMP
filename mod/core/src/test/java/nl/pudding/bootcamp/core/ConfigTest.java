@@ -19,7 +19,7 @@ class ConfigTest {
 				.metDeel(new BlokPos(8, 60, 5), new BlokPos(12, 60, 20)));
 		c.regios().put("vloer", Regio.cilinder(10.5, -3.5, 64, 60, 5));
 		c.punten().put("troon", Punt.positie(10.5, 80.0, -3.5, 90f, -10f));
-		c.punten().put("quizlamp_rood", Punt.blok(new BlokPos(1, 2, 3)));
+		c.punten().put("quizlamp_rood_2", Punt.blok(new BlokPos(1, 2, 3)));
 		c.doodteksten().add("Nog eentje");
 		c.grapjes().add("Mis!");
 		c.zetTeam("Speler7", Kleur.GROEN);
@@ -49,8 +49,8 @@ class ConfigTest {
 		assertEquals(2, t.regios().get("veld_1").aantalDelen());
 		assertTrue(t.regios().get("vloer").isCilinder());
 		assertEquals(c.punten(), t.punten());
-		assertTrue(t.punten().get("quizlamp_rood").blok());
-		assertEquals(new BlokPos(1, 2, 3), t.punten().get("quizlamp_rood").blokPos());
+		assertTrue(t.punten().get("quizlamp_rood_2").blok());
+		assertEquals(new BlokPos(1, 2, 3), t.punten().get("quizlamp_rood_2").blokPos());
 		assertEquals(c.doodteksten(), t.doodteksten());
 		assertEquals(c.grapjes(), t.grapjes());
 		assertEquals(Kleur.GROEN, t.teamVan("SPELER7"));
@@ -109,6 +109,17 @@ class ConfigTest {
 		// Zelf aangepast blijft aangepast, ook als de oude teksten erin staan.
 		BootcampConfig eigen = BootcampConfig.uitJson("{\"doodteksten\":[\"Grote L gepakt!\",\"Weg ermee\"]}");
 		assertEquals(List.of("Grote L gepakt!", "Weg ermee"), eigen.doodteksten());
+	}
+
+	@Test
+	void oudeLampWordtLampEen() {
+		BootcampConfig c = BootcampConfig.uitJson("{\"punten\":{\"quizlamp_rood\":{\"x\":1,\"y\":2,\"z\":3,\"blok\":true},"
+				+ "\"quizlamp_geel\":{\"x\":4,\"y\":5,\"z\":6,\"blok\":true},\"quizlamp_geel_1\":{\"x\":7,\"y\":8,\"z\":9,\"blok\":true}}}");
+		assertEquals(new BlokPos(1, 2, 3), c.punten().get("quizlamp_rood_1").blokPos());
+		assertFalse(c.punten().containsKey("quizlamp_rood"));
+		// Staat lamp 1 er al, dan blijft alles zoals het is.
+		assertEquals(new BlokPos(7, 8, 9), c.punten().get("quizlamp_geel_1").blokPos());
+		assertTrue(c.punten().containsKey("quizlamp_geel"));
 	}
 
 	@Test

@@ -20,6 +20,11 @@ public final class QuizRad {
 	 */
 	public static final int EERSTE_GLYPH = 0xE100;
 	public static final int TEGELS_PER_STAND = 4;
+	/**
+	 * De eerste glyph van de opgelichte standen: vak v fel opgelicht onder het pijltje, op zijn eigen
+	 * eindstand. Vak v heeft de codepoints U+E200 + 4v t/m U+E200 + 4v + 3.
+	 */
+	public static final int EERSTE_OPLICHT_GLYPH = 0xE200;
 
 	public static final List<Kleur> VAKKEN = List.of(
 			Kleur.ROOD, Kleur.BLAUW, Kleur.GROEN, Kleur.GEEL,
@@ -50,6 +55,11 @@ public final class QuizRad {
 	/** Gaat er bij deze stand een vakgrens onder het pijltje door? Daar valt een tikje van het geluid (zie {@link QuizDraai}). */
 	public static boolean isVakgrens(int stand) {
 		return Math.floorMod(stand, PER_VAK) == PER_VAK / 2;
+	}
+
+	/** Het rad op de eindstand van dit vak, met dat vak fel opgelicht, in font {@code bootcamp:rad}. */
+	public static String glyphOplicht(int vak) {
+		return FontTegels.tekst(EERSTE_OPLICHT_GLYPH + Math.floorMod(vak, VAKKEN.size()) * TEGELS_PER_STAND, 2, 2);
 	}
 
 	/** De tekst die deze stand in font {@code bootcamp:rad} tekent: 2 x 2 tegels. */

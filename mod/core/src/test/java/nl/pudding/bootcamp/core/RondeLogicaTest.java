@@ -527,6 +527,15 @@ class RondeLogicaTest {
 			assertFalse(draai.uitslag(10.1));
 			assertTrue(draai.uitslag(203 / 20.0));
 			assertEquals(draai.stand(QuizDraai.STIL), draai.stand(QuizDraai.UITSLAG));
+			// Op het plingeltje knippert het vak: aan, uit, aan, uit, dan aan tot de tekst.
+			StringBuilder knipper = new StringBuilder();
+			for (int tick = 202; tick < 222; tick++) {
+				knipper.append(draai.oplichten(tick / 20.0) ? '#' : '.');
+			}
+			assertEquals(".###..###..#########", knipper.toString());
+			assertFalse(draai.tekst(221 / 20.0));
+			assertTrue(draai.tekst(222 / 20.0));
+			assertTrue(QuizDraai.TEKST > QuizDraai.PLING + 0.8 && QuizDraai.TEKST < 11.2);
 		}
 	}
 

@@ -112,7 +112,8 @@ zit, maar de commander moet alleen commander zijn.
    `kooi`, punt `warden` (waar de warden uit de grond komt) en tribunepunten `tribune_mob_n`.
 7. De quizhal met 4 gekleurde banken, een redstone lamp bij elke bank (geen redstone ernaast),
    twee dispensers bij elke bank (de kant op gericht waar het vuurwerk heen moet) en een trap met
-   podium. Daarna `/quiz bank <kleur>` bij elke bank, `/quiz lamp <kleur>` kijkend naar elke lamp,
+   podium. Daarna `/quiz bank <kleur>` bij elke bank, `/quiz lamp <kleur>` kijkend naar elke lamp (zo vaak als er lampen
+   bij die bank staan; `/quiz lamp <kleur> wis` om opnieuw te beginnen),
    `/quiz vuurwerk <kleur> <1|2>` kijkend naar elke dispenser (8 keer) en `/quiz podium` boven
    aan de trap (gebouwd).
 8. De Arena: colosseum met open vloer, podium in het midden, 20 redstone blocks in een cirkel,

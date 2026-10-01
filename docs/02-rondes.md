@@ -300,7 +300,7 @@ wie in de buurt staat.
 - **De quizhal**: vier **banken** in de teamkleuren, een **trap met een klein podium** waar Pudding
   presenteert, en in het midden een rond vloerontwerp met een vraagteken (decor).
 - Iedereen staat bij de bank van zijn team, zonder spullen: alles is na de mob arena ingeleverd.
-- **Bij elke bank staat een lamp.** Die van het team dat aan de beurt is, brandt.
+- **Bij elke bank staan een of meer lampen.** Die van het team dat aan de beurt is, branden.
 - **Pudding presenteert** en zit dus niet bij zijn eigen team. Dat team heeft in de quiz één
   speler minder: pech. Pudding krijgt als enige iets: vijf items in de hotbar, een item om **het rad te
   draaien** (toets 1), **groene wol** (goed, 3), **rode wol** (fout, 4), een **emerald voor het
@@ -317,18 +317,19 @@ wie in de buurt staat.
   in alleen de teamkleuren, **elk team 4 keer**, zo verdeeld dat twee buren nooit dezelfde kleur
   hebben. In het midden het Pudding-logo, dat rechtop blijft staan terwijl het rad
   draait. Het draait op de maat van een rad-geluid: bij elk tikje schuift er een vak langs het
-  pijltje, het remt af, staat na zo'n 9,7 seconden stil op een vak, en bij het plingeltje (10,2 s)
-  komt het team in beeld. Dat team is aan de beurt. Dat is echt willekeurig: elk team heeft evenveel kans. Het rad staat
+  pijltje, het remt af en staat na zo'n 9,7 seconden stil op een vak. Bij het plingeltje (10,2 s)
+  knippert dat vak fel op en gaan de lampen bij de bank van dat team aan; als het geluid uit is
+  (11,1 s) komt het team groot in beeld. Dat team is aan de beurt. Dat is echt willekeurig: elk team heeft evenveel kans. Het rad staat
   alleen in beeld (plaatjes uit het resource pack), niet in de wereld.
 
 **Hoe het loopt**
-1. Pudding draait het rad. In beeld: **ROOD IS AAN DE BEURT**, en de lamp bij de rode bank gaat
+1. Pudding draait het rad. In beeld: **ROOD IS AAN DE BEURT**, en de lampen bij de rode bank gaan
    aan.
 2. Pudding leest een vraag voor. Het team overlegt en geeft antwoord.
 3. **Goed?** Pudding klikt de groene wol: **GOED!** in beeld, een punt voor dat team, en uit de
    twee dispensers bij hun bank een vuurpijl in de teamkleur. Het team
    krijgt de volgende vraag. Vanaf twee op rij staat de reeks erbij: "+1 Rood · 3 op rij".
-4. **Fout?** Pudding klikt de rode wol: **FOUT!** in beeld, geen punt, de lamp gaat uit. Dan
+4. **Fout?** Pudding klikt de rode wol: **FOUT!** in beeld, geen punt, de lampen gaan uit. Dan
    draait Pudding het rad
    opnieuw, over alle vier de teams. Hetzelfde team kan dus weer uitkomen.
 5. Dit gaat door tot Pudding stopt.

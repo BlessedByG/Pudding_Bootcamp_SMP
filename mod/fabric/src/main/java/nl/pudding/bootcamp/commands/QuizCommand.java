@@ -17,6 +17,7 @@ import nl.pudding.bootcamp.core.Punt;
 import nl.pudding.bootcamp.core.Ronde;
 import nl.pudding.bootcamp.game.ronde4.Quiz;
 
+import java.util.List;
 import java.util.function.BiFunction;
 
 /** {@code /quiz}: ronde 4. */
@@ -44,8 +45,12 @@ final class QuizCommand {
 			Punt p = SetupCommands.zetPunt(speler, "quiz_podium");
 			return BcCommand.bewaard(ctx, "Podium (quiz_podium) gezet op " + SetupCommands.beschrijfPunt(p));
 		}));
+		// Elke keer een lamp erbij; met een nummer die ene opnieuw; wis haalt ze allemaal weg.
 		cmd.then(Commands.literal("lamp").then(Commands.argument("kleur", StringArgumentType.word()).suggests(BcCommand.KLEUREN)
-				.executes(QuizCommand::lamp)));
+				.executes(ctx -> lamp(ctx, 0))
+				.then(Commands.argument("nummer", IntegerArgumentType.integer(1, 50))
+						.executes(ctx -> lamp(ctx, IntegerArgumentType.getInteger(ctx, "nummer"))))
+				.then(Commands.literal("wis").executes(QuizCommand::lampenWis))));
 		cmd.then(Commands.literal("vuurwerk").then(Commands.argument("kleur", StringArgumentType.word()).suggests(BcCommand.KLEUREN)
 				.then(Commands.argument("nummer", IntegerArgumentType.integer(1, Quiz.VUURWERK_PER_BANK))
 						.executes(QuizCommand::vuurwerk))));
@@ -85,17 +90,33 @@ final class QuizCommand {
 		return BcCommand.bewaard(ctx, "Bank van " + k.naam() + " (quiz_" + k.id() + ") gezet op " + SetupCommands.beschrijfPunt(p));
 	}
 
-	private static int lamp(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+	/** Een lamp bij de bank van een team, kijkend naar de lamp. Nummer 0: de volgende vrije. */
+	private static int lamp(CommandContext<CommandSourceStack> ctx, int nummer) throws CommandSyntaxException {
 		ServerPlayer speler = ctx.getSource().getPlayerOrException();
 		Kleur k = BcCommand.kleur(ctx, "kleur");
 		if (k == null) {
 			return BcCommand.fout(ctx, "Kies rood, blauw, groen of geel.");
 		}
-		Punt p = SetupCommands.zetBlokPunt(speler, "quizlamp_" + k.id());
+		String prefix = "quizlamp_" + k.id() + "_";
+		int n = nummer > 0 ? nummer : Ronde.volgendVrij(prefix, ConfigStore.get().punten().keySet());
+		Punt p = SetupCommands.zetBlokPunt(speler, prefix + n);
 		if (p == null) {
 			return BcCommand.fout(ctx, "Kijk naar de lamp (binnen 32 blokken).");
 		}
-		return BcCommand.bewaard(ctx, "Lamp van " + k.naam() + " (quizlamp_" + k.id() + ") gezet op " + SetupCommands.beschrijfPunt(p));
+		int aantal = Ronde.allemaal(prefix, ConfigStore.get().punten().keySet()).size();
+		return BcCommand.bewaard(ctx, "Lamp " + n + " van " + k.naam() + " (" + prefix + n + ") gezet op " + SetupCommands.beschrijfPunt(p)
+				+ ". " + k.naam() + " heeft nu " + aantal + (aantal == 1 ? " lamp." : " lampen."));
+	}
+
+	/** {@code /quiz lamp <kleur> wis}: alle lampen van dat team weg, om opnieuw te beginnen. */
+	private static int lampenWis(CommandContext<CommandSourceStack> ctx) {
+		Kleur k = BcCommand.kleur(ctx, "kleur");
+		if (k == null) {
+			return BcCommand.fout(ctx, "Kies rood, blauw, groen of geel.");
+		}
+		List<String> weg = Ronde.allemaal("quizlamp_" + k.id() + "_", ConfigStore.get().punten().keySet());
+		weg.forEach(ConfigStore.get().punten()::remove);
+		return BcCommand.bewaard(ctx, weg.size() + (weg.size() == 1 ? " lamp" : " lampen") + " van " + k.naam() + " weggehaald.");
 	}
 
 	/** Een dispenser bij de bank van een team, waar bij een goed antwoord een vuurpijl uit komt. */

@@ -88,6 +88,8 @@ public class BouwPack {
 	 * U+E100 + 4s + 2r + c (QuizRad in de mod).
 	 */
 	static final int RAD_EERSTE = 0xE100;
+	/** Vak v fel opgelicht op zijn eindstand: U+E200 + 4v + 2r + c (QuizRad.glyphOplicht in de mod). */
+	static final int RAD_OPLICHT_EERSTE = 0xE200;
 	static final int RAD_EENHEDEN = 22;
 	static final int RAD_PX_PER_EENHEID = 11;
 	static final int RAD = 2 * RAD_EENHEDEN * RAD_PX_PER_EENHEID;
@@ -212,7 +214,7 @@ public class BouwPack {
 		FontJson rad = new FontJson();
 		int radTegel = RAD_EENHEDEN * RAD_PX_PER_EENHEID;
 		for (int s = 0; s < STANDEN; s++) {
-			BufferedImage stand = tekenRad(s, naaf);
+			BufferedImage stand = tekenRad(s, -1, naaf);
 			for (int r = 0; r < 2; r++) {
 				for (int c = 0; c < 2; c++) {
 					String naam = String.format("rad_%02d_%d_%d.png", s, r, c);
@@ -221,10 +223,22 @@ public class BouwPack {
 				}
 			}
 		}
+		// Elk vak nog een keer op zijn eigen eindstand, fel opgelicht: daarmee knippert het gekozen vak.
+		for (int v = 0; v < VAKKEN.length; v++) {
+			int s = ((VAKKEN.length - v) % VAKKEN.length) * (STANDEN / VAKKEN.length);
+			BufferedImage licht = tekenRad(s, v, naaf);
+			for (int r = 0; r < 2; r++) {
+				for (int c = 0; c < 2; c++) {
+					String naam = String.format("rad_licht_%02d_%d_%d.png", v, r, c);
+					schrijfTegel(licht.getSubimage(c * radTegel, r * radTegel, radTegel, radTegel), fontTex.resolve(naam));
+					rad.tegel("bootcamp:font/" + naam, RAD_EENHEDEN, r == 0 ? RAD_EENHEDEN : 0, RAD_OPLICHT_EERSTE + 4 * v + 2 * r + c);
+				}
+			}
+		}
 		rad.spatie(TERUG_EEN, -1);
 		rad.spatie(TERUG_RIJ, -2 * RAD_EENHEDEN);
 		schrijf(assets.resolve("font").resolve("rad.json"), rad.json());
-		System.out.println("Quiz-rad: " + STANDEN + " standen getekend, " + (STANDEN * 4) + " tegels.");
+		System.out.println("Quiz-rad: " + STANDEN + " standen en " + VAKKEN.length + " opgelichte vakken getekend, " + ((STANDEN + VAKKEN.length) * 4) + " tegels.");
 
 		// 4. pack.mcmeta
 		schrijf(pack.resolve("pack.mcmeta"), """
@@ -487,9 +501,10 @@ public class BouwPack {
 	 * Het rad in stand {@code s}: {@code s} x 5,625 graden met de klok mee gedraaid. Vak {@code i}
 	 * heeft zijn midden op {@code i} x 22,5 graden met de klok mee vanaf boven, plus de draaiing.
 	 *
+	 * @param licht het vak dat fel oplicht, met een witte rand, of -1 voor geen
 	 * @param naaf de schijf met het logo ({@link #naaf}), of {@code null} voor een gewone dop
 	 */
-	static BufferedImage tekenRad(int stand, BufferedImage naaf) {
+	static BufferedImage tekenRad(int stand, int licht, BufferedImage naaf) {
 		BufferedImage beeld = new BufferedImage(RAD, RAD, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = mooi(beeld);
 		// Getekend op 512 x 512 en verkleind naar de maat van de tegels.
@@ -512,12 +527,16 @@ public class BouwPack {
 			double midden = i * vak + draai;
 			// Java2D: 0 graden is rechts, tegen de klok in positief. "Met de klok mee vanaf boven" = 90 - hoek.
 			double start = 90 - midden - vak / 2;
-			g.setColor(new Color(Integer.parseInt(VAKKEN[i], 16)));
+			Color kleur = new Color(Integer.parseInt(VAKKEN[i], 16));
+			if (i == licht) {
+				kleur = lichter(kleur, 0.3);
+			}
+			g.setColor(kleur);
 			g.fill(new Arc2D.Double(cx - r, cy - r, 2 * r, 2 * r, start, vak, Arc2D.PIE));
 			// Een lichte band langs de binnenrand van elk vak, voor wat diepte.
 			g.setColor(new Color(255, 255, 255, 40));
 			g.fill(new Arc2D.Double(cx - r * 0.93, cy - r * 0.93, 2 * r * 0.93, 2 * r * 0.93, start, vak, Arc2D.PIE));
-			g.setColor(new Color(Integer.parseInt(VAKKEN[i], 16)));
+			g.setColor(kleur);
 			g.fill(new Arc2D.Double(cx - r * 0.86, cy - r * 0.86, 2 * r * 0.86, 2 * r * 0.86, start, vak, Arc2D.PIE));
 		}
 		// Naden tussen de vakken en pinnetjes op de rand
@@ -532,6 +551,13 @@ public class BouwPack {
 			double py = cy - Math.cos(grens) * (r + 1);
 			g.setColor(new Color(0xF2F2F2));
 			g.fill(new Ellipse2D.Double(px - 6, py - 6, 12, 12));
+		}
+		if (licht >= 0) {
+			// Het gekozen vak: een witte rand eromheen, over de naden heen.
+			double start = 90 - (licht * vak + draai) - vak / 2;
+			g.setColor(Color.WHITE);
+			g.setStroke(new BasicStroke(9f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+			g.draw(new Arc2D.Double(cx - r + 4, cy - r + 4, 2 * r - 8, 2 * r - 8, start, vak, Arc2D.PIE));
 		}
 		if (naaf == null) {
 			// De dop in het midden
@@ -566,6 +592,14 @@ public class BouwPack {
 		g.fill(pijl);
 		g.dispose();
 		return beeld;
+	}
+
+	/** Een kleur een deel van de weg naar wit. */
+	static Color lichter(Color kleur, double deel) {
+		return new Color(
+				(int) Math.round(kleur.getRed() + (255 - kleur.getRed()) * deel),
+				(int) Math.round(kleur.getGreen() + (255 - kleur.getGreen()) * deel),
+				(int) Math.round(kleur.getBlue() + (255 - kleur.getBlue()) * deel));
 	}
 
 	static String escape(int code) {
