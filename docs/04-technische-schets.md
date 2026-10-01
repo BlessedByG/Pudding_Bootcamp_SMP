@@ -150,8 +150,8 @@ Het pack staat in `pack/` in deze repo. **Aanleveren** gaat in `pack/aanleveren/
 | `schrik_1.png` t/m `schrik_5.png` (ook `.jpg` of `.jpeg`) | De vijf jumpscare-foto's; in de mod heten ze foto 1 t/m 5. **Elk formaat en elke verhouding**: vierkant, liggend of staand, zo groot als je wilt. Een webp eerst omzetten naar png. |
 | `schrik.ogg` | Het geluid bij elke jumpscare, ogg vorbis. **Zonder stilte aan het begin** (anders komt het geluid na de foto) en zo hard als je hem wilt: Minecraft speelt nooit harder dan het bestand zelf. Het huidige bestand is 0,362 s ingekort en 12 dB harder gemaakt, zie `pack/aanleveren/LEESMIJ.txt`. |
 | `klop.ogg` | De 8D-klop uit de valkisten, ogg vorbis. **Stereo laten**: Minecraft speelt een stereogeluid zonder richting af, dus het 8D-effect in het bestand blijft. |
-| `rad.ogg` | Het geluid van een draai van het quiz-rad (spinwheel, 11,1 s), ogg vorbis. **Niet inkorten**: de tijdlijn van het rad (`QuizDraai`) is op dit bestand gemeten; een ander geluid betekent de tikjes opnieuw meten. |
-| `logo.png` | Het logo in het midden van het quiz-rad, liefst met een doorzichtige achtergrond. Het staat rechtop, ook als het rad draait. Zonder logo een gewone dop. |
+| `rad.ogg` | Het geluid van een draai van het quiz-rad (spinwheel, 11,1 s), ogg vorbis. Speelt op 70% (`"volume": 0.7` in `sounds.json`). **Niet inkorten**: de tijdlijn van het rad (`QuizDraai`) is op dit bestand gemeten; een ander geluid betekent de tikjes opnieuw meten. |
+| `logo.png` | Het logo in het midden van het quiz-rad, vierkant. Het staat rechtop, ook als het rad draait, en zo groot dat het hele puddingkje binnen de ronde naaf valt (`LOGO_REIKWIJDTE`: het blaadje steekt tot 1,06 keer de halve breedte uit); de achtergrond van het logo vult de rest van de naaf, met een zachte overgang. Zonder logo een gewone dop. |
 
 Minecraft speelt alleen ogg vorbis. Een wav of mp3 eerst omzetten, met Audacity (Bestand >
 Exporteren > Exporteren als OGG) of `ffmpeg -i in.wav -c:a libvorbis -q:a 5 uit.ogg`. BouwPack

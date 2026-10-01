@@ -92,12 +92,20 @@ public class BouwPack {
 	static final int RAD_PX_PER_EENHEID = 11;
 	static final int RAD = 2 * RAD_EENHEDEN * RAD_PX_PER_EENHEID;
 	/**
-	 * De naaf van het rad (op de tekening van 512 x 512): een donkere ring met een lichte schijf, en
-	 * daarop het logo uit {@code aanleveren/logo.png}, rechtop, ook als het rad draait.
+	 * De naaf van het rad (op de tekening van 512 x 512): een donkere ring met daarin de schijf met het
+	 * logo uit {@code aanleveren/logo.png}, rechtop, ook als het rad draait (zie {@link #naaf}).
 	 */
-	static final double NAAF = 76;
-	static final double NAAF_SCHIJF = 69;
-	static final double LOGO = 124;
+	static final double NAAF = 82;
+	static final double NAAF_SCHIJF = 75;
+	/**
+	 * Tot zover van het midden reikt het puddingkje, in halve breedtes van het logo: het blaadje
+	 * linksboven steekt net buiten de cirkel die in het vierkant past (gemeten: 1,056).
+	 */
+	static final double LOGO_REIKWIJDTE = 1.06;
+	/** Zoveel van de straal van de schijf mag het puddingkje vullen; de rest is ruimte tot de rand. */
+	static final double LOGO_MARGE = 0.94;
+	/** De randen van het logo lopen over deze breedte (deel van het logo) zacht over in de achtergrond. */
+	static final double LOGO_ZACHTE_RAND = 0.06;
 
 	static final String ROOD = "E24B4A";
 	static final String BLAUW = "378ADD";
@@ -164,7 +172,7 @@ public class BouwPack {
 		Path soundsJson = assets.resolve("sounds.json");
 		leeg(sounds);
 		List<String> geluiden = new ArrayList<>();
-		for (String[] g : new String[][] {{"schrik", "Jumpscare", "false"}, {"klop", "8D-klop", "true"}, {"rad", "Quiz-rad", "false"}}) {
+		for (String[] g : new String[][] {{"schrik", "Jumpscare", "false", "1"}, {"klop", "8D-klop", "true", "1"}, {"rad", "Quiz-rad", "false", "0.7"}}) {
 			Path ogg = aanleveren.resolve(g[0] + ".ogg");
 			if (Files.exists(ogg)) {
 				Files.createDirectories(sounds);
@@ -173,6 +181,10 @@ public class BouwPack {
 				// al bij het laden van het pack (preload): anders laadt Minecraft het pas bij de eerste keer
 				// afspelen, en dan komt de eerste jumpscare te laat.
 				String laden = g[2].equals("true") ? "\"stream\": true" : "\"stream\": false, \"preload\": true";
+				// Een volume onder 1 maakt het zachter (nooit harder dan het bestand); het rad staat op 0,7.
+				if (!g[3].equals("1")) {
+					laden += ", \"volume\": " + g[3];
+				}
 				geluiden.add("  \"" + g[0] + "\": {\"sounds\": [{\"name\": \"bootcamp:" + g[0] + "\", " + laden + "}]}");
 				System.out.println(g[1] + ": " + g[0] + ".ogg erbij.");
 			} else if (Files.exists(aanleveren.resolve(g[0] + ".wav"))) {
@@ -194,13 +206,13 @@ public class BouwPack {
 		if (logoBestand != null && logo == null) {
 			throw new IllegalStateException(logoBestand + " is geen jpg of png die Java kan lezen. Sla hem opnieuw op als png.");
 		}
-		BufferedImage logoOpMaat = logo == null ? null : verklein(logo, logoPx(), logoPx());
+		BufferedImage naaf = logo == null ? null : naaf(logo);
 		System.out.println(logo != null ? "Logo: " + logoBestand.getFileName() + " in het midden van het rad."
 				: "Logo: geen logo.png in " + aanleveren + ", dus een gewone dop in het midden van het rad.");
 		FontJson rad = new FontJson();
 		int radTegel = RAD_EENHEDEN * RAD_PX_PER_EENHEID;
 		for (int s = 0; s < STANDEN; s++) {
-			BufferedImage stand = tekenRad(s, logoOpMaat);
+			BufferedImage stand = tekenRad(s, naaf);
 			for (int r = 0; r < 2; r++) {
 				for (int c = 0; c < 2; c++) {
 					String naam = String.format("rad_%02d_%d_%d.png", s, r, c);
@@ -394,17 +406,90 @@ public class BouwPack {
 		return g;
 	}
 
+	/** Drie keer een vierkante vervaging (samen bijna een gaussische), met de randpixels doorgetrokken. */
+	static BufferedImage vervaag(BufferedImage bron, int straal) {
+		BufferedImage beeld = naarArgb(bron);
+		for (int keer = 0; keer < 3; keer++) {
+			beeld = vervaagRichting(vervaagRichting(beeld, straal, true), straal, false);
+		}
+		return beeld;
+	}
+
+	private static BufferedImage vervaagRichting(BufferedImage bron, int straal, boolean liggend) {
+		int b = bron.getWidth(), h = bron.getHeight();
+		BufferedImage uit = new BufferedImage(b, h, BufferedImage.TYPE_INT_ARGB);
+		int n = 2 * straal + 1;
+		for (int y = 0; y < h; y++) {
+			for (int x = 0; x < b; x++) {
+				long a = 0, r = 0, g = 0, bl = 0;
+				for (int i = -straal; i <= straal; i++) {
+					int sx = liggend ? Math.clamp(x + i, 0, b - 1) : x;
+					int sy = liggend ? y : Math.clamp(y + i, 0, h - 1);
+					int p = bron.getRGB(sx, sy);
+					a += p >>> 24;
+					r += (p >> 16) & 255;
+					g += (p >> 8) & 255;
+					bl += p & 255;
+				}
+				uit.setRGB(x, y, (int) (a / n) << 24 | (int) (r / n) << 16 | (int) (g / n) << 8 | (int) (bl / n));
+			}
+		}
+		return uit;
+	}
+
+	/**
+	 * De schijf van de naaf in echte pixels, met het logo erin. Het logo staat zo groot dat het hele
+	 * puddingkje binnen de schijf valt ({@link #LOGO_REIKWIJDTE}, {@link #LOGO_MARGE}); dat laat langs
+	 * de vier zijden een randje van de schijf vrij. Daar ligt dezelfde afbeelding onder, net groot
+	 * genoeg om de hele schijf te vullen, en de randen van het logo lopen er zacht in over: zo vult
+	 * de achtergrond van het logo de schijf zonder naad, en wordt er niks van het puddingkje
+	 * afgesneden.
+	 */
+	static BufferedImage naaf(BufferedImage logo) {
+		double k = RAD / 512.0;
+		int d = (int) Math.round(2 * NAAF_SCHIJF * k);
+		int voor = (int) Math.round(d * LOGO_MARGE / LOGO_REIKWIJDTE);
+		int achter = d + 2;
+		// Flink vervaagd: van de onderste afbeelding wil je alleen de kleuren van de achtergrond zien,
+		// geen stukje puddingkje dat door de zachte rand heen piept.
+		BufferedImage onder = vervaag(verklein(logo, achter, achter), Math.max(2, (int) Math.round(d * 0.05)));
+		BufferedImage boven = verklein(logo, voor, voor);
+		// Zachte randen: van doorzichtig op de rand naar heel op LOGO_ZACHTE_RAND naar binnen.
+		double zacht = Math.max(1, voor * LOGO_ZACHTE_RAND);
+		for (int y = 0; y < voor; y++) {
+			for (int x = 0; x < voor; x++) {
+				double rand = Math.min(Math.min(x + 0.5, y + 0.5), Math.min(voor - x - 0.5, voor - y - 0.5));
+				double f = Math.min(1, rand / zacht);
+				f = f * f * (3 - 2 * f);
+				int p = boven.getRGB(x, y);
+				int alfa = (int) Math.round((p >>> 24) * f);
+				boven.setRGB(x, y, (alfa << 24) | (p & 0xFFFFFF));
+			}
+		}
+		BufferedImage schijf = new BufferedImage(d, d, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = mooi(schijf);
+		g.drawImage(onder, (d - achter) / 2, (d - achter) / 2, null);
+		g.drawImage(boven, (d - voor) / 2, (d - voor) / 2, null);
+		// Rond uitknippen, met een gladde rand. Het masker beslaat het hele vlak: DstIn werkt alleen
+		// waar er getekend wordt, dus een losse cirkel zou de hoeken laten staan.
+		BufferedImage masker = new BufferedImage(d, d, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D m = mooi(masker);
+		m.setColor(Color.WHITE);
+		m.fill(new Ellipse2D.Double(0, 0, d, d));
+		m.dispose();
+		g.setComposite(java.awt.AlphaComposite.DstIn);
+		g.drawImage(masker, 0, 0, null);
+		g.dispose();
+		return schijf;
+	}
+
 	/**
 	 * Het rad in stand {@code s}: {@code s} x 5,625 graden met de klok mee gedraaid. Vak {@code i}
 	 * heeft zijn midden op {@code i} x 22,5 graden met de klok mee vanaf boven, plus de draaiing.
+	 *
+	 * @param naaf de schijf met het logo ({@link #naaf}), of {@code null} voor een gewone dop
 	 */
-	/** De maat van het logo in echte pixels van een stand. */
-	static int logoPx() {
-		return (int) Math.round(LOGO * RAD / 512.0);
-	}
-
-	/** @param logo het logo op maat ({@link #logoPx()}), of {@code null} voor een gewone dop */
-	static BufferedImage tekenRad(int stand, BufferedImage logo) {
+	static BufferedImage tekenRad(int stand, BufferedImage naaf) {
 		BufferedImage beeld = new BufferedImage(RAD, RAD, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = mooi(beeld);
 		// Getekend op 512 x 512 en verkleind naar de maat van de tegels.
@@ -448,7 +533,7 @@ public class BouwPack {
 			g.setColor(new Color(0xF2F2F2));
 			g.fill(new Ellipse2D.Double(px - 6, py - 6, 12, 12));
 		}
-		if (logo == null) {
+		if (naaf == null) {
 			// De dop in het midden
 			g.setColor(naad);
 			g.fill(new Ellipse2D.Double(cx - 38, cy - 38, 76, 76));
@@ -457,18 +542,14 @@ public class BouwPack {
 			g.setColor(new Color(0xFFD24A));
 			g.fill(new Ellipse2D.Double(cx - 14, cy - 14, 28, 28));
 		} else {
-			// De naaf met het logo: een donkere ring, een lichte schijf, en het logo rechtop erover.
+			// De naaf: een donkere ring, en daarin de schijf met het logo, rechtop.
 			g.setColor(naad);
 			g.fill(new Ellipse2D.Double(cx - NAAF, cy - NAAF, 2 * NAAF, 2 * NAAF));
-			g.setColor(new Color(0xFFF6E0));
-			g.fill(new Ellipse2D.Double(cx - NAAF_SCHIJF, cy - NAAF_SCHIJF, 2 * NAAF_SCHIJF, 2 * NAAF_SCHIJF));
-			// Het logo is al op de echte pixelmaat geschaald: zonder de schaal van de tekening erop zetten.
+			// De schijf is al op de echte pixelmaat: zonder de schaal van de tekening erop zetten.
 			double k = RAD / 512.0;
 			AffineTransform oud = g.getTransform();
 			g.setTransform(new AffineTransform());
-			g.setClip(new Ellipse2D.Double((cx - NAAF_SCHIJF) * k, (cy - NAAF_SCHIJF) * k, 2 * NAAF_SCHIJF * k, 2 * NAAF_SCHIJF * k));
-			g.drawImage(logo, (int) Math.round(cx * k - logo.getWidth() / 2.0), (int) Math.round(cy * k - logo.getHeight() / 2.0), null);
-			g.setClip(null);
+			g.drawImage(naaf, (int) Math.round(cx * k - naaf.getWidth() / 2.0), (int) Math.round(cy * k - naaf.getHeight() / 2.0), null);
 			g.setTransform(oud);
 		}
 
