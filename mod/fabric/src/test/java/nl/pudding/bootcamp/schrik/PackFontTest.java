@@ -57,6 +57,9 @@ class PackFontTest {
 		for (int s = 0; s < QuizRad.STANDEN; s++) {
 			controleer("rad.json", QuizRad.glyph(s));
 		}
+		for (int vak = 0; vak < QuizRad.VAKKEN.size(); vak++) {
+			controleer("rad.json", QuizRad.glyphOplicht(vak));
+		}
 	}
 
 	/** De tegenproef: de codec weigert een glyph die hoger boven de basislijn staat dan hij hoog is. */

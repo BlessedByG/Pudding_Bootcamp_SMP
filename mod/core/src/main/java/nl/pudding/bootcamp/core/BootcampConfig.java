@@ -250,6 +250,14 @@ public final class BootcampConfig {
 							blok));
 				}
 			}
+			// Vroeger één lamp per bank (quizlamp_rood); nu genummerd, en de oude wordt lamp 1.
+			for (Kleur k : Kleur.values()) {
+				Punt oud = c.punten.get("quizlamp_" + k.id());
+				if (oud != null && !c.punten.containsKey("quizlamp_" + k.id() + "_1")) {
+					c.punten.remove("quizlamp_" + k.id());
+					c.punten.put("quizlamp_" + k.id() + "_1", oud);
+				}
+			}
 			leesTeksten(root, "doodteksten", c.doodteksten);
 			if (c.doodteksten.equals(Doodteksten.OUDE_STANDAARD)) {
 				// Nooit aangepast: dan krijgt ook een oude wereld de nieuwe teksten.

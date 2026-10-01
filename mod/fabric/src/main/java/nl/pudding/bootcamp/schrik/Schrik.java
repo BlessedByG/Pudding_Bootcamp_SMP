@@ -48,8 +48,9 @@ public final class Schrik {
 		Identifier font = font(Regels.schrikFoto(foto, Spel.RANDOM));
 		// Zonder schaduw: een title krijgt anders een donkere rand rechtsonder.
 		Component beeld = Component.literal(TEKST).withStyle(s -> s.withFont(new FontDescription.Resource(font)).withoutShadow());
-		Mc.title(speler, beeld, null, 0, 30, 10);
+		// Eerst het geluid, dan het beeld: een geluid heeft bij de client net iets meer aanlooptijd.
 		Mc.geluid(speler, GELUID, 1f, 1f);
+		Mc.title(speler, beeld, null, 0, 30, 10);
 	}
 
 	/** De 8D-klop, alleen voor deze speler. Stereo, dus zonder richting: het 8D-effect zit in het geluid zelf. */

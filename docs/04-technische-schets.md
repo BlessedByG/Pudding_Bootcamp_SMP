@@ -148,8 +148,10 @@ Het pack staat in `pack/` in deze repo. **Aanleveren** gaat in `pack/aanleveren/
 | Bestand | Eisen |
 |---|---|
 | `schrik_1.png` t/m `schrik_5.png` (ook `.jpg` of `.jpeg`) | De vijf jumpscare-foto's; in de mod heten ze foto 1 t/m 5. **Elk formaat en elke verhouding**: vierkant, liggend of staand, zo groot als je wilt. Een webp eerst omzetten naar png. |
-| `schrik.ogg` | Het geluid bij elke jumpscare, ogg vorbis. |
+| `schrik.ogg` | Het geluid bij elke jumpscare, ogg vorbis. **Zonder stilte aan het begin** (anders komt het geluid na de foto) en zo hard als je hem wilt: Minecraft speelt nooit harder dan het bestand zelf. Het huidige bestand is 0,362 s ingekort en 12 dB harder gemaakt, zie `pack/aanleveren/LEESMIJ.txt`. |
 | `klop.ogg` | De 8D-klop uit de valkisten, ogg vorbis. **Stereo laten**: Minecraft speelt een stereogeluid zonder richting af, dus het 8D-effect in het bestand blijft. |
+| `rad.ogg` | Het geluid van een draai van het quiz-rad (spinwheel, 11,1 s), ogg vorbis. Speelt op 70% (`"volume": 0.7` in `sounds.json`). **Niet inkorten**: de tijdlijn van het rad (`QuizDraai`) is op dit bestand gemeten; een ander geluid betekent de tikjes opnieuw meten. |
+| `logo.png` | Het logo in het midden van het quiz-rad, vierkant. Het staat rechtop, ook als het rad draait, en zo groot dat het hele puddingkje binnen de ronde naaf valt (`LOGO_REIKWIJDTE`: het blaadje steekt tot 1,06 keer de halve breedte uit); de achtergrond van het logo vult de rest van de naaf, met een zachte overgang. Zonder logo een gewone dop. |
 
 Minecraft speelt alleen ogg vorbis. Een wav of mp3 eerst omzetten, met Audacity (Bestand >
 Exporteren > Exporteren als OGG) of `ffmpeg -i in.wav -c:a libvorbis -q:a 5 uit.ogg`. BouwPack
@@ -161,11 +163,14 @@ en het werkt ook op Windows zonder Git Bash. Het programma:
 1. leest de vijf foto's (jpg of png) en schaalt ze naar 476 pixels hoog, met behoud van de
    verhouding (een heel brede foto wordt kleiner, tot 1428 pixels breed); een foto die er niet is,
    wordt een placeholder met "foto N volgt";
-2. zet `schrik.ogg` en `klop.ogg` erbij (de klop streamt, want die is lang);
+2. zet `schrik.ogg`, `klop.ogg` en `rad.ogg` erbij (de klop streamt, want die is lang; de jumpscare laadt al
+   bij het laden van het pack, `preload`, anders laadt Minecraft hem pas bij de eerste keer en komt
+   die te laat);
 3. tekent **het quiz-rad** (Java2D, niets aan te leveren): 64 standen van 484 × 484, elk 5,625°
    verder gedraaid, met de 16 vakken in de vaste volgorde uit *Ronde 4* in alleen de
    teamkleuren (rood `#E24B4A`, blauw `#378ADD`, groen `#639922`, geel `#EF9F27`), een donkere
-   rand en naad tussen de vakken, een dop in het midden, en het pijltje vast bovenin;
+   rand en naad tussen de vakken, een naaf in het midden met daarop `logo.png` (rechtop, het draait
+   niet mee; zonder logo een kleine dop), en het pijltje vast bovenin;
 4. knipt de foto's en elke stand van het rad in **tegels** en schrijft de fonts (zie hieronder);
 5. zipt het pack naar `bootcamp-pack.zip` en print de SHA-1 voor `server.properties`.
 
@@ -193,15 +198,15 @@ opnieuw uploaden, nieuwe SHA-1 invullen, server herstarten.
 ```
 pack/
   aanleveren/schrik_1.png … schrik_5.png      wat je aanlevert (jpg of png, elk formaat)
-  aanleveren/schrik.ogg, aanleveren/klop.ogg
+  aanleveren/schrik.ogg, klop.ogg, rad.ogg, logo.png
   BouwPack.java                               bouwt het pack en de zip
   pack.mcmeta
   assets/bootcamp/font/schrik_N.json          per foto: per tegel een bitmap-provider, plus de spaties
   assets/bootcamp/textures/font/schrik_N_R_C.png de tegels van foto N (rij R, kolom C), gemaakt door BouwPack
   assets/bootcamp/font/rad.json               per tegel een bitmap-provider (64 standen × 4), plus de spaties
   assets/bootcamp/textures/font/rad_SS_R_C.png de tegels van stand SS van het quiz-rad
-  assets/bootcamp/sounds.json                 bootcamp:schrik en bootcamp:klop
-  assets/bootcamp/sounds/schrik.ogg, klop.ogg gekopieerd uit aanleveren/
+  assets/bootcamp/sounds.json                 bootcamp:schrik, bootcamp:klop en bootcamp:rad
+  assets/bootcamp/sounds/*.ogg                gekopieerd uit aanleveren/
 ```
 
 De foto's en geluiden in `aanleveren/` staan niet in git (de repo is public); wat BouwPack maakt
@@ -215,11 +220,11 @@ is, blijft in de jumpscare in zijn eigen verhouding: de breedte volgt de hoogte.
 bepalen `SCHRIK_EENHEDEN` en `SCHRIK_PX_PER_EENHEID` bovenin `BouwPack.java` (nu 68 eenheden hoog;
 een title tekent vier keer zo groot); afstemmen in de eerste test. Heeft een speler het pack niet
 (weigerde of downloadfout), dan ziet die lege vierkantjes en hoort niks; met
-`require-resource-pack=true` kan dat niet. `/bc schrik <speler> [<foto>]` doet een jumpscare met
+`require-resource-pack=true` kan dat niet. `/bc schrik <spelers> [<foto>]` doet een jumpscare met
 de hand (zonder foto een willekeurige), voor het testen en voor de lol.
 
 **De 8D-klop** (`Schrik.klop(speler)`): alleen het geluid `bootcamp:klop`, alleen voor die speler,
-geen beeld. `/bc klop <speler>` om te testen.
+geen beeld. `/bc klop <spelers>` om te testen.
 
 Waar een jumpscare vandaan komt:
 - Doolhof: in een regio `schrik_1` t/m `schrik_n`, één keer per regio per speler. Per plek een
@@ -307,13 +312,14 @@ hele avond geldt (setup, spelers, noodknoppen) staat onder `/bc`.
 | `/quiz start\|stop` | Ronde 4. Weigert zonder presentator. |
 | `/quiz presentator [<speler>]` | Wie presenteert (Pudding). Op naam, mag ook voor iemand die nog niet online is; bewaard in `bootcamp.json`. Die gaat bij de start naar het podium in plaats van naar zijn bank en krijgt de drie quiz-items. |
 | `/quiz bank <rood\|blauw\|groen\|geel>` / `/quiz podium` | Zet de bank van dat team, of het podium, op de plek waar je staat, met je kijkrichting. Hetzelfde als `/bc point set quiz_<kleur>` en `quiz_podium`. |
-| `/quiz lamp <rood\|blauw\|groen\|geel>` | Zet de lamp bij de bank van dat team: het blok waar je naar kijkt (tot 32 blokken). Hetzelfde als `/bc point block quizlamp_<kleur>`. |
+| `/quiz lamp <kleur> [<nr>\|wis]` | Een lamp bij de bank van dat team: het blok waar je naar kijkt (tot 32 blokken). Zonder nummer komt er een lamp bij (`quizlamp_<kleur>_1`, `_2`, ...), met een nummer zet je die ene opnieuw, `wis` haalt alle lampen van dat team weg. Zoveel lampen als je wilt; ze gaan samen aan en uit. |
 | `/quiz vuurwerk <kleur> <1\|2>` | Zet dispenser 1 of 2 bij de bank van dat team: het blok waar je naar kijkt (tot 32 blokken), en het moet een dispenser zijn. Bij een goed antwoord schiet hij een vuurpijl in de teamkleur, de kant op waar hij naartoe wijst. |
 | `/quiz draai` | Het rad draaien. Hetzelfde als het rad-item van de presentator. |
 | `/quiz goed` / `/quiz fout` | Het antwoord van het team dat aan de beurt is goedkeuren (+1 punt) of afkeuren. Hetzelfde als de groene en rode wol. |
 | `/quiz punt <kleur> [<aantal>]` | Punten erbij (standaard 1, negatief mag): om een verkeerde klik recht te zetten. |
 | `/quiz einde` | Het team met de meeste punten wint: titles en vuurwerk. Bij gelijke stand weigert hij en noemt de teams die gelijk staan. |
 | `/quiz winnaar <kleur>` | Een winnaar aanwijzen, voor een gelijke stand. |
+| `/quiz naararena` | Na de winnaar: iedereen naar de tribune van de Arena, net als de ender pearl van de presentator. Noodknop als Pudding er niet is. |
 | `/clown rad` | Het Rad (in beeld), en daarna zet ronde 5 iedereen bevroren klaar op de vloer. Weigert zonder uitverkorene die online is en meedoet, en als ronde 5 daarna niet zou kunnen starten. |
 | `/clown go` | Start de countdown van 10 seconden; daarna is iedereen los. Alleen nodig na het Rad (of `/clown start`); na een kroonwissel loopt de countdown vanzelf. Weigert als er niemand klaarstaat. |
 | `/clown start` | Ronde 5 zonder het rad: de kroon gaat meteen naar de uitverkorene, iedereen bevroren klaar, dan `/clown go`. Noodknop, bijvoorbeeld na een crash. |
@@ -350,8 +356,8 @@ hele avond geldt (setup, spelers, noodknoppen) staat onder `/bc`.
 | `/bc status` | Rollen, teams en vlaggen van alle spelers, huidige ronde, timer en de instellingen. |
 | `/bc kit <naam> [<speler>]` | Zet een kit op iedereen die meedoet, of op één speler. |
 | `/bc team <speler> <rood\|blauw\|groen\|geel\|weg>` | Noodknop: iemand in een team zetten of de keuze weghalen. Mag boven het maximum. |
-| `/bc schrik <speler> [<foto>]` | Een jumpscare, met de hand: foto 1 t/m 5, zonder foto een willekeurige. |
-| `/bc klop <speler>` | De 8D-klop, met de hand (om te testen). |
+| `/bc schrik <spelers> [<foto>]` | Een jumpscare, met de hand: foto 1 t/m 5, zonder foto voor ieder een willekeurige. Eén speler of een selector, bijvoorbeeld `/bc schrik @a 3`. |
+| `/bc klop <spelers>` | De 8D-klop, met de hand (om te testen); ook met `@a`. |
 | `/bc kijker <speler> aan\|uit` | Noodknop: iemand met de hand op de tribune zetten of eraf halen. |
 | `/bc doodtekst lijst\|nieuw <tekst>\|weg <nr>\|standaard` | De doodteksten bekijken, er een bijzetten, er een weghalen (op nummer uit de lijst; er blijft er minstens één) of de standaard zes terugzetten. Wordt meteen opgeslagen. |
 | `/bc reset` | Alles terug naar de basiskamp-staat via het reset-register; ook alle teamkeuzes weg en het Ei teruggezet. Instellingen blijven. |
@@ -449,7 +455,9 @@ hij de doos om alle delen heen; bij de cirkel van `vloer` is dat het vierkant er
 | `tribune_mob_1` t/m `tribune_mob_n` | De tribune (het balkon). Zoveel als je wilt, allemaal op regio `tribune_mob`. |
 | `quiz_rood`, `quiz_blauw`, `quiz_groen`, `quiz_geel` | De vier banken in de quizhal. Zetten met `/quiz bank <kleur>`. |
 | `quiz_podium` | Het podium boven aan de trap, waar de presentator staat. Zetten met `/quiz podium`. |
-| `quizlamp_rood`, `quizlamp_blauw`, `quizlamp_groen`, `quizlamp_geel` (blokken) | De lamp bij elke bank. Gedoofde redstone lamp, geen redstone ernaast. Zetten met `/quiz lamp <kleur>`. |
+| `quizlamp_<kleur>_1` t/m `_n` (blokken) | De lampen bij elke bank, minstens één per team. Gedoofde redstone lampen, geen redstone ernaast. Zetten met `/quiz lamp <kleur>` (telkens een erbij). Een oude `quizlamp_<kleur>` (van voor 1 oktober) wordt bij het laden vanzelf `quizlamp_<kleur>_1`. |
+| (decorlampen) | Geen punten: alle andere redstone lampen in regio `quiz` doen mee aan de lichtshow (R4.6). Bij `/quiz start` krijgen de ops in de chat hoeveel er gevonden zijn. |
+| `quizdecor_rood`, `quizdecor_blauw`, `quizdecor_groen`, `quizdecor_geel` (regio's, mag) | De decorlampen achter elke bank: met de wand selecteren en `/bc region save quizdecor_<kleur>` (meer stukken met `/bc region add`). Is dat team aan de beurt, dan branden alleen deze lampen. Zonder regio blijft de lichtshow lopen als dat team aan de beurt is. |
 | `quizvuurwerk_<kleur>_1`, `quizvuurwerk_<kleur>_2` (blokken) | Twee dispensers bij elke bank, 8 in totaal. Zetten met `/quiz vuurwerk <kleur> <1\|2>`; `/quiz start` weigert als er een mist of geen dispenser is. |
 | `troon` | Het kleine podium in het midden van de Arena, waar de kroonhouder spawnt. Zetten met `/clown troon`. |
 | `jager_1` t/m `jager_n` | De startplekken van de jagers: in de Arena de 20 redstone blocks in een cirkel. Zetten met `/clown jagerplek`, bovenop het blok en kijkend waar de speler heen moet kijken; de kijkrichting gaat mee met de teleport. |
@@ -806,15 +814,21 @@ op de tribune stond. Iedereen weer speler, geheald, zonder spullen naar de quiz.
 **Ronde 4, quiz.** Weigert zonder presentator (`/quiz presentator`). Start: iedereen naar
 `quiz_<kleur>` van zijn team, border `quiz`, geen schade, geen timer. Sidebar `Quiz` met de vier
 teams op 0. Iedereen heeft een lege inventory (ingeleverd na de mob arena). De presentator gaat
-naar `quiz_podium` en telt in de quiz niet mee voor zijn team; hij krijgt als enige iets: vier
-items in hotbar-slot 1 t/m 4, herkenbaar aan `custom_data={bootcamp_quiz:"..."}`:
+naar `quiz_podium` en telt in de quiz niet mee voor zijn team; hij krijgt als enige iets: vijf
+items in de hotbar, in de volgorde van een vraag en met ruimte tussen de groepen, herkenbaar aan
+`custom_data={bootcamp_quiz:"..."}`:
 
-| Slot | Item | Rechtsklik doet |
+| Slot (toets) | Item | Rechtsklik doet |
 |---|---|---|
-| 1 | Groene wol, naam `Goed` | hetzelfde als `/quiz goed` |
-| 2 | Rode wol, naam `Fout` | hetzelfde als `/quiz fout` |
-| 3 | Nether star, naam `Draai het rad` | hetzelfde als `/quiz draai` |
-| 4 | Emerald, naam `Punten geven of afpakken` | opent het puntenmenu |
+| 1 | Nether star, naam `Draai het rad` | hetzelfde als `/quiz draai` |
+| 3 | Groene wol, naam `Goed` | hetzelfde als `/quiz goed` |
+| 4 | Rode wol, naam `Fout` | hetzelfde als `/quiz fout` |
+| 6 | Emerald, naam `Punten geven of afpakken` | opent het puntenmenu |
+| 9 | Barrier, naam `Quiz beëindigen` | opent de bevestiging: `Ja, de quiz is klaar` (hetzelfde als `/quiz einde`) of `Nee, verder met de quiz`, met de stand ertussen |
+
+Na de winnaar heeft hij alleen nog de ender pearl `Iedereen naar de Arena` in slot 1 (zie *Einde*).
+Bij een gelijke stand na `Ja` krijgt hij in de chat dat het nog niet klaar is: een beslisvraag en
+een punt met de emerald, of de commander kiest met `/quiz winnaar`.
 
 **Het puntenmenu** is een kistmenu met een rij per team: vooraan de wol met de stand
 (`Rood · 5`), daarachter knoppen `−2`, `−1`, `+1` en `+2` (gekleurde glazen panelen). Een klik
@@ -834,15 +848,38 @@ volgorde waarin twee buren (ook rondom) nooit dezelfde kleur hebben:
 `rood blauw groen geel blauw rood geel groen rood groen blauw geel groen geel rood blauw`.
 
 Het pack heeft 64 standen van het rad (elk 2 × 2 tegels, zie *Resource pack*), elk 5,625° verder
-gedraaid: vier per vak, en elk vierde plaatje heeft een vak precies onder het pijltje. Het draaien is
-`core`-`Rad` over die 64 standen: doel = de middenstand van een willekeurig vak (dus elk team
-25%), `rest` = de standen tot het doel plus 64 × (2 of 3). Per stap een title met de tegels van
-die stand, fade 0, lang genoeg blijven tot de volgende stap; de wachttijd loopt op van 1 naar 6
-ticks naarmate `rest` kleiner wordt, dus het rad remt echt af. Elke keer dat er een vakgrens
-onder het pijltje door gaat (om de vier standen): `note_block.hat` voor iedereen in de hal. Bij
-de landing blijft het laatste plaatje twee seconden staan, dan `entity.player.levelup` en title
-`ROOD IS AAN DE BEURT` in de teamkleur; bossbar `Quiz · aan de beurt: Rood`, en `quizlamp_rood`
-gaat aan (`LIT=true`). Terwijl het rad draait, doen draai, goed en fout niets. De lampen doen
+gedraaid: vier per vak, en elk vierde plaatje heeft een vak precies onder het pijltje. Een draai is
+`core`-`QuizDraai` (R4.3): het geluid `bootcamp:rad` (spinwheel, 11,1 s, `preload`) start voor
+iedereen op dezelfde tick als het rad, en het rad volgt een vaste tijdlijn die op dat geluid is
+gemeten. Van 0,05 tot 0,75 s komt het op snelheid; tot 4,48 s draait het ongeveer anderhalve stand
+per tick (sneller kan niet netjes: vanaf twee standen per tick, een half vak, lijkt een rad op 20
+beelden per seconde achteruit te draaien); dan gaat er bij elk van de laatste 20 tikjes van het
+geluid (4,48 s tot 9,18 s) precies een vakgrens onder het pijltje door; daarna remt het
+gelijkmatig af naar het midden van het laatste vak en staat stil op 9,68 s. In totaal 204 standen,
+ruim drie rondes. Het doel is een willekeurig vak (elk team 25%); de start volgt daaruit. De stand
+volgt de echte tijd sinds de draai, niet het aantal ticks: hapert de server, dan loopt het rad toch
+gelijk met het geluid, dat bij de spelers gewoon doorspeelt. Elke tick waarop de stand verandert
+een title met de tegels van die stand, fade 0, blijven tot het team in beeld komt. Bij het
+plingeltje (10,17 s, tick 203) gaan alle lampen van dat team aan (`quizlamp_rood_1..n`,
+`LIT=true`) en knippert het gekozen vak: aan 3 ticks, uit 2, aan 3, uit 2, en dan aan. Opgelicht is
+een eigen plaatje uit het pack (`QuizRad.glyphOplicht`, U+E200 + 4 × vak): het rad op de eindstand
+van dat vak, met dat vak 30% lichter en een witte rand. Als het geluid uitklinkt (11,1 s, tick
+222) de title `ROOD IS AAN DE BEURT` in de teamkleur en bossbar `Quiz · aan de beurt: Rood`; pas
+dan is de draai klaar. Terwijl het rad draait of knippert, doen draai, goed en fout niets.
+
+**Decorlampen** (R4.6, `Decorlampen`, `core`: `Lichtshow`): bij `/quiz start` zoekt de mod alle
+redstone lampen in regio `quiz` behalve de banklampen (hooguit 4 miljoen blokken doorzoeken) en
+meldt het aantal aan de ops. Elke lamp krijgt zijn hoek rond het midden van de regio, met de klok
+mee vanaf het noorden. Vier lichtbalken van elk 40% lopen rond: tussen de draaien een rondje per
+16 seconden; tijdens een draai draaien ze precies mee met het rad (`QuizDraai.rondjes`); op het
+plingeltje gaan ze allemaal tegelijk aan en uit met het knipperende vak. Is daarna een team aan de
+beurt, dan branden alleen de lampen in regio `quizdecor_<kleur>` van dat team, stil, en is de rest
+uit (lampen in zo'n regio doen ook mee als ze net buiten `quiz` staan); na een fout (niemand aan de
+beurt) lopen ze weer rustig rond vanaf waar ze waren. Na de winnaar branden die van het winnende
+team. Bij de start noemt de chatregel voor de ops ook hoeveel lampen elk team heeft. Alleen lampen die echt veranderen krijgen een nieuw blok (zonder
+de buren bij te werken), en elke seconde zet de mod alles nog eens goed. Na de quiz en bij `/bc
+reset` gaan ze uit. De hal donkerder maken kan de mod niet (binnen, frog lights): wil je dat de
+lampen meer opvallen, vervang dan wat frog lights door redstone lampen; die doen dan mee. De lampen doen
 niet mee aan het draaien.
 
 **Goed**: alleen als er een team aan de beurt is: +1 voor dat team in de sidebar, title `GOED!`
@@ -864,9 +901,12 @@ teams die gelijk staan, ziet iedereen de title `GELIJKSPEL` met subtitle `Rood e
 kiest`, en wijst de commander er een aan met `/quiz winnaar <kleur>` (Pudding kan er eerst een
 beslissende vraag van maken). Title
 `ROOD WINT DE QUIZ`, `ui.toast.challenge_complete`, vuurpijlen boven de bank, de lamp van de
-winnaar aan. 10 seconden later: alle lampen uit, de presentator zijn items kwijt (weer een lege
-inventory, zoals iedereen), en iedereen naar de tribune van de Arena (`tribune_n`, om en om) voor
-het Rad. `/quiz stop` en `/bc reset` zetten de lampen ook uit.
+winnaar aan. Niemand gaat vanzelf weg: de presentator houdt alleen nog een ender pearl
+`Iedereen naar de Arena` in slot 1 (met in de actionbar `Klaar met vieren? De ender pearl stuurt
+iedereen naar de Arena`). Gebruikt hij die, of doet de commander `/quiz naararena`, dan: alle
+lampen uit, de quiz-items weg (weer een lege inventory, zoals iedereen), en iedereen naar de
+tribune van de Arena (`tribune_n`, om en om) voor het Rad. Raakt hij de pearl kwijt of logt hij
+opnieuw in, dan krijgt hij hem terug. `/quiz stop` en `/bc reset` zetten de lampen ook uit.
 
 **Het Rad (start van ronde 5).** Iedereen staat op de tribune (wie er nog niet staat, zet
 `/clown rad` er eerst neer). Het rad staat **alleen in beeld, als een rij spelerskoppen met
@@ -1095,7 +1135,7 @@ langzaam draaiend. Opgeruimd als de kroonhouder kijker wordt.
 | Af in de mob arena | Doodtekst als title, daarna 5 seconden `/mobarena aftekst` in de actionbar. |
 | Speler sneuvelt | Alleen de dode ziet een willekeurige doodtekst als title. Geen geluid, geen chatregel. |
 | Beurt klaar | Meteen de title `BEURT 3 KLAAR` met de stand van de teams, 10 seconden in beeld, met `ui.toast.challenge_complete`. Aftelling in de actionbar voor wie in een arena of kooi staat; daarna pas naar de tribune. |
-| Quiz-rad | Een echt rond rad groot in beeld (plaatjes uit het pack), alleen kleuren, pijltje bovenin; het draait en remt af, `note_block.hat` per vak dat het pijltje passeert. Twee seconden stil op het gekozen vak, dan `entity.player.levelup` en `ROOD IS AAN DE BEURT`. |
+| Quiz-rad | Een echt rond rad groot in beeld (plaatjes uit het pack), alleen kleuren, pijltje bovenin. Het geluid `bootcamp:rad` loopt mee: bij elk tikje aan het eind een vak, stil op 9,7 s, en bij het plingeltje (10,2 s) knippert het gekozen vak en gaan de lampen aan; als het geluid uit is (11,1 s) `ROOD IS AAN DE BEURT`. `/quiz winnaar` of `/quiz stop` tijdens een draai stopt ook het geluid. |
 | Quiz goed | Title `GOED!` in groen met `+1 Rood`, vanaf twee op rij `+1 Rood · 3 op rij`, `block.note_block.bell`, een vuurpijl in de teamkleur uit elk van de twee dispensers bij de bank. De lamp bij de bank blijft aan. |
 | Puntenmenu | Chatregel `Pudding: +2 voor Rood (7)`, `note_block.pling` (erbij) of `note_block.bass` (eraf). |
 | Quiz fout | Title `FOUT!` in rood, `entity.villager.no`. De lamp bij de bank gaat uit, de reeks op nul. |

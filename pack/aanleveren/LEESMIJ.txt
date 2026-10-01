@@ -7,12 +7,34 @@ Hier komen de bestanden voor de jumpscares:
   klop.ogg                        De 8D-klop uit de valkisten, ogg vorbis. Laat hem stereo:
                                   Minecraft speelt stereo zonder richting af, dus het 8D-effect
                                   blijft.
+  rad.ogg                         Het geluid van een draai van het quiz-rad (spinwheel.wav).
+                                  NIET inkorten: het rad volgt de tikjes van dit bestand (de
+                                  tijden staan in QuizDraai in de mod). Een ander geluid = de
+                                  tikjes opnieuw meten.
+                                  Het rad speelt op 70% (volume 0.7 in sounds.json).
+  logo.png                        Het logo in het midden van het quiz-rad (vierkante png). Het
+                                  staat rechtop, ook als het rad draait. BouwPack zet het zo klein
+                                  dat het puddingkje helemaal in de ronde naaf past en laat de
+                                  achtergrond de rest vullen. Een ander logo dat verder uitsteekt:
+                                  LOGO_REIKWIJDTE in BouwPack aanpassen. Zonder logo een dop.
 
-Minecraft speelt alleen ogg vorbis. Een mp3 of wav eerst omzetten, bijvoorbeeld met Audacity
-(Bestand > Exporteren > Exporteren als OGG) of met ffmpeg:
+Minecraft speelt alleen ogg vorbis, en nooit harder dan het bestand zelf (volume 1 is het
+maximum). Harder betekent dus: het bestand harder maken. En knip de stilte aan het begin weg:
+elke fractie stilte komt de jumpscare te laat.
 
-  ffmpeg -i "Jumpscare Sound Effect-(p).wav" -c:a libvorbis -q:a 5 schrik.ogg
+Zo zijn ze gemaakt (ffmpeg, via winget install Gyan.FFmpeg):
+
+  ffmpeg -i "Jumpscare Sound Effect-(p).wav" -af "atrim=start=0.362,asetpts=PTS-STARTPTS,volume=12dB,alimiter=limit=0.89:attack=1:release=50:level=false" -c:a libvorbis -q:a 6 schrik.ogg
   ffmpeg -i "8d knock.wav" -c:a libvorbis -q:a 5 klop.ogg
+  ffmpeg -i spinwheel.wav -af "volume=3.5dB" -c:a libvorbis -q:a 6 rad.ogg
+
+atrim knipt de eerste 0,362 seconde stilte eraf, volume maakt hem 12 dB harder en de limiter
+houdt de pieken 1 dB onder het maximum. Een ander geluid: kijk eerst hoe lang de stilte is met
+
+  ffmpeg -i bestand.wav -af silencedetect=noise=-50dB:d=0.02 -f null -
+
+Met Audacity kan het ook: stilte selecteren en wissen, Effect > Versterken, dan Bestand >
+Exporteren > Exporteren als OGG.
 
 Daarna vanuit de repo:
 

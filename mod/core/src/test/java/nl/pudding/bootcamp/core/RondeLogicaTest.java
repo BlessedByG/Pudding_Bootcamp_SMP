@@ -480,10 +480,11 @@ class RondeLogicaTest {
 			Random random = new Random(11);
 			Map<Kleur, Integer> n = new EnumMap<>(Kleur.class);
 			for (int i = 0; i < 4000; i++) {
-				Rad rad = QuizRad.draai(random);
-				assertEquals(0, rad.doel() % 4);
-				assertTrue(rad.rest() >= 128 && rad.rest() < 256, "rest " + rad.rest());
-				n.merge(QuizRad.kleurBijStand(rad.doel()), 1, Integer::sum);
+				QuizDraai draai = QuizDraai.willekeurig(random);
+				int eind = draai.stand(QuizDraai.UITSLAG);
+				assertEquals(0, eind % 4);
+				assertEquals(draai.vak(), QuizRad.vakBijStand(eind));
+				n.merge(draai.kleur(), 1, Integer::sum);
 			}
 			for (Kleur k : Kleur.values()) {
 				assertTrue(n.get(k) > 850 && n.get(k) < 1150, k + " " + n.get(k));
@@ -491,18 +492,50 @@ class RondeLogicaTest {
 		}
 
 		@Test
-		void quizRadRemtAfVanEenNaarZes() {
-			assertEquals(1, Rad.wachttijd(200, Rad.QUIZ));
-			assertEquals(1, Rad.wachttijd(40, Rad.QUIZ));
-			assertEquals(6, Rad.wachttijd(1, Rad.QUIZ));
-			Rad rad = new Rad(64, 0, 0, 2, Rad.QUIZ);
-			int ticks = 0;
-			while (!rad.geland()) {
-				rad.tick();
-				ticks++;
+		void draaiVolgtDeTikjesVanHetGeluid() {
+			// Een volle draai van vakmidden naar vakmidden, ruim drie rondes.
+			assertEquals(0, QuizDraai.STANDEN_TOTAAL % 4);
+			assertTrue(QuizDraai.STANDEN_TOTAAL > 3 * QuizRad.STANDEN, "standen " + QuizDraai.STANDEN_TOTAAL);
+			// Bij elk gevolgd tikje gaat er precies een vakgrens onder het pijltje door.
+			for (int k = 0; k < QuizDraai.TIKJES.length; k++) {
+				double afstand = QuizDraai.afstand(QuizDraai.TIKJES[k]);
+				assertEquals(QuizDraai.VOOR_DE_TIKJES + 4.0 * k, afstand, 1e-9, "tikje " + k);
+				assertTrue(QuizRad.isVakgrens((int) Math.round(afstand)), "tikje " + k);
 			}
-			assertEquals(0, rad.pos());
-			assertTrue(ticks > 5 * 20 && ticks < 20 * 20, "ticks " + ticks);
+			// Stil op het vakmidden na het laatste tikje, en dat ruim voor het plingeltje.
+			assertEquals(QuizDraai.STANDEN_TOTAAL, QuizDraai.afstand(QuizDraai.STIL), 1e-9);
+			assertEquals(QuizDraai.STANDEN_TOTAAL, QuizDraai.afstand(20), 1e-9);
+			assertTrue(QuizDraai.STIL > 9.5 && QuizDraai.STIL < 9.9, "stil " + QuizDraai.STIL);
+			assertTrue(QuizDraai.PLING - QuizDraai.STIL > 0.3);
+			assertEquals(203, QuizDraai.UITSLAG_TICK);
+		}
+
+		@Test
+		void draaiNooitTeSnelVoorHetScherm() {
+			// Nooit achteruit, en nooit meer dan anderhalve stand per tick: vanaf twee standen per tick
+			// (een half vak) lijkt een rad op 20 beelden per seconde achteruit te draaien.
+			QuizDraai draai = new QuizDraai(0);
+			double vorige = 0;
+			for (int tick = 0; tick <= QuizDraai.UITSLAG_TICK + 20; tick++) {
+				double nu = QuizDraai.afstand(tick / 20.0);
+				assertTrue(nu >= vorige, "achteruit op tick " + tick);
+				assertTrue(nu - vorige <= 1.6, "te snel op tick " + tick + ": " + (nu - vorige));
+				vorige = nu;
+			}
+			assertFalse(draai.stil(9.55));
+			assertTrue(draai.stil(9.9));
+			assertFalse(draai.uitslag(10.1));
+			assertTrue(draai.uitslag(203 / 20.0));
+			assertEquals(draai.stand(QuizDraai.STIL), draai.stand(QuizDraai.UITSLAG));
+			// Op het plingeltje knippert het vak: aan, uit, aan, uit, dan aan tot de tekst.
+			StringBuilder knipper = new StringBuilder();
+			for (int tick = 202; tick < 222; tick++) {
+				knipper.append(draai.oplichten(tick / 20.0) ? '#' : '.');
+			}
+			assertEquals(".###..###..#########", knipper.toString());
+			assertFalse(draai.tekst(221 / 20.0));
+			assertTrue(draai.tekst(222 / 20.0));
+			assertTrue(QuizDraai.TEKST > QuizDraai.PLING + 0.8 && QuizDraai.TEKST < 11.2);
 		}
 	}
 

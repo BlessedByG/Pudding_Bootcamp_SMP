@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FontDescription;
@@ -12,6 +13,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.InteractionResult;
@@ -32,15 +34,15 @@ import nl.pudding.bootcamp.config.ConfigStore;
 import nl.pudding.bootcamp.core.BlokPos;
 import nl.pudding.bootcamp.core.BossbarTekst;
 import nl.pudding.bootcamp.core.Kleur;
+import nl.pudding.bootcamp.core.Lichtshow;
 import nl.pudding.bootcamp.core.Punt;
+import nl.pudding.bootcamp.core.QuizDraai;
 import nl.pudding.bootcamp.core.QuizRad;
 import nl.pudding.bootcamp.core.QuizStand;
-import nl.pudding.bootcamp.core.Rad;
 import nl.pudding.bootcamp.core.Regels;
 import nl.pudding.bootcamp.core.Rol;
 import nl.pudding.bootcamp.core.Ronde;
 import nl.pudding.bootcamp.game.Border;
-import nl.pudding.bootcamp.game.Planner;
 import nl.pudding.bootcamp.game.Reset;
 import nl.pudding.bootcamp.game.RondeLogica;
 import nl.pudding.bootcamp.game.Spel;
@@ -55,18 +57,21 @@ import nl.pudding.bootcamp.visuals.Vuurwerk;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Ronde 4: de quiz. Iedereen zonder spullen bij de bank van zijn team, de presentator op het podium
- * met vier items: groene wol (goed), rode wol (fout), een nether star (het rad draaien) en een
- * emerald (het puntenmenu, {@link PuntenMenu}). Het rad is een echt rond rad in beeld, uit het
+ * met vijf items: groene wol (goed), rode wol (fout), een nether star (het rad draaien), een
+ * emerald (het puntenmenu, {@link PuntenMenu}) en een barrier (de quiz beëindigen, met een tweede
+ * bevestiging in {@link EindeMenu}). Het rad is een echt rond rad in beeld, uit het
  * resource pack; het team waar het op landt is aan de beurt en de lamp bij hun bank brandt. Bij een
  * goed antwoord schieten de twee dispensers bij de bank van dat team een vuurpijl in de teamkleur.
  */
 public final class Quiz extends RondeLogica {
 	public static final Identifier RAD_FONT = Identifier.fromNamespaceAndPath("bootcamp", "rad");
-	/** Zo lang blijft het rad stil op het gekozen vak voordat het team in beeld komt. */
-	private static final int STIL_NA_LANDING = 40;
+	/** Het geluid van een draai (spinwheel): het rad volgt zijn tikjes, zie {@link QuizDraai}. */
+	private static final Identifier RAD_GELUID_ID = Identifier.fromNamespaceAndPath("bootcamp", "rad");
+	private static final Holder<SoundEvent> RAD_GELUID = Holder.direct(SoundEvent.createVariableRangeEvent(RAD_GELUID_ID));
 	/** Binnen zoveel ticks na een klik met een quiz-item telt een volgende klik niet. */
 	private static final int KLIK_PAUZE = 5;
 	/** Zoveel dispensers met vuurwerk staan er bij elke bank. */
@@ -78,9 +83,21 @@ public final class Quiz extends RondeLogica {
 	}
 
 	private final QuizStand stand = new QuizStand();
-	private Rad rad;
-	/** Servertick waarop de landing bekend wordt; -1 als er niks geland is. */
-	private int bekendOp = -1;
+	/** De lopende draai, of {@code null}. */
+	private QuizDraai draai;
+	/** Wanneer de draai (en het geluid) begon, in {@link System#nanoTime()}: echte tijd, ook als de server hapert. */
+	private long draaiStart;
+	/** Het plaatje dat nu in beeld staat: een stand (0 t/m 63), 100 + vak voor een opgelicht vak, -1 voor geen. */
+	private int getoond = -1;
+	/** De lampen van het gekozen team zijn al aan (op het plingeltje). */
+	private boolean lampAan;
+	/** De decorlampen van de hal (R4.6), gezocht bij de start. */
+	private Decorlampen decor;
+	/** Hoe ver de lichtshow rond is, in rondjes; en waar hij was toen het rad begon te draaien. */
+	private double decorRond;
+	private double decorBijDraai;
+	/** Het team dat de quiz won, voor de lampen tijdens het vieren. */
+	private Kleur winnaarKleur;
 	private Fase fase = Fase.SPELEN;
 
 	public static void init() {
@@ -105,6 +122,7 @@ public final class Quiz extends RondeLogica {
 			for (Kleur k : Kleur.values()) {
 				lamp(server, k, false);
 			}
+			Decorlampen.zoek(server).allemaal(Mc.wereld(server), false);
 		});
 	}
 
@@ -123,8 +141,13 @@ public final class Quiz extends RondeLogica {
 			case "goed" -> quiz.goed(server);
 			case "fout" -> quiz.fout(server);
 			case "draai" -> quiz.draai(server);
+			case "arena" -> quiz.naarArena(server);
 			case "punten" -> {
 				PuntenMenu.open(speler, quiz);
+				yield null;
+			}
+			case "einde" -> {
+				EindeMenu.open(speler, quiz);
 				yield null;
 			}
 			default -> null;
@@ -183,6 +206,13 @@ public final class Quiz extends RondeLogica {
 		for (Kleur k : Kleur.values()) {
 			lamp(server, k, false);
 		}
+		decor = Decorlampen.zoek(server);
+		StringBuilder perTeam = new StringBuilder();
+		for (Kleur k : Kleur.values()) {
+			perTeam.append(perTeam.isEmpty() ? "" : ", ").append(k.naam()).append(' ').append(decor.aantal(k));
+		}
+		Mc.chatOps(server, Mc.tekst("[bootcamp] Quiz: " + decor.aantal() + " decorlampen gevonden; achter de banken (quizdecor_<kleur>): "
+				+ perTeam + ".", ChatFormatting.GRAY));
 		for (ServerPlayer s : Mc.deelnemers(server)) {
 			// Iedereen heeft na de mob arena alles ingeleverd.
 			s.getInventory().clearContent();
@@ -213,31 +243,46 @@ public final class Quiz extends RondeLogica {
 		return stack;
 	}
 
-	private static List<ItemStack> quizItems() {
-		return List.of(
-				item(Items.WOOL.lime(), "Goed", ChatFormatting.GREEN, "goed"),
-				item(Items.WOOL.red(), "Fout", ChatFormatting.RED, "fout"),
-				item(Items.NETHER_STAR, "Draai het rad", ChatFormatting.GOLD, "draai"),
-				item(Items.EMERALD, "Punten geven of afpakken", ChatFormatting.AQUA, "punten"));
+	/**
+	 * De items van de presentator met hun plek in de hotbar (0 t/m 8), in de volgorde van een vraag:
+	 * links het rad (toets 1), dan goed en fout naast elkaar (3 en 4), het puntenmenu (6), en de
+	 * barrier apart helemaal rechts (9), zodat je hem niet per ongeluk pakt.
+	 */
+	private static Map<Integer, ItemStack> quizItems() {
+		return Map.of(
+				0, item(Items.NETHER_STAR, "Draai het rad", ChatFormatting.GOLD, "draai"),
+				2, item(Items.WOOL.lime(), "Goed", ChatFormatting.GREEN, "goed"),
+				3, item(Items.WOOL.red(), "Fout", ChatFormatting.RED, "fout"),
+				5, item(Items.EMERALD, "Punten geven of afpakken", ChatFormatting.AQUA, "punten"),
+				8, item(Items.BARRIER, "Quiz beëindigen", ChatFormatting.DARK_RED, "einde"));
+	}
+
+	/** Na de quiz: alleen nog de ender pearl waarmee de presentator iedereen naar de Arena stuurt. */
+	private static void geefArenaItem(ServerPlayer presentator) {
+		Items26.haalWeg(presentator, Items26.QUIZ_TAG);
+		presentator.getInventory().setItem(0, item(Items.ENDER_PEARL, "Iedereen naar de Arena", ChatFormatting.LIGHT_PURPLE, "arena"));
+		presentator.inventoryMenu.broadcastChanges();
 	}
 
 	private static void geefItems(ServerPlayer presentator) {
 		Items26.haalWeg(presentator, Items26.QUIZ_TAG);
 		Inventory inv = presentator.getInventory();
-		List<ItemStack> items = quizItems();
-		for (int i = 0; i < items.size(); i++) {
-			inv.setItem(i, items.get(i));
-		}
+		quizItems().forEach(inv::setItem);
 		presentator.inventoryMenu.broadcastChanges();
 	}
 
 	/** Raakt de presentator er toch een kwijt, dan legt de mod hem terug. */
-	private static void controleerItems(MinecraftServer server) {
+	private void controleerItems(MinecraftServer server) {
 		ServerPlayer p = Spel.presentator(server);
 		if (p != null) {
-			for (String actie : List.of("goed", "fout", "draai", "punten")) {
+			List<String> nodig = fase == Fase.SPELEN ? List.of("goed", "fout", "draai", "punten", "einde") : List.of("arena");
+			for (String actie : nodig) {
 				if (!p.getInventory().contains(s -> actie.equals(Items26.tagWaarde(s, Items26.QUIZ_TAG)))) {
-					geefItems(p);
+					if (fase == Fase.SPELEN) {
+						geefItems(p);
+					} else {
+						geefArenaItem(p);
+					}
 					break;
 				}
 			}
@@ -259,15 +304,21 @@ public final class Quiz extends RondeLogica {
 		if (fase != Fase.SPELEN) {
 			return "de quiz is voorbij";
 		}
-		if (rad != null || bekendOp >= 0) {
+		if (draai != null) {
 			return "het rad draait al";
 		}
 		stand.draai();
 		for (Kleur k : Kleur.values()) {
 			lamp(server, k, false);
 		}
-		rad = QuizRad.draai(Spel.RANDOM);
-		toonStand(server, rad.pos(), rad.wacht() + 2);
+		draai = QuizDraai.willekeurig(Spel.RANDOM);
+		draaiStart = System.nanoTime();
+		getoond = -1;
+		lampAan = false;
+		decorBijDraai = decorRond;
+		// Geluid en rad starten op dezelfde tick: het rad volgt de tikjes van het geluid.
+		Mc.geluidAllen(server, RAD_GELUID, 1f, 1f);
+		toonDraai(server, 0);
 		Bossbar.zet(BossbarTekst.quiz(null), BossEvent.BossBarColor.WHITE, 1f);
 		return null;
 	}
@@ -276,43 +327,83 @@ public final class Quiz extends RondeLogica {
 		return Component.literal(QuizRad.glyph(stand)).withStyle(s -> s.withFont(new FontDescription.Resource(RAD_FONT)).withoutShadow());
 	}
 
-	private static void toonStand(MinecraftServer server, int stand, int blijf) {
-		Mc.titleAllen(server, glyph(stand), null, 0, blijf, 0);
+	/** Het plaatje van nu, alleen als de stand veranderd is; hij blijft staan tot de uitslag. */
+	private void toonDraai(MinecraftServer server, double seconden) {
+		int s = draai.stand(seconden);
+		if (s != getoond) {
+			getoond = s;
+			Mc.titleAllen(server, glyph(s), null, 0, totDeTekst(seconden), 0);
+		}
+	}
+
+	/** Op het plingeltje: het gekozen vak afwisselend opgelicht en gewoon, tot het team in beeld komt. */
+	private void toonOplicht(MinecraftServer server, double seconden) {
+		int vak = draai.vak();
+		int nu = draai.oplichten(seconden) ? 100 + vak : draai.stand(seconden);
+		if (nu != getoond) {
+			getoond = nu;
+			String tekst = nu >= 100 ? QuizRad.glyphOplicht(vak) : QuizRad.glyph(nu);
+			Component beeld = Component.literal(tekst).withStyle(s -> s.withFont(new FontDescription.Resource(RAD_FONT)).withoutShadow());
+			Mc.titleAllen(server, beeld, null, 0, totDeTekst(seconden), 0);
+		}
+	}
+
+	/** Ticks tot het team in beeld komt, plus wat marge: zo lang blijft een plaatje van het rad staan. */
+	private static int totDeTekst(double seconden) {
+		return Math.max(20, (int) Math.ceil((QuizDraai.TEKST - seconden) * QuizDraai.TICKS_PER_SECONDE) + 5);
 	}
 
 	@Override
 	public void tick(MinecraftServer server) {
-		if (rad != null) {
-			switch (rad.tick()) {
-				case NIKS -> {
-				}
-				case STAP -> {
-					toonStand(server, rad.pos(), rad.wacht() + 2);
-					if (QuizRad.isVakgrens(rad.pos())) {
-						float toon = 0.8f + 0.8f * Math.min(1f, rad.rest() / 40f);
-						Mc.geluidAllen(server, SoundEvents.NOTE_BLOCK_HAT, 1f, toon);
-					}
-				}
-				case GELAND -> {
-					toonStand(server, rad.pos(), STIL_NA_LANDING + 5);
-					bekendOp = server.getTickCount() + STIL_NA_LANDING;
-				}
+		ServerLevel wereld = Mc.wereld(server);
+		if (draai == null) {
+			// Een team aan de beurt (of de winnaar): zijn decorlampen branden stil, de rest is uit.
+			Kleur team = fase == Fase.VIEREN ? winnaarKleur : stand.aanDeBeurt();
+			if (team != null && decor.aantal(team) > 0) {
+				decor.team(wereld, team);
+				return;
 			}
+			// Niemand aan de beurt: de decorlampen lopen rustig rond.
+			decorRond += Lichtshow.RUST / QuizDraai.TICKS_PER_SECONDE;
+			decor.toon(wereld, decorRond);
+			return;
 		}
-		if (bekendOp >= 0 && server.getTickCount() >= bekendOp) {
-			bekendOp = -1;
-			Kleur k = QuizRad.kleurBijStand(rad.pos());
-			rad = null;
-			stand.geland(k);
-			Mc.geluidAllen(server, SoundEvents.PLAYER_LEVELUP, 1f, 1f);
-			Mc.titleAllen(server, Mc.tekst(k.naam().toUpperCase(Locale.ROOT) + " IS AAN DE BEURT", Mc.kleur(k), ChatFormatting.BOLD), null, 0, 50, 15);
-			lamp(server, k, true);
-			bossbar();
+		double seconden = (System.nanoTime() - draaiStart) / 1e9;
+		if (!draai.uitslag(seconden)) {
+			// De decorlampen draaien mee met het rad.
+			decor.toon(wereld, decorBijDraai + QuizDraai.rondjes(seconden));
+			toonDraai(server, seconden);
+			return;
+		}
+		Kleur k = draai.kleur();
+		if (!draai.tekst(seconden)) {
+			// Het plingeltje: het gekozen vak en de decorlampen knipperen, de lampen van dat team gaan aan.
+			decor.allemaal(wereld, draai.oplichten(seconden));
+			if (!lampAan) {
+				lampAan = true;
+				lamp(server, k, true);
+			}
+			toonOplicht(server, seconden);
+			return;
+		}
+		// Het geluid is uitgeklonken: het team groot in beeld, en de decorlampen lopen weer rustig verder.
+		decorRond = decorBijDraai + QuizDraai.rondjes(seconden);
+		draai = null;
+		stand.geland(k);
+		Mc.titleAllen(server, Mc.tekst(k.naam().toUpperCase(Locale.ROOT) + " IS AAN DE BEURT", Mc.kleur(k), ChatFormatting.BOLD), null, 0, 50, 15);
+		bossbar();
+	}
+
+	/** Een draai die nog loopt stopt, ook zijn geluid (bij {@code /quiz winnaar} en {@code /quiz stop}). */
+	private void stopDraai(MinecraftServer server) {
+		if (draai != null) {
+			draai = null;
+			Mc.stopGeluidAllen(server, RAD_GELUID_ID);
 		}
 	}
 
 	private boolean draait() {
-		return rad != null || bekendOp >= 0;
+		return draai != null;
 	}
 
 	/** {@code /quiz goed} en de groene wol. */
@@ -445,8 +536,8 @@ public final class Quiz extends RondeLogica {
 			return "de quiz is al voorbij";
 		}
 		fase = Fase.VIEREN;
-		rad = null;
-		bekendOp = -1;
+		stopDraai(server);
+		winnaarKleur = k;
 		for (Kleur l : Kleur.values()) {
 			lamp(server, l, l == k);
 		}
@@ -461,19 +552,29 @@ public final class Quiz extends RondeLogica {
 			}
 		}
 		Bossbar.zet("Quiz · " + k.naam() + " wint", BossEvent.BossBarColor.YELLOW, 1f);
-		// Tien seconden vieren, dan de items weg en iedereen naar de tribune van de Arena voor het Rad.
-		Planner.naSeconden(Regels.VIEREN, () -> {
-			if (Spel.actief() != this) {
-				return;
-			}
-			Spel.einde(server);
-			Bossbar.basiskamp();
-			for (ServerPlayer s : Mc.deelnemers(server)) {
-				Items26.haalWeg(s, Items26.QUIZ_TAG);
-				Spel.zetRol(server, s, Rol.SPELER);
-				Tribune.naarTribune(s, Ronde.CLOWN);
-			}
-		});
+		// Pudding beslist wanneer iedereen naar de Arena gaat: zijn quiz-items worden een ender pearl.
+		ServerPlayer p = Spel.presentator(server);
+		if (p != null) {
+			geefArenaItem(p);
+		}
+		return null;
+	}
+
+	/**
+	 * De ender pearl van de presentator en {@code /quiz naararena}: de quiz is klaar, iedereen gaat
+	 * zonder quiz-items naar de tribune van de Arena, voor het Rad.
+	 */
+	public String naarArena(MinecraftServer server) {
+		if (fase != Fase.VIEREN) {
+			return "de quiz is nog niet voorbij (/quiz einde)";
+		}
+		Spel.einde(server);
+		Bossbar.basiskamp();
+		for (ServerPlayer s : Mc.deelnemers(server)) {
+			Items26.haalWeg(s, Items26.QUIZ_TAG);
+			Spel.zetRol(server, s, Rol.SPELER);
+			Tribune.naarTribune(s, Ronde.CLOWN);
+		}
 		return null;
 	}
 
@@ -486,18 +587,19 @@ public final class Quiz extends RondeLogica {
 		}
 	}
 
-	/** De lamp bij de bank van dit team: een redstone lamp, aan of uit zonder de buren bij te werken. */
+	/**
+	 * De lampen bij de bank van dit team ({@code quizlamp_rood_1}, {@code _2}, ...): redstone lampen,
+	 * aan of uit zonder de buren bij te werken.
+	 */
 	private static void lamp(MinecraftServer server, Kleur k, boolean aan) {
-		Punt p = Spel.punt("quizlamp_" + k.id());
-		if (p == null) {
-			return;
-		}
 		ServerLevel wereld = Mc.wereld(server);
-		BlokPos b = p.blokPos();
-		BlockPos pos = new BlockPos(b.x(), b.y(), b.z());
-		BlockState nu = wereld.getBlockState(pos);
-		if (nu.hasProperty(RedstoneLampBlock.LIT) && nu.getValue(RedstoneLampBlock.LIT) != aan) {
-			wereld.setBlock(pos, nu.setValue(RedstoneLampBlock.LIT, aan), Block.UPDATE_CLIENTS);
+		for (String naam : Ronde.allemaal("quizlamp_" + k.id() + "_", ConfigStore.get().punten().keySet())) {
+			BlokPos b = Spel.punt(naam).blokPos();
+			BlockPos pos = new BlockPos(b.x(), b.y(), b.z());
+			BlockState nu = wereld.getBlockState(pos);
+			if (nu.hasProperty(RedstoneLampBlock.LIT) && nu.getValue(RedstoneLampBlock.LIT) != aan) {
+				wereld.setBlock(pos, nu.setValue(RedstoneLampBlock.LIT, aan), Block.UPDATE_CLIENTS);
+			}
 		}
 	}
 
@@ -505,10 +607,14 @@ public final class Quiz extends RondeLogica {
 
 	@Override
 	public void seconde(MinecraftServer server) {
-		if (fase != Fase.SPELEN) {
+		controleerItems(server);
+		if (fase == Fase.VIEREN) {
+			ServerPlayer p = Spel.presentator(server);
+			if (p != null) {
+				Mc.actionbar(p, Mc.tekst("Klaar met vieren? De ender pearl stuurt iedereen naar de Arena", ChatFormatting.LIGHT_PURPLE));
+			}
 			return;
 		}
-		controleerItems(server);
 		ServerPlayer p = Spel.presentator(server);
 		if (p != null) {
 			Mc.actionbar(p, Mc.tekst(draait() ? "Het rad draait" : stand.presentatorTekst(),
@@ -555,8 +661,12 @@ public final class Quiz extends RondeLogica {
 		Spel.zetRol(server, speler, Rol.SPELER);
 		speler.setGameMode(GameType.ADVENTURE);
 		naarPlek(speler);
-		if (Spel.isPresentator(speler) && fase == Fase.SPELEN) {
-			geefItems(speler);
+		if (Spel.isPresentator(speler)) {
+			if (fase == Fase.SPELEN) {
+				geefItems(speler);
+			} else {
+				geefArenaItem(speler);
+			}
 		}
 	}
 
@@ -572,6 +682,10 @@ public final class Quiz extends RondeLogica {
 
 	@Override
 	public void end(MinecraftServer server) {
+		stopDraai(server);
+		if (decor != null) {
+			decor.allemaal(Mc.wereld(server), false);
+		}
 		for (Kleur k : Kleur.values()) {
 			lamp(server, k, false);
 		}

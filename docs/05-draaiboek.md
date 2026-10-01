@@ -43,7 +43,7 @@ Wat de commander en de ref per ronde typen. Het volledige overzicht staat in
 | 1 De Doolhof | `/doolhof start`, dan `/doolhof go` op het sein van Pudding | `/doolhof poort open`, `/doolhof resterend <sec>`, noodknop `/doolhof einde`; na afloop `/doolhof naarei` |
 | 2 Het Ei | `/ei start` | `/ei resterend <sec>` |
 | 3 De Mob Arena | `/mobarena start` | `/mobarena volgende` (elke volgende beurt), `/mobarena schema`, `/mobarena wave volgende` |
-| 4 De Quiz | `/quiz start` | Pudding doet het met de vier items (ook het puntenmenu); noodknoppen `/quiz draai`, `/quiz goed`, `/quiz fout`, `/quiz punt <kleur> [-1]`. Einde: `/quiz einde` (bij gelijke stand `/quiz winnaar <kleur>`) |
+| 4 De Quiz | `/quiz start` | Pudding doet het met de vijf items (rad 1, goed 3, fout 4, punten 6, beëindigen 9); noodknoppen `/quiz draai`, `/quiz goed`, `/quiz fout`, `/quiz punt <kleur> [-1]`. Einde: `/quiz einde` (bij gelijke stand `/quiz winnaar <kleur>`); daarna stuurt Pudding iedereen met de ender pearl naar de Arena (noodknop `/quiz naararena`) |
 | 5 Clown vs All | `/clown rad`, dan `/clown go` op het sein van Pudding | `/clown kroon <speler>`, `/clown krimp <grootte>` |
 | 6 De FFA | `/ffa start`, dan `/ffa go` op het sein van Pudding | `/ffa krimp <grootte>` als het stilvalt |
 | 7 De Finale | `/finale start`, dan `/finale go` op het sein van Pudding | `/finale krimp <grootte>` als het stilvalt; `/finale spelers` laat zien wie er speelt; logt een finalist uit, dan pauzeert de finale: Pudding kiest `/finale combatlog` (de ander wint) of `/finale crash` (daarna opnieuw `/finale start`) |
@@ -112,7 +112,11 @@ zit, maar de commander moet alleen commander zijn.
    `kooi`, punt `warden` (waar de warden uit de grond komt) en tribunepunten `tribune_mob_n`.
 7. De quizhal met 4 gekleurde banken, een redstone lamp bij elke bank (geen redstone ernaast),
    twee dispensers bij elke bank (de kant op gericht waar het vuurwerk heen moet) en een trap met
-   podium. Daarna `/quiz bank <kleur>` bij elke bank, `/quiz lamp <kleur>` kijkend naar elke lamp,
+   podium. Daarna `/quiz bank <kleur>` bij elke bank, `/quiz lamp <kleur>` kijkend naar elke lamp (zo vaak als er lampen
+   bij die bank staan; `/quiz lamp <kleur> wis` om opnieuw te beginnen), en alle andere redstone lampen
+   binnen regio `quiz` doen vanzelf mee aan de lichtshow (bij `/quiz start` zie je hoeveel er gevonden
+   zijn), met per bank een regio om de lampen erachter (`/bc wand`, dan `/bc region save
+   quizdecor_<kleur>`; die branden als dat team aan de beurt is),
    `/quiz vuurwerk <kleur> <1|2>` kijkend naar elke dispenser (8 keer) en `/quiz podium` boven
    aan de trap (gebouwd).
 8. De Arena: colosseum met open vloer, podium in het midden, 20 redstone blocks in een cirkel,
@@ -198,14 +202,16 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
       in het veld staat aan, het publiek krijgt geen Darkness, en hij blijft tot hij dood is
       (`/mobarena wave volgende` als noodknop). De kill staat in de chat met 50 punten.
 - [ ] `/quiz presentator <naam>`, `/quiz start`: iedereen zonder spullen bij zijn bank, de
-      presentator op het podium met alleen groene wol, rode wol, het rad-item en de emerald. Rad een paar keer
+      presentator op het podium met het rad-item (slot 1), groene en rode wol (3 en 4), de emerald (6) en de
+      barrier (9). Barrier: een menu met Ja en Nee; Nee laat de quiz doorgaan. Rad een paar keer
       draaien: een rond rad groot in beeld dat afremt en met een vak onder het pijltje stopt (is
       het groot genoeg en scherp? anders `RAD_EENHEDEN` in `BouwPack.java` bijstellen), de lamp bij die bank
       gaat aan, groene wol geeft een
       punt (vanaf twee op rij met "3 op rij"), rode wol niet en zet de lamp uit, wol wordt nooit
       neergezet, de presentator ziet onderin wie aan de beurt is. Maak het gelijk en typ
-      `/quiz einde`: iedereen ziet GELIJKSPEL. `/quiz punt <kleur> -1` corrigeert. `/quiz einde`: winnaar, 10 seconden,
-      de items van de presentator zijn weg.
+      `/quiz einde`: iedereen ziet GELIJKSPEL. `/quiz punt <kleur> -1` corrigeert. `/quiz einde`: winnaar, niemand gaat
+      weg, de presentator heeft alleen nog de ender pearl. Ender pearl gebruiken (of `/quiz
+      naararena`): iedereen naar de tribune van de Arena, de pearl is weg.
 - [ ] Quiz extra: bij groene wol schieten de twee dispensers van dat team een vuurpijl in de
       teamkleur. De emerald opent het puntenmenu: `+2` en `−1` bij een team dat niet aan de beurt
       is veranderen de sidebar meteen, iedereen ziet de chatregel, onder 0 kan.
@@ -257,7 +263,8 @@ Minstens één keer de hele avond met 4 tot 8 testers. Let vooral op:
       de aantallen in `waves.json` bijstellen. Punten per mob voelen eerlijk (`/mobarena punten`).
       De warden is haalbaar maar zwaar; anders `/mobarena warden leven|klap|boom <hp>`.
 - [ ] Quiz: Pudding is vanaf het podium bij alle vier de banken te horen. Het rad is goed te
-      lezen in beeld.
+      lezen in beeld. Draai een paar keer: de tikjes van het geluid lopen gelijk met de vakken aan
+      het eind, het rad staat stil voor het plingeltje en het team komt in beeld op het plingeltje.
 - [ ] Clown vs All: jagers kunnen elkaar niet raken, ook niet met pijlen. Kroonwissel zet
       iedereen goed terug. Rad landt op de uitverkorene; draai hem vijf keer. Voelt Strength II voor
       de kroonhouder te sterk of te zwak, en de 10 gapples genoeg?

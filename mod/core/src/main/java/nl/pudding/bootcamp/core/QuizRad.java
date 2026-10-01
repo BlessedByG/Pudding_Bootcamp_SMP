@@ -1,7 +1,6 @@
 package nl.pudding.bootcamp.core;
 
 import java.util.List;
-import java.util.random.RandomGenerator;
 
 /**
  * Het ronde quiz-rad uit het resource pack: 16 vakken in de teamkleuren, elk team 4 keer, buren
@@ -9,7 +8,8 @@ import java.util.random.RandomGenerator;
  * klok mee gedraaid. Op plaatje 0 staat vak 0 onder het pijltje, en elk vierde plaatje heeft een
  * vak precies onder het pijltje. Een vakgrens gaat onder het pijltje door op de standen 2, 6, 10...
  *
- * <p>BouwPack tekent de plaatjes met dezelfde {@link #VAKKEN} en dezelfde draairichting.
+ * <p>BouwPack tekent de plaatjes met dezelfde {@link #VAKKEN} en dezelfde draairichting. Hoe een draai
+ * loopt, staat in {@link QuizDraai}.
  */
 public final class QuizRad {
 	public static final int STANDEN = 64;
@@ -20,6 +20,11 @@ public final class QuizRad {
 	 */
 	public static final int EERSTE_GLYPH = 0xE100;
 	public static final int TEGELS_PER_STAND = 4;
+	/**
+	 * De eerste glyph van de opgelichte standen: vak v fel opgelicht onder het pijltje, op zijn eigen
+	 * eindstand. Vak v heeft de codepoints U+E200 + 4v t/m U+E200 + 4v + 3.
+	 */
+	public static final int EERSTE_OPLICHT_GLYPH = 0xE200;
 
 	public static final List<Kleur> VAKKEN = List.of(
 			Kleur.ROOD, Kleur.BLAUW, Kleur.GROEN, Kleur.GEEL,
@@ -47,19 +52,18 @@ public final class QuizRad {
 		return VAKKEN.get(vakBijStand(stand));
 	}
 
-	/** Gaat er bij deze stand een vakgrens onder het pijltje door? Dan klinkt de tik. */
+	/** Gaat er bij deze stand een vakgrens onder het pijltje door? Daar valt een tikje van het geluid (zie {@link QuizDraai}). */
 	public static boolean isVakgrens(int stand) {
 		return Math.floorMod(stand, PER_VAK) == PER_VAK / 2;
+	}
+
+	/** Het rad op de eindstand van dit vak, met dat vak fel opgelicht, in font {@code bootcamp:rad}. */
+	public static String glyphOplicht(int vak) {
+		return FontTegels.tekst(EERSTE_OPLICHT_GLYPH + Math.floorMod(vak, VAKKEN.size()) * TEGELS_PER_STAND, 2, 2);
 	}
 
 	/** De tekst die deze stand in font {@code bootcamp:rad} tekent: 2 x 2 tegels. */
 	public static String glyph(int stand) {
 		return FontTegels.tekst(EERSTE_GLYPH + Math.floorMod(stand, STANDEN) * TEGELS_PER_STAND, 2, 2);
-	}
-
-	/** Een draai: een willekeurig vak (elk team 25%), landend op het midden van dat vak. */
-	public static Rad draai(RandomGenerator random) {
-		int vak = random.nextInt(VAKKEN.size());
-		return Rad.willekeurig(STANDEN, standVanVak(vak), random, Rad.QUIZ);
 	}
 }
