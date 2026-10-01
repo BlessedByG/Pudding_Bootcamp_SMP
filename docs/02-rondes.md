@@ -234,13 +234,15 @@ punten wint.
 
 | Wave | Wat | Aantal |
 |---|---|---|
-| 1 | Zombies + husks | 10 + 4 |
-| 2 | Skeletons + spiders | 8 + 8 |
-| 3 | Zombies met iron gear + creepers + skeletons | 8 + 4 + 4 |
-| 4 | Zombies met iron gear + witches + cave spiders + vindicators | 8 + 4 + 6 + 2 |
-| 5 | Ravagers + vindicators + evokers | 2 + 8 + 2 |
+| 1 | Zombies + husks | 40 + 16 |
+| 2 | Skeletons + spiders | 32 + 32 |
+| 3 | Zombies met iron gear + creepers + skeletons | 32 + 16 + 16 |
+| 4 | Zombies met iron gear + witches + cave spiders + vindicators | 32 + 16 + 24 + 8 |
+| 5 | Ravagers + vindicators + evokers | 8 + 32 + 8 |
 
-- De aantallen staan in `waves.json` en zijn af te stemmen in de testrun.
+- De aantallen staan in `waves.json` en zijn af te stemmen in de testrun. Op de server staat dat
+  bestand in `config/bootcamp/`; de mod zet het er alleen neer als het ontbreekt, dus haal het weg
+  (of pas het aan) om nieuwe standaardaantallen te krijgen.
 - De beurt is klaar na wave 5, of als alle spelers in het veld af zijn.
 - **Na de beurt: 10 seconden om te vieren.** `BEURT 1 KLAAR` met de stand staat meteen in beeld,
   met een aftelling van 10 seconden. Pas daarna gaan de spelers uit het veld en de mensen in de
