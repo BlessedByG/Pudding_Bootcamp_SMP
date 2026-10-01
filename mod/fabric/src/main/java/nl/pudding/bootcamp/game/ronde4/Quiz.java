@@ -96,6 +96,8 @@ public final class Quiz extends RondeLogica {
 	/** Hoe ver de lichtshow rond is, in rondjes; en waar hij was toen het rad begon te draaien. */
 	private double decorRond;
 	private double decorBijDraai;
+	/** Het team dat de quiz won, voor de lampen tijdens het vieren. */
+	private Kleur winnaarKleur;
 	private Fase fase = Fase.SPELEN;
 
 	public static void init() {
@@ -205,7 +207,12 @@ public final class Quiz extends RondeLogica {
 			lamp(server, k, false);
 		}
 		decor = Decorlampen.zoek(server);
-		Mc.chatOps(server, Mc.tekst("[bootcamp] Quiz: " + decor.aantal() + " decorlampen gevonden in regio quiz.", ChatFormatting.GRAY));
+		StringBuilder perTeam = new StringBuilder();
+		for (Kleur k : Kleur.values()) {
+			perTeam.append(perTeam.isEmpty() ? "" : ", ").append(k.naam()).append(' ').append(decor.aantal(k));
+		}
+		Mc.chatOps(server, Mc.tekst("[bootcamp] Quiz: " + decor.aantal() + " decorlampen gevonden; achter de banken (quizdecor_<kleur>): "
+				+ perTeam + ".", ChatFormatting.GRAY));
 		for (ServerPlayer s : Mc.deelnemers(server)) {
 			// Iedereen heeft na de mob arena alles ingeleverd.
 			s.getInventory().clearContent();
@@ -350,7 +357,13 @@ public final class Quiz extends RondeLogica {
 	public void tick(MinecraftServer server) {
 		ServerLevel wereld = Mc.wereld(server);
 		if (draai == null) {
-			// Tussen de draaien: de decorlampen lopen rustig rond.
+			// Een team aan de beurt (of de winnaar): zijn decorlampen branden stil, de rest is uit.
+			Kleur team = fase == Fase.VIEREN ? winnaarKleur : stand.aanDeBeurt();
+			if (team != null && decor.aantal(team) > 0) {
+				decor.team(wereld, team);
+				return;
+			}
+			// Niemand aan de beurt: de decorlampen lopen rustig rond.
 			decorRond += Lichtshow.RUST / QuizDraai.TICKS_PER_SECONDE;
 			decor.toon(wereld, decorRond);
 			return;
@@ -524,6 +537,7 @@ public final class Quiz extends RondeLogica {
 		}
 		fase = Fase.VIEREN;
 		stopDraai(server);
+		winnaarKleur = k;
 		for (Kleur l : Kleur.values()) {
 			lamp(server, l, l == k);
 		}

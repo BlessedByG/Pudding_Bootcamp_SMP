@@ -457,6 +457,7 @@ hij de doos om alle delen heen; bij de cirkel van `vloer` is dat het vierkant er
 | `quiz_podium` | Het podium boven aan de trap, waar de presentator staat. Zetten met `/quiz podium`. |
 | `quizlamp_<kleur>_1` t/m `_n` (blokken) | De lampen bij elke bank, minstens één per team. Gedoofde redstone lampen, geen redstone ernaast. Zetten met `/quiz lamp <kleur>` (telkens een erbij). Een oude `quizlamp_<kleur>` (van voor 1 oktober) wordt bij het laden vanzelf `quizlamp_<kleur>_1`. |
 | (decorlampen) | Geen punten: alle andere redstone lampen in regio `quiz` doen mee aan de lichtshow (R4.6). Bij `/quiz start` krijgen de ops in de chat hoeveel er gevonden zijn. |
+| `quizdecor_rood`, `quizdecor_blauw`, `quizdecor_groen`, `quizdecor_geel` (regio's, mag) | De decorlampen achter elke bank: met de wand selecteren en `/bc region save quizdecor_<kleur>` (meer stukken met `/bc region add`). Is dat team aan de beurt, dan branden alleen deze lampen. Zonder regio blijft de lichtshow lopen als dat team aan de beurt is. |
 | `quizvuurwerk_<kleur>_1`, `quizvuurwerk_<kleur>_2` (blokken) | Twee dispensers bij elke bank, 8 in totaal. Zetten met `/quiz vuurwerk <kleur> <1\|2>`; `/quiz start` weigert als er een mist of geen dispenser is. |
 | `troon` | Het kleine podium in het midden van de Arena, waar de kroonhouder spawnt. Zetten met `/clown troon`. |
 | `jager_1` t/m `jager_n` | De startplekken van de jagers: in de Arena de 20 redstone blocks in een cirkel. Zetten met `/clown jagerplek`, bovenop het blok en kijkend waar de speler heen moet kijken; de kijkrichting gaat mee met de teleport. |
@@ -871,8 +872,11 @@ redstone lampen in regio `quiz` behalve de banklampen (hooguit 4 miljoen blokken
 meldt het aantal aan de ops. Elke lamp krijgt zijn hoek rond het midden van de regio, met de klok
 mee vanaf het noorden. Vier lichtbalken van elk 40% lopen rond: tussen de draaien een rondje per
 16 seconden; tijdens een draai draaien ze precies mee met het rad (`QuizDraai.rondjes`); op het
-plingeltje gaan ze allemaal tegelijk aan en uit met het knipperende vak, en daarna lopen ze rustig
-verder vanaf waar het rad stopte. Alleen lampen die echt veranderen krijgen een nieuw blok (zonder
+plingeltje gaan ze allemaal tegelijk aan en uit met het knipperende vak. Is daarna een team aan de
+beurt, dan branden alleen de lampen in regio `quizdecor_<kleur>` van dat team, stil, en is de rest
+uit (lampen in zo'n regio doen ook mee als ze net buiten `quiz` staan); na een fout (niemand aan de
+beurt) lopen ze weer rustig rond vanaf waar ze waren. Na de winnaar branden die van het winnende
+team. Bij de start noemt de chatregel voor de ops ook hoeveel lampen elk team heeft. Alleen lampen die echt veranderen krijgen een nieuw blok (zonder
 de buren bij te werken), en elke seconde zet de mod alles nog eens goed. Na de quiz en bij `/bc
 reset` gaan ze uit. De hal donkerder maken kan de mod niet (binnen, frog lights): wil je dat de
 lampen meer opvallen, vervang dan wat frog lights door redstone lampen; die doen dan mee. De lampen doen

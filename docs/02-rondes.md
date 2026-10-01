@@ -303,8 +303,11 @@ wie in de buurt staat.
 - **Bij elke bank staan een of meer lampen.** Die van het team dat aan de beurt is, branden.
 - **De andere redstone lampen in de hal** (het decor) doen een lichtshow: vier lichtbalken lopen
   rustig met de klok mee rond. Draait het rad, dan draaien ze mee (eerst snel, dan steeds
-  trager), en op het plingeltje knipperen ze mee met het gekozen vak. De mod vindt ze zelf in de
-  regio van de quizhal; frog lights en andere lichtbronnen doen niet mee.
+  trager), en op het plingeltje knipperen ze mee met het gekozen vak. Is een team aan de beurt, dan
+  branden alleen de lampen achter zijn bank (stil) en is de rest uit; na een fout antwoord lopen ze
+  weer rond. Na de quiz branden die van de winnaar. De mod vindt de lampen zelf in de regio van de
+  quizhal; welke achter welke bank staan, geef je aan met een regio per team. Frog lights en andere
+  lichtbronnen doen niet mee.
 - **Pudding presenteert** en zit dus niet bij zijn eigen team. Dat team heeft in de quiz één
   speler minder: pech. Pudding krijgt als enige iets: vijf items in de hotbar, een item om **het rad te
   draaien** (toets 1), **groene wol** (goed, 3), **rode wol** (fout, 4), een **emerald voor het

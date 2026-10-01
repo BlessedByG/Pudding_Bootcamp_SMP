@@ -18,6 +18,7 @@ import nl.pudding.bootcamp.game.Spel;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -26,6 +27,10 @@ import java.util.Set;
  * de banken. De mod zoekt ze bij de start van de quiz zelf op en zet ze aan en uit volgens de
  * {@link Lichtshow}, met de klok mee rond het midden van de regio. Alleen een lamp die echt
  * verandert, krijgt een nieuw blok; de buren worden niet bijgewerkt.
+ *
+ * <p>Per team kan er een regio {@code quizdecor_<kleur>} zijn (met de wand, ook in delen): de lampen
+ * daarin horen bij dat team. Is een team aan de beurt, dan branden alleen die en staat de rest uit.
+ * Lampen in zo'n regio doen ook mee als ze net buiten regio {@code quiz} staan.
  */
 final class Decorlampen {
 	/** Groter dan dit zoekt de mod niet: dan is regio {@code quiz} vast verkeerd gezet. */
@@ -35,6 +40,8 @@ final class Decorlampen {
 
 	private final List<BlockPos> lampen;
 	private final double[] hoek;
+	/** Bij welk team de lamp hoort ({@code quizdecor_<kleur>}), of {@code null}. */
+	private final Kleur[] team;
 	private final boolean[] aan;
 	private final boolean[] bekend;
 	private int ticks;
@@ -42,21 +49,33 @@ final class Decorlampen {
 	private Decorlampen(List<BlockPos> lampen, double midX, double midZ) {
 		this.lampen = lampen;
 		this.hoek = new double[lampen.size()];
+		this.team = new Kleur[lampen.size()];
 		this.aan = new boolean[lampen.size()];
 		this.bekend = new boolean[lampen.size()];
 		for (int i = 0; i < lampen.size(); i++) {
 			BlockPos p = lampen.get(i);
 			hoek[i] = Lichtshow.hoek(p.getX() + 0.5 - midX, p.getZ() + 0.5 - midZ);
+			for (Kleur k : Kleur.values()) {
+				Regio r = Spel.regio(teamRegio(k));
+				if (r != null && r.bevatDoos(p.getX() + 0.5, p.getY() + 0.5, p.getZ() + 0.5)) {
+					team[i] = k;
+					break;
+				}
+			}
 		}
 	}
 
-	/** Zoekt alle redstone lampen in regio {@code quiz}, behalve die van de banken. */
+	/** De regio met de decorlampen achter de bank van dit team. */
+	static String teamRegio(Kleur k) {
+		return "quizdecor_" + k.id();
+	}
+
+	/**
+	 * Zoekt alle redstone lampen in regio {@code quiz} en in de regio's {@code quizdecor_<kleur>},
+	 * behalve die van de banken.
+	 */
 	static Decorlampen zoek(MinecraftServer server) {
 		Regio quiz = Spel.regio("quiz");
-		List<BlockPos> lampen = new ArrayList<>();
-		if (quiz == null || quiz.aantalBlokken() > MAX_BLOKKEN) {
-			return new Decorlampen(lampen, 0, 0);
-		}
 		Set<BlockPos> banken = new HashSet<>();
 		for (Kleur k : Kleur.values()) {
 			for (String naam : Ronde.allemaal("quizlamp_" + k.id() + "_", ConfigStore.get().punten().keySet())) {
@@ -65,20 +84,48 @@ final class Decorlampen {
 			}
 		}
 		ServerLevel wereld = Mc.wereld(server);
-		Regio.Doos doos = quiz.omhullende();
+		Set<BlockPos> gevonden = new LinkedHashSet<>();
+		zoekIn(wereld, quiz, banken, gevonden);
+		for (Kleur k : Kleur.values()) {
+			zoekIn(wereld, Spel.regio(teamRegio(k)), banken, gevonden);
+		}
+		return new Decorlampen(new ArrayList<>(gevonden), quiz == null ? 0 : quiz.centerX(), quiz == null ? 0 : quiz.centerZ());
+	}
+
+	private static void zoekIn(ServerLevel wereld, Regio regio, Set<BlockPos> banken, Set<BlockPos> gevonden) {
+		if (regio == null || regio.aantalBlokken() > MAX_BLOKKEN) {
+			return;
+		}
+		Regio.Doos doos = regio.omhullende();
 		BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
 		for (int x = doos.min().x(); x <= doos.max().x(); x++) {
 			for (int z = doos.min().z(); z <= doos.max().z(); z++) {
 				for (int y = doos.min().y(); y <= doos.max().y(); y++) {
 					pos.set(x, y, z);
-					if (wereld.getBlockState(pos).is(Blocks.REDSTONE_LAMP) && quiz.bevatDoos(x + 0.5, y + 0.5, z + 0.5)
+					if (wereld.getBlockState(pos).is(Blocks.REDSTONE_LAMP) && regio.bevatDoos(x + 0.5, y + 0.5, z + 0.5)
 							&& !banken.contains(pos)) {
-						lampen.add(pos.immutable());
+						gevonden.add(pos.immutable());
 					}
 				}
 			}
 		}
-		return new Decorlampen(lampen, quiz.centerX(), quiz.centerZ());
+	}
+
+	/** Hoeveel decorlampen er bij dit team horen. */
+	int aantal(Kleur k) {
+		int n = 0;
+		for (Kleur t : team) {
+			n += t == k ? 1 : 0;
+		}
+		return n;
+	}
+
+	/** Een team aan de beurt: zijn lampen branden stil, de rest is uit. */
+	void team(ServerLevel wereld, Kleur k) {
+		vers();
+		for (int i = 0; i < lampen.size(); i++) {
+			zet(wereld, i, team[i] == k);
+		}
 	}
 
 	int aantal() {
