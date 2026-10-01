@@ -597,7 +597,7 @@ willekeurig grapje als title (lijst in `bootcamp.json`) en gaat naar `doolhof_st
 tick gecontroleerd) staat zonder team krijgt het teammenu. Na `/doolhof hint` minuten (standaard 10)
 voor wie nog binnen is de title `HINT` met als subtitle `/doolhof hinttekst` (of de windrichting).
 **Finish**: achter de echte uitgang ligt een afgesloten ruimte met de finishlijn. Wie een kleur
-kiest krijgt de title `GEFINISHT` met `Je zit in Rood · je mag terug het doolhof in`, een chatregel
+kiest krijgt de title `GEFINISHT` met `Je zit in Rood`, een chatregel
 voor iedereen (`Speler7 zit in Rood (3/5)`) en blijft waar hij is. Wie gefinisht is doet gewoon mee
 als hij terug naar binnen loopt, om anderen te helpen of meer loot te zoeken: loot, mobs, valkisten,
 schrikplekken en nep-uitgangen werken ook voor hem, en doodgaan zet hem terug in de startruimte.
@@ -619,6 +619,11 @@ Title voor iedereen `DE TIJD IS OM` met `Het doolhof is giftig · ga naar de fin
 `doolhof_gif` staat (het doolhof zelf, niet de finishruimte) krijgt elke seconde kort Poison I
 (weg zodra je eruit loopt) en om de 2 seconden een klap van 1 hart die door armor heen gaat
 (`core`: `Regels.DOOLHOF_GIF_ELKE`, `DOOLHOF_GIF_SCHADE`). Poison alleen doodt niet, de klap wel.
+Met het gif gaat het regenen en wordt het in 30 seconden nacht (R1.10, `Lucht`, `core`: `Dagtijd`): de
+mod zet de stilstaande klok elke tick een stukje verder, tot middernacht, en de regen komt bij de
+spelers vanzelf geleidelijk. Aan het eind van het doolhof (ook `/doolhof stop` of `/doolhof einde`)
+wordt het in 20 seconden weer middag, door de ochtend heen, en droog; `/bc reset` zet het meteen op
+middag en droog.
 **Na elke minuut gif verdubbelt de klap** (R1.8, `Regels.gifSchade`): 1, 2, 4, 8 en dan 16 hartjes,
 verder niet. Op het moment dat het sterker wordt, ziet wie binnen staat de title `HET GIF WORDT
 STERKER` met `4 hartjes per klap · ga naar de finish` en `entity.elder_guardian.curse`; de bossbar

@@ -32,6 +32,7 @@ Dit is de lijst van het rondeplan van 25 september 2026 (taakplan 2). De regels 
 | R1.7 | Na de timer is regio `doolhof_gif` giftig tot iedereen een team heeft en eruit is: elke seconde Poison, om de 2 seconden een klap van 1 hart. | `Regels.DOOLHOF_GIF_ELKE`, `Regels.DOOLHOF_GIF_SCHADE` | `RegelsTest.momenten` |
 | R1.8 | Na elke minuut gif is de klap twee keer zo hard: 1, 2, 4, 8, 16 hartjes, en dan niet meer. | `Regels.gifSchade`, `Regels.gifKeer` | `RegelsTest.gifVerdubbeltElkeMinuut` |
 | R1.9 | Het doolhof is voorbij als iedereen een team heeft en niemand meer in regio `doolhof_gif` loopt; niemand wordt weggehaald (behalve met `/doolhof einde`). | `Doolhof.klaarVoorEinde` (fabric) | testrun |
+| R1.10 | Met het gif gaat het regenen en wordt het in 30 seconden middernacht; na het doolhof in 20 seconden weer middag en droog. Altijd vooruit, nooit terug in de tijd. | `Dagtijd`, `Lucht` (fabric) | `DagtijdTest` |
 | R2.1 | Blokken in het Ei: netherite 50, diamond 10, gold 5 punten; redstone, emerald, TNT, glowstone, slime en target geven een effect. Standaard 6, 90, 120, 10, 10, 10, 10, 10, 5. | `EiBlok`, `Instellingen` | `EiVerdelingTest.blokkenEnPunten`, `InstellingenTest.standaarden` |
 | R2.2 | Strooien trekt zonder dubbele uit de deepslate-plekken; samen meer dan er plekken zijn weigert hij. | `EiVerdeling` | `EiVerdelingTest` |
 | R2.3 | `/ei blokken` weigert een totaal boven de deepslate van de vastlegging. | `Instellingen.checkEiBlokken` | `InstellingenTest.eiBlokkenPassenOpDeDeepslate` |

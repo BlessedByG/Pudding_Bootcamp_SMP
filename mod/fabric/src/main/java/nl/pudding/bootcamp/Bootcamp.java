@@ -26,6 +26,7 @@ import nl.pudding.bootcamp.setup.Wand;
 import nl.pudding.bootcamp.teams.Teams;
 import nl.pudding.bootcamp.tribune.Tribune;
 import nl.pudding.bootcamp.visuals.Bossbar;
+import nl.pudding.bootcamp.visuals.Lucht;
 import nl.pudding.bootcamp.visuals.Sidebar;
 import nl.pudding.bootcamp.visuals.Zweefkroon;
 import org.slf4j.Logger;
@@ -57,6 +58,7 @@ public final class Bootcamp implements ModInitializer {
 		Spelregels.init();
 		Border.init();
 		Bossbar.init();
+		Lucht.init();
 		Wand.init();
 
 		CommandRegistrationCallback.EVENT.register((dispatcher, buildContext, selection) -> BcCommand.registreer(dispatcher));
@@ -78,6 +80,7 @@ public final class Bootcamp implements ModInitializer {
 			Spel.tick(server);
 			Tribune.tick(server);
 			Zweefkroon.tick(server);
+			Lucht.tick(server);
 		});
 
 		ServerPlayConnectionEvents.JOIN.register((listener, sender, server) -> Spel.onJoin(server, listener.getPlayer()));

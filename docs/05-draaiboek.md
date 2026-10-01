@@ -166,7 +166,8 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
       `DE TIJD IS OM`, paarse bossbar, in het doolhof Poison en om de 2 seconden een hart eraf,
       in de finishruimte niets. Doodgaan in het gif: spullen weg behalve je steak, basiskit
       terug, `VERGIFTIGD` in de finishruimte en je zit in het kleinste team. Na een minuut gif
-      `HET GIF WORDT STERKER` (2 hartjes per klap), na twee minuten 4. Laat de een met team terug
+      `HET GIF WORDT STERKER` (2 hartjes per klap), na twee minuten 4. Met het gif begint het te regenen
+      en wordt het in een halve minuut nacht; na het doolhof wordt het weer dag. Laat de een met team terug
       naar binnen lopen en de ander als laatste een team kiezen: niemand wordt weggehaald, in de chat staat dat
       het doolhof wacht, en pas als de ander zelf de finishruimte in loopt of doodgaat
       `DOOLHOF VOORBIJ`. `/doolhof einde` sluit het doolhof ook midden in het gif af.

@@ -87,7 +87,8 @@ Clown vs All en het Rad pas bij ronde 5. Nog geen teams; iedereen is wit.
 
 **Einde**
 - Timer 15 minuten. Daarna wordt het doolhof (zonder de finishruimte) **giftig**: Poison en om de
-  2 seconden een klap van 1 hartje, door armor heen. **Na elke minuut gif is de klap twee keer zo
+  2 seconden een klap van 1 hartje, door armor heen. Het gaat regenen en wordt langzaam nacht (in 30
+  seconden); als het doolhof voorbij is, wordt het weer dag. **Na elke minuut gif is de klap twee keer zo
   hard** (2, 4, 8, 16 hartjes); wie binnen staat, ziet dan HET GIF WORDT STERKER. Wie in het gif
   doodgaat, raakt zijn spullen kwijt (zijn eten houdt hij, de basiskit krijgt hij terug), komt in
   de finishruimte en, als hij nog geen team had, in het kleinste team.

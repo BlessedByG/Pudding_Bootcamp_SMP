@@ -18,6 +18,28 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /** De kleine onderdelen bij elkaar; de namen van de geneste klassen staan in REGELS.md. */
 class KleineTests {
 	@Nested
+	class DagtijdTest {
+		@Test
+		void altijdVooruitNaarDeVolgendeKeer() {
+			// Middag naar middernacht: een halve dag verder.
+			assertEquals(12000, Dagtijd.totDagtijd(6000, Dagtijd.MIDDERNACHT));
+			// Middernacht naar middag: door de ochtend heen, niet terug.
+			assertEquals(12000, Dagtijd.totDagtijd(3 * Dagtijd.DAG + 18000, Dagtijd.MIDDAG));
+			// Het is al middag: niks te doen.
+			assertEquals(0, Dagtijd.totDagtijd(5 * Dagtijd.DAG + 6000, Dagtijd.MIDDAG));
+			assertEquals(23000, Dagtijd.totDagtijd(7000, Dagtijd.MIDDAG));
+		}
+
+		@Test
+		void stapPerTick() {
+			// 12000 ticks dagtijd in 30 seconden (600 ticks): 20 per tick.
+			assertEquals(20, Dagtijd.stap(12000, 600));
+			assertEquals(1, Dagtijd.stap(5, 600));
+			assertEquals(7, Dagtijd.stap(13, 2));
+		}
+	}
+
+	@Nested
 	class LichtshowTest {
 		@Test
 		void hoekMetDeKlokMeeVanafHetNoorden() {

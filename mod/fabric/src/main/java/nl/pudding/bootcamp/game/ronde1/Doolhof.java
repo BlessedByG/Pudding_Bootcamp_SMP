@@ -54,6 +54,7 @@ import nl.pudding.bootcamp.schrik.Schrik;
 import nl.pudding.bootcamp.teams.Teammenu;
 import nl.pudding.bootcamp.teams.Teams;
 import nl.pudding.bootcamp.visuals.Bossbar;
+import nl.pudding.bootcamp.visuals.Lucht;
 import nl.pudding.bootcamp.visuals.Sidebar;
 
 import java.io.IOException;
@@ -352,8 +353,7 @@ public final class Doolhof extends RondeLogica {
 		Kleur kleur = Teams.keuze(speler);
 		Mc.geluid(speler, SoundEvents.PLAYER_LEVELUP, 1f, 1f);
 		Mc.title(speler, Mc.tekst("GEFINISHT", ChatFormatting.GREEN, ChatFormatting.BOLD),
-				Component.empty().append(Mc.tekst("Je zit in " + kleur.naam(), Mc.kleur(kleur)))
-						.append(Mc.tekst(" · je mag terug het doolhof in", ChatFormatting.WHITE)), 0, 60, 15);
+				Mc.tekst("Je zit in " + kleur.naam(), Mc.kleur(kleur)), 0, 60, 15);
 	}
 
 	private static boolean iedereenKlaar(MinecraftServer server) {
@@ -520,6 +520,8 @@ public final class Doolhof extends RondeLogica {
 			return;
 		}
 		gifLoopt = true;
+		// Het gif: het gaat regenen en wordt langzaam nacht.
+		Lucht.naarNacht(server);
 		Mc.titleAllen(server, Mc.tekst("DE TIJD IS OM", ChatFormatting.RED, ChatFormatting.BOLD),
 				Mc.tekst("Het doolhof is giftig · ga naar de finish", ChatFormatting.YELLOW), 0, 70, 15);
 		Mc.geluidAllen(server, SoundEvents.ELDER_GUARDIAN_CURSE, 1f, 1f);
@@ -724,6 +726,10 @@ public final class Doolhof extends RondeLogica {
 	@Override
 	public void end(MinecraftServer server) {
 		Poorten.dichtAlsHijBestaat(server, POORT);
+		// Was het nacht van het gif, dan wordt het in 20 seconden weer dag en droog.
+		if (gifLoopt) {
+			Lucht.naarDag(server);
+		}
 		Valkisten.ruimOp(server);
 		for (ServerPlayer s : Mc.spelers(server)) {
 			if (Teammenu.heeftOpen(s)) {
