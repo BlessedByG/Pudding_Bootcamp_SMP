@@ -64,6 +64,7 @@ import nl.pudding.bootcamp.kits.Items26;
 import nl.pudding.bootcamp.kits.Kits;
 import nl.pudding.bootcamp.schrik.Schrik;
 import nl.pudding.bootcamp.teams.Teams;
+import nl.pudding.bootcamp.tribune.Tribune;
 import nl.pudding.bootcamp.visuals.Bossbar;
 import nl.pudding.bootcamp.visuals.Sidebar;
 
@@ -108,6 +109,8 @@ public final class Ei extends RondeLogica {
 	private boolean bevriezingLoopt;
 	private boolean timerGestart;
 	private int volgendeSpawn;
+	/** Na het Ei verzamelt iedereen op het plein; pas na {@code /ei naarmobarena} is de tribune van de mob arena het verzamelpunt. */
+	private static boolean naarMobarena;
 
 	public static void init() {
 		Huldiging.init();
@@ -173,6 +176,7 @@ public final class Ei extends RondeLogica {
 
 	@Override
 	public void start(MinecraftServer server) {
+		naarMobarena = false;
 		// Eerst het Ei terug en de puntenblokken erin; dat is klaar voordat de countdown afloopt.
 		EiOpslag.Vastlegging v = EiOpslag.get(server);
 		Map<Integer, BlockState> extra = strooi(v);
@@ -777,6 +781,33 @@ public final class Ei extends RondeLogica {
 		Huldiging.opstellen(server, winnaarId);
 		Huldiging.prijsKlaarzetten(server, winnaarId);
 		toonSidebar(server);
+	}
+
+	/** Of iedereen al naar de mob arena is ({@code /ei naarmobarena}); tot dan is het plein het verzamelpunt. */
+	public static boolean naarMobarena() {
+		return naarMobarena;
+	}
+
+	/**
+	 * {@code /ei naarmobarena}: na de huldiging iedereen die meedoet van het plein naar de tribune van
+	 * de mob arena. Ligt het Warden-ei nog in het frame, dan krijgt de winnaar het nu.
+	 *
+	 * @return {@code null} als het gelukt is, anders waarom niet
+	 */
+	public static String naarDeMobarena(MinecraftServer server) {
+		if (Spel.actief() != null) {
+			return "er loopt nog een ronde (" + Spel.actief().ronde().naam() + ")";
+		}
+		if (Spel.ronde() != Ronde.EI) {
+			return "dit is voor na het Ei";
+		}
+		naarMobarena = true;
+		Huldiging.prijsAlsnog(server);
+		for (ServerPlayer s : Mc.deelnemers(server)) {
+			Tribune.naarTribune(s, Ronde.MOBARENA);
+		}
+		Mc.titleAllen(server, Mc.tekst("OP NAAR DE MOB ARENA", ChatFormatting.GOLD, ChatFormatting.BOLD), null, 10, 50, 15);
+		return null;
 	}
 
 	/** Van het Ei of een ketting gevallen: geheald terug op je eigen startplek, met je punten en spullen. */

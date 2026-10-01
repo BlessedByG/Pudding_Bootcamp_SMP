@@ -298,14 +298,16 @@ hele avond geldt (setup, spelers, noodknoppen) staat onder `/bc`.
 | `/ei timer [<minuten>]` | Hoe lang het Ei duurt, standaard 15. |
 | `/ei blokken [<soort> <aantal>]` | Hoeveel blokken van een soort (`netherite`, `diamond`, `gold`, `iron`, `redstone`, `emerald`, `lapis`, `tnt`, `glowstone`, `slime`, `target`) de mod in het Ei strooit. Zonder argumenten: het overzicht, met het aantal deepslate-plekken in het Ei. |
 | `/ei prijskader` | Het item frame waar je naar kijkt (binnen 5 blokken) wordt het frame voor het Warden-ei: daar verschijnt het als het Ei voorbij is. Slaat punt `ei_prijskader` op. |
+| `/ei naarmobarena` | Na de huldiging: iedereen die meedoet van het plein naar de tribune van de mob arena (`tribune_mob_n`), title `OP NAAR DE MOB ARENA`. Ligt het Warden-ei nog in het frame en is de winnaar online, dan krijgt hij het nu. Weigert zolang er een ronde loopt, en als de laatste ronde niet het Ei was. |
 | `/ei vastleggen` | Legt het Ei vast zoals het nu gebouwd is: alle blokken in regio `ei`. Eén keer na het bouwen, en opnieuw na elke bouwwijziging. Niet tijdens ronde 2. Antwoord: `Ei vastgelegd: 54.000 blokken, waarvan 27.812 deepslate.` |
 | `/mobarena start` | Ronde 3: loot het schema (geheim, niet in de chat) en start beurt 1. |
 | `/mobarena volgende` | Start de volgende beurt. Weigert zolang de huidige beurt nog loopt, ook tijdens de 10 seconden na de beurt. |
 | `/mobarena schema` | Het schema, alleen voor wie het typt (de spelers zien het niet): per beurt wie in welke arena staat, wie af is. |
+| `/mobarena naarquiz` | Na de mob arena: iedereen die meedoet van de tribune naar de quiz, bij de bank van zijn team (`quiz_<kleur>`), de presentator naar `quiz_podium`; title `OP NAAR DE QUIZ`. Weigert zolang er een ronde loopt, en als de laatste ronde niet de mob arena was. |
 | `/mobarena startplek <rood\|blauw\|groen\|geel> <1\|2>` | Zet startplek 1 of 2 van dat team op de plek waar je staat, met je kijkrichting. Elk team heeft er twee, zodat de twee spelers van een team niet in elkaar spawnen. Hetzelfde als `/bc point set start_<kleur>_<nummer>`. |
 | `/mobarena stop` | Breekt ronde 3 af. |
 | `/mobarena wave volgende` | De huidige wave telt als klaar (overgebleven mobs weg), ook de warden. |
-| `/mobarena warden [leven\|klap\|boom <hp>]` | De warden uit het Warden-ei, in HP (2 HP is één hartje): `leven` (standaard 200), `klap` (8) en `boom` voor de sonic boom (5). Zonder argumenten: de huidige waarden. Geldt voor de volgende warden; bewaard in `bootcamp.json`. Zijn punten: `/mobarena punten warden <n>`. |
+| `/mobarena warden [leven\|klap\|boom <hp>]` | De warden uit het Warden-ei, in HP (2 HP is één hartje): `leven` (standaard 200), `klap` (16) en `boom` voor de sonic boom (10). Zonder argumenten: de huidige waarden. Geldt voor de volgende warden; bewaard in `bootcamp.json`. Zijn punten: `/mobarena punten warden <n>`. |
 | `/mobarena punten [<mob> <punten>]` | Hoeveel punten een mobtype waard is. Zonder argumenten: de tabel. |
 | `/mobarena aftekst [<tekst>]` | De tekst die in de actionbar staat bij wie in de mob arena sneuvelt, standaard `Af · je speelt geen beurt meer`. Zonder tekst: de huidige laten zien. Bewaard in `bootcamp.json`. |
 | `/mobarena veldhoogte [<blokken>]` | Tot hoeveel blokken boven de selectie een veld telt voor kijkers en wachtenden, standaard 3. Op regio `tribune_mob` telt het veld nooit, dus meestal hoef je hier niets aan te doen. Bij `0` telt alleen wie binnen de selectie zelf staat. Geldt meteen; bewaard in `bootcamp.json`. |
@@ -444,7 +446,7 @@ hij de doos om alle delen heen; bij de cirkel van `vloer` is dat het vierkant er
 | `doolhof_finish` | In de finishruimte: waar wie tijdens het gif doodgaat neerkomt, en waar `/doolhof einde` wie nog in het doolhof liep heen zet. Binnen regio `doolhof`, niet in `doolhof_gif`. |
 | `v2` | Verzamelpunt bij het Ei: na `/doolhof naarei`. |
 | `ei_spawn_1` t/m `ei_spawn_n` | De startplekken aan het buiteneinde van de kettingen. Zoveel als je wilt, genummerd vanaf 1. Spelers worden er om en om over verdeeld; na een dodelijke klap kom je terug op je eigen startplek. |
-| `v3` | Verzamelpunt bij de mob arena, op het plein: voor wie tussen het Ei en de mob arena inlogt. |
+| `v3` | Verzamelpunt bij de mob arena, op het plein: voor wie na het Ei inlogt, tot `/ei naarmobarena`; daarna is de tribune van de mob arena het verzamelpunt. |
 | `ei_podium` | Het podium op het plein, kijkend naar het plein: daar komt de winnaar van het Ei. |
 | `ei_presentator` | Ook op het podium, naast de winnaar: daar komt de presentator (Pudding) om het Warden-ei uit te reiken, ook als hij staff is. |
 | `ei_prijskader` | Het item frame voor het Warden-ei. Zetten met `/ei prijskader` terwijl je naar het frame kijkt. |
@@ -757,8 +759,13 @@ item met `custom_data={bootcamp_ei:1b}` verdwijnt uit inventory, offhand en curs
 inloggen kwijt. Het Ei blijft uitgehakt liggen tot de volgende `/ei start`; ook `/bc reset` zet het
 terug (zonder puntenblokken).
 
+Iedereen blijft op het plein tot de commander **`/ei naarmobarena`** doet: dan gaat iedereen die
+meedoet naar `tribune_mob_n` (om en om), title `OP NAAR DE MOB ARENA`. Ligt het Warden-ei dan nog
+in het frame, dan pakt de winnaar het alsnog (zelfde chatregel), als hij online is. Wie daarna
+inlogt, gaat ook naar de tribune.
+
 **Ronde 3, mob arena.** Eén veld (`veld`); per beurt staan er van elk team twee spelers tegelijk
-in. Geen kit: iedereen speelt met wat hij heeft. Start bij `v3`: border `mobarena`, iedereen naar
+in. Geen kit: iedereen speelt met wat hij heeft. Start: border `mobarena`, iedereen naar
 `tribune_mob_n`, dan het **schema** (`core`: `MobSchema`):
 
 - Per team een willekeurige volgorde van de spelers; in beurt *b* spelen speler *2b* en *2b + 1*.
@@ -837,7 +844,10 @@ beurt is.
 **Einde**, na de laatste beurt en haar 10 seconden: het team met de meeste punten wint (gelijk:
 meeste kills, dan samen), titles en vuurpijlen boven de tribune. Weer 10 seconden om te vieren,
 dan **levert iedereen alles in**: inventory, armor en offhand leeg (`clearContent`), ook voor wie
-op de tribune stond. Iedereen weer speler, geheald, zonder spullen naar de quiz.
+op de tribune stond. Iedereen weer speler, geheald, zonder spullen, en **iedereen blijft op de
+tribune** (ook wie inlogt) tot de commander **`/mobarena naarquiz`** doet: dan iedereen die meedoet
+naar de bank van zijn team (`quiz_<kleur>`), de presentator naar `quiz_podium`, title
+`OP NAAR DE QUIZ`.
 
 **Ronde 4, quiz.** Weigert zonder presentator (`/quiz presentator`). Start: iedereen naar
 `quiz_<kleur>` van zijn team, border `quiz`, geen schade, geen timer. Sidebar `Quiz` met de vier

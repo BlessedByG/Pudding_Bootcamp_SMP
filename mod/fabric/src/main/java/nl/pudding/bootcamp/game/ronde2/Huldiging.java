@@ -146,6 +146,15 @@ public final class Huldiging {
 		}
 	}
 
+	/** {@code /ei naarmobarena}: ligt het Warden-ei nog in het frame, dan krijgt de winnaar het alsnog. */
+	static void prijsAlsnog(MinecraftServer server) {
+		ItemFrame kader = kader(server);
+		ServerPlayer w = prijsVoor == null ? null : server.getPlayerList().getPlayer(prijsVoor);
+		if (kader != null && w != null && WardenEi.is(kader.getItem())) {
+			pak(w, kader);
+		}
+	}
+
 	private static ItemFrame kader(MinecraftServer server) {
 		Punt p = Spel.punt(KADER);
 		if (p == null) {

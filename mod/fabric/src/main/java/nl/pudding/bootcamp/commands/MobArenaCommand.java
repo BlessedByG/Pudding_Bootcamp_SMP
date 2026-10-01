@@ -29,6 +29,7 @@ final class MobArenaCommand {
 		RondeCommands.startStop(cmd, Ronde.MOBARENA);
 		cmd.then(Commands.literal("volgende").executes(MobArenaCommand::volgende));
 		cmd.then(Commands.literal("schema").executes(MobArenaCommand::schema));
+		cmd.then(Commands.literal("naarquiz").executes(MobArenaCommand::naarQuiz));
 		cmd.then(Commands.literal("wave").then(Commands.literal("volgende").executes(MobArenaCommand::waveVolgende)));
 		cmd.then(Commands.literal("startplek").then(Commands.argument("kleur", StringArgumentType.word()).suggests(BcCommand.KLEUREN)
 				.then(Commands.argument("nummer", IntegerArgumentType.integer(1, MobSchema.PER_BEURT))
@@ -65,6 +66,15 @@ final class MobArenaCommand {
 			return BcCommand.fout(ctx, "Nog niet: " + fout + ".");
 		}
 		return BcCommand.ok(ctx, "Volgende beurt gestart.");
+	}
+
+	/** Na de mob arena: iedereen van de tribune naar de quiz. */
+	private static int naarQuiz(CommandContext<CommandSourceStack> ctx) {
+		String fout = MobArena.naarDeQuiz(ctx.getSource().getServer());
+		if (fout != null) {
+			return BcCommand.fout(ctx, "Nog niet: " + fout + ".");
+		}
+		return BcCommand.ok(ctx, "Iedereen is naar de quiz, bij de bank van zijn team.");
 	}
 
 	private static int schema(CommandContext<CommandSourceStack> ctx) {

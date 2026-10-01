@@ -188,8 +188,8 @@ onder *Commands*.
 | Ronde | Commands |
 |---|---|
 | Doolhof | `/doolhof start\|go\|stop\|einde\|naarei\|resterend <sec>`, `wachttekst [<tekst>]`, `timer [<min>]` (15), `poort [<min>]` (4), `hint [<min>]` (10), `hinttekst [<tekst>\|-]`, `poort open\|dicht`, `startpoort open\|dicht`, `poortmelding [aan\|uit]`, `valmobs [<min> [<max>]]` (3 t/m 10), `schrik [<nr> [<1..5\|random>]]` (foto per schrikplek) |
-| Het Ei | `/ei start\|stop\|resterend <sec>`, `timer [<min>]` (15), `blokken [<soort> <aantal>]`, `vastleggen`, `prijskader` |
-| Mob arena | `/mobarena start\|volgende\|schema\|stop`, `wave volgende`, `startplek <kleur> <1\|2>`, `warden [leven\|klap\|boom <hp>]`, `punten [<mob> <punten>]`, `veldhoogte [<blokken>]`, `aftekst [<tekst>]` |
+| Het Ei | `/ei start\|stop\|resterend <sec>\|naarmobarena`, `timer [<min>]` (15), `blokken [<soort> <aantal>]`, `vastleggen`, `prijskader` |
+| Mob arena | `/mobarena start\|volgende\|schema\|stop\|naarquiz`, `wave volgende`, `startplek <kleur> <1\|2>`, `warden [leven\|klap\|boom <hp>]`, `punten [<mob> <punten>]`, `veldhoogte [<blokken>]`, `aftekst [<tekst>]` |
 | Quiz | `/quiz start\|stop`, `presentator [<speler>]`, `bank <kleur>`, `podium`, `lamp <kleur> [<nr>\|wis]`, `vuurwerk <kleur> <1\|2>`, `draai`, `goed`, `fout`, `punt <kleur> [<aantal>]`, `einde`, `winnaar <kleur>`, `naararena` |
 | Clown vs All | `/clown rad\|go\|start\|stop`, `uitverkoren [<speler>]`, `troon`, `jagerplek [<nr>]`, `vloer <diameter>`, `tribune [<nr>]`, `wachttekst [<tekst>]`, `kroon <speler>`, `krimp <grootte> [<sec>]` |
 | FFA | `/ffa start\|stop\|go`, `krimp <grootte> [<sec>]`, `wachttekst [<tekst>]` |
@@ -207,8 +207,8 @@ seconde worden bijgezet, zodat je met `@a[tag=...]` kunt kijken. Zelf zetten hee
 | Ronde | Commander |
 |---|---|
 | 1 Doolhof | `/doolhof start` (iedereen klaar in de startruimte), dan `/doolhof go` (countdown). Eindigt als iedereen een team heeft; na de timer wordt het doolhof giftig tot het zover is. Noodknop: `/doolhof einde`. Daarna staat iedereen in de finishruimte; `/doolhof naarei` zet iedereen bij het Ei (`v2`). |
-| 2 Het Ei | `/ei start`. Eindigt na de timer: de winnaar op het podium, de rest op het plein, het Warden-ei in het frame. |
-| 3 Mob arena | `/mobarena start` (beurt 1), daarna per beurt `/mobarena volgende`. Na de laatste beurt vanzelf de winnaar en, tien seconden later, iedereen zonder spullen naar zijn bank. |
+| 2 Het Ei | `/ei start`. Eindigt na de timer: de winnaar op het podium, de rest op het plein, het Warden-ei in het frame. Na de huldiging `/ei naarmobarena`: iedereen naar de tribune van de mob arena (ligt het Warden-ei nog in het frame, dan krijgt de winnaar het nu). |
+| 3 Mob arena | `/mobarena start` (beurt 1), daarna per beurt `/mobarena volgende`. Na de laatste beurt vanzelf de winnaar en, tien seconden later, iedereen zonder spullen; iedereen blijft op de tribune. `/mobarena naarquiz`: iedereen naar zijn bank, Pudding naar het podium. |
 | 4 Quiz | `/quiz start`. Pudding draait met de nether star, keurt met de wol, geeft of pakt punten met de emerald en beëindigt met de barrier (met bevestiging), of `/quiz einde`, bij gelijkspel `/quiz winnaar <kleur>`. Daarna vieren tot Pudding de ender pearl gebruikt (of `/quiz naararena`): dan iedereen naar de tribune van de Arena. |
 | 5 Clown vs All | `/clown rad` (of `/clown start` zonder rad), iedereen staat bevroren klaar, dan `/clown go`. |
 | 6 FFA | `/ffa start`, dan `/ffa go`. De winnaar staat daarna in beeld en gaat door naar de finale. |

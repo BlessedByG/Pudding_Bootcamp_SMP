@@ -182,7 +182,8 @@ Clown vs All en het Rad pas bij ronde 5. Nog geen teams; iedereen is wit.
   voor iedereen. Gelijk? Dan wint wie die score het eerst had.
 - De pickaxe gaat weer weg. **Huldiging op het plein bij de mob arena**: de winnaar staat op het
   podium met Pudding ernaast, de rest verspreid op het plein ervoor, met vuurwerk boven het
-  podium.
+  podium. Daarna gaat iedereen met `/ei naarmobarena` naar de tribune van de mob arena; ligt
+  het Warden-ei dan nog in het frame, dan krijgt de winnaar het op dat moment.
 - **De prijs: het Warden-ei.** Het verschijnt in een item frame op het podium. Alleen de winnaar
   of Pudding (de presentator) kan het eruit halen. Tijdens de mob arena kan de winnaar het vanaf
   de tribune inzetten: dan komt er meteen een warden in het veld (zie ronde 3).
@@ -297,7 +298,8 @@ punten wint.
   iedereen, vuurpijlen boven het team. Gelijk? Dan wint het team met de meeste kills; is dat ook
   gelijk, dan winnen ze samen.
 - Ook dan eerst 10 seconden om te vieren; daarna **levert iedereen alles in**: inventory en
-  armor leeg, ook een ongebruikt Warden-ei. Iedereen geheald en zonder spullen naar de quiz.
+  armor leeg, ook een ongebruikt Warden-ei. Iedereen geheald en zonder spullen, en iedereen
+  blijft op de tribune. Pas met `/mobarena naarquiz` gaat iedereen naar de quiz.
 
 **Voice:** proximity. In het veld hoor je de andere spelers, in de kooi en op de tribune hoor je
 wie in de buurt staat.

@@ -25,6 +25,8 @@ import nl.pudding.bootcamp.game.Reset;
 import nl.pudding.bootcamp.game.RondeLogica;
 import nl.pudding.bootcamp.game.Spel;
 import nl.pudding.bootcamp.game.ronde1.Doolhof;
+import nl.pudding.bootcamp.game.ronde2.Ei;
+import nl.pudding.bootcamp.game.ronde3.MobArena;
 import nl.pudding.bootcamp.game.SpelerStatus;
 import nl.pudding.bootcamp.rad.KroonRad;
 import nl.pudding.bootcamp.teams.Teams;
@@ -173,9 +175,14 @@ public final class Tribune {
 			case BASISKAMP -> "basiskamp";
 			// Na het doolhof eerst de finishruimte; na /doolhof naarei het Ei.
 			case DOOLHOF -> Doolhof.naarEi() ? "v2" : "doolhof_finish";
-			case EI -> "v3";
+			// Na het Ei eerst het plein; na /ei naarmobarena de tribune van de mob arena.
+			case EI -> Ei.naarMobarena() ? volgendTribunepunt(Ronde.MOBARENA) : "v3";
 			case MOBARENA -> {
-				// Na de mob arena naar de quiz: bij de bank van je team, de presentator op het podium.
+				// Na de mob arena eerst de tribune; na /mobarena naarquiz de quiz: bij de bank van je
+				// team, de presentator op het podium.
+				if (!MobArena.naarQuiz()) {
+					yield volgendTribunepunt(Ronde.MOBARENA);
+				}
 				if (Spel.isPresentator(speler) && Spel.punt("quiz_podium") != null) {
 					yield "quiz_podium";
 				}
@@ -188,7 +195,9 @@ public final class Tribune {
 
 	public static void naarVerzamelpunt(ServerPlayer speler) {
 		String punt = verzamelpunt(speler);
-		if (punt.startsWith("tribune_")) {
+		if (punt.startsWith("tribune_mob_")) {
+			naarTribune(speler, Ronde.MOBARENA);
+		} else if (punt.startsWith("tribune_")) {
 			naarTribune(speler, Ronde.CLOWN);
 		} else if (Spel.punt(punt) != null) {
 			Spel.naarPunt(speler, punt);

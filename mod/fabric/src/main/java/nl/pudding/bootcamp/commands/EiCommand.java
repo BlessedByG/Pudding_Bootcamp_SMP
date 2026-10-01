@@ -48,6 +48,7 @@ final class EiCommand {
 						.then(Commands.argument("aantal", IntegerArgumentType.integer(0, 100_000)).executes(EiCommand::blokken))));
 		cmd.then(Commands.literal("vastleggen").executes(EiCommand::vastleggen));
 		cmd.then(Commands.literal("prijskader").executes(EiCommand::prijskader));
+		cmd.then(Commands.literal("naarmobarena").executes(EiCommand::naarMobarena));
 		return cmd;
 	}
 
@@ -86,6 +87,15 @@ final class EiCommand {
 			return BcCommand.fout(ctx, "Geen frame: " + fout + ".");
 		}
 		return BcCommand.ok(ctx, "Dit item frame krijgt het Warden-ei als het Ei voorbij is (punt " + Huldiging.KADER + ").");
+	}
+
+	/** Na de huldiging: iedereen van het plein naar de tribune van de mob arena. */
+	private static int naarMobarena(CommandContext<CommandSourceStack> ctx) {
+		String fout = Ei.naarDeMobarena(ctx.getSource().getServer());
+		if (fout != null) {
+			return BcCommand.fout(ctx, "Nog niet: " + fout + ".");
+		}
+		return BcCommand.ok(ctx, "Iedereen is naar de tribune van de mob arena.");
 	}
 
 	private static int vastleggen(CommandContext<CommandSourceStack> ctx) {

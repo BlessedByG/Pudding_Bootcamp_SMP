@@ -123,6 +123,8 @@ public final class MobArena extends RondeLogica {
 	private final List<Kleur> meedoend = new ArrayList<>();
 	/** Wie deze beurt in het veld staat, met zijn kleur en startplek. */
 	private final List<MobSchema.Plek> opstelling = new ArrayList<>();
+	/** Na de mob arena blijft iedereen op de tribune; pas na {@code /mobarena naarquiz} is de quiz het verzamelpunt. */
+	private static boolean naarQuiz;
 
 	public static void init() {
 		Reset.REGISTER.registreer("mobs van de mob arena", MobArena::ruimMobsOp);
@@ -251,6 +253,7 @@ public final class MobArena extends RondeLogica {
 
 	@Override
 	public void start(MinecraftServer server) {
+		naarQuiz = false;
 		ruimMobsOp(server);
 		Spelregels.locatorBar(server, false);
 		// Geen kit: iedereen speelt met wat hij uit het doolhof heeft.
@@ -901,8 +904,8 @@ public final class MobArena extends RondeLogica {
 		Spel.einde(server);
 		Bossbar.basiskamp();
 		toonSidebar(server);
-		// Tien seconden vieren, dan levert iedereen alles in (ook een ongebruikt Warden-ei) en gaat
-		// geheald naar de quiz.
+		// Tien seconden vieren, dan levert iedereen alles in (ook een ongebruikt Warden-ei) en wordt
+		// geheald. Iedereen blijft op de tribune; naar de quiz pas met /mobarena naarquiz.
 		Planner.naSeconden(Regels.VIEREN, () -> {
 			for (ServerPlayer s : Mc.deelnemers(server)) {
 				s.getInventory().clearContent();
@@ -912,9 +915,35 @@ public final class MobArena extends RondeLogica {
 				Mc.heal(s);
 				Spel.status(s).tribunepunt = null;
 				Spel.status(s).kooi = 0;
-				Tribune.naarVerzamelpunt(s);
 			}
 		});
+	}
+
+	/** Of iedereen al naar de quiz is ({@code /mobarena naarquiz}); tot dan is de tribune het verzamelpunt. */
+	public static boolean naarQuiz() {
+		return naarQuiz;
+	}
+
+	/**
+	 * {@code /mobarena naarquiz}: na de mob arena iedereen die meedoet van de tribune naar de quiz,
+	 * bij de bank van zijn team; de presentator naar het podium.
+	 *
+	 * @return {@code null} als het gelukt is, anders waarom niet
+	 */
+	public static String naarDeQuiz(MinecraftServer server) {
+		if (Spel.actief() != null) {
+			return "er loopt nog een ronde (" + Spel.actief().ronde().naam() + ")";
+		}
+		if (Spel.ronde() != Ronde.MOBARENA) {
+			return "dit is voor na de mob arena";
+		}
+		naarQuiz = true;
+		for (ServerPlayer s : Mc.deelnemers(server)) {
+			Spel.status(s).tribunepunt = null;
+			Tribune.naarVerzamelpunt(s);
+		}
+		Mc.titleAllen(server, Mc.tekst("OP NAAR DE QUIZ", ChatFormatting.GOLD, ChatFormatting.BOLD), null, 10, 50, 15);
+		return null;
 	}
 
 	/** {@code /mobarena wave volgende}: de huidige wave telt als klaar, ook de warden. */

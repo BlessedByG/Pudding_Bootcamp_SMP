@@ -13,10 +13,10 @@ Tijdschema, rollen en checklists voor de avond zelf. Tijden zijn een voorbeeld m
 | 20:02 | **Ronde 1: De Doolhof** (15 min, uitgang open na 4 min, hint na 10 min, teamkeuze bij de uitgang) | |
 | 20:18 | Iedereen in de finishruimte van het doolhof: teams in beeld, praatje. Dan `/doolhof naarei`: iedereen naar V2 bij het Ei. | Host, Admin 1 |
 | 20:20 | **Ronde 2: Het Ei** (15 min) | |
-| 20:36 | Winnaar van het Ei op het podium bij de mob arena, de rest op het plein. De winnaar pakt het Warden-ei uit het frame (of Pudding reikt het uit). | Host, Pudding |
+| 20:36 | Winnaar van het Ei op het podium bij de mob arena, de rest op het plein. De winnaar pakt het Warden-ei uit het frame (of Pudding reikt het uit). Dan `/ei naarmobarena`: iedereen naar de tribune van de mob arena. | Host, Pudding, Admin 1 |
 | 20:38 | **Pauze** (5 min). | Host |
 | 20:43 | **Ronde 3: De Mob Arena**: 5 beurten van 5 waves (wie wanneer speelt blijft een verrassing), elke beurt op het sein van Pudding (± 25 min) | Host, Admin 1 |
-| 21:08 | Winnend team. Naar de quiz. | Host |
+| 21:08 | Winnend team. Dan `/mobarena naarquiz`: iedereen naar de quiz. | Host, Admin 1 |
 | 21:10 | **Ronde 4: De Quiz** (± 15 min, Pudding presenteert en bepaalt) | Pudding, Admin 1 |
 | 21:25 | Winnend team. Naar de Arena. Host legt King of the Hill uit (zo heet de ronde in beeld; zeg nooit "Clown vs All"). "Het lot beslist wie de kroon krijgt." Het Rad landt op Clown. | Host, Admin 1 |
 | 21:28 | **Ronde 5: King of the Hill** (intern Clown vs All; iedereen stil tot `/clown go`, dan 10 sec countdown, geen timer, reken op 10 tot 20 min) | Admin 1 |
@@ -41,8 +41,8 @@ Wat de commander en de ref per ronde typen. Het volledige overzicht staat in
 | Ronde | Starten | Tijdens de ronde |
 |---|---|---|
 | 1 De Doolhof | `/doolhof start`, dan `/doolhof go` op het sein van Pudding | `/doolhof poort open`, `/doolhof resterend <sec>`, noodknop `/doolhof einde`; na afloop `/doolhof naarei` |
-| 2 Het Ei | `/ei start` | `/ei resterend <sec>` |
-| 3 De Mob Arena | `/mobarena start` | `/mobarena volgende` (elke volgende beurt), `/mobarena schema`, `/mobarena wave volgende` |
+| 2 Het Ei | `/ei start` | `/ei resterend <sec>`; na de huldiging `/ei naarmobarena` |
+| 3 De Mob Arena | `/mobarena start` | `/mobarena volgende` (elke volgende beurt), `/mobarena schema`, `/mobarena wave volgende`; na afloop `/mobarena naarquiz` |
 | 4 De Quiz | `/quiz start` | Pudding doet het met de vijf items (rad 1, goed 3, fout 4, punten 6, beëindigen 9); noodknoppen `/quiz draai`, `/quiz goed`, `/quiz fout`, `/quiz punt <kleur> [-1]`. Einde: `/quiz einde` (bij gelijke stand `/quiz winnaar <kleur>`); daarna stuurt Pudding iedereen met de ender pearl naar de Arena (noodknop `/quiz naararena`) |
 | 5 Clown vs All | `/clown rad`, dan `/clown go` op het sein van Pudding | `/clown kroon <speler>`, `/clown krimp <grootte>` |
 | 6 De FFA | `/ffa start`, dan `/ffa go` op het sein van Pudding | `/ffa krimp <grootte>` als het stilvalt |
@@ -81,7 +81,7 @@ Na elke bouwwijziging aan het Ei: `/ei vastleggen`.
 |---|---|---|
 | **Host / caster** | 1 | Praat op de stream, legt regels uit, kondigt rondes aan. Speelt Het Rad recht: "iedereen kan de kroon krijgen". |
 | **Pudding: presentator van de quiz** | 1 | Speelt verder gewoon mee in zijn team, maar presenteert de quiz vanaf het podium: leest de vragen voor, keurt met groene en rode wol, draait het rad met het derde item. Zijn team heeft in de quiz één speler minder. |
-| **Admin 1: commander** | 1 | Start elke ronde op het sein van Pudding, elke beurt van de mob arena (`/mobarena volgende`), sluit de quiz af (`/quiz einde`), draait het Rad (`/clown rad`) en geeft het startsein in Clown vs All en de FFA (`/clown go`, `/ffa go`). |
+| **Admin 1: commander** | 1 | Start elke ronde op het sein van Pudding, elke beurt van de mob arena (`/mobarena volgende`), stuurt iedereen door (`/doolhof naarei`, `/ei naarmobarena`, `/mobarena naarquiz`), sluit de quiz af (`/quiz einde`), draait het Rad (`/clown rad`) en geeft het startsein in Clown vs All en de FFA (`/clown go`, `/ffa go`). |
 | **Admin 2: ref** | 1 | Kijkt naar problemen: stuck spelers, disconnects, bugs met de kroon, een team dat scheef zit. Heeft het randgevallen-lijstje uit [03-kroon-regels.md](03-kroon-regels.md) bij de hand. |
 | **Camera** | 0 tot 2 | Kijker-accounts voor het hoofdbeeld: boven het doolhof, boven de mob arena, in de quizhal, boven de Arena. |
 | **Bouwers** | 2 tot 4 | Vooraf. Zie de bouwlijst hieronder. |
@@ -192,7 +192,9 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
 - [ ] `/mobarena punten`: de tabel klopt.
 - [ ] Einde van het Ei: de winnaar staat op het podium, Pudding ernaast, de rest verspreid op het
       plein en kijkt naar het podium, vuurpijl boven het podium. Het Warden-ei zit in het frame; een ander
-      account kan het niet pakken, de winnaar of de presentator wel.
+      account kan het niet pakken, de winnaar of de presentator wel. Iedereen blijft op het plein
+      tot `/ei naarmobarena`: dan iedereen naar de tribune van de mob arena, en ligt het
+      Warden-ei nog in het frame, dan heeft de winnaar het nu.
 - [ ] `/mobarena start` met twee accounts in twee teams: geen schema in de chat
       (`/mobarena schema` laat het alleen jou zien), beide op hun eigen startplek, gloeiend in hun
       teamkleur, en tot `GO` kun je rondkijken maar niet lopen. Rook bij de spawnpunten, 5
@@ -202,7 +204,8 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
       `/mobarena aftekst` onderin, na de beurt de tribune. Na wave 5: tekst meteen in beeld, 10
       seconden aftellen, dan pas het veld en de kooi naar de tribune; wie al op de tribune stond
       blijft staan. `/mobarena volgende` weigert tijdens die 10 seconden. Einde: winnaar, 10
-      seconden, daarna heeft iedereen een lege inventory en armor.
+      seconden, daarna heeft iedereen een lege inventory en armor en staat iedereen nog op de
+      tribune. `/mobarena naarquiz`: iedereen naar de bank van zijn team, Pudding op het podium.
 - [ ] Warden-ei: vanaf het veld of de kooi weigert hij; vanaf de tribune tijdens een beurt: `WARDEN-EI`
       in beeld en de warden komt meteen bij punt `warden` uit de grond (tussen twee beurten of
       tijdens de countdown weigert hij); de wave is pas klaar als hij dood is. Hij valt alleen wie

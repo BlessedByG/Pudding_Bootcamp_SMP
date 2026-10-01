@@ -506,7 +506,7 @@ public final class Spel {
 			case EI -> {
 				Teams.zorgVoorTeam(server, speler);
 				zetRol(server, speler, Rol.SPELER);
-				naarPunt(speler, "v3");
+				Tribune.naarVerzamelpunt(speler);
 			}
 			case MOBARENA -> {
 				// Na de mob arena levert iedereen alles in.
