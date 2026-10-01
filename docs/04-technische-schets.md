@@ -151,6 +151,7 @@ Het pack staat in `pack/` in deze repo. **Aanleveren** gaat in `pack/aanleveren/
 | `schrik.ogg` | Het geluid bij elke jumpscare, ogg vorbis. **Zonder stilte aan het begin** (anders komt het geluid na de foto) en zo hard als je hem wilt: Minecraft speelt nooit harder dan het bestand zelf. Het huidige bestand is 0,362 s ingekort en 12 dB harder gemaakt, zie `pack/aanleveren/LEESMIJ.txt`. |
 | `klop.ogg` | De 8D-klop uit de valkisten, ogg vorbis. **Stereo laten**: Minecraft speelt een stereogeluid zonder richting af, dus het 8D-effect in het bestand blijft. |
 | `rad.ogg` | Het geluid van een draai van het quiz-rad (spinwheel, 11,1 s), ogg vorbis. **Niet inkorten**: de tijdlijn van het rad (`QuizDraai`) is op dit bestand gemeten; een ander geluid betekent de tikjes opnieuw meten. |
+| `logo.png` | Het logo in het midden van het quiz-rad, liefst met een doorzichtige achtergrond. Het staat rechtop, ook als het rad draait. Zonder logo een gewone dop. |
 
 Minecraft speelt alleen ogg vorbis. Een wav of mp3 eerst omzetten, met Audacity (Bestand >
 Exporteren > Exporteren als OGG) of `ffmpeg -i in.wav -c:a libvorbis -q:a 5 uit.ogg`. BouwPack
@@ -168,7 +169,8 @@ en het werkt ook op Windows zonder Git Bash. Het programma:
 3. tekent **het quiz-rad** (Java2D, niets aan te leveren): 64 standen van 484 × 484, elk 5,625°
    verder gedraaid, met de 16 vakken in de vaste volgorde uit *Ronde 4* in alleen de
    teamkleuren (rood `#E24B4A`, blauw `#378ADD`, groen `#639922`, geel `#EF9F27`), een donkere
-   rand en naad tussen de vakken, een dop in het midden, en het pijltje vast bovenin;
+   rand en naad tussen de vakken, een naaf in het midden met daarop `logo.png` (rechtop, het draait
+   niet mee; zonder logo een kleine dop), en het pijltje vast bovenin;
 4. knipt de foto's en elke stand van het rad in **tegels** en schrijft de fonts (zie hieronder);
 5. zipt het pack naar `bootcamp-pack.zip` en print de SHA-1 voor `server.properties`.
 
@@ -196,7 +198,7 @@ opnieuw uploaden, nieuwe SHA-1 invullen, server herstarten.
 ```
 pack/
   aanleveren/schrik_1.png … schrik_5.png      wat je aanlevert (jpg of png, elk formaat)
-  aanleveren/schrik.ogg, klop.ogg, rad.ogg
+  aanleveren/schrik.ogg, klop.ogg, rad.ogg, logo.png
   BouwPack.java                               bouwt het pack en de zip
   pack.mcmeta
   assets/bootcamp/font/schrik_N.json          per foto: per tegel een bitmap-provider, plus de spaties

@@ -11,6 +11,9 @@ Hier komen de bestanden voor de jumpscares:
                                   NIET inkorten: het rad volgt de tikjes van dit bestand (de
                                   tijden staan in QuizDraai in de mod). Een ander geluid = de
                                   tikjes opnieuw meten.
+  logo.png                        Het logo in het midden van het quiz-rad (png, liefst met een
+                                  doorzichtige achtergrond). Het staat rechtop, ook als het rad
+                                  draait. Zonder logo een gewone dop.
 
 Minecraft speelt alleen ogg vorbis, en nooit harder dan het bestand zelf (volume 1 is het
 maximum). Harder betekent dus: het bestand harder maken. En knip de stilte aan het begin weg:

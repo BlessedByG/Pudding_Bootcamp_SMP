@@ -6,6 +6,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
@@ -90,6 +91,13 @@ public class BouwPack {
 	static final int RAD_EENHEDEN = 22;
 	static final int RAD_PX_PER_EENHEID = 11;
 	static final int RAD = 2 * RAD_EENHEDEN * RAD_PX_PER_EENHEID;
+	/**
+	 * De naaf van het rad (op de tekening van 512 x 512): een donkere ring met een lichte schijf, en
+	 * daarop het logo uit {@code aanleveren/logo.png}, rechtop, ook als het rad draait.
+	 */
+	static final double NAAF = 76;
+	static final double NAAF_SCHIJF = 69;
+	static final double LOGO = 124;
 
 	static final String ROOD = "E24B4A";
 	static final String BLAUW = "378ADD";
@@ -181,10 +189,18 @@ public class BouwPack {
 		}
 
 		// 3. Het quiz-rad, elke stand in 2 x 2 tegels
+		Path logoBestand = zoekFoto(aanleveren, "logo");
+		BufferedImage logo = logoBestand == null ? null : ImageIO.read(logoBestand.toFile());
+		if (logoBestand != null && logo == null) {
+			throw new IllegalStateException(logoBestand + " is geen jpg of png die Java kan lezen. Sla hem opnieuw op als png.");
+		}
+		BufferedImage logoOpMaat = logo == null ? null : verklein(logo, logoPx(), logoPx());
+		System.out.println(logo != null ? "Logo: " + logoBestand.getFileName() + " in het midden van het rad."
+				: "Logo: geen logo.png in " + aanleveren + ", dus een gewone dop in het midden van het rad.");
 		FontJson rad = new FontJson();
 		int radTegel = RAD_EENHEDEN * RAD_PX_PER_EENHEID;
 		for (int s = 0; s < STANDEN; s++) {
-			BufferedImage stand = tekenRad(s);
+			BufferedImage stand = tekenRad(s, logoOpMaat);
 			for (int r = 0; r < 2; r++) {
 				for (int c = 0; c < 2; c++) {
 					String naam = String.format("rad_%02d_%d_%d.png", s, r, c);
@@ -382,7 +398,13 @@ public class BouwPack {
 	 * Het rad in stand {@code s}: {@code s} x 5,625 graden met de klok mee gedraaid. Vak {@code i}
 	 * heeft zijn midden op {@code i} x 22,5 graden met de klok mee vanaf boven, plus de draaiing.
 	 */
-	static BufferedImage tekenRad(int stand) {
+	/** De maat van het logo in echte pixels van een stand. */
+	static int logoPx() {
+		return (int) Math.round(LOGO * RAD / 512.0);
+	}
+
+	/** @param logo het logo op maat ({@link #logoPx()}), of {@code null} voor een gewone dop */
+	static BufferedImage tekenRad(int stand, BufferedImage logo) {
 		BufferedImage beeld = new BufferedImage(RAD, RAD, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = mooi(beeld);
 		// Getekend op 512 x 512 en verkleind naar de maat van de tegels.
@@ -426,13 +448,29 @@ public class BouwPack {
 			g.setColor(new Color(0xF2F2F2));
 			g.fill(new Ellipse2D.Double(px - 6, py - 6, 12, 12));
 		}
-		// De dop in het midden
-		g.setColor(naad);
-		g.fill(new Ellipse2D.Double(cx - 38, cy - 38, 76, 76));
-		g.setColor(new Color(0xF2F2F2));
-		g.fill(new Ellipse2D.Double(cx - 26, cy - 26, 52, 52));
-		g.setColor(new Color(0xFFD24A));
-		g.fill(new Ellipse2D.Double(cx - 14, cy - 14, 28, 28));
+		if (logo == null) {
+			// De dop in het midden
+			g.setColor(naad);
+			g.fill(new Ellipse2D.Double(cx - 38, cy - 38, 76, 76));
+			g.setColor(new Color(0xF2F2F2));
+			g.fill(new Ellipse2D.Double(cx - 26, cy - 26, 52, 52));
+			g.setColor(new Color(0xFFD24A));
+			g.fill(new Ellipse2D.Double(cx - 14, cy - 14, 28, 28));
+		} else {
+			// De naaf met het logo: een donkere ring, een lichte schijf, en het logo rechtop erover.
+			g.setColor(naad);
+			g.fill(new Ellipse2D.Double(cx - NAAF, cy - NAAF, 2 * NAAF, 2 * NAAF));
+			g.setColor(new Color(0xFFF6E0));
+			g.fill(new Ellipse2D.Double(cx - NAAF_SCHIJF, cy - NAAF_SCHIJF, 2 * NAAF_SCHIJF, 2 * NAAF_SCHIJF));
+			// Het logo is al op de echte pixelmaat geschaald: zonder de schaal van de tekening erop zetten.
+			double k = RAD / 512.0;
+			AffineTransform oud = g.getTransform();
+			g.setTransform(new AffineTransform());
+			g.setClip(new Ellipse2D.Double((cx - NAAF_SCHIJF) * k, (cy - NAAF_SCHIJF) * k, 2 * NAAF_SCHIJF * k, 2 * NAAF_SCHIJF * k));
+			g.drawImage(logo, (int) Math.round(cx * k - logo.getWidth() / 2.0), (int) Math.round(cy * k - logo.getHeight() / 2.0), null);
+			g.setClip(null);
+			g.setTransform(oud);
+		}
 
 		// Het pijltje, vast bovenin, met de punt in het rad
 		Polygon pijl = new Polygon();

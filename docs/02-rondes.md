@@ -314,7 +314,8 @@ wie in de buurt staat.
 **Het rad**
 - Een **echt rond rad**, groot in het midden van het scherm, met een pijltje bovenin: 16 vakken
   in alleen de teamkleuren, **elk team 4 keer**, zo verdeeld dat twee buren nooit dezelfde kleur
-  hebben. Het draait op de maat van een rad-geluid: bij elk tikje schuift er een vak langs het
+  hebben. In het midden het Pudding-logo, dat rechtop blijft staan terwijl het rad
+  draait. Het draait op de maat van een rad-geluid: bij elk tikje schuift er een vak langs het
   pijltje, het remt af, staat na zo'n 9,7 seconden stil op een vak, en bij het plingeltje (10,2 s)
   komt het team in beeld. Dat team is aan de beurt. Dat is echt willekeurig: elk team heeft evenveel kans. Het rad staat
   alleen in beeld (plaatjes uit het resource pack), niet in de wereld.
