@@ -68,7 +68,7 @@ Vooraf instellen, in minuten (blijft bewaard):
 | `/mobarena punten` | zombie 1; skeleton, spider, cave spider 2; creeper 3; witch 4; vindicator 5; evoker 8; ravager 10; warden 50 |
 | `/mobarena aftekst` | "Af · je speelt geen beurt meer" |
 | `/mobarena veldhoogte` | 3 |
-| `/mobarena warden` | leven 200, klap 8, boom 5 (HP; 2 HP is één hartje) |
+| `/mobarena warden` | leven 200, klap 16, boom 10 (HP; 2 HP is één hartje) |
 | `/clown wachttekst` | "Wacht op het startsein" |
 | `/ffa wachttekst` | "Wacht op het startsein" |
 | `/finale wachttekst` | "Wacht op het startsein" |

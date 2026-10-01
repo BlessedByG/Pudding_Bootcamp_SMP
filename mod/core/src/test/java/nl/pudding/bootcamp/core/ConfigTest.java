@@ -77,7 +77,7 @@ class ConfigTest {
 		assertEquals(1, t.instellingen().schrikFotos().size());
 		assertEquals("Nog even geduld", t.instellingen().doolhofWachttekst());
 		assertEquals(300, t.instellingen().warden(Instellingen.WardenWaarde.LEVEN));
-		assertEquals(8, t.instellingen().warden(Instellingen.WardenWaarde.KLAP));
+		assertEquals(16, t.instellingen().warden(Instellingen.WardenWaarde.KLAP));
 	}
 
 	@Test

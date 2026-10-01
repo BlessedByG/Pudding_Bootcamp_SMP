@@ -252,8 +252,8 @@ punten wint.
 - De winnaar van het Ei kan het ei **vanaf de tribune** inzetten, dus niet als hij zelf aan de
   beurt is en niet vanuit de kooi. Iedereen ziet dat hij het doet.
 - **De warden komt dan meteen** uit de grond in het veld, bovenop de wave die loopt. Die wave is
-  pas klaar als de warden ook dood is. Hij is zwakker dan een gewone warden (200 HP, klap 4 hartjes, sonic boom 2,5 hartje),
-  haalbaar maar zwaar, en blijft tot hij dood is. Het team dat hem doodt krijgt 50 punten.
+  pas klaar als de warden ook dood is. Hij heeft minder levens dan een gewone warden (200 HP), maar
+  slaat hard (klap 8 hartjes, sonic boom 5 hartjes): haalbaar maar zwaar. Hij blijft tot hij dood is. Het team dat hem doodt krijgt 50 punten.
 - Inzetten kan alleen terwijl er gevochten wordt (na de countdown van een beurt). Tussen twee
   beurten of tijdens de countdown houdt hij het ei; ook als er al een warden rondloopt.
 

@@ -383,7 +383,7 @@ ronde. Een nieuw aantal puntenblokken geldt vanaf de volgende `/ei start`.
 | `/mobarena punten` | zombie 1; skeleton, spider, cave spider 2; creeper 3; witch 4; vindicator 5; evoker 8; ravager 10; elk ander type 1 | 0 tot 100 |
 | `/mobarena aftekst` | `Af · je speelt geen beurt meer` | tot 60 tekens |
 | `/mobarena veldhoogte` | 3 blokken | 0 tot 10 |
-| `/mobarena warden` | leven 200, klap 8, boom 5 (HP) | leven 20 tot 1000, klap 0 tot 60, boom 0 tot 40 |
+| `/mobarena warden` | leven 200, klap 16, boom 10 (HP) | leven 20 tot 1000, klap 0 tot 60, boom 0 tot 40 |
 | `/clown wachttekst` | `Wacht op het startsein` | tot 60 tekens |
 | `/ffa wachttekst` | `Wacht op het startsein` | tot 60 tekens |
 | `/finale wachttekst` | `Wacht op het startsein` | tot 60 tekens |
@@ -806,8 +806,8 @@ houdt het (de rest van zijn spullen is hij kwijt); een ongebruikt ei gaat aan he
 arena weg met de rest.
 
 **De warden** komt met de graaf-animatie uit de grond op punt `warden` (spawnreden `TRIGGERED`), met de levens
-en klap uit `/mobarena warden` (standaard 200 HP, klap 8 = 4 hartjes); zijn sonic boom doet de
-ingestelde schade (standaard 5 = 2,5 hartje) in plaats van 10. Hij kiest zijn doel met woede: de mod
+en klap uit `/mobarena warden` (standaard 200 HP, klap 16 = 8 hartjes); zijn sonic boom doet de
+ingestelde schade (standaard 10 = 5 hartjes) in plaats van de 10 van vanilla. Hij kiest zijn doel met woede: de mod
 wist woede op wie niet aan de beurt is en zet hem op de dichtstbijzijnde speler in het veld, en
 houdt hem boven de grond zolang hij leeft. Het publiek krijgt geen Darkness. Een kill
 op de warden is `/mobarena punten warden` waard (standaard 50) en komt in de chat.

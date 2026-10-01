@@ -342,8 +342,8 @@ public final class Instellingen {
 	/** De warden uit het Warden-ei: zijn levens en zijn schade, in HP (2 HP is één hartje). */
 	public enum WardenWaarde {
 		LEVEN("leven", 200, 20, 1000),
-		KLAP("klap", 8, 0, 60),
-		BOOM("boom", 5, 0, 40);
+		KLAP("klap", 16, 0, 60),
+		BOOM("boom", 10, 0, 40);
 
 		private final String id;
 		private final int standaard;

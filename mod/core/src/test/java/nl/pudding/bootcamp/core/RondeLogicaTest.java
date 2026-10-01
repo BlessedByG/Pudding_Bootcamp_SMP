@@ -638,8 +638,8 @@ class RondeLogicaTest {
 			assertEquals("Wacht op het startsein", i.ffaWachttekst());
 			assertEquals("Wacht op het startsein", i.doolhofWachttekst());
 			assertEquals(200, i.warden(Instellingen.WardenWaarde.LEVEN));
-			assertEquals(8, i.warden(Instellingen.WardenWaarde.KLAP));
-			assertEquals(5, i.warden(Instellingen.WardenWaarde.BOOM));
+			assertEquals(16, i.warden(Instellingen.WardenWaarde.KLAP));
+			assertEquals(10, i.warden(Instellingen.WardenWaarde.BOOM));
 			assertEquals(50, i.mobPunten("minecraft:warden"));
 			assertEquals(3, i.veldHoogte());
 			assertTrue(i.poortMelding());
