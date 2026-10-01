@@ -343,8 +343,8 @@ wie in de buurt staat.
   kiest") en kiest Pudding de winnaar, eventueel met een beslissende vraag.
 - Pudding ziet de hele quiz onderin wie er aan de beurt is en hoeveel op rij, of dat het rad
   gedraaid moet worden.
-- 10 seconden om te vieren, dan naar de Arena voor Clown vs All. Pudding is daar weer gewone
-  speler.
+- Daarna vieren, zo lang als Pudding wil: zijn quiz-items worden een ender pearl. Gebruikt hij
+  die, dan gaat iedereen naar de Arena voor Clown vs All. Pudding is daar weer gewone speler.
 
 **Voice:** proximity. De hal is klein, dus iedereen hoort Pudding en elkaar. Overleggen met je
 team kan hardop: de andere teams horen het ook. Dat is onderdeel van het spel.

@@ -319,6 +319,7 @@ hele avond geldt (setup, spelers, noodknoppen) staat onder `/bc`.
 | `/quiz punt <kleur> [<aantal>]` | Punten erbij (standaard 1, negatief mag): om een verkeerde klik recht te zetten. |
 | `/quiz einde` | Het team met de meeste punten wint: titles en vuurwerk. Bij gelijke stand weigert hij en noemt de teams die gelijk staan. |
 | `/quiz winnaar <kleur>` | Een winnaar aanwijzen, voor een gelijke stand. |
+| `/quiz naararena` | Na de winnaar: iedereen naar de tribune van de Arena, net als de ender pearl van de presentator. Noodknop als Pudding er niet is. |
 | `/clown rad` | Het Rad (in beeld), en daarna zet ronde 5 iedereen bevroren klaar op de vloer. Weigert zonder uitverkorene die online is en meedoet, en als ronde 5 daarna niet zou kunnen starten. |
 | `/clown go` | Start de countdown van 10 seconden; daarna is iedereen los. Alleen nodig na het Rad (of `/clown start`); na een kroonwissel loopt de countdown vanzelf. Weigert als er niemand klaarstaat. |
 | `/clown start` | Ronde 5 zonder het rad: de kroon gaat meteen naar de uitverkorene, iedereen bevroren klaar, dan `/clown go`. Noodknop, bijvoorbeeld na een crash. |
@@ -874,9 +875,12 @@ teams die gelijk staan, ziet iedereen de title `GELIJKSPEL` met subtitle `Rood e
 kiest`, en wijst de commander er een aan met `/quiz winnaar <kleur>` (Pudding kan er eerst een
 beslissende vraag van maken). Title
 `ROOD WINT DE QUIZ`, `ui.toast.challenge_complete`, vuurpijlen boven de bank, de lamp van de
-winnaar aan. 10 seconden later: alle lampen uit, de presentator zijn items kwijt (weer een lege
-inventory, zoals iedereen), en iedereen naar de tribune van de Arena (`tribune_n`, om en om) voor
-het Rad. `/quiz stop` en `/bc reset` zetten de lampen ook uit.
+winnaar aan. Niemand gaat vanzelf weg: de presentator houdt alleen nog een ender pearl
+`Iedereen naar de Arena` in slot 1 (met in de actionbar `Klaar met vieren? De ender pearl stuurt
+iedereen naar de Arena`). Gebruikt hij die, of doet de commander `/quiz naararena`, dan: alle
+lampen uit, de quiz-items weg (weer een lege inventory, zoals iedereen), en iedereen naar de
+tribune van de Arena (`tribune_n`, om en om) voor het Rad. Raakt hij de pearl kwijt of logt hij
+opnieuw in, dan krijgt hij hem terug. `/quiz stop` en `/bc reset` zetten de lampen ook uit.
 
 **Het Rad (start van ronde 5).** Iedereen staat op de tribune (wie er nog niet staat, zet
 `/clown rad` er eerst neer). Het rad staat **alleen in beeld, als een rij spelerskoppen met

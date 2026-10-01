@@ -42,7 +42,6 @@ import nl.pudding.bootcamp.core.Regels;
 import nl.pudding.bootcamp.core.Rol;
 import nl.pudding.bootcamp.core.Ronde;
 import nl.pudding.bootcamp.game.Border;
-import nl.pudding.bootcamp.game.Planner;
 import nl.pudding.bootcamp.game.Reset;
 import nl.pudding.bootcamp.game.RondeLogica;
 import nl.pudding.bootcamp.game.Spel;
@@ -129,6 +128,7 @@ public final class Quiz extends RondeLogica {
 			case "goed" -> quiz.goed(server);
 			case "fout" -> quiz.fout(server);
 			case "draai" -> quiz.draai(server);
+			case "arena" -> quiz.naarArena(server);
 			case "punten" -> {
 				PuntenMenu.open(speler, quiz);
 				yield null;
@@ -227,6 +227,13 @@ public final class Quiz extends RondeLogica {
 				item(Items.EMERALD, "Punten geven of afpakken", ChatFormatting.AQUA, "punten"));
 	}
 
+	/** Na de quiz: alleen nog de ender pearl waarmee de presentator iedereen naar de Arena stuurt. */
+	private static void geefArenaItem(ServerPlayer presentator) {
+		Items26.haalWeg(presentator, Items26.QUIZ_TAG);
+		presentator.getInventory().setItem(0, item(Items.ENDER_PEARL, "Iedereen naar de Arena", ChatFormatting.LIGHT_PURPLE, "arena"));
+		presentator.inventoryMenu.broadcastChanges();
+	}
+
 	private static void geefItems(ServerPlayer presentator) {
 		Items26.haalWeg(presentator, Items26.QUIZ_TAG);
 		Inventory inv = presentator.getInventory();
@@ -238,12 +245,17 @@ public final class Quiz extends RondeLogica {
 	}
 
 	/** Raakt de presentator er toch een kwijt, dan legt de mod hem terug. */
-	private static void controleerItems(MinecraftServer server) {
+	private void controleerItems(MinecraftServer server) {
 		ServerPlayer p = Spel.presentator(server);
 		if (p != null) {
-			for (String actie : List.of("goed", "fout", "draai", "punten")) {
+			List<String> nodig = fase == Fase.SPELEN ? List.of("goed", "fout", "draai", "punten") : List.of("arena");
+			for (String actie : nodig) {
 				if (!p.getInventory().contains(s -> actie.equals(Items26.tagWaarde(s, Items26.QUIZ_TAG)))) {
-					geefItems(p);
+					if (fase == Fase.SPELEN) {
+						geefItems(p);
+					} else {
+						geefArenaItem(p);
+					}
 					break;
 				}
 			}
@@ -472,19 +484,29 @@ public final class Quiz extends RondeLogica {
 			}
 		}
 		Bossbar.zet("Quiz · " + k.naam() + " wint", BossEvent.BossBarColor.YELLOW, 1f);
-		// Tien seconden vieren, dan de items weg en iedereen naar de tribune van de Arena voor het Rad.
-		Planner.naSeconden(Regels.VIEREN, () -> {
-			if (Spel.actief() != this) {
-				return;
-			}
-			Spel.einde(server);
-			Bossbar.basiskamp();
-			for (ServerPlayer s : Mc.deelnemers(server)) {
-				Items26.haalWeg(s, Items26.QUIZ_TAG);
-				Spel.zetRol(server, s, Rol.SPELER);
-				Tribune.naarTribune(s, Ronde.CLOWN);
-			}
-		});
+		// Pudding beslist wanneer iedereen naar de Arena gaat: zijn quiz-items worden een ender pearl.
+		ServerPlayer p = Spel.presentator(server);
+		if (p != null) {
+			geefArenaItem(p);
+		}
+		return null;
+	}
+
+	/**
+	 * De ender pearl van de presentator en {@code /quiz naararena}: de quiz is klaar, iedereen gaat
+	 * zonder quiz-items naar de tribune van de Arena, voor het Rad.
+	 */
+	public String naarArena(MinecraftServer server) {
+		if (fase != Fase.VIEREN) {
+			return "de quiz is nog niet voorbij (/quiz einde)";
+		}
+		Spel.einde(server);
+		Bossbar.basiskamp();
+		for (ServerPlayer s : Mc.deelnemers(server)) {
+			Items26.haalWeg(s, Items26.QUIZ_TAG);
+			Spel.zetRol(server, s, Rol.SPELER);
+			Tribune.naarTribune(s, Ronde.CLOWN);
+		}
 		return null;
 	}
 
@@ -516,10 +538,14 @@ public final class Quiz extends RondeLogica {
 
 	@Override
 	public void seconde(MinecraftServer server) {
-		if (fase != Fase.SPELEN) {
+		controleerItems(server);
+		if (fase == Fase.VIEREN) {
+			ServerPlayer p = Spel.presentator(server);
+			if (p != null) {
+				Mc.actionbar(p, Mc.tekst("Klaar met vieren? De ender pearl stuurt iedereen naar de Arena", ChatFormatting.LIGHT_PURPLE));
+			}
 			return;
 		}
-		controleerItems(server);
 		ServerPlayer p = Spel.presentator(server);
 		if (p != null) {
 			Mc.actionbar(p, Mc.tekst(draait() ? "Het rad draait" : stand.presentatorTekst(),
@@ -566,8 +592,12 @@ public final class Quiz extends RondeLogica {
 		Spel.zetRol(server, speler, Rol.SPELER);
 		speler.setGameMode(GameType.ADVENTURE);
 		naarPlek(speler);
-		if (Spel.isPresentator(speler) && fase == Fase.SPELEN) {
-			geefItems(speler);
+		if (Spel.isPresentator(speler)) {
+			if (fase == Fase.SPELEN) {
+				geefItems(speler);
+			} else {
+				geefArenaItem(speler);
+			}
 		}
 	}
 

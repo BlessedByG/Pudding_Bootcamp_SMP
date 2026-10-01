@@ -57,6 +57,7 @@ final class QuizCommand {
 				.then(Commands.argument("aantal", IntegerArgumentType.integer(-100, 100))
 						.executes(ctx -> punt(ctx, IntegerArgumentType.getInteger(ctx, "aantal"))))));
 		cmd.then(Commands.literal("einde").executes(ctx -> actie(ctx, (q, s) -> q.einde(s), "De quiz is voorbij.")));
+		cmd.then(Commands.literal("naararena").executes(ctx -> actie(ctx, (q, s) -> q.naarArena(s), "Iedereen gaat naar de tribune van de Arena.")));
 		cmd.then(Commands.literal("winnaar").then(Commands.argument("kleur", StringArgumentType.word()).suggests(BcCommand.KLEUREN)
 				.executes(QuizCommand::winnaar)));
 		return cmd;

@@ -43,7 +43,7 @@ Wat de commander en de ref per ronde typen. Het volledige overzicht staat in
 | 1 De Doolhof | `/doolhof start`, dan `/doolhof go` op het sein van Pudding | `/doolhof poort open`, `/doolhof resterend <sec>`, noodknop `/doolhof einde`; na afloop `/doolhof naarei` |
 | 2 Het Ei | `/ei start` | `/ei resterend <sec>` |
 | 3 De Mob Arena | `/mobarena start` | `/mobarena volgende` (elke volgende beurt), `/mobarena schema`, `/mobarena wave volgende` |
-| 4 De Quiz | `/quiz start` | Pudding doet het met de vier items (ook het puntenmenu); noodknoppen `/quiz draai`, `/quiz goed`, `/quiz fout`, `/quiz punt <kleur> [-1]`. Einde: `/quiz einde` (bij gelijke stand `/quiz winnaar <kleur>`) |
+| 4 De Quiz | `/quiz start` | Pudding doet het met de vier items (ook het puntenmenu); noodknoppen `/quiz draai`, `/quiz goed`, `/quiz fout`, `/quiz punt <kleur> [-1]`. Einde: `/quiz einde` (bij gelijke stand `/quiz winnaar <kleur>`); daarna stuurt Pudding iedereen met de ender pearl naar de Arena (noodknop `/quiz naararena`) |
 | 5 Clown vs All | `/clown rad`, dan `/clown go` op het sein van Pudding | `/clown kroon <speler>`, `/clown krimp <grootte>` |
 | 6 De FFA | `/ffa start`, dan `/ffa go` op het sein van Pudding | `/ffa krimp <grootte>` als het stilvalt |
 | 7 De Finale | `/finale start`, dan `/finale go` op het sein van Pudding | `/finale krimp <grootte>` als het stilvalt; `/finale spelers` laat zien wie er speelt; logt een finalist uit, dan pauzeert de finale: Pudding kiest `/finale combatlog` (de ander wint) of `/finale crash` (daarna opnieuw `/finale start`) |
@@ -204,8 +204,9 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
       gaat aan, groene wol geeft een
       punt (vanaf twee op rij met "3 op rij"), rode wol niet en zet de lamp uit, wol wordt nooit
       neergezet, de presentator ziet onderin wie aan de beurt is. Maak het gelijk en typ
-      `/quiz einde`: iedereen ziet GELIJKSPEL. `/quiz punt <kleur> -1` corrigeert. `/quiz einde`: winnaar, 10 seconden,
-      de items van de presentator zijn weg.
+      `/quiz einde`: iedereen ziet GELIJKSPEL. `/quiz punt <kleur> -1` corrigeert. `/quiz einde`: winnaar, niemand gaat
+      weg, de presentator heeft alleen nog de ender pearl. Ender pearl gebruiken (of `/quiz
+      naararena`): iedereen naar de tribune van de Arena, de pearl is weg.
 - [ ] Quiz extra: bij groene wol schieten de twee dispensers van dat team een vuurpijl in de
       teamkleur. De emerald opent het puntenmenu: `+2` en `−1` bij een team dat niet aan de beurt
       is veranderen de sidebar meteen, iedereen ziet de chatregel, onder 0 kan.
