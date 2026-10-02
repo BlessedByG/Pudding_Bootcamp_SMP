@@ -42,8 +42,11 @@ import java.util.zip.ZipOutputStream;
  * valkisten) en {@code rad.ogg} (een draai van het quiz-rad) erbij als ze er zijn;</li>
  * <li>tekent het quiz-rad: 64 standen van 484 x 484, elk 5,625 graden verder met de klok mee
  * gedraaid, 16 vakken in de teamkleuren, pijltje vast bovenin;</li>
- * <li>knipt de foto en elke stand van het rad in tegels (zie hieronder) en schrijft de fonts en
- * {@code pack.mcmeta};</li>
+ * <li>knipt de foto en elke stand van het rad in tegels (zie hieronder) en schrijft de fonts;</li>
+ * <li>maakt van {@code banner_1}, {@code banner_2}, ... (zonder gaten) banners van 3 bij 5 blokken: de foto in
+ * het midden bijgesneden tot 3:5, als item-texture, met een model (een doek aan een stok) en een
+ * itemdefinitie {@code bootcamp:banner_<n>}; plus {@code aanleveren/banners_overzicht.png} met de nummers;</li>
+ * <li>schrijft {@code pack.mcmeta};</li>
  * <li>zipt alles naar {@code pack/bootcamp-pack.zip} en print de SHA-1 voor
  * {@code server.properties}.</li>
  * </ol>
@@ -64,6 +67,47 @@ public class BouwPack {
 	/** Het resource-packformaat van Minecraft 26.2. */
 	static final int PACK_FORMAT = 88;
 	static final int STANDEN = 64;
+
+	/** Een banner is 3 blokken breed en 5 hoog: 96 pixels per blok. */
+	static final int BANNER_B = 288;
+	static final int BANNER_H = 480;
+	/**
+	 * Het model van een banner, in modeleenheden (16 per blok; de mod schaalt het 5 keer, dus 16 eenheden
+	 * is 5 blokken): een doek van 9,6 bij 16 met de foto aan beide kanten, zonder schaduw, en erboven een
+	 * stok van gestripte donkere eik die aan elke kant iets uitsteekt.
+	 */
+	static final String BANNER_MODEL = """
+			{
+			  "textures": {
+			    "particle": "#foto",
+			    "stok": "minecraft:block/stripped_dark_oak_log",
+			    "stok_kop": "minecraft:block/stripped_dark_oak_log_top"
+			  },
+			  "elements": [
+			    {
+			      "from": [3.2, 0, 7.9], "to": [12.8, 16, 8.1], "shade": false,
+			      "faces": {
+			        "north": {"uv": [0, 0, 16, 16], "texture": "#foto"},
+			        "south": {"uv": [0, 0, 16, 16], "texture": "#foto"},
+			        "east": {"uv": [15.8, 0, 16, 16], "texture": "#foto"},
+			        "west": {"uv": [0, 0, 0.2, 16], "texture": "#foto"},
+			        "down": {"uv": [0, 15.8, 16, 16], "texture": "#foto"}
+			      }
+			    },
+			    {
+			      "from": [2.4, 16, 7.5], "to": [13.6, 17, 8.5],
+			      "faces": {
+			        "north": {"uv": [7, 0, 9, 16], "rotation": 90, "texture": "#stok"},
+			        "south": {"uv": [7, 0, 9, 16], "rotation": 90, "texture": "#stok"},
+			        "up": {"uv": [7, 0, 9, 16], "rotation": 90, "texture": "#stok"},
+			        "down": {"uv": [7, 0, 9, 16], "rotation": 90, "texture": "#stok"},
+			        "east": {"uv": [6, 6, 10, 10], "texture": "#stok_kop"},
+			        "west": {"uv": [6, 6, 10, 10], "texture": "#stok_kop"}
+			      }
+			    }
+			  ]
+			}
+			""";
 
 	/** Spatie van -1 na elke tegel, en de spatie terug na de bovenste rij (FontTegels in de mod). */
 	static final int TERUG_EEN = 0xF801;
@@ -240,7 +284,49 @@ public class BouwPack {
 		schrijf(assets.resolve("font").resolve("rad.json"), rad.json());
 		System.out.println("Quiz-rad: " + STANDEN + " standen en " + VAKKEN.length + " opgelichte vakken getekend, " + ((STANDEN + VAKKEN.length) * 4) + " tegels.");
 
-		// 4. pack.mcmeta
+		// 4. De banners: banner_1, banner_2, ... (zonder gaten), elk in het midden bijgesneden tot 3 breed
+		// bij 5 hoog, als item-texture met een model (een doek aan een stok) en een itemdefinitie. De mod
+		// hangt ze op als item display met item_model bootcamp:banner_<n>.
+		Path bannerTex = assets.resolve("textures").resolve("item");
+		Path modellen = assets.resolve("models").resolve("item");
+		Path itemDefs = assets.resolve("items");
+		leeg(bannerTex);
+		leeg(modellen);
+		leeg(itemDefs);
+		List<BufferedImage> banners = new ArrayList<>();
+		for (int nr = 1; ; nr++) {
+			Path foto = zoekFoto(aanleveren, "banner_" + nr);
+			if (foto == null) {
+				break;
+			}
+			BufferedImage bron = ImageIO.read(foto.toFile());
+			if (bron == null) {
+				throw new IllegalStateException(foto + " is geen jpg of png die Java kan lezen. Sla hem opnieuw op als png.");
+			}
+			BufferedImage beeld = bannerFoto(bron);
+			Files.createDirectories(bannerTex);
+			ImageIO.write(beeld, "png", bannerTex.resolve("banner_" + nr + ".png").toFile());
+			schrijf(modellen.resolve("banner_" + nr + ".json"), """
+					{
+					  "parent": "bootcamp:item/banner",
+					  "textures": {"foto": "bootcamp:item/banner_%d"}
+					}
+					""".formatted(nr));
+			schrijf(itemDefs.resolve("banner_" + nr + ".json"), """
+					{
+					  "model": {"type": "minecraft:model", "model": "bootcamp:item/banner_%d"}
+					}
+					""".formatted(nr));
+			banners.add(beeld);
+		}
+		if (!banners.isEmpty()) {
+			schrijf(modellen.resolve("banner.json"), BANNER_MODEL);
+			ImageIO.write(overzicht(banners), "png", aanleveren.resolve("banners_overzicht.png").toFile());
+		}
+		System.out.println("Banners: " + banners.size() + " (" + BANNER_B + " x " + BANNER_H + " pixels)"
+				+ (banners.isEmpty() ? "" : "; welk nummer welke foto is: " + aanleveren.resolve("banners_overzicht.png")));
+
+		// 5. pack.mcmeta
 		schrijf(pack.resolve("pack.mcmeta"), """
 				{
 				  "pack": {
@@ -251,7 +337,7 @@ public class BouwPack {
 				}
 				""".formatted(PACK_FORMAT, PACK_FORMAT));
 
-		// 5. Zippen
+		// 6. Zippen
 		Path zip = pack.resolve("bootcamp-pack.zip");
 		zip(pack, zip);
 		System.out.println();
@@ -323,6 +409,52 @@ public class BouwPack {
 			t.setRGB(x, y, 0x01000000);
 		}
 		ImageIO.write(t, "png", doel.toFile());
+	}
+
+	/**
+	 * Een banner: in het midden bijgesneden tot 3:5 (een te hoge foto iets boven het midden, waar meestal
+	 * het gezicht zit) en dan precies {@link #BANNER_B} x {@link #BANNER_H}.
+	 */
+	static BufferedImage bannerFoto(BufferedImage bron) {
+		int b = bron.getWidth();
+		int h = bron.getHeight();
+		BufferedImage uitsnede;
+		if (b * BANNER_H > h * BANNER_B) {
+			int nieuwB = Math.max(1, h * BANNER_B / BANNER_H);
+			uitsnede = bron.getSubimage((b - nieuwB) / 2, 0, nieuwB, h);
+		} else {
+			int nieuwH = Math.max(1, b * BANNER_H / BANNER_B);
+			uitsnede = bron.getSubimage(0, (h - nieuwH) / 4, b, nieuwH);
+		}
+		return verklein(uitsnede, BANNER_B, BANNER_H);
+	}
+
+	/** Alle banners naast elkaar met hun nummer eronder, zodat je weet welke {@code /bc banner <nr>} welke is. */
+	static BufferedImage overzicht(List<BufferedImage> banners) {
+		int kolommen = Math.min(8, banners.size());
+		int rijen = (banners.size() + kolommen - 1) / kolommen;
+		int tb = BANNER_B / 2;
+		int th = BANNER_H / 2;
+		int marge = 12;
+		int onder = 40;
+		BufferedImage uit = new BufferedImage(kolommen * (tb + marge) + marge, rijen * (th + onder + marge) + marge, BufferedImage.TYPE_INT_RGB);
+		Graphics2D g = uit.createGraphics();
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g.setColor(new Color(0x202020));
+		g.fillRect(0, 0, uit.getWidth(), uit.getHeight());
+		g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 28));
+		FontMetrics fm = g.getFontMetrics();
+		for (int i = 0; i < banners.size(); i++) {
+			int x = marge + (i % kolommen) * (tb + marge);
+			int y = marge + (i / kolommen) * (th + onder + marge);
+			g.drawImage(verklein(banners.get(i), tb, th), x, y, null);
+			String nr = String.valueOf(i + 1);
+			g.setColor(Color.WHITE);
+			g.drawString(nr, x + (tb - fm.stringWidth(nr)) / 2, y + th + 32);
+		}
+		g.dispose();
+		return uit;
 	}
 
 	static void leeg(Path map) throws IOException {

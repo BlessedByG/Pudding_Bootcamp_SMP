@@ -25,6 +25,7 @@ import nl.pudding.bootcamp.rad.KroonRad;
 import nl.pudding.bootcamp.setup.Wand;
 import nl.pudding.bootcamp.teams.Teams;
 import nl.pudding.bootcamp.tribune.Tribune;
+import nl.pudding.bootcamp.visuals.Banners;
 import nl.pudding.bootcamp.visuals.Bossbar;
 import nl.pudding.bootcamp.visuals.Lucht;
 import nl.pudding.bootcamp.visuals.Sidebar;
@@ -45,6 +46,7 @@ public final class Bootcamp implements ModInitializer {
 		Kroon.init();
 		Opstelling.init();
 		Zweefkroon.init();
+		Banners.init();
 		Sidebar.init();
 		MobArena.init();
 		Valkisten.init();
@@ -80,6 +82,7 @@ public final class Bootcamp implements ModInitializer {
 			Spel.tick(server);
 			Tribune.tick(server);
 			Zweefkroon.tick(server);
+			Banners.tick(server);
 			Lucht.tick(server);
 		});
 
