@@ -142,6 +142,10 @@ public final class Quiz extends RondeLogica {
 			case "fout" -> quiz.fout(server);
 			case "draai" -> quiz.draai(server);
 			case "arena" -> quiz.naarArena(server);
+			case "beurt" -> {
+				BeurtMenu.open(speler, quiz);
+				yield null;
+			}
 			case "punten" -> {
 				PuntenMenu.open(speler, quiz);
 				yield null;
@@ -245,12 +249,13 @@ public final class Quiz extends RondeLogica {
 
 	/**
 	 * De items van de presentator met hun plek in de hotbar (0 t/m 8), in de volgorde van een vraag:
-	 * links het rad (toets 1), dan goed en fout naast elkaar (3 en 4), het puntenmenu (6), en de
-	 * barrier apart helemaal rechts (9), zodat je hem niet per ongeluk pakt.
+	 * links het rad (toets 1) met ernaast het beurtmenu (2), dan goed en fout naast elkaar (3 en 4),
+	 * het puntenmenu (6), en de barrier apart helemaal rechts (9), zodat je hem niet per ongeluk pakt.
 	 */
 	private static Map<Integer, ItemStack> quizItems() {
 		return Map.of(
 				0, item(Items.NETHER_STAR, "Draai het rad", ChatFormatting.GOLD, "draai"),
+				1, item(Items.COMPASS, "Beurt geven", ChatFormatting.YELLOW, "beurt"),
 				2, item(Items.WOOL.lime(), "Goed", ChatFormatting.GREEN, "goed"),
 				3, item(Items.WOOL.red(), "Fout", ChatFormatting.RED, "fout"),
 				5, item(Items.EMERALD, "Punten geven of afpakken", ChatFormatting.AQUA, "punten"),
@@ -275,7 +280,7 @@ public final class Quiz extends RondeLogica {
 	private void controleerItems(MinecraftServer server) {
 		ServerPlayer p = Spel.presentator(server);
 		if (p != null) {
-			List<String> nodig = fase == Fase.SPELEN ? List.of("goed", "fout", "draai", "punten", "einde") : List.of("arena");
+			List<String> nodig = fase == Fase.SPELEN ? List.of("goed", "fout", "draai", "beurt", "punten", "einde") : List.of("arena");
 			for (String actie : nodig) {
 				if (!p.getInventory().contains(s -> actie.equals(Items26.tagWaarde(s, Items26.QUIZ_TAG)))) {
 					if (fase == Fase.SPELEN) {
@@ -404,6 +409,32 @@ public final class Quiz extends RondeLogica {
 
 	private boolean draait() {
 		return draai != null;
+	}
+
+	/** Het team dat nu aan de beurt is, voor het beurtmenu; {@code null} als niemand. */
+	Kleur aanDeBeurt() {
+		return stand.aanDeBeurt();
+	}
+
+	/**
+	 * {@code /quiz beurt} en het kompas: dit team is meteen aan de beurt, zonder rad (R4.7). Alleen
+	 * zijn lampen gaan aan, en iedereen ziet het team groot in beeld, net als na een draai.
+	 */
+	public String geefBeurt(MinecraftServer server, Kleur k) {
+		if (fase != Fase.SPELEN) {
+			return "de quiz is voorbij";
+		}
+		if (draait()) {
+			return "het rad draait nog";
+		}
+		stand.geefBeurt(k);
+		for (Kleur team : Kleur.values()) {
+			lamp(server, team, team == k);
+		}
+		Mc.titleAllen(server, Mc.tekst(k.naam().toUpperCase(Locale.ROOT) + " IS AAN DE BEURT", Mc.kleur(k), ChatFormatting.BOLD), null, 0, 50, 15);
+		Mc.geluidAllen(server, SoundEvents.NOTE_BLOCK_PLING, 1f, 1f);
+		bossbar();
+		return null;
 	}
 
 	/** {@code /quiz goed} en de groene wol. */

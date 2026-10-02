@@ -43,7 +43,7 @@ Wat de commander en de ref per ronde typen. Het volledige overzicht staat in
 | 1 De Doolhof | `/doolhof start`, dan `/doolhof go` op het sein van Pudding | `/doolhof poort open`, `/doolhof resterend <sec>`, noodknop `/doolhof einde`; na afloop `/doolhof naarei` |
 | 2 Het Ei | `/ei start` | `/ei resterend <sec>`; na de huldiging `/ei naarmobarena` |
 | 3 De Mob Arena | `/mobarena start` | `/mobarena volgende` (elke volgende beurt), `/mobarena schema`, `/mobarena wave volgende`; na afloop `/mobarena naarquiz` |
-| 4 De Quiz | `/quiz start` | Pudding doet het met de vijf items (rad 1, goed 3, fout 4, punten 6, beëindigen 9); noodknoppen `/quiz draai`, `/quiz goed`, `/quiz fout`, `/quiz punt <kleur> [-1]`. Einde: `/quiz einde` (bij gelijke stand `/quiz winnaar <kleur>`); daarna stuurt Pudding iedereen met de ender pearl naar de Arena (noodknop `/quiz naararena`) |
+| 4 De Quiz | `/quiz start` | Pudding doet het met de zes items (rad 1, beurt 2, goed 3, fout 4, punten 6, beëindigen 9); noodknoppen `/quiz draai`, `/quiz beurt <kleur>`, `/quiz goed`, `/quiz fout`, `/quiz punt <kleur> [-1]`. Einde: `/quiz einde` (bij gelijke stand `/quiz winnaar <kleur>`); daarna stuurt Pudding iedereen met de ender pearl naar de Arena (noodknop `/quiz naararena`) |
 | 5 Clown vs All | `/clown rad`, dan `/clown go` op het sein van Pudding | `/clown kroon <speler>`, `/clown krimp <grootte>` |
 | 6 De FFA | `/ffa start`, dan `/ffa go` op het sein van Pudding | `/ffa krimp <grootte>` als het stilvalt |
 | 7 De Finale | `/finale start`, dan `/finale go` op het sein van Pudding | `/finale krimp <grootte>` als het stilvalt; `/finale spelers` laat zien wie er speelt; logt een finalist uit, dan pauzeert de finale: Pudding kiest `/finale combatlog` (de ander wint) of `/finale crash` (daarna opnieuw `/finale start`) |
@@ -217,8 +217,8 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
       in het veld staat aan, het publiek krijgt geen Darkness, en hij blijft tot hij dood is
       (`/mobarena wave volgende` als noodknop). De kill staat in de chat met 50 punten.
 - [ ] `/quiz presentator <naam>`, `/quiz start`: iedereen zonder spullen bij zijn bank, de
-      presentator op het podium met het rad-item (slot 1), groene en rode wol (3 en 4), de emerald (6) en de
-      barrier (9). Barrier: een menu met Ja en Nee; Nee laat de quiz doorgaan. Rad een paar keer
+      presentator op het podium met het rad-item (slot 1), het kompas (2), groene en rode wol (3 en 4), de
+      emerald (6) en de barrier (9). Kompas: kies een team, dat is meteen aan de beurt met zijn lampen aan. Barrier: een menu met Ja en Nee; Nee laat de quiz doorgaan. Rad een paar keer
       draaien: een rond rad groot in beeld dat afremt en met een vak onder het pijltje stopt (is
       het groot genoeg en scherp? anders `RAD_EENHEDEN` in `BouwPack.java` bijstellen), de lamp bij die bank
       gaat aan, groene wol geeft een

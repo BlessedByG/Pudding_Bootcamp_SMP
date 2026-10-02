@@ -48,6 +48,17 @@ public final class QuizStand {
 		reeks = 0;
 	}
 
+	/**
+	 * R4.7: de presentator geeft een team zelf de beurt, zonder rad. Een ander team begint op reeks
+	 * nul; het team dat al aan de beurt is houdt zijn reeks.
+	 */
+	public void geefBeurt(Kleur k) {
+		if (k != aanDeBeurt) {
+			aanDeBeurt = k;
+			reeks = 0;
+		}
+	}
+
 	/** @return false als er niemand aan de beurt is */
 	public boolean goed() {
 		if (aanDeBeurt == null) {

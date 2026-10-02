@@ -334,13 +334,17 @@ wie in de buurt staat.
   quizhal; welke achter welke bank staan, geef je aan met een regio per team. Frog lights en andere
   lichtbronnen doen niet mee.
 - **Pudding presenteert** en zit dus niet bij zijn eigen team. Dat team heeft in de quiz één
-  speler minder: pech. Pudding krijgt als enige iets: vijf items in de hotbar, een item om **het rad te
-  draaien** (toets 1), **groene wol** (goed, 3), **rode wol** (fout, 4), een **emerald voor het
+  speler minder: pech. Pudding krijgt als enige iets: zes items in de hotbar, een item om **het rad te
+  draaien** (toets 1), een **kompas om zelf een team de beurt te geven** (2), **groene wol** (goed, 3), **rode wol** (fout, 4), een **emerald voor het
   puntenmenu** (6) en apart rechts een **barrier om de quiz te beëindigen** (9), met een tweede
   bevestiging in een kistmenu. Na de quiz zijn die weer weg.
 - **Het puntenmenu**: per team knoppen −2, −1, +1 en +2. Pudding kan er elk team punten mee
   geven of afpakken, ook als het niet aan de beurt is: wie bij Pudding slijmt, verdient er
   misschien een bij. Iedereen ziet het in de chat: "Pudding: +2 voor Rood (7)". Onder 0 kan.
+- **Het beurtmenu** (kompas): de vier teams met hun stand. Pudding klikt een team aan en dat team
+  is meteen aan de beurt, zonder rad: "ROOD IS AAN DE BEURT" in beeld, de lampen van dat team aan.
+  Het team dat al aan de beurt was houdt zijn reeks; een ander team begint opnieuw. Niet terwijl
+  het rad draait.
 - **Bij elke bank staan twee dispensers** voor het vuurwerk.
 - Adventure, geen schade, geen timer.
 

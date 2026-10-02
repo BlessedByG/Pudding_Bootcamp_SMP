@@ -441,6 +441,23 @@ class RondeLogicaTest {
 		}
 
 		@Test
+		void beurtGevenZonderRad() {
+			QuizStand q = new QuizStand();
+			q.geefBeurt(Kleur.BLAUW);
+			assertEquals(Kleur.BLAUW, q.aanDeBeurt());
+			assertTrue(q.goed());
+			assertTrue(q.goed());
+			// Hetzelfde team nog eens: de reeks blijft staan.
+			q.geefBeurt(Kleur.BLAUW);
+			assertEquals(2, q.reeks());
+			// Een ander team: opnieuw vanaf nul, de punten blijven.
+			q.geefBeurt(Kleur.GEEL);
+			assertEquals(Kleur.GEEL, q.aanDeBeurt());
+			assertEquals(0, q.reeks());
+			assertEquals(2, q.punten(Kleur.BLAUW));
+		}
+
+		@Test
 		void winnaarOfGelijkspel() {
 			QuizStand q = new QuizStand();
 			q.punt(Kleur.ROOD, 3);

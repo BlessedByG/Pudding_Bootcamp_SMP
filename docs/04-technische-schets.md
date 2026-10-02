@@ -318,6 +318,7 @@ hele avond geldt (setup, spelers, noodknoppen) staat onder `/bc`.
 | `/quiz lamp <kleur> [<nr>\|wis]` | Een lamp bij de bank van dat team: het blok waar je naar kijkt (tot 32 blokken). Zonder nummer komt er een lamp bij (`quizlamp_<kleur>_1`, `_2`, ...), met een nummer zet je die ene opnieuw, `wis` haalt alle lampen van dat team weg. Zoveel lampen als je wilt; ze gaan samen aan en uit. |
 | `/quiz vuurwerk <kleur> <1\|2>` | Zet dispenser 1 of 2 bij de bank van dat team: het blok waar je naar kijkt (tot 32 blokken), en het moet een dispenser zijn. Bij een goed antwoord schiet hij een vuurpijl in de teamkleur, de kant op waar hij naartoe wijst. |
 | `/quiz draai` | Het rad draaien. Hetzelfde als het rad-item van de presentator. |
+| `/quiz beurt <kleur>` | Dat team meteen aan de beurt, zonder rad. Hetzelfde als het kompas van de presentator. Weigert terwijl het rad draait. |
 | `/quiz goed` / `/quiz fout` | Het antwoord van het team dat aan de beurt is goedkeuren (+1 punt) of afkeuren. Hetzelfde als de groene en rode wol. |
 | `/quiz punt <kleur> [<aantal>]` | Punten erbij (standaard 1, negatief mag): om een verkeerde klik recht te zetten. |
 | `/quiz einde` | Het team met de meeste punten wint: titles en vuurwerk. Bij gelijke stand weigert hij en noemt de teams die gelijk staan. |
@@ -855,13 +856,14 @@ naar de bank van zijn team (`quiz_<kleur>`), de presentator naar `quiz_podium`, 
 **Ronde 4, quiz.** Weigert zonder presentator (`/quiz presentator`). Start: iedereen naar
 `quiz_<kleur>` van zijn team, border `quiz`, geen schade, geen timer. Sidebar `Quiz` met de vier
 teams op 0. Iedereen heeft een lege inventory (ingeleverd na de mob arena). De presentator gaat
-naar `quiz_podium` en telt in de quiz niet mee voor zijn team; hij krijgt als enige iets: vijf
+naar `quiz_podium` en telt in de quiz niet mee voor zijn team; hij krijgt als enige iets: zes
 items in de hotbar, in de volgorde van een vraag en met ruimte tussen de groepen, herkenbaar aan
 `custom_data={bootcamp_quiz:"..."}`:
 
 | Slot (toets) | Item | Rechtsklik doet |
 |---|---|---|
 | 1 | Nether star, naam `Draai het rad` | hetzelfde als `/quiz draai` |
+| 2 | Kompas, naam `Beurt geven` | opent het beurtmenu |
 | 3 | Groene wol, naam `Goed` | hetzelfde als `/quiz goed` |
 | 4 | Rode wol, naam `Fout` | hetzelfde als `/quiz fout` |
 | 6 | Emerald, naam `Punten geven of afpakken` | opent het puntenmenu |
@@ -877,6 +879,13 @@ past de stand meteen aan, voor elk team, ook als het niet aan de beurt is (voor 
 slijmt); onder 0 mag. Iedereen ziet een chatregel `Pudding: +2 voor Rood (7)` met een pling
 (erbij) of een bas (eraf), en de sidebar wordt bijgewerkt. Alleen de presentator kan klikken;
 items verplaatsen kan niet.
+
+**Het beurtmenu** (`BeurtMenu`, R4.7) is een kistmenu van één rij met de wol van elk team en zijn
+stand (`Rood · 5`); het team dat al aan de beurt is glinstert. Een klik sluit het menu en geeft dat
+team meteen de beurt, zonder rad: alleen de lampen van dat team aan, title
+`ROOD IS AAN DE BEURT`, `block.note_block.pling`, bossbar in de teamkleur. Het team dat al aan de
+beurt was houdt zijn reeks; een ander team begint op nul. Weigert terwijl het rad draait (`het rad
+draait nog` in de actionbar) en na de winnaar. Hetzelfde als `/quiz beurt <kleur>`.
 
 Rechtsklik wordt afgevangen in `UseItemCallback` én `UseBlockCallback`, zodat de wol nooit als
 blok wordt neergezet. De items zijn niet te droppen of te verplaatsen naar een kist; raakt de
