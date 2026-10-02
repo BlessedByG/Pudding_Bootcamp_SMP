@@ -152,6 +152,7 @@ Het pack staat in `pack/` in deze repo. **Aanleveren** gaat in `pack/aanleveren/
 | `klop.ogg` | De 8D-klop uit de valkisten, ogg vorbis. **Stereo laten**: Minecraft speelt een stereogeluid zonder richting af, dus het 8D-effect in het bestand blijft. |
 | `rad.ogg` | Het geluid van een draai van het quiz-rad (spinwheel, 11,1 s), ogg vorbis. Speelt op 70% (`"volume": 0.7` in `sounds.json`). **Niet inkorten**: de tijdlijn van het rad (`QuizDraai`) is op dit bestand gemeten; een ander geluid betekent de tikjes opnieuw meten. |
 | `logo.png` | Het logo in het midden van het quiz-rad, vierkant. Het staat rechtop, ook als het rad draait, en zo groot dat het hele puddingkje binnen de ronde naaf valt (`LOGO_REIKWIJDTE`: het blaadje steekt tot 1,06 keer de halve breedte uit); de achtergrond van het logo vult de rest van de naaf, met een zachte overgang. Zonder logo een gewone dop. |
+| `banner_1` t/m `banner_n` (`.png`, `.jpg` of `.jpeg`, zonder gaten in de nummers) | De foto's voor de banners. Elk formaat; BouwPack snijdt ze in het midden bij tot 3:5 (een te hoge foto iets boven het midden, waar meestal het gezicht zit) en maakt ze 288 x 480. In de mod banner 1, 2, ... (`/bc banner <nr>`). BouwPack schrijft ook `aanleveren/banners_overzicht.png`: alle banners met hun nummer. Een webp eerst omzetten: `ffmpeg -i in.webp uit.png`. |
 
 Minecraft speelt alleen ogg vorbis. Een wav of mp3 eerst omzetten, met Audacity (Bestand >
 Exporteren > Exporteren als OGG) of `ffmpeg -i in.wav -c:a libvorbis -q:a 5 uit.ogg`. BouwPack
@@ -207,10 +208,15 @@ pack/
   assets/bootcamp/textures/font/rad_SS_R_C.png de tegels van stand SS van het quiz-rad
   assets/bootcamp/sounds.json                 bootcamp:schrik, bootcamp:klop en bootcamp:rad
   assets/bootcamp/sounds/*.ogg                gekopieerd uit aanleveren/
+  assets/bootcamp/textures/item/banner_N.png  banner N, 288 x 480
+  assets/bootcamp/models/item/banner.json     het model: een doek aan een stok (BANNER_MODEL in BouwPack)
+  assets/bootcamp/models/item/banner_N.json   banner.json met de foto van banner N
+  assets/bootcamp/items/banner_N.json          de itemdefinitie bootcamp:banner_N
 ```
 
 De foto's en geluiden in `aanleveren/` staan niet in git (de repo is public); wat BouwPack maakt
-(`assets/bootcamp/textures/`, de geluiden, de zip) ook niet. De fonts en `pack.mcmeta` wel. Zonder
+(`assets/bootcamp/textures/`, de modellen en itemdefinities van de banners, de geluiden, de zip)
+ook niet. De fonts en `pack.mcmeta` wel. Zonder
 geluid is het stil, want een stil ogg-bestand kan BouwPack niet maken. Een foto die niet vierkant
 is, blijft in de jumpscare in zijn eigen verhouding: de breedte volgt de hoogte.
 
@@ -249,7 +255,7 @@ Waar een jumpscare vandaan komt:
 | `mobs` | Waves spawnen en tellen, per arena; kills toeschrijven; mobs laten kijkers met rust. | `EntityType.spawn`, entity-tags, `Mob.setTarget` |
 | `schrik` | De jumpscare en de nep-uitgang. | title-packets, `playNotifySound` |
 | `tribune` | Wie af is naar de tribune of de kooi, daar houden, geen schade, locator bar uit. | `ALLOW_DAMAGE`, tick-check op regio's |
-| `visuals` | Bossbar, sidebar, titles, geluid, particles, vuurwerk, zweefkroon, labels. | `ServerBossEvent`, packets, `Display`-entities |
+| `visuals` | Bossbar, sidebar, titles, geluid, particles, vuurwerk, zweefkroon, labels, banners. | `ServerBossEvent`, packets, `Display`-entities |
 
 Vuistregel: alles draait op de server-tick. Geen `Thread.sleep`, geen eigen threads; een
 wachttijd is een tick-teller in een state-object.
@@ -357,6 +363,7 @@ hele avond geldt (setup, spelers, noodknoppen) staat onder `/bc`.
 | `/bc region save\|add\|show\|list\|del <naam>` | `save` maakt de regio uit de wand-selectie (een bestaande regio begint opnieuw), `add` voegt de selectie toe als extra deel, `show` tekent tien seconden particles op de randen van alle delen, `list` toont de regio's met hun aantal delen, `del` haalt de hele regio weg. |
 | `/bc point set\|block\|tp\|list\|del <naam>` | Punt op je positie (met kijkrichting) of op het blok waar je naar kijkt (tot 32 blokken). |
 | `/bc label zet <tekst>` / `/bc label weg` | Een text display boven je hoofd plaatsen of het dichtstbijzijnde weghalen. |
+| `/bc banner <nr>` / `/bc banner weg` / `/bc banner lijst` | Banner `<nr>` (1 t/m 99, uit het pack) ophangen onder het blok waar je naar kijkt (tot 32 blokken), midden onder dat blok, met de foto naar je toe (op een kwartslag afgerond). `weg` haalt de banner weg waarvan het midden het dichtst bij je is (binnen acht blokken); `lijst` noemt de nummers van de banners in de geladen stukken van de wereld. Een nummer zonder foto in het pack wordt een paars-zwart blok. |
 | `/bc status` | Rollen, teams en vlaggen van alle spelers, huidige ronde, timer en de instellingen. |
 | `/bc kit <naam> [<speler>]` | Zet een kit op iedereen die meedoet, of op één speler. |
 | `/bc team <speler> <rood\|blauw\|groen\|geel\|weg>` | Noodknop: iemand in een team zetten of de keuze weghalen. Mag boven het maximum. |
@@ -1156,6 +1163,18 @@ langzaam draaiend. Opgeruimd als de kroonhouder kijker wordt.
 
 **Labels**: een `Display.TextDisplay` boven elk verzamelpunt, één keer geplaatst met
 `/bc label zet <tekst>`. Ze overleven `/bc reset`.
+
+**Banners** (`Banners`): een `Display.ItemDisplay` met een papiertje met `item_model`
+`bootcamp:banner_<n>` (`ItemDisplayContext.NONE`), vijf keer geschaald: een doek van 3 bij 5 blokken
+met de foto aan beide kanten (geen schaduw), en erboven een stok van gestripte donkere eik. De
+entity staat in het midden van de stok, net onder het blok; de transformatie houdt de stok daar
+(translatie = de draaiing van (0, -stok, 0)). Volle helderheid (`Brightness(15, 15)`), view range 4.
+Elke banner zwaait om de 50 ticks 3 graden de andere kant op om de stok, en de client schuift er in
+50 ticks vloeiend heen (`transformation_interpolation_duration`; de startwaarde om en om 0 en -1,
+anders begint de client niet opnieuw). Elke banner heeft zijn eigen moment (uit zijn UUID), zodat
+ze niet in de maat gaan. Tags `bootcamp_banner` en `bootcamp_banner_<n>`; de mod houdt de geladen
+banners bij met `ServerEntityEvents.ENTITY_LOAD`/`UNLOAD`. Ze horen bij de wereld en overleven
+`/bc reset`.
 
 **Per moment**
 

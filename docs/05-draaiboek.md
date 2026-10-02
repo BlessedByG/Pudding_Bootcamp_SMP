@@ -131,6 +131,9 @@ zit, maar de commander moet alleen commander zijn.
    schrikgeluid (`schrik.ogg`) en de 8D-klop (`klop.ogg`) in `pack/aanleveren/`,
    `java pack/BouwPack.java`, de zip online zetten (uurtje, zie
    [04-technische-schets.md](04-technische-schets.md)).
+   Banners: de foto's als `banner_1`, `banner_2`, ... in `pack/aanleveren/`; na het bouwen staat in
+   `banners_overzicht.png` welk nummer welke foto is. Ophangen in de wereld met `/bc banner <nr>`,
+   kijkend naar het blok waar hij onder moet hangen.
 10. De mod ombouwen naar dit rondeplan ([08-taakplan.md](08-taakplan.md)), dan met de wand,
    `/bc point` en de commando's per ronde alle regio's en punten zetten, zoals hierboven per
    zone (uurtje).
@@ -148,6 +151,9 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
       het scherm, het schrikgeluid klinkt. `/bc klop <naam>`: de klop gaat van oor naar oor.
 - [ ] `/bc wand`, een regio opslaan, `/bc region show`, `/bc point set`, `/bc point tp`,
       `/bc status`, `/bc kit basis`.
+- [ ] `/bc banner 1` kijkend naar een plafond: een doek van 3 bij 5 met foto 1, aan een stok,
+      naar je toe, dat zacht heen en weer wiegt; van achteren ook de foto. Na een herstart hangt hij
+      er nog en wiegt hij weer. `/bc banner lijst` noemt hem, `/bc banner weg` ernaast haalt hem weg.
 - [ ] Een T-vormige regio: `/bc region save test`, tweede selectie, `/bc region add test`.
       `/bc region show test` tekent beide delen, `/bc region list` zegt 2 delen.
 - [ ] `/doolhof timer`, `/doolhof poort`, `/doolhof hint` en `/ei timer` zonder getal: 15, 4,

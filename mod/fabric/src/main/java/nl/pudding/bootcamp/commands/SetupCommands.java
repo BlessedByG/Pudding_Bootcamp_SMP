@@ -1,5 +1,6 @@
 package nl.pudding.bootcamp.commands;
 
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -19,8 +20,10 @@ import nl.pudding.bootcamp.core.BootcampConfig;
 import nl.pudding.bootcamp.core.Punt;
 import nl.pudding.bootcamp.core.Regio;
 import nl.pudding.bootcamp.setup.Wand;
+import nl.pudding.bootcamp.visuals.Banners;
 import nl.pudding.bootcamp.visuals.Labels;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
@@ -56,6 +59,10 @@ final class SetupCommands {
 				.then(Commands.literal("zet").then(Commands.argument("tekst", StringArgumentType.greedyString())
 						.executes(SetupCommands::labelZet))));
 
+		bc.then(Commands.literal("banner")
+				.then(Commands.literal("weg").executes(SetupCommands::bannerWeg))
+				.then(Commands.literal("lijst").executes(SetupCommands::bannerLijst))
+				.then(Commands.argument("nr", IntegerArgumentType.integer(1, Banners.MAX_NR)).executes(SetupCommands::bannerZet)));
 		bc.then(Commands.literal("point")
 				.then(Commands.literal("set").then(Commands.argument("naam", StringArgumentType.word()).suggests(PUNTEN)
 						.executes(SetupCommands::pointSet)))
@@ -183,6 +190,32 @@ final class SetupCommands {
 			return BcCommand.fout(ctx, "Er staat geen label binnen zes blokken.");
 		}
 		return BcCommand.ok(ctx, "Label verwijderd.");
+	}
+
+	// banner
+
+	private static int bannerZet(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+		int nr = IntegerArgumentType.getInteger(ctx, "nr");
+		String fout = Banners.plaats(ctx.getSource().getPlayerOrException(), nr);
+		if (fout != null) {
+			return BcCommand.fout(ctx, "Geen banner: " + fout + ".");
+		}
+		return BcCommand.ok(ctx, "Banner " + nr + " hangt onder het blok waar je naar kijkt.");
+	}
+
+	private static int bannerWeg(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+		int nr = Banners.verwijderDichtstbij(ctx.getSource().getPlayerOrException());
+		if (nr == 0) {
+			return BcCommand.fout(ctx, "Er hangt geen banner binnen acht blokken.");
+		}
+		return BcCommand.ok(ctx, "Banner " + nr + " weggehaald.");
+	}
+
+	private static int bannerLijst(CommandContext<CommandSourceStack> ctx) {
+		List<Integer> nummers = Banners.nummers();
+		return BcCommand.info(ctx, nummers.isEmpty()
+				? "Er hangen geen banners (in de geladen stukken van de wereld)."
+				: nummers.size() + " banners in de geladen stukken van de wereld: " + nummers + ".");
 	}
 
 	// point

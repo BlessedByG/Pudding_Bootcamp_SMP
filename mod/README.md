@@ -174,7 +174,8 @@ blok waar je naar kijkt, tot 32 blokken). De commando's per ronde zetten de mees
 | Finale | (de vloer en tribune van hierboven) | `/finale plek 1` (winnaar King of the Hill), `/finale plek 2` (winnaar FFA) |
 
 Daarna: `/quiz presentator <speler>` en `/clown uitverkoren <speler>`. Labels boven de
-verzamelpunten: `/bc label zet <tekst>`.
+verzamelpunten: `/bc label zet <tekst>`. Banners met een foto (3 bij 5): kijk naar het blok waar hij
+onder moet hangen en doe `/bc banner <nr>` (welk nummer welke foto is: `pack/aanleveren/banners_overzicht.png`).
 
 `/<ronde> start` weigert met één regel en verandert dan niets als er een regio, punt of kit mist
 (`ontbreekt: kooi, start_geel_2`), een startpunt buiten de border ligt, een tribuneplek op de vloer
@@ -194,7 +195,7 @@ onder *Commands*.
 | Clown vs All | `/clown rad\|go\|start\|stop`, `uitverkoren [<speler>]`, `troon`, `jagerplek [<nr>]`, `vloer <diameter>`, `tribune [<nr>]`, `wachttekst [<tekst>]`, `kroon <speler>`, `krimp <grootte> [<sec>]` |
 | FFA | `/ffa start\|stop\|go`, `krimp <grootte> [<sec>]`, `wachttekst [<tekst>]` |
 | Finale | `/finale start\|stop\|go`, `combatlog`, `crash`, `plek 1\|2`, `spelers [<speler1> <speler2>]`, `krimp <grootte> [<sec>]`, `wachttekst [<tekst>]` |
-| Algemeen | `/bc wand`, `region save\|add\|show\|list\|del`, `point set\|block\|tp\|list\|del`, `label zet\|weg`, `status`, `kit <naam> [<speler>]`, `team <speler> <kleur\|weg>`, `schrik <spelers> [<foto>]`, `klop <spelers>`, `kijker <speler> aan\|uit`, `doodtekst lijst\|nieuw <tekst>\|weg <nr>\|standaard`, `reset` |
+| Algemeen | `/bc wand`, `region save\|add\|show\|list\|del`, `point set\|block\|tp\|list\|del`, `label zet\|weg`, `banner <nr>\|weg\|lijst`, `status`, `kit <naam> [<speler>]`, `team <speler> <kleur\|weg>`, `schrik <spelers> [<foto>]`, `klop <spelers>`, `kijker <speler> aan\|uit`, `doodtekst lijst\|nieuw <tekst>\|weg <nr>\|standaard`, `reset` |
 
 **Staff** is wie in creative of spectator staat: de mod blijft van ze af (geen teleport, geen kit,
 ze tellen niet mee). Zet host, camera's en admins dus in creative of spectator vóór een ronde.

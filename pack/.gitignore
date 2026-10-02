@@ -11,3 +11,7 @@ aanleveren/schrik_*
 aanleveren/*.ogg
 aanleveren/*.wav
 aanleveren/logo.*
+aanleveren/banner_*
+aanleveren/banners_*
+assets/bootcamp/models/
+assets/bootcamp/items/

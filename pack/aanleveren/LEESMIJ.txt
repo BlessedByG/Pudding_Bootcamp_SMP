@@ -42,3 +42,15 @@ Daarna vanuit de repo:
 
 Dat maakt pack/bootcamp-pack.zip en print de SHA-1 voor server.properties.
 Zonder foto komt er een placeholder in; zonder geluid is het stil.
+
+Banners (foto's op een doek van 3 bij 5 blokken, aan een stok, in de wereld):
+
+  banner_1.png, banner_2.png, ...   Zonder gaten in de nummers (ook .jpg of .jpeg). Elk formaat;
+                                    BouwPack snijdt ze in het midden bij tot 3:5 en maakt ze
+                                    288 x 480. Een webp eerst omzetten:
+                                      ffmpeg -i foto.webp banner_6.png
+  banners_overzicht.png             Maakt BouwPack zelf: alle banners met hun nummer, zodat je
+                                    weet welke /bc banner <nr> welke foto is.
+
+Ophangen in de wereld: kijk naar het blok waar de banner onder moet hangen en doe
+/bc banner <nr>. Weghalen: /bc banner weg (de dichtstbijzijnde).

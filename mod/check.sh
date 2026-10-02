@@ -71,7 +71,7 @@ if [ -d "$CMD_DIR" ]; then
 		start stop resterend timer poort open dicht hint hinttekst blokken vastleggen \
 		volgende schema wave startplek punten veldhoogte aftekst poortmelding valmobs startpoort naarei naarmobarena naarquiz valgrens hier prijskader warden vuurwerk \
 		presentator bank podium lamp draai beurt goed fout punt einde winnaar naararena \
-		rad go uitverkoren troon jagerplek vloer tribune wachttekst kroon krimp plek spelers combatlog crash klop; do
+		rad go uitverkoren troon jagerplek vloer tribune wachttekst kroon krimp plek spelers combatlog crash klop banner; do
 		grep -rq "\"$c\"" "$CMD_DIR" || { fout "command-literal \"$c\" ontbreekt"; MIST=1; }
 	done
 	[ "${MIST:-0}" -eq 0 ] && ok "alle literals aanwezig"
