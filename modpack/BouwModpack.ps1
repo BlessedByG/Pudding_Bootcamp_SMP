@@ -15,7 +15,7 @@
 param(
     [Parameter(Mandatory = $true)][string]$Server,
     [string]$ServerNaam = "Pudding's Bootcamp",
-    [string]$Versie = "1.0.0"
+    [string]$Versie = "1.1.0"
 )
 
 $ErrorActionPreference = 'Stop'
@@ -29,6 +29,7 @@ $Bestanden = @(
     @{ Project = 'sodium';                   Versie = 'mc26.2-0.9.2-fabric'; Map = 'mods' },
     @{ Project = 'iris';                     Versie = '1.11.4+26.2-fabric';  Map = 'mods' },
     @{ Project = 'simple-voice-chat';        Versie = 'fabric-2.6.24+26.2';  Map = 'mods' },
+    @{ Project = 'essential';                Versie = '1.5.0.1';             Map = 'mods' },
     @{ Project = 'complementary-reimagined'; Versie = 'r5.9.3';              Map = 'shaderpacks' },
     @{ Project = 'complementary-unbound';    Versie = 'r5.9.3';              Map = 'shaderpacks' }
 )
@@ -72,7 +73,7 @@ $Index = [ordered]@{
     game          = 'minecraft'
     versionId     = $Versie
     name          = "Pudding's Bootcamp"
-    summary       = 'Simple Voice Chat en Complementary Shaders (Sodium en Iris) voor de Pudding Bootcamp.'
+    summary       = 'Simple Voice Chat, Essential (emotes) en Complementary Shaders (Sodium en Iris) voor de Pudding Bootcamp.'
     files         = $Files
     dependencies  = [ordered]@{ minecraft = $Minecraft; 'fabric-loader' = $FabricLoader }
 }
