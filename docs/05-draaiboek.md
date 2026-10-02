@@ -322,7 +322,8 @@ Minstens één keer de hele avond met 4 tot 8 testers. Let vooral op:
 Kort en op de borden in het basiskamp:
 
 1. Geen x-ray, geen cheats, geen mods die voordeel geven. Sodium en dat soort dingen mag.
-   Simple Voice Chat en het resource pack zijn verplicht.
+   Simple Voice Chat en het resource pack zijn verplicht. Het makkelijkst: het modpack
+   ([modpack/LEESMIJ.md](../modpack/LEESMIJ.md)), daar zit alles in, ook de shaders.
 2. Niet streamsnipen: niet op andermans stream kijken waar de uitgang is of waar de punten in
    het Ei zitten.
 3. Teams: maximaal 5. Wie het eerst uit het doolhof is, kiest het eerst.

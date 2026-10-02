@@ -51,5 +51,6 @@ elkaar zit, hoe je het technisch bouwt en hoe de avond zelf verloopt.
 - [docs/05-draaiboek.md](docs/05-draaiboek.md): tijdschema, rollen, bouwlijst, checklists.
 - [docs/06-open-keuzes.md](docs/06-open-keuzes.md): alle besluiten en wat nog praktisch open staat.
 - [docs/07-voice.md](docs/07-voice.md): Simple Voice Chat en de voice-regels per ronde.
+- [modpack/](modpack/LEESMIJ.md): het modpack voor de streamers (Simple Voice Chat, Sodium, Iris, Complementary), als `.mrpack`.
 - [docs/08-taakplan.md](docs/08-taakplan.md): het plan om de mod om te bouwen naar dit rondeplan.
 - [mod/](mod/README.md): de mod zelf. **Let op:** die implementeert nog het oude rondeplan (horde, King of the SMP, finale) tot het taakplan is uitgevoerd.
