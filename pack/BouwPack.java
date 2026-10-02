@@ -44,7 +44,7 @@ import java.util.zip.ZipOutputStream;
  * gedraaid, 16 vakken in de teamkleuren, pijltje vast bovenin;</li>
  * <li>knipt de foto en elke stand van het rad in tegels (zie hieronder) en schrijft de fonts;</li>
  * <li>maakt van {@code banner_1}, {@code banner_2}, ... (zonder gaten) banners van 3 bij 5 blokken: de foto in
- * het midden bijgesneden tot 3:5, als item-texture, met een model (een doek aan een stok) en een
+ * het midden bijgesneden tot 3:5, als bloktexture (één atlas met de stok), met een model (een doek aan een stok) en een
  * itemdefinitie {@code bootcamp:banner_<n>}; plus {@code aanleveren/banners_overzicht.png} met de nummers;</li>
  * <li>schrijft {@code pack.mcmeta};</li>
  * <li>zipt alles naar {@code pack/bootcamp-pack.zip} en print de SHA-1 voor
@@ -285,9 +285,13 @@ public class BouwPack {
 		System.out.println("Quiz-rad: " + STANDEN + " standen en " + VAKKEN.length + " opgelichte vakken getekend, " + ((STANDEN + VAKKEN.length) * 4) + " tegels.");
 
 		// 4. De banners: banner_1, banner_2, ... (zonder gaten), elk in het midden bijgesneden tot 3 breed
-		// bij 5 hoog, als item-texture met een model (een doek aan een stok) en een itemdefinitie. De mod
+		// bij 5 hoog, als bloktexture met een model (een doek aan een stok) en een itemdefinitie. De mod
 		// hangt ze op als item display met item_model bootcamp:banner_<n>.
-		Path bannerTex = assets.resolve("textures").resolve("item");
+		// De foto staat bij de bloktexturen, net als de stok: een model mag maar één atlas gebruiken, en
+		// textures/item/ zit sinds 26.x in een eigen atlas (items.png).
+		Path bannerTex = assets.resolve("textures").resolve("block");
+		// De oude plek (pack 10) leeg, anders gaan die foto's dubbel mee in de zip.
+		leeg(assets.resolve("textures").resolve("item"));
 		Path modellen = assets.resolve("models").resolve("item");
 		Path itemDefs = assets.resolve("items");
 		leeg(bannerTex);
@@ -309,7 +313,7 @@ public class BouwPack {
 			schrijf(modellen.resolve("banner_" + nr + ".json"), """
 					{
 					  "parent": "bootcamp:item/banner",
-					  "textures": {"foto": "bootcamp:item/banner_%d"}
+					  "textures": {"foto": "bootcamp:block/banner_%d"}
 					}
 					""".formatted(nr));
 			schrijf(itemDefs.resolve("banner_" + nr + ".json"), """

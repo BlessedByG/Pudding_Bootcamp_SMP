@@ -208,7 +208,8 @@ pack/
   assets/bootcamp/textures/font/rad_SS_R_C.png de tegels van stand SS van het quiz-rad
   assets/bootcamp/sounds.json                 bootcamp:schrik, bootcamp:klop en bootcamp:rad
   assets/bootcamp/sounds/*.ogg                gekopieerd uit aanleveren/
-  assets/bootcamp/textures/item/banner_N.png  banner N, 288 x 480
+  assets/bootcamp/textures/block/banner_N.png banner N, 288 x 480 (bij de bloktexturen: een model mag maar
+                                              één atlas gebruiken, en de stok is een bloktexture)
   assets/bootcamp/models/item/banner.json     het model: een doek aan een stok (BANNER_MODEL in BouwPack)
   assets/bootcamp/models/item/banner_N.json   banner.json met de foto van banner N
   assets/bootcamp/items/banner_N.json          de itemdefinitie bootcamp:banner_N
