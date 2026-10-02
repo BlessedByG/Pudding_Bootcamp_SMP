@@ -8,6 +8,7 @@
 #   - options.txt          GUI-schaal 3, zodat bossbar en titles goed in beeld passen
 #   - config/iris.properties  shaders aan, met Complementary Reimagined
 #   - servers.dat          de bootcamp-server in de Multiplayer-lijst, resource pack automatisch aan
+# En als modpack/icon.png er ligt, wordt dat het icoon van de instance.
 #
 # Het serveradres staat bewust niet in dit script: de repo is publiek.
 
@@ -104,6 +105,14 @@ $w.Write([byte]0)                                               # einde server
 $w.Write([byte]0)                                               # einde root
 $w.Flush()
 [IO.File]::WriteAllBytes((Join-Path $Bouw 'overrides\servers.dat'), $stroom.ToArray())
+
+# Het icoon van de instance: de Modrinth App en Prism lezen icon.png uit de root van het pack.
+$Icoon = Join-Path $Map 'icon.png'
+if (Test-Path $Icoon) {
+    Copy-Item $Icoon (Join-Path $Bouw 'icon.png')
+} else {
+    Write-Host 'Geen modpack/icon.png: het pack krijgt het standaardicoon van de launcher.'
+}
 
 # 4. Zippen, met / in de namen (Compress-Archive in PowerShell 5 zet er \ in).
 Add-Type -AssemblyName System.IO.Compression

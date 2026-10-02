@@ -18,6 +18,8 @@ Verder zet het pack klaar:
 - **shaders aan** met Complementary Reimagined (`config/iris.properties`);
 - **de bootcamp-server** in de Multiplayer-lijst (`servers.dat`), met het resource pack op
   automatisch aan, zodat er bij het joinen geen vraag komt.
+- **het logo** als icoon van de instance (`icon.png` in het pack; de Modrinth App en Prism lezen
+  dat uit).
 
 Het pack bevat zelf geen mods: alleen een lijst met de vaste versies, met de download-url en de
 hashes van Modrinth. De launcher haalt ze bij het importeren zelf op, dus het bestand is een paar kB
@@ -29,7 +31,9 @@ en iedereen krijgt precies dezelfde, officiële bestanden.
 powershell -ExecutionPolicy Bypass -File modpack/BouwModpack.ps1 -Server "<adres>:<poort>"
 ```
 
-Dat maakt `modpack/Puddings-Bootcamp-1.0.0.mrpack`. Het serveradres staat bewust niet in de repo
+Dat maakt `modpack/Puddings-Bootcamp-1.0.0.mrpack`. Het icoon komt uit `modpack/icon.png` (vierkant,
+bijvoorbeeld 512 x 512); dat staat net als de andere aangeleverde plaatjes niet in git, dus leg het
+zelf neer. Het serveradres staat bewust niet in de repo
 (die is publiek); geef het mee met `-Server`. Een nieuwe versie van het pack: pas de versies in
 `$Bestanden` aan (het versienummer zoals op Modrinth) en bouw met `-Versie 1.0.1`. De Simple Voice
 Chat in het pack moet bij die op de server passen (dezelfde 2.6.x).
