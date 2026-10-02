@@ -1,0 +1,5 @@
+# Gemaakt door BouwModpack.ps1
+*.mrpack
+bouw/
+# Het logo voor het pack: aangeleverd, niet in de publieke repo (net als pack/aanleveren)
+icon.png

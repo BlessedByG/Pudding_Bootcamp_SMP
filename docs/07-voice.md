@@ -1,7 +1,8 @@
 # Voice: Simple Voice Chat
 
 Alle voice loopt via de mod **Simple Voice Chat** (van henkelmax). Iedereen installeert de
-client-mod, de server draait de Fabric-versie. Geen Discord-call ernaast, anders is proximity
+client-mod (die zit in het modpack voor de streamers, zie [modpack/LEESMIJ.md](../modpack/LEESMIJ.md)), de
+server draait de Fabric-versie. Geen Discord-call ernaast, anders is proximity
 zinloos.
 
 Spelers hoeven **niks** te doen, te typen of aan te klikken, en de bootcamp-mod doet ook niks met
