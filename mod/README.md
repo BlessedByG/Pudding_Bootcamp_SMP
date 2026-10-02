@@ -212,7 +212,7 @@ seconde worden bijgezet, zodat je met `@a[tag=...]` kunt kijken. Zelf zetten hee
 | 4 Quiz | `/quiz start`. Pudding draait met de nether star, keurt met de wol, geeft of pakt punten met de emerald en beëindigt met de barrier (met bevestiging), of `/quiz einde`, bij gelijkspel `/quiz winnaar <kleur>`. Daarna vieren tot Pudding de ender pearl gebruikt (of `/quiz naararena`): dan iedereen naar de tribune van de Arena. |
 | 5 Clown vs All | `/clown rad` (of `/clown start` zonder rad), iedereen staat bevroren klaar, dan `/clown go`. |
 | 6 FFA | `/ffa start`, dan `/ffa go`. De winnaar staat daarna in beeld en gaat door naar de finale. |
-| 7 Finale | `/finale start` (de winnaar van King of the Hill tegen die van de FFA; `/finale spelers` laat zien wie), dan `/finale go`. De kroning volgt vanzelf; na twintig seconden vuurwerk gaat iedereen samen naar het basiskamp, de King met zijn kroon. Logt een finalist uit, dan pauzeert de finale en kiest Pudding (als op): `/finale combatlog` (de ander wint) of `/finale crash` (stoppen; als hij terug is `/finale start` en `/finale go`). |
+| 7 Finale | `/finale start` (de winnaar van King of the Hill tegen die van de FFA; `/finale spelers` laat zien wie), dan `/finale go`. De kroning volgt vanzelf; na twintig seconden vuurwerk gaat iedereen samen naar het basiskamp, zonder spullen of armor; de King houdt alleen zijn kroon. Logt een finalist uit, dan pauzeert de finale en kiest Pudding (als op): `/finale combatlog` (de ander wint) of `/finale crash` (stoppen; als hij terug is `/finale start` en `/finale go`). |
 
 Tussen twee rondes in is er geen border en geen PvP. Gaat er in een ronde iets mis in de mod zelf,
 dan breekt die ronde zichzelf af met een melding in de chat en de fout in de console; de server

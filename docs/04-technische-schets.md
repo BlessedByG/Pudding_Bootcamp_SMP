@@ -1076,8 +1076,9 @@ opnieuw. Logt hij in tijdens de pauze, dan wordt hij kijker en krijgen de ops ee
 **Kroning** (na de finale): iedereen naar de tribune, de winnaar naar `troon` (het podium) met de kroon en de
 zweefkroon, twintig seconden vuurpijlen, title `KING OF THE SMP BOOTCAMP` met de kop en de naam
 als subtitle. Na het vuurwerk eindigt de ronde en gaat iedereen die meedoet naar `basiskamp`
-(`Finale.naarHetBasiskamp`): weer speler (niet meer dood of kijker), adventure; de King houdt rol
-`KROON`, zijn kroon en zijn spullen. Wie daarna inlogt, gaat ook naar het basiskamp. De bossbar
+(`Finale.naarHetBasiskamp`): weer speler (niet meer dood of kijker), adventure, geheald, inventory,
+armor en offhand leeg (`clearContent`), effecten weg. De King houdt rol `KROON` en krijgt meteen
+alleen de kroon terug, met Glowing en de zweefkroon (`Kroon.geef`). Wie daarna inlogt, gaat ook naar het basiskamp. De bossbar
 `Pudding's Bootcamp · King: Speler7` (goud) en de zweefkroon boven de King blijven tot `/bc reset`.
 
 ## Kijkers: wie af of dood is

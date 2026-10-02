@@ -253,7 +253,8 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
       allebei: de nummer twee van de FFA). `/finale start`: die twee op `finale_1` en `finale_2`,
       FFA-kit, de rest op de tribune, DE FINALE met hun koppen, stil tot `/finale go`. Wie wint:
       kroning op het podium, iedereen op de tribune, vuurwerk, KING OF THE SMP BOOTCAMP met de kop
-      van de winnaar. Na twintig seconden staat iedereen in het basiskamp, de King met zijn kroon;
+      van de winnaar. Na twintig seconden staat iedereen in het basiskamp, zonder spullen of armor,
+      de King alleen met zijn kroon;
       de bossbar "King: <naam>" en de zwevende kroon blijven tot `/bc reset`. Log
       een finalist uit: de finale pauzeert, de ander staat stil, de ops krijgen een melding.
       `/finale combatlog`: de ander krijgt de kroning. Nog een keer met `/finale crash`: de

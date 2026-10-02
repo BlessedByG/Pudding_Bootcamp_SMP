@@ -357,15 +357,24 @@ public final class Finale extends RondeLogica {
 	}
 
 	/**
-	 * Na het vuurwerk: weer gewoon speler, met de anderen in het basiskamp. De King houdt zijn kroon,
-	 * zweefkroon en bossbar (tot {@code /bc reset}).
+	 * Na het vuurwerk: weer gewoon speler, geheald en zonder spullen of armor, met de anderen in het
+	 * basiskamp. De King houdt alleen zijn kroon, Glowing, zweefkroon en bossbar (tot {@code /bc reset}).
 	 */
 	public static void naarHetBasiskamp(MinecraftServer server, ServerPlayer speler) {
 		SpelerStatus st = Spel.status(speler);
 		st.dood = false;
 		st.tribunepunt = null;
-		Spel.zetRol(server, speler, Kroon.isKing(speler) ? Rol.KROON : Rol.SPELER);
+		speler.getInventory().clearContent();
 		speler.setGameMode(GameType.ADVENTURE);
+		Mc.heal(speler);
+		if (Kroon.isKing(speler)) {
+			// De kroon ging mee met de armor; hij krijgt hem meteen terug.
+			Kroon.geef(server, speler);
+		} else {
+			speler.removeAllEffects();
+			Spel.zetRol(server, speler, Rol.SPELER);
+		}
+		speler.inventoryMenu.broadcastChanges();
 		Spel.naarPunt(speler, "basiskamp");
 	}
 
