@@ -55,6 +55,8 @@ final class QuizCommand {
 				.then(Commands.argument("nummer", IntegerArgumentType.integer(1, Quiz.VUURWERK_PER_BANK))
 						.executes(QuizCommand::vuurwerk))));
 		cmd.then(Commands.literal("draai").executes(ctx -> actie(ctx, (q, s) -> q.draai(s), "Het rad draait.")));
+		cmd.then(Commands.literal("beurt").then(Commands.argument("kleur", StringArgumentType.word()).suggests(BcCommand.KLEUREN)
+				.executes(QuizCommand::beurt)));
 		cmd.then(Commands.literal("goed").executes(ctx -> actie(ctx, (q, s) -> q.goed(s), "Goed.")));
 		cmd.then(Commands.literal("fout").executes(ctx -> actie(ctx, (q, s) -> q.fout(s), "Fout.")));
 		cmd.then(Commands.literal("punt").then(Commands.argument("kleur", StringArgumentType.word()).suggests(BcCommand.KLEUREN)
@@ -151,6 +153,23 @@ final class QuizCommand {
 		}
 		quiz.punt(ctx.getSource().getServer(), k, aantal);
 		return BcCommand.ok(ctx, (aantal >= 0 ? "+" : "") + aantal + " voor " + k.naam() + ".");
+	}
+
+	/** Noodknop voor het kompas: dit team meteen aan de beurt, zonder rad. */
+	private static int beurt(CommandContext<CommandSourceStack> ctx) {
+		Quiz quiz = RondeCommands.lopend(Quiz.class);
+		if (quiz == null) {
+			return BcCommand.fout(ctx, "De quiz loopt niet.");
+		}
+		Kleur k = BcCommand.kleur(ctx, "kleur");
+		if (k == null) {
+			return BcCommand.fout(ctx, "Kies rood, blauw, groen of geel.");
+		}
+		String fout = quiz.geefBeurt(ctx.getSource().getServer(), k);
+		if (fout != null) {
+			return BcCommand.fout(ctx, fout + ".");
+		}
+		return BcCommand.info(ctx, k.naam() + " is aan de beurt.");
 	}
 
 	private static int winnaar(CommandContext<CommandSourceStack> ctx) {
