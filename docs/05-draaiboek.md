@@ -13,18 +13,18 @@ Tijdschema, rollen en checklists voor de avond zelf. Tijden zijn een voorbeeld m
 | 20:02 | **Ronde 1: De Doolhof** (15 min, uitgang open na 4 min, hint na 10 min, teamkeuze bij de uitgang) | |
 | 20:18 | Iedereen in de finishruimte van het doolhof: teams in beeld, praatje. Dan `/doolhof naarei`: iedereen naar V2 bij het Ei. | Host, Admin 1 |
 | 20:20 | **Ronde 2: Het Ei** (15 min) | |
-| 20:36 | Winnaar van het Ei op het podium bij de mob arena, de rest op het plein. De winnaar pakt het Warden-ei uit het frame (of Pudding reikt het uit). | Host, Pudding |
+| 20:36 | Winnaar van het Ei op het podium bij de mob arena, de rest op het plein. De winnaar pakt het Warden-ei uit het frame (of Pudding reikt het uit). Dan `/ei naarmobarena`: iedereen naar de tribune van de mob arena. | Host, Pudding, Admin 1 |
 | 20:38 | **Pauze** (5 min). | Host |
 | 20:43 | **Ronde 3: De Mob Arena**: 5 beurten van 5 waves (wie wanneer speelt blijft een verrassing), elke beurt op het sein van Pudding (± 25 min) | Host, Admin 1 |
-| 21:08 | Winnend team. Naar de quiz. | Host |
+| 21:08 | Winnend team. Dan `/mobarena naarquiz`: iedereen naar de quiz. | Host, Admin 1 |
 | 21:10 | **Ronde 4: De Quiz** (± 15 min, Pudding presenteert en bepaalt) | Pudding, Admin 1 |
 | 21:25 | Winnend team. Naar de Arena. Host legt King of the Hill uit (zo heet de ronde in beeld; zeg nooit "Clown vs All"). "Het lot beslist wie de kroon krijgt." Het Rad landt op Clown. | Host, Admin 1 |
 | 21:28 | **Ronde 5: King of the Hill** (intern Clown vs All; iedereen stil tot `/clown go`, dan 10 sec countdown, geen timer, reken op 10 tot 20 min) | Admin 1 |
-| 21:45 | Winnaar. Iedereen behalve Clown de vloer op. | Admin 1 |
+| 21:45 | Winnaar. Iedereen de vloer op, ook Clown. | Admin 1 |
 | 21:47 | **Ronde 6: De FFA** (iedereen stil tot `/ffa go`, dan 10 sec countdown, geen timer, reken op 5 tot 10 min) | Admin 1 |
 | 21:58 | Winnaar FFA. `/finale spelers`: wie speelt de finale? Host kondigt aan: de winnaar van King of the Hill tegen de winnaar van de FFA. | Host, Admin 1 |
 | 22:00 | **Ronde 7: De Finale** (1 tegen 1, stil tot `/finale go`, dan 10 sec countdown, geen timer, reken op 2 tot 5 min) | Admin 1 |
-| 22:05 | **Kroning** op het podium in het midden van de Arena, tribunes vol. | Host |
+| 22:05 | **Kroning** op het podium in het midden van de Arena, tribunes vol. Na twintig seconden vuurwerk staat iedereen samen in het basiskamp. | Host |
 | 22:15 | Einde stream. | |
 
 Totaal ruim 1,5 uur speeltijd, plan 2 uur en een kwartier met buffer. De tijden van het doolhof
@@ -41,8 +41,8 @@ Wat de commander en de ref per ronde typen. Het volledige overzicht staat in
 | Ronde | Starten | Tijdens de ronde |
 |---|---|---|
 | 1 De Doolhof | `/doolhof start`, dan `/doolhof go` op het sein van Pudding | `/doolhof poort open`, `/doolhof resterend <sec>`, noodknop `/doolhof einde`; na afloop `/doolhof naarei` |
-| 2 Het Ei | `/ei start` | `/ei resterend <sec>` |
-| 3 De Mob Arena | `/mobarena start` | `/mobarena volgende` (elke volgende beurt), `/mobarena schema`, `/mobarena wave volgende` |
+| 2 Het Ei | `/ei start` | `/ei resterend <sec>`; na de huldiging `/ei naarmobarena` |
+| 3 De Mob Arena | `/mobarena start` | `/mobarena volgende` (elke volgende beurt), `/mobarena schema`, `/mobarena wave volgende`; na afloop `/mobarena naarquiz` |
 | 4 De Quiz | `/quiz start` | Pudding doet het met de vijf items (rad 1, goed 3, fout 4, punten 6, beëindigen 9); noodknoppen `/quiz draai`, `/quiz goed`, `/quiz fout`, `/quiz punt <kleur> [-1]`. Einde: `/quiz einde` (bij gelijke stand `/quiz winnaar <kleur>`); daarna stuurt Pudding iedereen met de ender pearl naar de Arena (noodknop `/quiz naararena`) |
 | 5 Clown vs All | `/clown rad`, dan `/clown go` op het sein van Pudding | `/clown kroon <speler>`, `/clown krimp <grootte>` |
 | 6 De FFA | `/ffa start`, dan `/ffa go` op het sein van Pudding | `/ffa krimp <grootte>` als het stilvalt |
@@ -64,11 +64,12 @@ Vooraf instellen, in minuten (blijft bewaard):
 | `/doolhof schrik` | elke schrikplek een willekeurige foto; `/doolhof schrik <nr> <1..5>` voor een vaste |
 | `/doolhof wachttekst` | "Wacht op het startsein" |
 | `/ei timer` | 15 |
-| `/ei blokken` | netherite 6, diamond 90, gold 120, redstone 10, emerald 10, tnt 10, glowstone 10, slime 10, target 5 (voorlopig; samen 271, dat moet op de deepslate passen) |
+| `/ei valgrens` | uit; zet hem met `/ei valgrens hier` op de grond onder het Ei |
+| `/ei blokken` | netherite 10, diamond 150, gold 200, iron 2000, redstone 20, emerald 30, lapis 30, tnt 20, glowstone 20, slime 30, target 30 (samen 2540, dat moet op de deepslate passen) |
 | `/mobarena punten` | zombie 1; skeleton, spider, cave spider 2; creeper 3; witch 4; vindicator 5; evoker 8; ravager 10; warden 50 |
 | `/mobarena aftekst` | "Af · je speelt geen beurt meer" |
 | `/mobarena veldhoogte` | 3 |
-| `/mobarena warden` | leven 200, klap 8, boom 5 (HP; 2 HP is één hartje) |
+| `/mobarena warden` | leven 200, klap 16, boom 10 (HP; 2 HP is één hartje) |
 | `/clown wachttekst` | "Wacht op het startsein" |
 | `/ffa wachttekst` | "Wacht op het startsein" |
 | `/finale wachttekst` | "Wacht op het startsein" |
@@ -81,7 +82,7 @@ Na elke bouwwijziging aan het Ei: `/ei vastleggen`.
 |---|---|---|
 | **Host / caster** | 1 | Praat op de stream, legt regels uit, kondigt rondes aan. Speelt Het Rad recht: "iedereen kan de kroon krijgen". |
 | **Pudding: presentator van de quiz** | 1 | Speelt verder gewoon mee in zijn team, maar presenteert de quiz vanaf het podium: leest de vragen voor, keurt met groene en rode wol, draait het rad met het derde item. Zijn team heeft in de quiz één speler minder. |
-| **Admin 1: commander** | 1 | Start elke ronde op het sein van Pudding, elke beurt van de mob arena (`/mobarena volgende`), sluit de quiz af (`/quiz einde`), draait het Rad (`/clown rad`) en geeft het startsein in Clown vs All en de FFA (`/clown go`, `/ffa go`). |
+| **Admin 1: commander** | 1 | Start elke ronde op het sein van Pudding, elke beurt van de mob arena (`/mobarena volgende`), stuurt iedereen door (`/doolhof naarei`, `/ei naarmobarena`, `/mobarena naarquiz`), sluit de quiz af (`/quiz einde`), draait het Rad (`/clown rad`) en geeft het startsein in Clown vs All en de FFA (`/clown go`, `/ffa go`). |
 | **Admin 2: ref** | 1 | Kijkt naar problemen: stuck spelers, disconnects, bugs met de kroon, een team dat scheef zit. Heeft het randgevallen-lijstje uit [03-kroon-regels.md](03-kroon-regels.md) bij de hand. |
 | **Camera** | 0 tot 2 | Kijker-accounts voor het hoofdbeeld: boven het doolhof, boven de mob arena, in de quizhal, boven de Arena. |
 | **Bouwers** | 2 tot 4 | Vooraf. Zie de bouwlijst hieronder. |
@@ -102,7 +103,8 @@ zit, maar de commander moet alleen commander zijn.
    geselecteerd als `poort_start` (elke opening een deel) (1 tot 2 avonden).
 4. Het zwevende Ei met de kettingen: schil van andere blokken, binnenkant gewone deepslate, geen
    gewone deepslate in schil of kettingen. Daarna regio `ei`, `eigebied`, de startplekken
-   `ei_spawn_n` en `/ei vastleggen` (gebouwd).
+   `ei_spawn_n`, `/ei valgrens hier` op de grond waar mensen landen als ze vallen, en
+   `/ei vastleggen` (gebouwd).
 5. Het plein bij de mob arena met een podium en een item frame: punt `ei_podium` op het podium,
    punt `ei_presentator` ernaast (voor Pudding), regio `ei_plein` (de vloer ervoor), `/ei prijskader` kijkend naar het frame, en `v3` op het
    plein.
@@ -165,16 +167,24 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
 - [ ] Het gif: met twee accounts, één kiest geen team. Timer op (`/doolhof resterend 5`):
       `DE TIJD IS OM`, paarse bossbar, in het doolhof Poison en om de 2 seconden een hart eraf,
       in de finishruimte niets. Doodgaan in het gif: spullen weg behalve je steak, basiskit
-      terug, `VERGIFTIGD` in de finishruimte en je zit in het kleinste team. Was je de laatste
-      zonder team: `DOOLHOF VOORBIJ`. `/doolhof einde` sluit het doolhof ook midden in het gif af.
+      terug, `VERGIFTIGD` in de finishruimte en je zit in het kleinste team. Na een minuut gif
+      `HET GIF WORDT STERKER` (2 hartjes per klap), na twee minuten 4. Met het gif begint het te regenen
+      en wordt het in een halve minuut nacht; na het doolhof wordt het weer dag. Laat de een met team terug
+      naar binnen lopen en de ander als laatste een team kiezen: niemand wordt weggehaald, in de chat staat dat
+      het doolhof wacht, en pas als de ander zelf de finishruimte in loopt of doodgaat
+      `DOOLHOF VOORBIJ`. `/doolhof einde` sluit het doolhof ook midden in het gif af.
 - [ ] Valkist in het doolhof: de bossbar noemt alleen de totale tijd. Een trapped chest openen geeft
       de jumpscare (willekeurige foto), de 8D-klop, of `/doolhof valmobs` husks en silverfish om je
       heen (open er een paar: ongeveer een kwart jumpscare, een kwart klop, de helft mobs); nog eens openen geeft een lege kist, een tweede speler krijgt hem wel. `/doolhof poortmelding uit`: de poort gaat stil
       open. Na `/doolhof stop` zijn de mobs weg.
 - [ ] `/ei vastleggen`, `/ei blokken`: het overzicht noemt het aantal deepslate-plekken.
+- [ ] `/ei valgrens hier` op de grond onder het Ei. Spring tijdens het Ei van een ketting: zodra je
+      de grond raakt sta je zonder valschade op je startplek, met `Gevallen · terug naar je
+      startplek` onderin; je punten en spullen heb je nog.
 - [ ] `/ei start`: spelers verdeeld over de startplekken, punten per block, alles wat je vindt in
       de chat, redstone (beide uitkomsten met aftellen onderin, een paar keer breken), emerald geeft
-      de ander een jumpscare en iedereen ziet groot wie naar wie, laatste minuut rood met aftellen,
+      een kistmenu (kies wie de jumpscare krijgt; dichtdoen en het komt terug) en iedereen ziet groot
+      wie naar wie, lapis idem maar de gekozene gaat terug naar zijn startplek, laatste minuut rood met aftellen,
       niets valt als item, kettingen en wereld niet te breken, niets neer te zetten behalve de TNT,
       dood = terug op je eigen startplek, winnaar bij de timer, daarna is de pickaxe weg (ook na
       `/ei stop`). Dan nog een keer `/ei start`: het Ei is weer heel en de blokken liggen ergens
@@ -187,18 +197,23 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
 - [ ] `/mobarena punten`: de tabel klopt.
 - [ ] Einde van het Ei: de winnaar staat op het podium, Pudding ernaast, de rest verspreid op het
       plein en kijkt naar het podium, vuurpijl boven het podium. Het Warden-ei zit in het frame; een ander
-      account kan het niet pakken, de winnaar of de presentator wel.
+      account kan het niet pakken, de winnaar of de presentator wel. Iedereen blijft op het plein
+      tot `/ei naarmobarena`: dan iedereen naar de tribune van de mob arena, en ligt het
+      Warden-ei nog in het frame, dan heeft de winnaar het nu.
 - [ ] `/mobarena start` met twee accounts in twee teams: geen schema in de chat
       (`/mobarena schema` laat het alleen jou zien), beide op hun eigen startplek, gloeiend in hun
       teamkleur, en tot `GO` kun je rondkijken maar niet lopen. Rook bij de spawnpunten, 5
-      seconden na de laatste kill de volgende wave, punten per kill in de sidebar, een ravager-
-      of evokerkill in de chat, mobs negeren de tribune en de kooi. Ga dood: de kooi, je
+      seconden na de laatste kill de volgende wave, bij elke kill een wolk en ring in de
+      teamkleur van de killer, punten per kill in de sidebar, een ravager- of evokerkill in de
+      chat, mobs negeren de tribune en de kooi. Ga dood: de kooi, je
       `/mobarena aftekst` onderin, na de beurt de tribune. Na wave 5: tekst meteen in beeld, 10
       seconden aftellen, dan pas het veld en de kooi naar de tribune; wie al op de tribune stond
       blijft staan. `/mobarena volgende` weigert tijdens die 10 seconden. Einde: winnaar, 10
-      seconden, daarna heeft iedereen een lege inventory en armor.
-- [ ] Warden-ei: vanaf het veld of de kooi weigert hij; vanaf de tribune: `WARDEN-EI` in beeld, en
-      de volgende wave is de warden, die bij punt `warden` uit de grond komt. Hij valt alleen wie
+      seconden, daarna heeft iedereen een lege inventory en armor en staat iedereen nog op de
+      tribune. `/mobarena naarquiz`: iedereen naar de bank van zijn team, Pudding op het podium.
+- [ ] Warden-ei: vanaf het veld of de kooi weigert hij; vanaf de tribune tijdens een beurt: `WARDEN-EI`
+      in beeld en de warden komt meteen bij punt `warden` uit de grond (tussen twee beurten of
+      tijdens de countdown weigert hij); de wave is pas klaar als hij dood is. Hij valt alleen wie
       in het veld staat aan, het publiek krijgt geen Darkness, en hij blijft tot hij dood is
       (`/mobarena wave volgende` als noodknop). De kill staat in de chat met 50 punten.
 - [ ] `/quiz presentator <naam>`, `/quiz start`: iedereen zonder spullen bij zijn bank, de
@@ -227,8 +242,7 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
       Bij nog 3 over heeft iedereen Strength I, ook de kroonhouder. Killt de kroonhouder een
       jager, dan ziet de rest zijn kop en naam groot met "pakt Speler3 · n over" en een brul. Jager raakt jager:
       geen schade. Kill de kroonhouder: kroon over, kroonpakket, reset. Laatste over wint.
-- [ ] `/ffa start`: iedereen behalve Clown op een willekeurige plek, Clown op de tribune,
-      iedereen stil. Kit: dezelfde als King of the Hill met 32 gapples, gewone diamond helm.
+- [ ] `/ffa start`: iedereen op een willekeurige plek, ook Clown, iedereen stil. Kit: dezelfde als King of the Hill met 32 gapples, gewone diamond helm.
       Onderin "Wacht op het startsein". `/ffa go`: 10 seconden, dan raakt iedereen iedereen.
       Kills rechts, wie af is in de chat, onderin "n kills · n over" voor wie vecht. Een kill
       komt groot in beeld bij de tribune en de killer (zachte brul), niet bij de andere
@@ -239,7 +253,9 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
       allebei: de nummer twee van de FFA). `/finale start`: die twee op `finale_1` en `finale_2`,
       FFA-kit, de rest op de tribune, DE FINALE met hun koppen, stil tot `/finale go`. Wie wint:
       kroning op het podium, iedereen op de tribune, vuurwerk, KING OF THE SMP BOOTCAMP met de kop
-      van de winnaar; de bossbar "King: <naam>" en de zwevende kroon blijven tot `/bc reset`. Log
+      van de winnaar. Na twintig seconden staat iedereen in het basiskamp, zonder spullen of armor,
+      de King alleen met zijn kroon;
+      de bossbar "King: <naam>" en de zwevende kroon blijven tot `/bc reset`. Log
       een finalist uit: de finale pauzeert, de ander staat stil, de ops krijgen een melding.
       `/finale combatlog`: de ander krijgt de kroning. Nog een keer met `/finale crash`: de
       finale stopt, daarna opnieuw `/finale start` en `/finale go`. `/finale spelers a b` zet ze met de hand.
@@ -268,7 +284,7 @@ Minstens één keer de hele avond met 4 tot 8 testers. Let vooral op:
 - [ ] Clown vs All: jagers kunnen elkaar niet raken, ook niet met pijlen. Kroonwissel zet
       iedereen goed terug. Rad landt op de uitverkorene; draai hem vijf keer. Voelt Strength II voor
       de kroonhouder te sterk of te zwak, en de 10 gapples genoeg?
-- [ ] FFA: iedereen behalve Clown staat op de vloer. Kijk hoe lang een potje duurt met 32
+- [ ] FFA: iedereen staat op de vloer, ook Clown. Kijk hoe lang een potje duurt met 32
       gapples, en bij welke grootte `/ffa krimp` het afmaakt.
 - [ ] Kijkers: tribune en kooi, geen schade, niet het veld op. Spring als kijker van de tribune
       de Arena in: je staat meteen weer op de tribune.

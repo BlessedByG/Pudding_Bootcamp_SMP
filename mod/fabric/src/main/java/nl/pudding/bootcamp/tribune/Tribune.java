@@ -25,6 +25,9 @@ import nl.pudding.bootcamp.game.Reset;
 import nl.pudding.bootcamp.game.RondeLogica;
 import nl.pudding.bootcamp.game.Spel;
 import nl.pudding.bootcamp.game.ronde1.Doolhof;
+import nl.pudding.bootcamp.game.ronde2.Ei;
+import nl.pudding.bootcamp.game.ronde3.MobArena;
+import nl.pudding.bootcamp.game.ronde7.Finale;
 import nl.pudding.bootcamp.game.SpelerStatus;
 import nl.pudding.bootcamp.rad.KroonRad;
 import nl.pudding.bootcamp.teams.Teams;
@@ -173,22 +176,31 @@ public final class Tribune {
 			case BASISKAMP -> "basiskamp";
 			// Na het doolhof eerst de finishruimte; na /doolhof naarei het Ei.
 			case DOOLHOF -> Doolhof.naarEi() ? "v2" : "doolhof_finish";
-			case EI -> "v3";
+			// Na het Ei eerst het plein; na /ei naarmobarena de tribune van de mob arena.
+			case EI -> Ei.naarMobarena() ? volgendTribunepunt(Ronde.MOBARENA) : "v3";
 			case MOBARENA -> {
-				// Na de mob arena naar de quiz: bij de bank van je team, de presentator op het podium.
+				// Na de mob arena eerst de tribune; na /mobarena naarquiz de quiz: bij de bank van je
+				// team, de presentator op het podium.
+				if (!MobArena.naarQuiz()) {
+					yield volgendTribunepunt(Ronde.MOBARENA);
+				}
 				if (Spel.isPresentator(speler) && Spel.punt("quiz_podium") != null) {
 					yield "quiz_podium";
 				}
 				Kleur k = Teams.keuze(speler);
 				yield k != null && Spel.punt("quiz_" + k.id()) != null ? "quiz_" + k.id() : "v3";
 			}
-			case QUIZ, CLOWN, FFA, FINALE -> volgendTribunepunt(Ronde.CLOWN);
+			case QUIZ, CLOWN, FFA -> volgendTribunepunt(Ronde.CLOWN);
+			// Na het vuurwerk van de kroning is iedereen samen in het basiskamp.
+			case FINALE -> Finale.naarBasiskamp() ? "basiskamp" : volgendTribunepunt(Ronde.CLOWN);
 		};
 	}
 
 	public static void naarVerzamelpunt(ServerPlayer speler) {
 		String punt = verzamelpunt(speler);
-		if (punt.startsWith("tribune_")) {
+		if (punt.startsWith("tribune_mob_")) {
+			naarTribune(speler, Ronde.MOBARENA);
+		} else if (punt.startsWith("tribune_")) {
 			naarTribune(speler, Ronde.CLOWN);
 		} else if (Spel.punt(punt) != null) {
 			Spel.naarPunt(speler, punt);
@@ -232,10 +244,11 @@ public final class Tribune {
 		}
 	}
 
-	/** Groot in beeld een willekeurige doodtekst, alleen voor de dode. */
+	/** Groot in beeld een willekeurige doodtekst, alleen voor de dode. Een lange over twee regels (R0.14). */
 	public static void doodtekst(ServerPlayer speler) {
-		String tekst = Doodteksten.kies(ConfigStore.get().doodteksten(), Spel.RANDOM);
-		Mc.title(speler, Mc.tekst(tekst, ChatFormatting.RED, ChatFormatting.BOLD), null, 5, 70, 20);
+		String[] regels = Doodteksten.verdeel(Doodteksten.kies(ConfigStore.get().doodteksten(), Spel.RANDOM));
+		Mc.title(speler, Mc.tekst(regels[0], ChatFormatting.RED, ChatFormatting.BOLD),
+				regels[1] == null ? null : Mc.tekst(regels[1], ChatFormatting.RED), 5, 70, 20);
 	}
 
 	/** Zet iemand op de tribune zonder er een kijker van te maken (voor het Rad, of in de mob arena). */

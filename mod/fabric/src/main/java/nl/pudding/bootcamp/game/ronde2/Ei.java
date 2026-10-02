@@ -17,6 +17,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.InteractionResult;
@@ -64,9 +65,11 @@ import nl.pudding.bootcamp.kits.Items26;
 import nl.pudding.bootcamp.kits.Kits;
 import nl.pudding.bootcamp.schrik.Schrik;
 import nl.pudding.bootcamp.teams.Teams;
+import nl.pudding.bootcamp.tribune.Tribune;
 import nl.pudding.bootcamp.visuals.Bossbar;
 import nl.pudding.bootcamp.visuals.Sidebar;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -91,6 +94,8 @@ public final class Ei extends RondeLogica {
 
 	private final Klassement stand = new Klassement();
 	private final Map<UUID, Integer> plus = new HashMap<>();
+	/** Emerald en lapis: wie er nog een speler moet kiezen, en voor wat. */
+	private final Map<UUID, ArrayDeque<Keuze>> keuzes = new HashMap<>();
 	private final Map<UUID, Integer> plusTot = new HashMap<>();
 	private final Map<UUID, Integer> hasteTot = new HashMap<>();
 	/** Glowstone: tot wanneer de pickaxe Efficiency V heeft. */
@@ -105,6 +110,8 @@ public final class Ei extends RondeLogica {
 	private boolean bevriezingLoopt;
 	private boolean timerGestart;
 	private int volgendeSpawn;
+	/** Na het Ei verzamelt iedereen op het plein; pas na {@code /ei naarmobarena} is de tribune van de mob arena het verzamelpunt. */
+	private static boolean naarMobarena;
 
 	public static void init() {
 		Huldiging.init();
@@ -165,11 +172,31 @@ public final class Ei extends RondeLogica {
 		if (fout != null) {
 			return fout;
 		}
+		fout = startplekOnderValgrens(Spel.instellingen().eiValgrens());
+		if (fout != null) {
+			return fout + " (/ei valgrens)";
+		}
 		return Spel.buitenRegio("eigebied", Spel.reeks("ei_spawn_"));
+	}
+
+	/**
+	 * R2.14: een startplek op of onder de valgrens zou wie daar staat steeds terugzetten.
+	 *
+	 * @return {@code null} als alle startplekken erboven liggen (of de valgrens uit staat), anders welke niet
+	 */
+	public static String startplekOnderValgrens(Integer grens) {
+		for (String naam : Spel.reeks("ei_spawn_")) {
+			Punt p = Spel.punt(naam);
+			if (p != null && Regels.vanHetEiGevallen(p.y(), grens)) {
+				return naam + " staat op y=" + (int) Math.floor(p.y()) + ", op of onder de valgrens y=" + grens;
+			}
+		}
+		return null;
 	}
 
 	@Override
 	public void start(MinecraftServer server) {
+		naarMobarena = false;
 		// Eerst het Ei terug en de puntenblokken erin; dat is klaar voordat de countdown afloopt.
 		EiOpslag.Vastlegging v = EiOpslag.get(server);
 		Map<Integer, BlockState> extra = strooi(v);
@@ -239,9 +266,10 @@ public final class Ei extends RondeLogica {
 		}
 		MinecraftServer server = speler.level().getServer();
 		switch (blok) {
-			case NETHERITE, DIAMOND, GOLD -> punten(server, speler, blok);
+			case NETHERITE, DIAMOND, GOLD, IRON -> punten(server, speler, blok);
 			case REDSTONE -> redstone(server, speler);
 			case EMERALD -> emerald(server, speler);
+			case LAPIS -> lapis(server, speler);
 			case TNT -> tnt(server, speler);
 			case GLOWSTONE -> glowstone(server, speler);
 			case SLIME -> slime(server, speler);
@@ -250,7 +278,7 @@ public final class Ei extends RondeLogica {
 		return false;
 	}
 
-	/** Alles wat iemand vindt, staat in de chat. */
+	/** Wat iemand vindt, staat in de chat (behalve iron: daarvan is er te veel). */
 	private static void chat(MinecraftServer server, ServerPlayer speler, Component wat) {
 		Mc.chatAllen(server, Component.empty().append(naam(speler)).append(wat));
 	}
@@ -260,13 +288,16 @@ public final class Ei extends RondeLogica {
 		stand.voegToe(speler.getUUID(), erbij);
 		plus.put(speler.getUUID(), erbij);
 		plusTot.put(speler.getUUID(), server.getTickCount() + PLUS_TICKS);
-		Mc.geluid(speler, SoundEvents.EXPERIENCE_ORB_PICKUP, 1f, 1f);
-		ChatFormatting kleur = switch (blok) {
-			case NETHERITE -> ChatFormatting.LIGHT_PURPLE;
-			case DIAMOND -> ChatFormatting.AQUA;
-			default -> ChatFormatting.GOLD;
-		};
-		chat(server, speler, Mc.tekst(" hakte " + blok.id() + " (+" + erbij + ")", kleur));
+		// Iron is er zoveel dat hij alleen voor de hakker klinkt (iets hoger) en niet in de chat komt.
+		Mc.geluid(speler, SoundEvents.EXPERIENCE_ORB_PICKUP, 1f, blok == EiBlok.IRON ? 1.4f : 1f);
+		if (blok != EiBlok.IRON) {
+			ChatFormatting kleur = switch (blok) {
+				case NETHERITE -> ChatFormatting.LIGHT_PURPLE;
+				case DIAMOND -> ChatFormatting.AQUA;
+				default -> ChatFormatting.GOLD;
+			};
+			chat(server, speler, Mc.tekst(" hakte " + blok.id() + " (+" + erbij + ")", kleur));
+		}
 		actionbar(server, speler);
 		toonSidebar(server);
 	}
@@ -301,15 +332,94 @@ public final class Ei extends RondeLogica {
 		Mc.geluidAllen(server, SoundEvents.GLASS_BREAK, 1f, 1f);
 	}
 
+	/** Emerald: kies uit een kistmenu wie de jumpscare krijgt. */
 	private void emerald(MinecraftServer server, ServerPlayer speler) {
-		List<ServerPlayer> anderen = new ArrayList<>(Spel.levend(server, Rol.SPELER));
-		anderen.remove(speler);
-		if (anderen.isEmpty()) {
-			Spel.melding(speler, Mc.tekst("Niemand om te laten schrikken", ChatFormatting.GRAY), 2);
+		kies(server, speler, Keuze.SCHRIK);
+	}
+
+	/** Lapis: kies uit een kistmenu wie terug moet naar zijn startplek. */
+	private void lapis(MinecraftServer server, ServerPlayer speler) {
+		kies(server, speler, Keuze.TERUG);
+	}
+
+	/** Wat de hakker straks met zijn keuze doet. */
+	private enum Keuze {
+		SCHRIK, TERUG
+	}
+
+	/**
+	 * Zet een keuze in de rij van deze speler en opent het menu als het nog niet open is. Twee
+	 * vondsten vlak na elkaar? Dan komt het tweede menu na het eerste.
+	 */
+	private void kies(MinecraftServer server, ServerPlayer speler, Keuze keuze) {
+		if (anderen(server, speler).isEmpty()) {
+			Spel.melding(speler, Mc.tekst("Er is niemand anders", ChatFormatting.GRAY), 2);
 			actionbar(server, speler);
 			return;
 		}
-		ServerPlayer ander = anderen.get(Spel.RANDOM.nextInt(anderen.size()));
+		keuzes.computeIfAbsent(speler.getUUID(), k -> new ArrayDeque<>()).add(keuze);
+		Mc.geluid(speler, SoundEvents.UI_BUTTON_CLICK.value(), 1f, 1f);
+		if (!KiesMenu.heeftOpen(speler)) {
+			openKeuze(server, speler);
+		}
+	}
+
+	private static List<ServerPlayer> anderen(MinecraftServer server, ServerPlayer speler) {
+		List<ServerPlayer> anderen = new ArrayList<>(Spel.levend(server, Rol.SPELER));
+		anderen.remove(speler);
+		return anderen;
+	}
+
+	/** Het menu voor de eerste keuze in de rij; is er niemand meer om te kiezen, dan vervalt de rij. */
+	private void openKeuze(MinecraftServer server, ServerPlayer speler) {
+		ArrayDeque<Keuze> rij = keuzes.get(speler.getUUID());
+		if (rij == null || rij.isEmpty()) {
+			return;
+		}
+		List<ServerPlayer> anderen = anderen(server, speler);
+		if (anderen.isEmpty()) {
+			keuzes.remove(speler.getUUID());
+			return;
+		}
+		Component titel = rij.peek() == Keuze.SCHRIK
+				? Mc.tekst("Wie laat je schrikken?", ChatFormatting.DARK_GREEN)
+				: Mc.tekst("Wie stuur je terug naar de start?", ChatFormatting.DARK_BLUE);
+		KiesMenu.open(speler, titel, anderen, (s, wie) -> gekozen(server, s, wie));
+	}
+
+	private void gekozen(MinecraftServer server, ServerPlayer speler, UUID wie) {
+		if (Spel.actief() != this) {
+			return;
+		}
+		ArrayDeque<Keuze> rij = keuzes.get(speler.getUUID());
+		ServerPlayer ander = server.getPlayerList().getPlayer(wie);
+		if (rij == null || rij.isEmpty()) {
+			return;
+		}
+		if (ander == null || !anderen(server, speler).contains(ander)) {
+			// Net weg of uitgelogd: het menu komt terug met wie er nu nog zijn.
+			Planner.na(1, () -> openKeuze(server, speler));
+			return;
+		}
+		Keuze keuze = rij.poll();
+		if (rij.isEmpty()) {
+			keuzes.remove(speler.getUUID());
+		}
+		if (keuze == Keuze.SCHRIK) {
+			schrik(server, speler, ander);
+		} else {
+			terug(server, speler, ander);
+		}
+		// Nog een keuze in de rij: het volgende menu, een tick later.
+		Planner.na(1, () -> {
+			if (Spel.actief() == this && !KiesMenu.heeftOpen(speler)) {
+				openKeuze(server, speler);
+			}
+		});
+	}
+
+	/** De jumpscare van een emerald, naar wie de hakker koos. */
+	private void schrik(MinecraftServer server, ServerPlayer speler, ServerPlayer ander) {
 		Schrik.op(ander);
 		Spel.melding(speler, Component.empty().append(Mc.tekst("Jumpscare naar ", ChatFormatting.GREEN)).append(naam(ander)), 2);
 		actionbar(server, speler);
@@ -332,6 +442,22 @@ public final class Ei extends RondeLogica {
 				actionbar(server, a);
 			}
 		});
+	}
+
+	/** De lapis: wie de hakker koos, gaat terug naar zijn eigen startplek. Groot in beeld voor iedereen. */
+	private void terug(MinecraftServer server, ServerPlayer speler, ServerPlayer ander) {
+		String spawn = Spel.status(ander).eiSpawn;
+		Spel.naarPunt(ander, spawn != null ? spawn : "ei_spawn_1");
+		Mc.geluid(ander, SoundEvents.ENDERMAN_TELEPORT, 1f, 1f);
+		Mc.geluid(speler, SoundEvents.ENDERMAN_TELEPORT, 1f, 1.4f);
+		MutableComponent wie = Component.empty().append(naam(speler)).append(Mc.tekst(" → ", ChatFormatting.BLUE)).append(naam(ander));
+		Mc.titleAllen(server, wie, Mc.tekst("TERUG NAAR START", ChatFormatting.BLUE, ChatFormatting.BOLD), 0, 50, 10);
+		chat(server, speler, Component.empty().append(Mc.tekst(" stuurde ", ChatFormatting.BLUE)).append(naam(ander))
+				.append(Mc.tekst(" terug naar de start", ChatFormatting.BLUE)));
+		Spel.melding(speler, Component.empty().append(Mc.tekst("Terug naar de start: ", ChatFormatting.BLUE)).append(naam(ander)), 2);
+		Spel.melding(ander, Component.empty().append(Mc.tekst("Teruggestuurd door ", ChatFormatting.BLUE)).append(naam(speler)), 3);
+		actionbar(server, speler);
+		actionbar(server, ander);
 	}
 
 	/** TNT: een TNT in je inventory. Zet je hem neer, dan gaat hij meteen af ({@link #zetTnt}). */
@@ -591,11 +717,49 @@ public final class Ei extends RondeLogica {
 				knal(server, tnt.getX(), tnt.getY(), tnt.getZ());
 			}
 		}
+		valgrens(server);
+	}
+
+	/** R2.14: wie van het Ei valt, gaat op of onder de valgrens terug naar zijn startplek, met zijn punten en spullen. */
+	private void valgrens(MinecraftServer server) {
+		Integer grens = Spel.instellingen().eiValgrens();
+		if (grens == null) {
+			return;
+		}
+		for (ServerPlayer s : Mc.deelnemers(server)) {
+			if (!Regels.vanHetEiGevallen(s.getY(), grens)) {
+				continue;
+			}
+			String spawn = Spel.status(s).eiSpawn != null ? Spel.status(s).eiSpawn : "ei_spawn_1";
+			Punt p = Spel.punt(spawn);
+			// Een startplek onder de grens zou hem elke tick terugzetten; die weigert /ei start al.
+			if (p == null || Regels.vanHetEiGevallen(p.y(), grens)) {
+				continue;
+			}
+			Spel.naarPunt(s, spawn);
+			s.resetFallDistance();
+			Mc.geluid(s, SoundEvents.ENDERMAN_TELEPORT, 1f, 1f);
+			Spel.melding(s, Mc.tekst("Gevallen · terug naar je startplek", ChatFormatting.YELLOW), 2);
+			actionbar(server, s);
+		}
+	}
+
+	/** R2.14: wie op of onder de valgrens landt, krijgt geen valschade; hij gaat toch terug naar zijn startplek. */
+	@Override
+	public boolean magSchade(ServerPlayer slachtoffer, DamageSource bron) {
+		return !(bron.is(DamageTypeTags.IS_FALL) && Regels.vanHetEiGevallen(slachtoffer.getY(), Spel.instellingen().eiValgrens()));
 	}
 
 	@Override
 	public void seconde(MinecraftServer server) {
 		int nu = server.getTickCount();
+		// Nog een keuze open en het menu dicht? Dan komt het terug, tot er gekozen is.
+		for (UUID id : new ArrayList<>(keuzes.keySet())) {
+			ServerPlayer s = server.getPlayerList().getPlayer(id);
+			if (s != null && !KiesMenu.heeftOpen(s)) {
+				openKeuze(server, s);
+			}
+		}
 		// Glowstone voorbij: de pickaxe terug naar zijn eigen Efficiency.
 		for (Map.Entry<UUID, Integer> e : new ArrayList<>(turboTot.entrySet())) {
 			if (nu >= e.getValue()) {
@@ -670,6 +834,33 @@ public final class Ei extends RondeLogica {
 		toonSidebar(server);
 	}
 
+	/** Of iedereen al naar de mob arena is ({@code /ei naarmobarena}); tot dan is het plein het verzamelpunt. */
+	public static boolean naarMobarena() {
+		return naarMobarena;
+	}
+
+	/**
+	 * {@code /ei naarmobarena}: na de huldiging iedereen die meedoet van het plein naar de tribune van
+	 * de mob arena. Ligt het Warden-ei nog in het frame, dan krijgt de winnaar het nu.
+	 *
+	 * @return {@code null} als het gelukt is, anders waarom niet
+	 */
+	public static String naarDeMobarena(MinecraftServer server) {
+		if (Spel.actief() != null) {
+			return "er loopt nog een ronde (" + Spel.actief().ronde().naam() + ")";
+		}
+		if (Spel.ronde() != Ronde.EI) {
+			return "dit is voor na het Ei";
+		}
+		naarMobarena = true;
+		Huldiging.prijsAlsnog(server);
+		for (ServerPlayer s : Mc.deelnemers(server)) {
+			Tribune.naarTribune(s, Ronde.MOBARENA);
+		}
+		Mc.titleAllen(server, Mc.tekst("OP NAAR DE MOB ARENA", ChatFormatting.GOLD, ChatFormatting.BOLD), null, 10, 50, 15);
+		return null;
+	}
+
 	/** Van het Ei of een ketting gevallen: geheald terug op je eigen startplek, met je punten en spullen. */
 	@Override
 	public void onDeath(MinecraftServer server, ServerPlayer speler, DamageSource bron) {
@@ -732,6 +923,12 @@ public final class Ei extends RondeLogica {
 
 	@Override
 	public void end(MinecraftServer server) {
+		keuzes.clear();
+		for (ServerPlayer s : Mc.spelers(server)) {
+			if (KiesMenu.heeftOpen(s)) {
+				s.closeContainer();
+			}
+		}
 		for (ServerPlayer s : Mc.deelnemers(server)) {
 			// De pickaxe is alleen voor het Ei.
 			Items26.haalWeg(s, Items26.EI_TAG);

@@ -14,7 +14,7 @@ import java.util.UUID;
 
 /**
  * Eén bossbar voor iedereen: kort, altijd hetzelfde formaat. Na de kroning blijft
- * {@code Pudding Bootcamp · King: <naam>} staan tot {@code /bc reset}.
+ * {@code Pudding's Bootcamp · King: <naam>} staan tot {@code /bc reset}.
  */
 public final class Bossbar {
 	private static final ServerBossEvent BAR = new ServerBossEvent(
@@ -33,7 +33,7 @@ public final class Bossbar {
 		});
 	}
 
-	/** Tussen de rondes: {@code Pudding Bootcamp}, of na de kroning de King. */
+	/** Tussen de rondes: {@code Pudding's Bootcamp}, of na de kroning de King. */
 	public static void basiskamp() {
 		if (king != null) {
 			BAR.setName(Mc.tekst(BossbarTekst.king(king), ChatFormatting.GOLD, ChatFormatting.BOLD));

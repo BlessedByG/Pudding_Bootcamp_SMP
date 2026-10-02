@@ -2,7 +2,7 @@ package nl.pudding.bootcamp.core;
 
 /** De teksten van de bossbar: kort, altijd hetzelfde formaat (tabel in docs/04). */
 public final class BossbarTekst {
-	public static final String BASISKAMP = "Pudding Bootcamp";
+	public static final String BASISKAMP = "Pudding's Bootcamp";
 	public static final String QUIZ_DRAAI = "Quiz · draai het rad";
 	public static final String DOOLHOF_WACHT = "Doolhof · wacht op de start";
 	public static final String CLOWN_WACHT = "King of the Hill · wacht op de start";
@@ -19,6 +19,11 @@ public final class BossbarTekst {
 	/** Na de timer, zolang niet iedereen een team heeft. */
 	public static String doolhofGif() {
 		return "Doolhof · de tijd is om · gif";
+	}
+
+	/** Met hoe sterk het gif nu is: {@code gif x4} na twee minuten. */
+	public static String doolhofGif(int keer) {
+		return keer <= 1 ? doolhofGif() : doolhofGif() + " x" + keer;
 	}
 
 	public static String ei(int seconden) {
@@ -58,6 +63,6 @@ public final class BossbarTekst {
 	}
 
 	public static String king(String naam) {
-		return "Pudding Bootcamp · King: " + naam;
+		return "Pudding's Bootcamp · King: " + naam;
 	}
 }

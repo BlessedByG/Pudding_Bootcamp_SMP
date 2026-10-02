@@ -122,12 +122,12 @@ zet iemand met de hand in een team; `/bc team <speler> weg` haalt de keuze weg. 
 iedereen uit zijn teamkleur naar `jagers`; de keuze blijft bewaard, maar wordt niet meer
 gebruikt. In ronde 6 en de finale zit iedereen zonder team.
 
-**Maximum per team**: 5, of meer als er meer dan 20 spelers zijn: `max(5, ceil(spelers / 4))`,
+**Maximum per team**: 4, of meer als er meer dan 16 spelers zijn: `max(4, ceil(spelers / 4))`,
 met spelers = iedereen die meedoet op het moment dat de eerste kiest.
 
 **Het teammenu** is een vanilla kistmenu (`ChestMenu`, 4 rijen, `MenuType.GENERIC_9x4`) met een
 `SimpleContainer`, een rij per kleur. Vooraan een gekleurd wolblok met de teamnaam en het aantal
-(`Rood · 3/5`); een vol team is grijze wol. Daarachter de hoofden van wie er al in zit, met hun skin
+(`Rood · 3/4`); een vol team is grijze wol. Daarachter de hoofden van wie er al in zit, met hun skin
 (online met hun eigen profiel, offline op naam) en hun naam in de teamkleur; zijn het er meer dan
 acht, dan zeven hoofden en `+3 meer`. Elke seconde bijgewerkt. Items verplaatsen kan niet (het menu
 annuleert elke klik en handelt hem zelf af). **Alleen een klik op de wol** zet je in het team en
@@ -135,7 +135,7 @@ sluit het menu; een klik op een hoofd doet niets. Je blijft waar je bent (zie ro
 menu zonder keuze terwijl je op de finishlijn (`doolhof_uit`) staat, dan opent het na 2 seconden
 opnieuw. Allemaal server-side, geen client-mod nodig.
 
-**De sidebar in het doolhof** (`Teams`) laat per kleur `Rood 3/5` zien (vet, in de teamkleur) en
+**De sidebar in het doolhof** (`Teams`) laat per kleur `Rood 3/4` zien (vet, in de teamkleur) en
 daaronder wie erin zit, met het hoofd ervoor als hij online is. De sidebar heeft maar 15 regels
 (`core`: `TeamOverzicht`): past het niet met één naam per regel, dan komen er twee, drie of meer naast
 elkaar, zo weinig als kan. Elke seconde bekeken (ook `/bc team` en wie in- of uitlogt), alleen
@@ -231,8 +231,8 @@ Waar een jumpscare vandaan komt:
   vaste foto of willekeurig: `/doolhof schrik <nr> <1..5|random>`, standaard willekeurig.
 - Doolhof: een valkist (trapped chest) openen, één keer per kist per speler: 25% de jumpscare met
   een willekeurige foto, 25% de 8D-klop, 50% mobs (R1.4).
-- Het Ei: een emerald block, bij een willekeurige andere levende deelnemer, met een willekeurige
-  foto; iedereen ziet groot wie naar wie.
+- Het Ei: een emerald block, bij de deelnemer die de hakker in een kistmenu kiest, met een
+  willekeurige foto; iedereen ziet groot wie naar wie.
 
 ## Modules
 
@@ -283,7 +283,7 @@ hele avond geldt (setup, spelers, noodknoppen) staat onder `/bc`.
 | `/doolhof start\|stop\|resterend` | Ronde 1. `start` zet iedereen klaar in de startruimte, zonder countdown. |
 | `/doolhof go` | De countdown na `/doolhof start`; daarna gaat de startpoort open en loopt de timer. |
 | `/doolhof wachttekst [<tekst>]` | De tekst in de actionbar zolang het doolhof op `/doolhof go` wacht, standaard `Wacht op het startsein`. Zonder tekst: de huidige laten zien. Bewaard in `bootcamp.json`. |
-| `/doolhof einde` | Noodknop: het doolhof nu afsluiten zoals na het gif (kleinste team voor wie er nog geen heeft, iedereen naar de finishruimte). Bijvoorbeeld als iemand in de finishruimte blijft staan zonder te kiezen. |
+| `/doolhof einde` | Noodknop: het doolhof nu afsluiten: kleinste team voor wie er nog geen heeft, en wie nog in het doolhof loopt naar de finishruimte (met zijn spullen). Zonder deze knop wacht het doolhof tot niemand er meer in loopt. Bijvoorbeeld als iemand in de finishruimte blijft staan zonder te kiezen. |
 | `/doolhof naarei` | Na het doolhof: iedereen die meedoet van de finishruimte naar `v2` bij het Ei, title `OP NAAR HET EI`. Weigert zolang er een ronde loopt. |
 | `/doolhof timer [<minuten>]` | Hoe lang het doolhof duurt, standaard 15. |
 | `/doolhof poort [<minuten>]` | Na hoeveel minuten de poort van de uitgang opengaat, standaard 4. |
@@ -296,16 +296,19 @@ hele avond geldt (setup, spelers, noodknoppen) staat onder `/bc`.
 | `/doolhof valmobs [<min> [<max>]]` | Hoeveel mobs (husks en silverfish door elkaar) er uit een valkist komen: elke keer willekeurig van `<min>` t/m `<max>`, standaard 3 t/m 10. Met één getal altijd zoveel; `0` is alleen de jumpscare of de klop (50/50). Bewaard in `bootcamp.json`. |
 | `/ei start\|stop\|resterend` | Ronde 2. |
 | `/ei timer [<minuten>]` | Hoe lang het Ei duurt, standaard 15. |
-| `/ei blokken [<soort> <aantal>]` | Hoeveel blokken van een soort (`netherite`, `diamond`, `gold`, `redstone`, `emerald`, `tnt`, `glowstone`, `slime`, `target`) de mod in het Ei strooit. Zonder argumenten: het overzicht, met het aantal deepslate-plekken in het Ei. |
+| `/ei blokken [<soort> <aantal>]` | Hoeveel blokken van een soort (`netherite`, `diamond`, `gold`, `iron`, `redstone`, `emerald`, `lapis`, `tnt`, `glowstone`, `slime`, `target`) de mod in het Ei strooit. Zonder argumenten: het overzicht, met het aantal deepslate-plekken in het Ei. |
+| `/ei valgrens [hier\|<y>\|uit]` | Wie tijdens het Ei met zijn voeten op of onder deze hoogte komt, gaat meteen terug naar zijn eigen startplek, met zijn punten en spullen en zonder valschade. `hier`: de blokhoogte van je voeten (ga op de grond staan waar mensen landen). Zonder argument: de huidige. Standaard uit. Weigert als een `ei_spawn_n` op of onder de grens staat. Bewaard in `bootcamp.json`. |
 | `/ei prijskader` | Het item frame waar je naar kijkt (binnen 5 blokken) wordt het frame voor het Warden-ei: daar verschijnt het als het Ei voorbij is. Slaat punt `ei_prijskader` op. |
+| `/ei naarmobarena` | Na de huldiging: iedereen die meedoet van het plein naar de tribune van de mob arena (`tribune_mob_n`), title `OP NAAR DE MOB ARENA`. Ligt het Warden-ei nog in het frame en is de winnaar online, dan krijgt hij het nu. Weigert zolang er een ronde loopt, en als de laatste ronde niet het Ei was. |
 | `/ei vastleggen` | Legt het Ei vast zoals het nu gebouwd is: alle blokken in regio `ei`. Eén keer na het bouwen, en opnieuw na elke bouwwijziging. Niet tijdens ronde 2. Antwoord: `Ei vastgelegd: 54.000 blokken, waarvan 27.812 deepslate.` |
 | `/mobarena start` | Ronde 3: loot het schema (geheim, niet in de chat) en start beurt 1. |
 | `/mobarena volgende` | Start de volgende beurt. Weigert zolang de huidige beurt nog loopt, ook tijdens de 10 seconden na de beurt. |
 | `/mobarena schema` | Het schema, alleen voor wie het typt (de spelers zien het niet): per beurt wie in welke arena staat, wie af is. |
+| `/mobarena naarquiz` | Na de mob arena: iedereen die meedoet van de tribune naar de quiz, bij de bank van zijn team (`quiz_<kleur>`), de presentator naar `quiz_podium`; title `OP NAAR DE QUIZ`. Weigert zolang er een ronde loopt, en als de laatste ronde niet de mob arena was. |
 | `/mobarena startplek <rood\|blauw\|groen\|geel> <1\|2>` | Zet startplek 1 of 2 van dat team op de plek waar je staat, met je kijkrichting. Elk team heeft er twee, zodat de twee spelers van een team niet in elkaar spawnen. Hetzelfde als `/bc point set start_<kleur>_<nummer>`. |
 | `/mobarena stop` | Breekt ronde 3 af. |
 | `/mobarena wave volgende` | De huidige wave telt als klaar (overgebleven mobs weg), ook de warden. |
-| `/mobarena warden [leven\|klap\|boom <hp>]` | De warden uit het Warden-ei, in HP (2 HP is één hartje): `leven` (standaard 200), `klap` (8) en `boom` voor de sonic boom (5). Zonder argumenten: de huidige waarden. Geldt voor de volgende warden; bewaard in `bootcamp.json`. Zijn punten: `/mobarena punten warden <n>`. |
+| `/mobarena warden [leven\|klap\|boom <hp>]` | De warden uit het Warden-ei, in HP (2 HP is één hartje): `leven` (standaard 200), `klap` (16) en `boom` voor de sonic boom (10). Zonder argumenten: de huidige waarden. Geldt voor de volgende warden; bewaard in `bootcamp.json`. Zijn punten: `/mobarena punten warden <n>`. |
 | `/mobarena punten [<mob> <punten>]` | Hoeveel punten een mobtype waard is. Zonder argumenten: de tabel. |
 | `/mobarena aftekst [<tekst>]` | De tekst die in de actionbar staat bij wie in de mob arena sneuvelt, standaard `Af · je speelt geen beurt meer`. Zonder tekst: de huidige laten zien. Bewaard in `bootcamp.json`. |
 | `/mobarena veldhoogte [<blokken>]` | Tot hoeveel blokken boven de selectie een veld telt voor kijkers en wachtenden, standaard 3. Op regio `tribune_mob` telt het veld nooit, dus meestal hoef je hier niets aan te doen. Bij `0` telt alleen wie binnen de selectie zelf staat. Geldt meteen; bewaard in `bootcamp.json`. |
@@ -379,11 +382,12 @@ ronde. Een nieuw aantal puntenblokken geldt vanaf de volgende `/ei start`.
 | `/doolhof valmobs` | 3 t/m 10 | 0 tot 20, min niet boven max |
 | `/doolhof schrik` | per plek willekeurig | foto 1 t/m 5, of random |
 | `/ei timer` | 15 | 5 tot 60 |
-| `/ei blokken` | netherite 6, diamond 90, gold 120, redstone 10, emerald 10, tnt 10, glowstone 10, slime 10, target 5 (voorlopig; samen 271) | 0 of meer; samen niet meer dan de deepslate-plekken in het Ei |
+| `/ei valgrens` | uit | y -64 tot 319, boven alle `ei_spawn_n` |
+| `/ei blokken` | netherite 10, diamond 150, gold 200, iron 2000, redstone 20, emerald 30, lapis 30, tnt 20, glowstone 20, slime 30, target 30 (samen 2540) | 0 of meer; samen niet meer dan de deepslate-plekken in het Ei |
 | `/mobarena punten` | zombie 1; skeleton, spider, cave spider 2; creeper 3; witch 4; vindicator 5; evoker 8; ravager 10; elk ander type 1 | 0 tot 100 |
 | `/mobarena aftekst` | `Af · je speelt geen beurt meer` | tot 60 tekens |
 | `/mobarena veldhoogte` | 3 blokken | 0 tot 10 |
-| `/mobarena warden` | leven 200, klap 8, boom 5 (HP) | leven 20 tot 1000, klap 0 tot 60, boom 0 tot 40 |
+| `/mobarena warden` | leven 200, klap 16, boom 10 (HP) | leven 20 tot 1000, klap 0 tot 60, boom 0 tot 40 |
 | `/clown wachttekst` | `Wacht op het startsein` | tot 60 tekens |
 | `/ffa wachttekst` | `Wacht op het startsein` | tot 60 tekens |
 | `/finale wachttekst` | `Wacht op het startsein` | tot 60 tekens |
@@ -441,10 +445,10 @@ hij de doos om alle delen heen; bij de cirkel van `vloer` is dat het vierkant er
 |---|---|
 | `basiskamp` | Spawn en reset. |
 | `doolhof_start` | De startruimte in het midden van het doolhof; ook waar een nep-uitgang je neerzet. |
-| `doolhof_finish` | In de finishruimte: waar wie tijdens het gif doodgaat neerkomt, en waar wie nog in het doolhof liep heen gaat als het doolhof voorbij is. Binnen regio `doolhof`, niet in `doolhof_gif`. |
+| `doolhof_finish` | In de finishruimte: waar wie tijdens het gif doodgaat neerkomt, en waar `/doolhof einde` wie nog in het doolhof liep heen zet. Binnen regio `doolhof`, niet in `doolhof_gif`. |
 | `v2` | Verzamelpunt bij het Ei: na `/doolhof naarei`. |
 | `ei_spawn_1` t/m `ei_spawn_n` | De startplekken aan het buiteneinde van de kettingen. Zoveel als je wilt, genummerd vanaf 1. Spelers worden er om en om over verdeeld; na een dodelijke klap kom je terug op je eigen startplek. |
-| `v3` | Verzamelpunt bij de mob arena, op het plein: voor wie tussen het Ei en de mob arena inlogt. |
+| `v3` | Verzamelpunt bij de mob arena, op het plein: voor wie na het Ei inlogt, tot `/ei naarmobarena`; daarna is de tribune van de mob arena het verzamelpunt. |
 | `ei_podium` | Het podium op het plein, kijkend naar het plein: daar komt de winnaar van het Ei. |
 | `ei_presentator` | Ook op het podium, naast de winnaar: daar komt de presentator (Pudding) om het Warden-ei uit te reiken, ook als hij staff is. |
 | `ei_prijskader` | Het item frame voor het Warden-ei. Zetten met `/ei prijskader` terwijl je naar het frame kijkt. |
@@ -574,7 +578,7 @@ dood geannuleerd, de speler geheald en afgehandeld volgens de ronde:
 | Ronde | Wat er gebeurt |
 |---|---|
 | 1 | Geheald terug naar `doolhof_start`. |
-| 2 | Geheald terug naar zijn eigen `ei_spawn_n`, punten en spullen blijven. |
+| 2 | Geheald terug naar zijn eigen `ei_spawn_n`, punten en spullen blijven. Wie niet doodgaat maar op of onder de valgrens komt, ook (zie ronde 2). |
 | 3 | Kijker in de kooi (`kooi`), na de beurt naar de tribune. Af voor de rest van de mob arena: een latere beurt op het schema blijft leeg. Punten blijven staan. Inventory leeg: wie af is speelt niet meer, en na ronde 3 levert iedereen toch alles in. Doodtekst. Het Warden-ei houdt hij. Zijn alle spelers in het veld af, dan is de beurt klaar. |
 | 4 | Kan niet: geen schade. |
 | 5, kroonhouder | Kroonwissel naar de killer, anders de laatste hit, anders een willekeurige levende jager. Ex-kroonhouder wordt kijker op de tribune. |
@@ -597,8 +601,8 @@ willekeurig grapje als title (lijst in `bootcamp.json`) en gaat naar `doolhof_st
 tick gecontroleerd) staat zonder team krijgt het teammenu. Na `/doolhof hint` minuten (standaard 10)
 voor wie nog binnen is de title `HINT` met als subtitle `/doolhof hinttekst` (of de windrichting).
 **Finish**: achter de echte uitgang ligt een afgesloten ruimte met de finishlijn. Wie een kleur
-kiest krijgt de title `GEFINISHT` met `Je zit in Rood · je mag terug het doolhof in`, een chatregel
-voor iedereen (`Speler7 zit in Rood (3/5)`) en blijft waar hij is. Wie gefinisht is doet gewoon mee
+kiest krijgt de title `GEFINISHT` met `Je zit in Rood`, een chatregel
+voor iedereen (`Speler7 zit in Rood (3/4)`) en blijft waar hij is. Wie gefinisht is doet gewoon mee
 als hij terug naar binnen loopt, om anderen te helpen of meer loot te zoeken: loot, mobs, valkisten,
 schrikplekken en nep-uitgangen werken ook voor hem, en doodgaan zet hem terug in de startruimte.
 Zijn team houdt hij. Logt hij uit en weer in, dan gaat hij verder waar hij was. **Valkisten**: een
@@ -612,36 +616,54 @@ speler gaat een kist één keer af (een dubbele kist is één kist), daarna gaat
 open als lege kist. Staff zet niets af. De mobs verdwijnen aan het einde van het doolhof en komen na
 een crash niet terug.
 
-**Timer op: het gif.** Heeft nog niet iedereen een team, dan is het doolhof niet meteen voorbij.
+**Timer op: het gif.** Heeft nog niet iedereen een team, of loopt er nog iemand in het doolhof, dan is
+het doolhof niet meteen voorbij.
 Title voor iedereen `DE TIJD IS OM` met `Het doolhof is giftig · ga naar de finish`,
 `entity.elder_guardian.curse`, bossbar `Doolhof · de tijd is om · gif` in paars. Wie in regio
 `doolhof_gif` staat (het doolhof zelf, niet de finishruimte) krijgt elke seconde kort Poison I
 (weg zodra je eruit loopt) en om de 2 seconden een klap van 1 hart die door armor heen gaat
 (`core`: `Regels.DOOLHOF_GIF_ELKE`, `DOOLHOF_GIF_SCHADE`). Poison alleen doodt niet, de klap wel.
+Met het gif gaat het regenen en wordt het in 30 seconden nacht (R1.10, `Lucht`, `core`: `Dagtijd`): de
+mod zet de stilstaande klok elke tick een stukje verder, tot middernacht, en de regen komt bij de
+spelers vanzelf geleidelijk. Aan het eind van het doolhof (ook `/doolhof stop` of `/doolhof einde`)
+wordt het in 20 seconden weer middag, door de ochtend heen, en droog; `/bc reset` zet het meteen op
+middag en droog.
+**Na elke minuut gif verdubbelt de klap** (R1.8, `Regels.gifSchade`): 1, 2, 4, 8 en dan 16 hartjes,
+verder niet. Op het moment dat het sterker wordt, ziet wie binnen staat de title `HET GIF WORDT
+STERKER` met `4 hartjes per klap · ga naar de finish` en `entity.elder_guardian.curse`; de bossbar
+wordt `Doolhof · de tijd is om · gif x4`.
 Dat geldt voor iedereen, ook wie al gefinisht is en terug naar binnen liep. **Wie tijdens het gif
 doodgaat** (door het gif of anders) raakt al zijn spullen kwijt behalve het eten uit de basiskit
 (`basis.json`), krijgt de rest van de basiskit terug, gaat naar punt `doolhof_finish` in de
 finishruimte met de title `VERGIFTIGD` en een chatregel `Speler7 bezweek aan het gif`. Heeft hij
 nog geen team, dan krijgt hij het kleinste (bij gelijk willekeurig, zodat de teams even groot
-blijven), met in de chat `en zit nu in Groen (3/5)`; hij telt niet mee als iemand die de uitgang
-vond. Het gif loopt tot iedereen een team heeft; `/doolhof einde` is de noodknop.
+blijven), met in de chat `en zit nu in Groen (3/4)`; hij telt niet mee als iemand die de uitgang
+vond. Het gif loopt tot iedereen een team heeft en niemand er meer in loopt; `/doolhof einde` is
+de noodknop.
 
-**Einde** (iedereen een team, of `/doolhof einde`): wie nog geen team heeft gaat naar het kleinste
-team (bij gelijk: willekeurig) en ziet in de actionbar `Je zit in Groen`; iedereen ziet de title
-`DOOLHOF VOORBIJ` met als subtitle `14 van de 20 vonden de uitgang` (wie zelf over de finish kwam),
-en iedereen verzamelt in de finishruimte: wie nog in het doolhof loopt (regio `doolhof_gif`) gaat
-naar `doolhof_finish`, wie al in de finishruimte staat blijft staan. Daar kan de host de teams
+**Einde** (R1.9): het doolhof is voorbij als iedereen een team heeft **en niemand meer in het
+doolhof loopt** (regio `doolhof_gif`), gecontroleerd bij elke finish, elke dood in het gif en elke
+seconde. Niemand wordt weggehaald: wie met een team terug naar binnen ging, loopt zelf naar de
+finishruimte of gaat dood in het gif. Heeft iedereen een team maar loopt er nog iemand binnen, dan
+een grijze chatregel voor iedereen: `Iedereen heeft een team. Het doolhof is voorbij zodra niemand er
+meer in loopt.` Gebeurt dat vóór de timer, dan wacht het doolhof; loopt de timer af, dan begint het
+gif voor wie nog binnen staat. Dan: iedereen ziet de title `DOOLHOF VOORBIJ` met als subtitle `14 van
+de 20 vonden de uitgang` (wie zelf over de finish kwam). **`/doolhof einde`** (de noodknop) sluit
+meteen af: wie nog geen team heeft gaat naar het kleinste team (bij gelijk: willekeurig) en ziet in
+de actionbar `Je zit in Groen`, en wie nog in het doolhof loopt gaat naar `doolhof_finish`, met zijn
+spullen. Daar kan de host de teams
 bespreken; **`/doolhof naarei`** zet daarna iedereen die meedoet naar `v2` bij het Ei, met de
 title `OP NAAR HET EI`. Tot dat command is de finishruimte ook het verzamelpunt voor wie
 tussendoor inlogt of in de void valt; daarna `v2`. `/doolhof start` begint
 zonder teams: het doolhof is de teamkeuze, dus oude keuzes gaan weg.
 
-**Welkom.** Wie joint terwijl er geen ronde loopt, krijgt de title `PUDDING BOOTCAMP` met als
+**Welkom.** Wie joint terwijl er geen ronde loopt, krijgt de title `PUDDING'S BOOTCAMP` met als
 subtitle `Welkom, <naam>` en `block.note_block.chime`, alleen voor hem. Tijdens een ronde niet,
 dan komt hij gewoon terug waar hij hoort.
 
 **Ronde 2, het Ei.** Weigert zonder vastlegging (`ontbreekt: /ei vastleggen`) en als de aantallen
-van `/ei blokken` samen meer zijn dan de deepslate-plekken. Start:
+van `/ei blokken` samen meer zijn dan de deepslate-plekken. Ook als een `ei_spawn_n` op of onder de
+valgrens staat (`ei_spawn_3 staat op y=60, op of onder de valgrens y=64 (/ei valgrens)`). Start:
 
 1. **Het Ei terugzetten**: elk blok in regio `ei` zoals het is vastgelegd, verspreid over een paar
    ticks (een paar duizend blokken per tick) zodat de server niet hapert; klaar voordat de
@@ -662,11 +684,12 @@ doos van meer dan 250.000 blokken weigert hij: dat is een verkeerde selectie.
 **Breken** (`PlayerBlockBreakEvents.BEFORE`): buiten regio `ei` geannuleerd. Binnen `ei` breekt
 elk blok zonder drop (`level.removeBlock`, event geannuleerd). De gestrooide blokken geven punten
 of een effect, alleen op de plekken waar de mod ze strooide: glowstone of slime als versiering in
-de schil doet niets. **Alles wat iemand vindt staat in de chat**, met de naam in de teamkleur
+de schil doet niets. **Alles wat iemand vindt staat in de chat** (behalve iron, daarvan is er te veel), met de naam in de teamkleur
 (`Speler7 hakte diamond (+10)`, `Speler7 hakte redstone: iedereen bevroren`, `Speler7 liet
 Speler3 schrikken`).
 
-- netherite +50, diamond +10, gold +5: `entity.experience_orb.pickup`, en twee seconden lang
+- netherite +50, diamond +10, gold +5, iron +1: `entity.experience_orb.pickup` (bij iron iets hoger), en
+  twee seconden lang
   `+10 · 85 punten · #4` in de actionbar. Bij netherite staat de `+50` in paars.
 - redstone: 50/50. **Haste**: Haste II 15 seconden voor de breker, `block.beacon.power_select`,
   title `HASTE` met subtitle `15 seconden sneller hakken`, alleen voor hem. **Bevriezing**:
@@ -675,11 +698,18 @@ Speler3 schrikken`).
   `door <naam>`, `block.glass.break`. Een nieuwe bevriezing vervangt een lopende. Bij beide
   telt de actionbar de resterende seconden af (`Haste · 7`, `Bevroren · 12`) en klinkt een pling
   als het voorbij is.
-- emerald: jumpscare bij een willekeurige andere deelnemer in het Ei. Groot in beeld voor
+- emerald: de breker kiest in een kistmenu (`KiesMenu`: de koppen van de andere levende
+  deelnemers, met hun naam in de teamkleur) wie de jumpscare krijgt. Doet hij het menu dicht
+  zonder te kiezen, dan komt het elke seconde terug tot hij kiest; twee vondsten vlak na elkaar
+  geven twee menu's na elkaar. Groot in beeld voor
   iedereen: title `Speler7 → Speler3` (namen in teamkleur) met subtitle `JUMPSCARE`. De ander
   staat dan zelf in de foto; hij krijgt dezelfde title zodra de foto wegvaagt, plus drie
   seconden `Met dank aan Speler7` in de actionbar. De breker ziet ook `Jumpscare naar Speler3`
   in de actionbar.
+- lapis: dezelfde soort keuze, `Wie stuur je terug naar de start?`. De gekozene gaat naar zijn
+  eigen startplek (`ei_spawn_n`) met `entity.enderman.teleport`. Iedereen ziet de title
+  `Speler7 → Speler3` met `TERUG NAAR START` in blauw, een chatregel `Speler7 stuurde Speler3
+  terug naar de start`, en beiden zien het in hun actionbar.
 - TNT: een TNT in je inventory (gemarkeerd als Ei-item, dus aan het eind weer weg), title `TNT`
   met `zet hem neer: hij gaat meteen af`. Neerzetten (rechtsklik op een blok) zet geen blok maar
   een brandende TNT op die plek, zonder zwaartekracht zodat hij ook aan de zijkant van het Ei
@@ -732,8 +762,13 @@ item met `custom_data={bootcamp_ei:1b}` verdwijnt uit inventory, offhand en curs
 inloggen kwijt. Het Ei blijft uitgehakt liggen tot de volgende `/ei start`; ook `/bc reset` zet het
 terug (zonder puntenblokken).
 
+Iedereen blijft op het plein tot de commander **`/ei naarmobarena`** doet: dan gaat iedereen die
+meedoet naar `tribune_mob_n` (om en om), title `OP NAAR DE MOB ARENA`. Ligt het Warden-ei dan nog
+in het frame, dan pakt de winnaar het alsnog (zelfde chatregel), als hij online is. Wie daarna
+inlogt, gaat ook naar de tribune.
+
 **Ronde 3, mob arena.** Eén veld (`veld`); per beurt staan er van elk team twee spelers tegelijk
-in. Geen kit: iedereen speelt met wat hij heeft. Start bij `v3`: border `mobarena`, iedereen naar
+in. Geen kit: iedereen speelt met wat hij heeft. Start: border `mobarena`, iedereen naar
 `tribune_mob_n`, dan het **schema** (`core`: `MobSchema`):
 
 - Per team een willekeurige volgorde van de spelers; in beurt *b* spelen speler *2b* en *2b + 1*.
@@ -770,21 +805,21 @@ niemand schade en is er niets meer om te killen. Daarna wacht de mod op `/mobare
 naam `Warden-ei`. Vanilla spawnt er nooit een warden mee: rechtsklik in de lucht, op een blok of op
 een entity wordt altijd afgevangen. Inzetten kan alleen tijdens de mob arena, als deelnemer op de
 tribune (regio `tribune_mob`): niet wie zelf aan de beurt is, niet vanuit de kooi, niet als staff.
-Dan is het ei op, iedereen ziet `WARDEN-EI` met `Speler7 zet hem in: de volgende wave is de warden`
-(`entity.warden.roar`) en een chatregel. **De volgende wave die start, is de warden** in plaats van
-de geplande wave; die vervalt. Tijdens een wave of de pauze erna is dat de volgende wave van deze
-beurt; in de laatste wave of tussen twee beurten wave 1 van de volgende beurt. Is er geen volgende
-wave meer, dan weigert hij en houdt de speler het ei. Wie het ei heeft en in het veld sneuvelt,
+Alleen terwijl er gevochten wordt (fase waves, ook in de pauze tussen twee waves; niet tijdens de
+countdown of tussen twee beurten), en niet als er al een warden rondloopt: dan weigert hij en houdt
+de speler het ei. Anders is het ei op, iedereen ziet `WARDEN-EI` met `Speler7 zet hem in: de warden
+komt eraan`, `entity.warden.emerge`, een chatregel, en **de warden komt meteen** uit de grond, bovenop
+de lopende wave. Zolang hij leeft, is die wave niet klaar en heeft hij geen limiet van 120 seconden
+(ook als er in de pauze nog een nieuwe wave start); de beurt eindigt dus pas als de warden dood is,
+of met `/mobarena wave volgende`. Wie het ei heeft en in het veld sneuvelt,
 houdt het (de rest van zijn spullen is hij kwijt); een ongebruikt ei gaat aan het einde van de mob
 arena weg met de rest.
 
-**De warden-wave**: title `WAVE 3` met `De warden van Speler7`, `entity.warden.emerge`. De warden
-komt met de graaf-animatie uit de grond op punt `warden` (spawnreden `TRIGGERED`), met de levens
-en klap uit `/mobarena warden` (standaard 200 HP, klap 8 = 4 hartjes); zijn sonic boom doet de
-ingestelde schade (standaard 5 = 2,5 hartje) in plaats van 10. Hij kiest zijn doel met woede: de mod
+**De warden** komt met de graaf-animatie uit de grond op punt `warden` (spawnreden `TRIGGERED`), met de levens
+en klap uit `/mobarena warden` (standaard 200 HP, klap 16 = 8 hartjes); zijn sonic boom doet de
+ingestelde schade (standaard 10 = 5 hartjes) in plaats van de 10 van vanilla. Hij kiest zijn doel met woede: de mod
 wist woede op wie niet aan de beurt is en zet hem op de dichtstbijzijnde speler in het veld, en
-houdt hem boven de grond zolang de wave loopt. Het publiek krijgt geen Darkness. De wave heeft
-**geen tijdslimiet**: hij loopt tot de warden dood is, of tot `/mobarena wave volgende`. Een kill
+houdt hem boven de grond zolang hij leeft. Het publiek krijgt geen Darkness. Een kill
 op de warden is `/mobarena punten warden` waard (standaard 50) en komt in de chat.
 
 **Punten**: `ServerLivingEntityEvents.AFTER_DEATH` op een mob met `bootcamp_mob`. De killer is
@@ -793,7 +828,10 @@ de speler die de laatste klap gaf, ook via een pijl of andere projectile; vanill
 raakte. Punten uit `/mobarena punten` naar het team van die speler, plus één kill voor de
 tiebreak. Zonder speler (magma, val) geen punten. Een kill op een **evoker, ravager of de warden**
 komt als chatregel voor iedereen: `Speler7 killde de ravager (+10)`, met de naam in de teamkleur.
-Andere kills alleen in de actionbar van de killer.
+Andere kills alleen in de actionbar van de killer. Elke kill met punten geeft deeltjes rond de
+mob (`MobArena.killDeeltjes`): `DustParticleOptions` in de `Kleur.rgb()` van het team van de killer,
+grootte 1.5, een wolk binnen de hitbox (16 + breedte × hoogte × 12, hooguit 80) en een ring om de
+voeten (straal minstens 0.8, 16 per blok straal, hooguit 48), voor iedereen zichtbaar, ook van ver.
 
 **Af**: wie in de mob arena sneuvelt, ziet eerst de doodtekst als title en daarna in de actionbar
 de tekst van `/mobarena aftekst` (standaard `Af · je speelt geen beurt meer`), vijf seconden lang.
@@ -809,7 +847,10 @@ beurt is.
 **Einde**, na de laatste beurt en haar 10 seconden: het team met de meeste punten wint (gelijk:
 meeste kills, dan samen), titles en vuurpijlen boven de tribune. Weer 10 seconden om te vieren,
 dan **levert iedereen alles in**: inventory, armor en offhand leeg (`clearContent`), ook voor wie
-op de tribune stond. Iedereen weer speler, geheald, zonder spullen naar de quiz.
+op de tribune stond. Iedereen weer speler, geheald, zonder spullen, en **iedereen blijft op de
+tribune** (ook wie inlogt) tot de commander **`/mobarena naarquiz`** doet: dan iedereen die meedoet
+naar de bank van zijn team (`quiz_<kleur>`), de presentator naar `quiz_podium`, title
+`OP NAAR DE QUIZ`.
 
 **Ronde 4, quiz.** Weigert zonder presentator (`/quiz presentator`). Start: iedereen naar
 `quiz_<kleur>` van zijn team, border `quiz`, geen schade, geen timer. Sidebar `Quiz` met de vier
@@ -975,9 +1016,9 @@ de laatste vijf als title plus pling, dan los met een groene GO en de raid horn.
 staat alles blokkeert waarmee je beweegt of schiet: bogen, crossbows, tridents, pearls, wind
 charges en chorus fruit. Eten (gapples) mag. Tijdens een opstelling doet niemand elkaar schade.
 
-**Ronde 6, FFA en kroning.** In de Arena van ronde 5. Iedereen behalve Clown, ook wie af was,
-willekeurig naar `jager_1..n` (één per plek, met kijkrichting), full hp, `arena.json`, geen team;
-Clown als kijker naar `tribune_n`. Dan de opstelling zonder countdown: iedereen bevroren (zoals
+**Ronde 6, FFA en kroning.** In de Arena van ronde 5. Iedereen behalve staff, ook Clown en wie af
+was, willekeurig naar `jager_1..n` (één per plek, met kijkrichting), full hp, `arena.json`, geen
+team. Dan de opstelling zonder countdown: iedereen bevroren (zoals
 in ronde 5, ook schieten en pearls geblokkeerd) tot de commander `/ffa go` doet; bossbar
 `FFA · wacht op de start`, actionbar `/ffa wachttekst` (standaard `Wacht op het startsein`). Na
 `/ffa go` 10 seconden countdown, dan los. **Geen timer**: elke seconde, is er nog maar één
@@ -993,7 +1034,7 @@ In beeld tijdens de FFA:
   `Speler3 is af · 11 over`. De dode ziet zijn doodtekst.
 - **Kill in beeld** (`Arena.killInBeeld`, dezelfde als bij King of the Hill): title met kop en naam
   van de killer in goud, subtitle `pakt Speler3 · 11 over`, 5/40/15 ticks, `entity.ravager.roar`
-  op half volume. Alleen voor wie niet (meer) vecht (tribune, Clown, staff) en voor de killer;
+  op half volume. Alleen voor wie niet (meer) vecht (tribune, staff) en voor de killer;
   de andere vechters krijgen alleen de chatregel. Niet als er bij die kill `LAATSTE DRIE` of
   `LAATSTE TWEE` komt, en niet bij de laatste kill.
 - **Actionbar**: elke seconde en na elke kill, voor iedereen die nog vecht, `3 kills · 11 over`
@@ -1034,8 +1075,11 @@ opnieuw. Logt hij in tijdens de pauze, dan wordt hij kijker en krijgen de ops ee
 
 **Kroning** (na de finale): iedereen naar de tribune, de winnaar naar `troon` (het podium) met de kroon en de
 zweefkroon, twintig seconden vuurpijlen, title `KING OF THE SMP BOOTCAMP` met de kop en de naam
-als subtitle. Daarna blijft de bossbar `Pudding Bootcamp · King: Speler7` (goud) staan en blijft
-de zweefkroon boven de winnaar, tot `/bc reset`.
+als subtitle. Na het vuurwerk eindigt de ronde en gaat iedereen die meedoet naar `basiskamp`
+(`Finale.naarHetBasiskamp`): weer speler (niet meer dood of kijker), adventure, geheald, inventory,
+armor en offhand leeg (`clearContent`), effecten weg. De King houdt rol `KROON` en krijgt meteen
+alleen de kroon terug, met Glowing en de zweefkroon (`Kroon.geef`). Wie daarna inlogt, gaat ook naar het basiskamp. De bossbar
+`Pudding's Bootcamp · King: Speler7` (goud) en de zweefkroon boven de King blijven tot `/bc reset`.
 
 ## Kijkers: wie af of dood is
 
@@ -1057,11 +1101,13 @@ Geen spectator mode, geen tp-items, geen vliegen.
   in `bootcamp.json` en gaat in-game met `/bc doodtekst`. Standaard zes: `Grote L gepakt!`,
   `Kleine L gepakt`, `Had je nou maar beter je best gedaan`, `Gelukkig is dit de CSMP niet..`,
   `Dag 1...`, `Op de lijst..`. Staat in een oude `bootcamp.json` nog precies de oude standaard
-  (drie teksten), dan maakt de mod er bij het laden de nieuwe zes van.
+  (drie teksten), dan maakt de mod er bij het laden de nieuwe zes van. Een tekst tot 22 tekens
+  staat helemaal groot (rood, vet); een langere splitst de mod op de spatie het dichtst bij het
+  midden (`Doodteksten.verdeel`): het begin groot, de rest kleiner eronder (`Had je nou maar` /
+  `beter je best gedaan`), zodat niks buiten beeld valt.
 
 Waar kijkers heen gaan: ronde 3 bij een dood naar `kooi` tot het einde van die
-beurt, en anders naar `tribune_mob_n`; ronde 5 en 6 naar `tribune_n`. Clown zit tijdens de FFA ook op de
-tribune.
+beurt, en anders naar `tribune_mob_n`; ronde 5 en 6 naar `tribune_n`.
 
 **Staff** gebruikt spectator of creative voor de camera; de mod dwingt daar niks af.
 
@@ -1076,19 +1122,19 @@ Eén bossbar, kort, altijd hetzelfde formaat. Persoonlijke info via de actionbar
 
 | Ronde | Tekst | Kleur | Vulling |
 |---|---|---|---|
-| Basiskamp | `Pudding Bootcamp` | wit | vol |
+| Basiskamp | `Pudding's Bootcamp` | wit | vol |
 | 1, voor `/doolhof go` | `Doolhof · wacht op de start` | groen | vol |
 | 1 | `Doolhof · 04:41` | groen, de laatste minuut rood | tijd; de poort staat er niet in |
-| 1, na de timer | `Doolhof · de tijd is om · gif` | paars | vol |
+| 1, na de timer | `Doolhof · de tijd is om · gif`, na elke minuut `gif x2`, `x4` ... | paars | vol |
 | 2 | `Het Ei · 07:12` | groen, de laatste minuut rood | tijd |
 | 3 | `Mob Arena · beurt 2/2 · wave 2` | rood | mobs over in het veld |
 | 4 | `Quiz · aan de beurt: Groen`, of `Quiz · draai het rad` | teamkleur, wit als niemand aan de beurt is | vol |
 | 5 | `King of the Hill · Kroon: Clown · 12 over` | geel | spelers over |
 | 6 | `FFA · 7 over` | paars | spelers over |
 | 7 | `De Finale · ClownPierce tegen Speler7` | rood | vol |
-| Na de kroning | `Pudding Bootcamp · King: Speler7` | goud | vol |
+| Na de kroning | `Pudding's Bootcamp · King: Speler7` | goud | vol |
 
-**Sidebar**: ronde 1 de teams met aantallen en namen (`Rood 3/5` met de spelers eronder), ronde 2 de top 10 op punten, ronde 3
+**Sidebar**: ronde 1 de teams met aantallen en namen (`Rood 3/4` met de spelers eronder), ronde 2 de top 10 op punten, ronde 3
 de teamstand in punten (`Rood 47`), ronde 4 de quizpunten, ronde 5 de regeerperiodes, ronde 6 de
 kills (die blijven staan tot de finale begint; in de finale geen sidebar).
 
@@ -1106,7 +1152,7 @@ langzaam draaiend. Opgeruimd als de kroonhouder kijker wordt.
 
 | Moment | Wat je ziet en hoort |
 |---|---|
-| Joinen in het basiskamp | Title `PUDDING BOOTCAMP`, subtitle `Welkom, <naam>`, `block.note_block.chime`. Alleen voor wie joint, en niet tijdens een ronde. |
+| Joinen in het basiskamp | Title `PUDDING'S BOOTCAMP`, subtitle `Welkom, <naam>`, `block.note_block.chime`. Alleen voor wie joint, en niet tijdens een ronde. |
 | Countdown | Titles 5 t/m 1 in goud met een stijgende `note_block.pling`, dan `GO` met `event.raid.horn`. |
 | Poort doolhof open | Cloud-particles in de poort; met `/doolhof poortmelding aan` ook `event.raid.horn` voor iedereen en de title `DE UITGANG IS OPEN` in groen. |
 | Valkist | 25% de jumpscare (willekeurige foto) voor wie hem opent, 25% de 8D-klop, 50% mobs met `poof`-particles en `entity.evoker.prepare_summon`. |
@@ -1115,11 +1161,12 @@ langzaam draaiend. Opgeruimd als de kroonhouder kijker wordt.
 | Doolhof voorbij | Title `DOOLHOF VOORBIJ`, subtitle `14 van de 20 vonden de uitgang`; wie in een team is gezet ziet in de actionbar `Je zit in Groen`. |
 | Jumpscare | Een van de vijf foto's schermvullend (vast per schrikplek, of willekeurig), `bootcamp:schrik`. |
 | 8D-klop | Alleen het geluid `bootcamp:klop`, stereo, alleen voor wie de valkist opende. |
-| Team gekozen | `entity.player.levelup`, je naam in de teamkleur, chatregel voor iedereen: `<naam> zit in Rood (3/5)`. |
+| Team gekozen | `entity.player.levelup`, je naam in de teamkleur, chatregel voor iedereen: `<naam> zit in Rood (3/4)`. |
 | Ei: punten | `entity.experience_orb.pickup`, actionbar met wat je erbij kreeg, je score en je plek. |
 | Ei: netherite | `+50` in paars in de actionbar, chatregel voor iedereen: `Speler7 hakte netherite (+50)`. |
 | Ei: redstone | Haste (15 seconden): `block.beacon.power_select`, title `HASTE` voor de hakker. Bevriezing: title `BEVROREN` met `door <naam>`, `block.glass.break`. Aftellen in de actionbar, pling als het voorbij is. |
-| Ei: emerald | Iedereen ziet de title `Speler7 → Speler3` met `JUMPSCARE`; de ander krijgt eerst de jumpscare, dan die title en `Met dank aan Speler7`; de hakker ziet ook `Jumpscare naar Speler3`. |
+| Ei: emerald | Kistmenu: wie laat je schrikken? Daarna ziet iedereen de title `Speler7 → Speler3` met `JUMPSCARE`; de ander krijgt eerst de jumpscare, dan die title en `Met dank aan Speler7`; de hakker ziet ook `Jumpscare naar Speler3`. |
+| Ei: lapis | Kistmenu: wie stuur je terug naar de start? De gekozene gaat terug naar zijn startplek; iedereen ziet `Speler7 → Speler3` met `TERUG NAAR START`. |
 | Ei: TNT | Title `TNT` voor de hakker; neergezet `entity.tnt.primed`, na 4 seconden de knal met `explosion_emitter`. |
 | Ei: glowstone | Title `TURBO`, `block.beacon.activate`, `Efficiency V · 8` in de actionbar, pling als het voorbij is. |
 | Ei: slime | Title `MISSELIJK` met `door <naam>` voor de anderen, `entity.slime.squish`. |
@@ -1129,8 +1176,7 @@ langzaam draaiend. Opgeruimd als de kroonhouder kijker wordt.
 | Start mob arena | `ui.toast.challenge_complete`; het schema blijft geheim. Bij elke beurt de title `BEURT 3` voor iedereen, zonder subtitle. |
 | Spelers in de mob arena | Glowing in hun teamkleur tijdens hun beurt. |
 | Nieuwe wave | Rookwolk en `block.fire.extinguish` op de spawnpunten, dan title `WAVE 3` in rood, `event.raid.horn`. |
-| Warden-ei ingezet | Title `WARDEN-EI` met `Speler7 zet hem in: de volgende wave is de warden`, `entity.warden.roar`, chatregel. |
-| Warden-wave | Title `WAVE 3` in donker-aqua met `De warden van Speler7`, `entity.warden.emerge`; de warden komt uit de grond. |
+| Warden-ei ingezet | Title `WARDEN-EI` met `Speler7 zet hem in: de warden komt eraan`, `entity.warden.emerge`, chatregel; de warden komt meteen uit de grond, bovenop de lopende wave. |
 | Mob gekild (ronde 3) | `entity.experience_orb.pickup` voor de killer, actionbar met de punten. Evoker en ravager ook als chatregel voor iedereen. |
 | Af in de mob arena | Doodtekst als title, daarna 5 seconden `/mobarena aftekst` in de actionbar. |
 | Speler sneuvelt | Alleen de dode ziet een willekeurige doodtekst als title. Geen geluid, geen chatregel. |
@@ -1159,7 +1205,7 @@ langzaam draaiend. Opgeruimd als de kroonhouder kijker wordt.
 | Finalist uitgelogd | Bossbar `De Finale · Speler7 is weg · Pudding beslist`, actionbar voor de ander `Speler7 is weg · even wachten`, chatregel met de keuzes alleen voor de ops. |
 | `/clown krimp`, `/ffa krimp` | Title `DE BORDER KRIMPT` in rood, subtitle `naar 20 in 60 seconden`, `event.raid.horn`. Kijkers zien de title ook, maar merken niets van de border. |
 | Laatste drie, laatste twee | Title `LAATSTE DRIE` of `LAATSTE TWEE` in paars met de namen, `entity.wither.spawn` zacht. |
-| Kroning (na de finale) | Twintig seconden vuurpijlen, title `KING OF THE SMP BOOTCAMP` met de kop en de naam van de winnaar als subtitle. Daarna blijven de bossbar `Pudding Bootcamp · King: Speler7` en de zweefkroon tot `/bc reset`. |
+| Kroning (na de finale) | Twintig seconden vuurpijlen, title `KING OF THE SMP BOOTCAMP` met de kop en de naam van de winnaar als subtitle. Daarna gaat iedereen naar het basiskamp; daar blijven de bossbar `Pudding's Bootcamp · King: Speler7` en de zweefkroon tot `/bc reset`. |
 
 ## Zo is dit gevibecode
 

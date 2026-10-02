@@ -55,12 +55,12 @@ Twee dingen houden het toch strak:
 |---|---|
 | Basiskamp | Startruimte in het midden van het doolhof |
 | Doolhof, als iedereen een team heeft | De finishruimte van het doolhof; met `/doolhof naarei` naar V2 bij het Ei |
-| Het Ei | Het plein bij de mob arena (V3): de winnaar op het podium, de rest ervoor |
-| Mob arena | De quiz: iedereen bij de bank van zijn team, Pudding op het podium |
+| Het Ei | Het plein bij de mob arena (V3): de winnaar op het podium, de rest ervoor; met `/ei naarmobarena` naar de tribune van de mob arena |
+| Mob arena | Iedereen blijft op de tribune van de mob arena; met `/mobarena naarquiz` naar de quiz: iedereen bij de bank van zijn team, Pudding op het podium |
 | Quiz | De tribune van de Arena, voor het Rad; na het Rad de vloer op |
 | Clown vs All | Blijft in de Arena: wie af is zit al op de tribune |
 | FFA | Blijft in de Arena: de winnaar op de vloer, de rest op de tribune |
-| Finale | Kroning op het podium in het midden van de Arena, iedereen op de tribune |
+| Finale | Kroning op het podium in het midden van de Arena, iedereen op de tribune; na twintig seconden vuurwerk iedereen samen naar het basiskamp |
 
 Lopen is er niet bij: teleporteren, en elke ronde start op het sein van Pudding.
 

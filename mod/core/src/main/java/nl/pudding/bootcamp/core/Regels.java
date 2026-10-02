@@ -1,6 +1,5 @@
 package nl.pudding.bootcamp.core;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -24,6 +23,18 @@ public final class Regels {
 	/** R1.7: na de timer is regio {@code doolhof_gif} giftig: elke zoveel seconden zoveel halve harten, plus Poison. */
 	public static final int DOOLHOF_GIF_ELKE = 2;
 	public static final int DOOLHOF_GIF_SCHADE = 2;
+	/** R1.8: na elke minuut in het gif verdubbelt de klap, tot hooguit zoveel keer. */
+	public static final int DOOLHOF_GIF_MAX_KEER = 16;
+
+	/** R1.8: hoe vaak zo hard als de eerste minuut: 1, 2, 4, 8, 16, en dan blijft het 16. */
+	public static int gifKeer(int gifSeconden) {
+		return Math.min(DOOLHOF_GIF_MAX_KEER, 1 << Math.min(30, Math.max(0, gifSeconden) / 60));
+	}
+
+	/** R1.8: de klap van het gif in halve harten, na zoveel seconden gif. */
+	public static int gifSchade(int gifSeconden) {
+		return DOOLHOF_GIF_SCHADE * gifKeer(gifSeconden);
+	}
 	/** R2.5: redstone-gok. */
 	public static final int EI_HASTE = 15;
 	public static final int EI_BEVRIEZING = 15;
@@ -33,6 +44,13 @@ public final class Regels {
 	public static final int EI_GLOWSTONE = 10;
 	/** R2.12: zo lang Nausea voor de anderen na slime. */
 	public static final int EI_MISSELIJK = 15;
+	/**
+	 * R2.14: van het Ei gevallen is wie met zijn voeten op of onder de valgrens komt (de blokhoogte).
+	 * Zonder valgrens nooit.
+	 */
+	public static boolean vanHetEiGevallen(double y, Integer valgrens) {
+		return valgrens != null && Math.floor(y) <= valgrens;
+	}
 	/** R3.6: na elke beurt tien seconden vieren, dan pas naar de tribune. */
 	public static final int BEURT_VIEREN = 10;
 	/** R3.8, R4.5: na de winnaar van de mob arena en de quiz tien seconden vieren. */
@@ -165,17 +183,6 @@ public final class Regels {
 	/** R5.8 en R6.2: geen timer, de ronde is voorbij zodra er nog één (of niemand) leeft. */
 	public static boolean laatsteOver(int levend) {
 		return levend <= 1;
-	}
-
-	/** R6.1: iedereen behalve de uitverkorene doet mee aan de FFA, ook wie in ronde 5 af was. */
-	public static List<UUID> ffaDeelnemers(List<UUID> spelers, UUID uitverkorene) {
-		List<UUID> uit = new ArrayList<>();
-		for (UUID s : spelers) {
-			if (!s.equals(uitverkorene)) {
-				uit.add(s);
-			}
-		}
-		return uit;
 	}
 
 	/**

@@ -167,7 +167,7 @@ blok waar je naar kijkt, tot 32 blokken). De commando's per ronde zetten de mees
 |---|---|---|
 | Algemeen | | `basiskamp` (optioneel, voor `/bc reset`) |
 | Doolhof | `doolhof`, `doolhof_uit` (de finishlijn), `doolhof_gif` (het doolhof zonder finishruimte), `poort_doolhof` (de muur, onder- en bovenhoek), `poort_start` (barrier blocks in de openingen van de startruimte, elk een deel), `nep_1..3`, `schrik_1..n` | `doolhof_start`, `doolhof_finish` (in de finishruimte), `v2` |
-| Het Ei | `ei` (het Ei als doos), `eigebied` (Ei, kettingen, startplekken), `ei_plein` (de vloer van het plein bij de mob arena) | `ei_spawn_1..n`, `v3` (op het plein), `ei_podium`, `ei_presentator` (naast de winnaar, voor Pudding), `/ei prijskader` (kijk naar het item frame); daarna `/ei vastleggen` |
+| Het Ei | `ei` (het Ei als doos), `eigebied` (Ei, kettingen, startplekken), `ei_plein` (de vloer van het plein bij de mob arena) | `ei_spawn_1..n`, `v3` (op het plein), `ei_podium`, `ei_presentator` (naast de winnaar, voor Pudding), `/ei prijskader` (kijk naar het item frame), `/ei valgrens hier` (op de grond waar mensen landen als ze vallen); daarna `/ei vastleggen` |
 | Mob arena | `mobarena` (veld, tribune en plein), `veld` (`save` + `add`), `tribune_mob` (de tribunevloer) | `/mobarena startplek <kleur> <1\|2>` (8x), `mob_1..n`, `kooi`, `warden`, `tribune_mob_1..n` |
 | Quiz | `quiz` (alle andere redstone lampen erin doen mee aan de lichtshow), `quizdecor_<kleur>` (mag: de decorlampen achter elke bank) | `/quiz bank <kleur>` (4x), `/quiz podium`, `/quiz lamp <kleur>` (per lamp, kijk naar de lamp; `wis` om opnieuw), `/quiz vuurwerk <kleur> <1\|2>` (8x, kijk naar de dispenser) |
 | Clown vs All, FFA | `/clown vloer <diameter>` (midden op de vloer staan), optioneel `colosseum` | `/clown troon`, `/clown jagerplek` (20x), `/clown tribune` (2 of meer, onderste ring) |
@@ -188,8 +188,8 @@ onder *Commands*.
 | Ronde | Commands |
 |---|---|
 | Doolhof | `/doolhof start\|go\|stop\|einde\|naarei\|resterend <sec>`, `wachttekst [<tekst>]`, `timer [<min>]` (15), `poort [<min>]` (4), `hint [<min>]` (10), `hinttekst [<tekst>\|-]`, `poort open\|dicht`, `startpoort open\|dicht`, `poortmelding [aan\|uit]`, `valmobs [<min> [<max>]]` (3 t/m 10), `schrik [<nr> [<1..5\|random>]]` (foto per schrikplek) |
-| Het Ei | `/ei start\|stop\|resterend <sec>`, `timer [<min>]` (15), `blokken [<soort> <aantal>]`, `vastleggen`, `prijskader` |
-| Mob arena | `/mobarena start\|volgende\|schema\|stop`, `wave volgende`, `startplek <kleur> <1\|2>`, `warden [leven\|klap\|boom <hp>]`, `punten [<mob> <punten>]`, `veldhoogte [<blokken>]`, `aftekst [<tekst>]` |
+| Het Ei | `/ei start\|stop\|resterend <sec>\|naarmobarena`, `timer [<min>]` (15), `blokken [<soort> <aantal>]`, `valgrens [hier\|<y>\|uit]` (uit), `vastleggen`, `prijskader` |
+| Mob arena | `/mobarena start\|volgende\|schema\|stop\|naarquiz`, `wave volgende`, `startplek <kleur> <1\|2>`, `warden [leven\|klap\|boom <hp>]`, `punten [<mob> <punten>]`, `veldhoogte [<blokken>]`, `aftekst [<tekst>]` |
 | Quiz | `/quiz start\|stop`, `presentator [<speler>]`, `bank <kleur>`, `podium`, `lamp <kleur> [<nr>\|wis]`, `vuurwerk <kleur> <1\|2>`, `draai`, `goed`, `fout`, `punt <kleur> [<aantal>]`, `einde`, `winnaar <kleur>`, `naararena` |
 | Clown vs All | `/clown rad\|go\|start\|stop`, `uitverkoren [<speler>]`, `troon`, `jagerplek [<nr>]`, `vloer <diameter>`, `tribune [<nr>]`, `wachttekst [<tekst>]`, `kroon <speler>`, `krimp <grootte> [<sec>]` |
 | FFA | `/ffa start\|stop\|go`, `krimp <grootte> [<sec>]`, `wachttekst [<tekst>]` |
@@ -207,12 +207,12 @@ seconde worden bijgezet, zodat je met `@a[tag=...]` kunt kijken. Zelf zetten hee
 | Ronde | Commander |
 |---|---|
 | 1 Doolhof | `/doolhof start` (iedereen klaar in de startruimte), dan `/doolhof go` (countdown). Eindigt als iedereen een team heeft; na de timer wordt het doolhof giftig tot het zover is. Noodknop: `/doolhof einde`. Daarna staat iedereen in de finishruimte; `/doolhof naarei` zet iedereen bij het Ei (`v2`). |
-| 2 Het Ei | `/ei start`. Eindigt na de timer: de winnaar op het podium, de rest op het plein, het Warden-ei in het frame. |
-| 3 Mob arena | `/mobarena start` (beurt 1), daarna per beurt `/mobarena volgende`. Na de laatste beurt vanzelf de winnaar en, tien seconden later, iedereen zonder spullen naar zijn bank. |
+| 2 Het Ei | `/ei start`. Eindigt na de timer: de winnaar op het podium, de rest op het plein, het Warden-ei in het frame. Na de huldiging `/ei naarmobarena`: iedereen naar de tribune van de mob arena (ligt het Warden-ei nog in het frame, dan krijgt de winnaar het nu). |
+| 3 Mob arena | `/mobarena start` (beurt 1), daarna per beurt `/mobarena volgende`. Na de laatste beurt vanzelf de winnaar en, tien seconden later, iedereen zonder spullen; iedereen blijft op de tribune. `/mobarena naarquiz`: iedereen naar zijn bank, Pudding naar het podium. |
 | 4 Quiz | `/quiz start`. Pudding draait met de nether star, keurt met de wol, geeft of pakt punten met de emerald en beëindigt met de barrier (met bevestiging), of `/quiz einde`, bij gelijkspel `/quiz winnaar <kleur>`. Daarna vieren tot Pudding de ender pearl gebruikt (of `/quiz naararena`): dan iedereen naar de tribune van de Arena. |
 | 5 Clown vs All | `/clown rad` (of `/clown start` zonder rad), iedereen staat bevroren klaar, dan `/clown go`. |
 | 6 FFA | `/ffa start`, dan `/ffa go`. De winnaar staat daarna in beeld en gaat door naar de finale. |
-| 7 Finale | `/finale start` (de winnaar van King of the Hill tegen die van de FFA; `/finale spelers` laat zien wie), dan `/finale go`. De kroning volgt vanzelf. Logt een finalist uit, dan pauzeert de finale en kiest Pudding (als op): `/finale combatlog` (de ander wint) of `/finale crash` (stoppen; als hij terug is `/finale start` en `/finale go`). |
+| 7 Finale | `/finale start` (de winnaar van King of the Hill tegen die van de FFA; `/finale spelers` laat zien wie), dan `/finale go`. De kroning volgt vanzelf; na twintig seconden vuurwerk gaat iedereen samen naar het basiskamp, zonder spullen of armor; de King houdt alleen zijn kroon. Logt een finalist uit, dan pauzeert de finale en kiest Pudding (als op): `/finale combatlog` (de ander wint) of `/finale crash` (stoppen; als hij terug is `/finale start` en `/finale go`). |
 
 Tussen twee rondes in is er geen border en geen PvP. Gaat er in een ronde iets mis in de mod zelf,
 dan breekt die ronde zichzelf af met een melding in de chat en de fout in de console; de server

@@ -64,6 +64,22 @@ class RegelsTest {
 	}
 
 	@Test
+	void gifVerdubbeltElkeMinuut() {
+		// De eerste minuut 1 hartje (2 halve) per klap, daarna 2, 4, 8 en 16 hartjes.
+		assertEquals(2, Regels.gifSchade(0));
+		assertEquals(2, Regels.gifSchade(59));
+		assertEquals(4, Regels.gifSchade(60));
+		assertEquals(8, Regels.gifSchade(120));
+		assertEquals(16, Regels.gifSchade(180));
+		assertEquals(32, Regels.gifSchade(240));
+		// Daarna niet verder: 16 hartjes is toch al dood.
+		assertEquals(32, Regels.gifSchade(3600));
+		assertEquals(1, Regels.gifKeer(-5));
+		assertEquals("Doolhof · de tijd is om · gif", BossbarTekst.doolhofGif(1));
+		assertEquals("Doolhof · de tijd is om · gif x4", BossbarTekst.doolhofGif(4));
+	}
+
+	@Test
 	void valkistGokIsKwartKwartHelft() {
 		Random random = new Random(2);
 		Map<Regels.Val, Integer> telling = new EnumMap<>(Regels.Val.class);
@@ -164,12 +180,6 @@ class RegelsTest {
 	}
 
 	@Test
-	void ffaZonderDeUitverkorene() {
-		assertEquals(List.of(a, c), Regels.ffaDeelnemers(List.of(a, b, c), b));
-		assertEquals(List.of(a, b, c), Regels.ffaDeelnemers(List.of(a, b, c), UUID.randomUUID()));
-	}
-
-	@Test
 	void finaleKingOfTheHillTegenFfa() {
 		assertEquals(List.of("clownpierce", "speler7"), Regels.finalisten("clownpierce", "speler7", "speler2"));
 		// Dezelfde winnaar (hoofdletters tellen niet): tegen de nummer twee van de FFA.
@@ -177,6 +187,17 @@ class RegelsTest {
 		assertTrue(Regels.finalisten("speler7", "speler7", null).isEmpty());
 		assertTrue(Regels.finalisten(null, "speler7", "speler2").isEmpty());
 		assertTrue(Regels.finalisten("clownpierce", null, null).isEmpty());
+	}
+
+	@Test
+	void vanHetEiGevallenOpOfOnderDeValgrens() {
+		assertTrue(Regels.vanHetEiGevallen(60.0, 60));
+		assertTrue(Regels.vanHetEiGevallen(60.9, 60));
+		assertTrue(Regels.vanHetEiGevallen(12.5, 60));
+		assertFalse(Regels.vanHetEiGevallen(61.0, 60));
+		// Onder nul rondt de blokhoogte naar beneden af: -0.5 is blok -1.
+		assertTrue(Regels.vanHetEiGevallen(-0.5, -1));
+		assertFalse(Regels.vanHetEiGevallen(-64.0, null));
 	}
 
 	@Test

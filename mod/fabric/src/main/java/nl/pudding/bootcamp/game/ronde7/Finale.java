@@ -43,7 +43,8 @@ import java.util.UUID;
 /**
  * Ronde 7: de finale in de Arena, één tegen één met de FFA-kit. De winnaar van King of the Hill
  * tegen de winnaar van de FFA; won één speler allebei, dan tegen de nummer twee van de FFA. De rest
- * kijkt vanaf de tribune. Wie wint is King of the SMP Bootcamp: meteen de kroning op het podium.
+ * kijkt vanaf de tribune. Wie wint is King of the SMP Bootcamp: meteen de kroning op het podium,
+ * twintig seconden vuurwerk, en dan gaat iedereen samen naar het basiskamp.
  * Logt een finalist uit, dan pauzeert de finale tot de staff kiest: combat log (de ander wint) of
  * crash (de finale stopt en de commander start hem opnieuw).
  */
@@ -64,6 +65,8 @@ public final class Finale extends RondeLogica {
 	private UUID weg;
 	private String wegNaam;
 	private final Set<UUID> netDood = new HashSet<>();
+	/** Na het vuurwerk van de kroning is iedereen naar het basiskamp; tot de volgende {@code /finale start}. */
+	private static boolean naarBasiskamp;
 
 	public static void init() {
 		Reset.REGISTER.registreer("uitslag voor de finale", server -> {
@@ -103,6 +106,7 @@ public final class Finale extends RondeLogica {
 
 	@Override
 	public void start(MinecraftServer server) {
+		naarBasiskamp = false;
 		Spelregels.locatorBar(server, false);
 		Kroon.wisHits();
 		// De kills van de FFA zijn klaar.
@@ -289,6 +293,10 @@ public final class Finale extends RondeLogica {
 			if (kroning-- <= 0) {
 				Spel.einde(server);
 				Bossbar.basiskamp();
+				naarBasiskamp = true;
+				for (ServerPlayer s : Mc.deelnemers(server)) {
+					naarHetBasiskamp(server, s);
+				}
 			}
 			return;
 		}
@@ -341,6 +349,33 @@ public final class Finale extends RondeLogica {
 		Mc.geluidAllen(server, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 1f, 1f);
 		// De bossbar met de King blijft staan tot /bc reset, net als de zweefkroon.
 		Bossbar.king(Mc.naam(winnaar));
+	}
+
+	/** Of de kroning voorbij is en iedereen naar het basiskamp is; dan is dat ook waar wie inlogt heen gaat. */
+	public static boolean naarBasiskamp() {
+		return naarBasiskamp;
+	}
+
+	/**
+	 * Na het vuurwerk: weer gewoon speler, geheald en zonder spullen of armor, met de anderen in het
+	 * basiskamp. De King houdt alleen zijn kroon, Glowing, zweefkroon en bossbar (tot {@code /bc reset}).
+	 */
+	public static void naarHetBasiskamp(MinecraftServer server, ServerPlayer speler) {
+		SpelerStatus st = Spel.status(speler);
+		st.dood = false;
+		st.tribunepunt = null;
+		speler.getInventory().clearContent();
+		speler.setGameMode(GameType.ADVENTURE);
+		Mc.heal(speler);
+		if (Kroon.isKing(speler)) {
+			// De kroon ging mee met de armor; hij krijgt hem meteen terug.
+			Kroon.geef(server, speler);
+		} else {
+			speler.removeAllEffects();
+			Spel.zetRol(server, speler, Rol.SPELER);
+		}
+		speler.inventoryMenu.broadcastChanges();
+		Spel.naarPunt(speler, "basiskamp");
 	}
 
 	/** Twintig seconden vuurpijlen rond het podium. */

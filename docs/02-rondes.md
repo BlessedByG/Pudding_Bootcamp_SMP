@@ -33,7 +33,7 @@ tribune: in adventure, zonder schade, met de andere doden. Niemand komt ooit in 
 
 ## Ronde 0: Basiskamp
 
-Iedereen spawnt in het basiskamp en ziet bij het joinen **PUDDING BOOTCAMP** met "Welkom, <naam>"
+Iedereen spawnt in het basiskamp en ziet bij het joinen **PUDDING'S BOOTCAMP** met "Welkom, <naam>"
 in beeld. Daarna de regels op de borden. De host legt uit wat er komen gaat, maar niet alles:
 Clown vs All en het Rad pas bij ronde 5. Nog geen teams; iedereen is wit.
 
@@ -76,20 +76,29 @@ Clown vs All en het Rad pas bij ronde 5. Nog geen teams; iedereen is wit.
 - De uitgang is een poort die pas **na 4 minuten** (instelbaar) opengaat. Tot die tijd kun je de echte gang
   vinden, maar niet eruit. De bossbar telt af tot de poort open is.
 - Wie door de uitgang komt, krijgt een menu met 4 kleuren: **rood, blauw, groen, geel**. Klik een
-  kleur en je zit in dat team: je naam krijgt die kleur. **Een team is vol bij 5**; een vol team
+  kleur en je zit in dat team: je naam krijgt die kleur. **Een team is vol bij 4** (bij meer dan 16 spelers iets meer, zodat iedereen past); een vol team
   staat grijs in het menu en kun je niet kiezen. Clown kiest ook gewoon een kleur, als teamlid.
-- Menu dicht zonder te kiezen? Dan komt het terug. Wie gekozen heeft gaat naar verzamelpunt 2 bij
-  het Ei en wacht daar op de rest.
+- Menu dicht zonder te kiezen? Dan komt het terug. Wie gekozen heeft, blijft gewoon in het doolhof:
+  je mag terug naar binnen om anderen te helpen of meer loot te zoeken, of wachten in de finishruimte.
 
 **Regels**
 - Alles wat je vindt mag je houden, tot het einde van de mob arena.
 - Doodgaan kan eigenlijk niet. Gebeurt het toch, dan sta je geheald terug in de startruimte.
 
 **Einde**
-- Timer 15 minuten. Na de timer gaat iedereen die nog binnen zit naar verzamelpunt 2 en komt in
-  het team met de minste spelers. Wie buiten stond maar niet koos ook. Iedereen ziet
-  **DOOLHOF VOORBIJ** met hoeveel spelers de uitgang vonden; wie in een team is gezet, ziet in
-  welk.
+- Timer 15 minuten. Daarna wordt het doolhof (zonder de finishruimte) **giftig**: Poison en om de
+  2 seconden een klap van 1 hartje, door armor heen. Het gaat regenen en wordt langzaam nacht (in 30
+  seconden); als het doolhof voorbij is, wordt het weer dag. **Na elke minuut gif is de klap twee keer zo
+  hard** (2, 4, 8, 16 hartjes); wie binnen staat, ziet dan HET GIF WORDT STERKER. Wie in het gif
+  doodgaat, raakt zijn spullen kwijt (zijn eten houdt hij, de basiskit krijgt hij terug), komt in
+  de finishruimte en, als hij nog geen team had, in het kleinste team.
+- Het doolhof is voorbij als **iedereen een team heeft en niemand er meer in loopt**. Niemand
+  wordt weggehaald: wie met een team nog binnen liep, loopt zelf naar de finishruimte of gaat dood
+  in het gif. Heeft iedereen een team maar loopt er nog iemand binnen, dan staat dat in de chat.
+  Loopt er nog iemand binnen als de timer afloopt, dan begint het gif gewoon. Iedereen ziet daarna
+  **DOOLHOF VOORBIJ** met hoeveel spelers de uitgang vonden, en met `/doolhof naarei` gaat iedereen
+  naar het Ei. `/doolhof einde` sluit het meteen af (wie nog binnen staat gaat dan wel naar de
+  finishruimte, met zijn spullen).
 - De timer, het openen van de poort en het moment van de hint zijn instelbaar met
   `/doolhof timer`, `/doolhof poort` en `/doolhof hint`, in minuten (zie
   [04-technische-schets.md](04-technische-schets.md)).
@@ -128,14 +137,22 @@ Clown vs All en het Rad pas bij ronde 5. Nog geen teams; iedereen is wit.
 
 | Block | Wat het doet | Aantal |
 |---|---|---|
-| Netherite block | **50 punten.** Kost met een diamond pickaxe een paar tellen: je staat even stil. | 6 |
-| Diamond block | **10 punten** | 90 |
-| Gold block | **5 punten** | 120 |
-| Redstone block | **Gok.** Of jij krijgt 10 seconden Haste, of iedereen behalve jij staat 15 seconden stil. 50/50. | 10 |
-| Emerald block | **Jumpscare** bij een willekeurige andere speler. | 10 |
+| Netherite block | **50 punten.** Kost met een diamond pickaxe een paar tellen: je staat even stil. | 10 |
+| Diamond block | **10 punten** | 150 |
+| Gold block | **5 punten** | 200 |
+| Iron block | **1 punt.** Heel veel, zodat je steeds iets vindt. Niet in de chat, alleen voor jou. | 2000 |
+| Redstone block | **Gok.** Of jij krijgt 15 seconden Haste, of iedereen behalve jij staat 15 seconden stil. 50/50. | 20 |
+| Emerald block | **Jumpscare.** Je kiest in een kistmenu (met de koppen van de anderen) wie hem krijgt. | 30 |
+| Lapis block | **Terug naar de start.** Je kiest in een kistmenu wie terug moet naar zijn eigen startplek. | 30 |
+| TNT | **Een TNT** in je inventory: zet hem neer en hij gaat meteen af, en blaast de deepslate om zich heen weg. | 20 |
+| Glowstone | **Turbo:** 10 seconden Efficiency V op je pickaxe en Haste II. | 20 |
+| Slime block | **Misselijk:** alle anderen 15 seconden Nausea. | 30 |
+| Target block | **Husselen:** iedereen staat ineens op de plek van een ander. | 30 |
 
 - De aantallen stel je in met `/ei blokken <soort> <aantal>`. Afstemmen in de testrun: het Ei
   heeft zo'n 28.000 blokken deepslate, en met 20 spelers in 15 minuten kan het grotendeels leeg.
+  Alle blokken samen (standaard 2540) moeten in de deepslate van het Ei passen; anders weigert
+  `/ei start`.
 
 **Regels**
 - **Alleen het Ei is te breken**: de schil en de binnenkant. De kettingen en de rest van de wereld
@@ -151,24 +168,27 @@ Clown vs All en het Rad pas bij ronde 5. Nog geen teams; iedereen is wit.
   kan. Iedereen ziet in beeld wie het deed, en onderin telt het af hoe lang je nog stil staat.
   Bij Haste telt het ook af.
 - **Netherite** meldt de mod in de chat: "Speler7 hakte netherite (+50)".
-- **Emerald**: de hakker ziet naar wie de jumpscare ging, en de ander ziet na de schrik van wie
-  hij kwam.
+- **Emerald** en **lapis**: het kiesmenu blijft terugkomen tot je iemand kiest. Iedereen ziet groot
+  wie naar wie (`JUMPSCARE` of `TERUG NAAR START`); de ander ziet daarna van wie het kwam.
 - De laatste minuut wordt de bossbar rood, en de laatste 10 seconden tellen groot af. Breekt iemand anders tijdens een bevriezing weer een
   redstone block en valt die ook op bevriezen, dan begint de bevriezing opnieuw, nu met die
   speler als enige die los is.
 - Geen PvP.
 - Doodgaan (van een ketting of het Ei vallen): je staat geheald terug op je startplek, je punten
-  en spullen houd je. Wie valt en het overleeft, loopt zelf terug naar een ketting.
+  en spullen houd je. Val je naast het Ei of een ketting en kom je op of onder de **valgrens**
+  (`/ei valgrens`, meestal de grond waar je landt), dan sta je meteen weer op je startplek,
+  zonder valschade, met je punten en spullen. Staat er geen valgrens, dan loop je zelf terug.
 
 **Einde**
 - Timer 15 minuten, instelbaar met `/ei timer <minuten>`. Wie de meeste punten heeft, wint: title
   voor iedereen. Gelijk? Dan wint wie die score het eerst had.
 - De pickaxe gaat weer weg. **Huldiging op het plein bij de mob arena**: de winnaar staat op het
   podium met Pudding ernaast, de rest verspreid op het plein ervoor, met vuurwerk boven het
-  podium.
+  podium. Daarna gaat iedereen met `/ei naarmobarena` naar de tribune van de mob arena; ligt
+  het Warden-ei dan nog in het frame, dan krijgt de winnaar het op dat moment.
 - **De prijs: het Warden-ei.** Het verschijnt in een item frame op het podium. Alleen de winnaar
   of Pudding (de presentator) kan het eruit halen. Tijdens de mob arena kan de winnaar het vanaf
-  de tribune inzetten: dan is de volgende wave een warden (zie ronde 3).
+  de tribune inzetten: dan komt er meteen een warden in het veld (zie ronde 3).
 
 **Voice:** proximity. Op het Ei hoor je wie naast je hakt.
 
@@ -217,13 +237,15 @@ punten wint.
 
 | Wave | Wat | Aantal |
 |---|---|---|
-| 1 | Zombies + husks | 10 + 4 |
-| 2 | Skeletons + spiders | 8 + 8 |
-| 3 | Zombies met iron gear + creepers + skeletons | 8 + 4 + 4 |
-| 4 | Zombies met iron gear + witches + cave spiders + vindicators | 8 + 4 + 6 + 2 |
-| 5 | Ravagers + vindicators + evokers | 2 + 8 + 2 |
+| 1 | Zombies + husks | 40 + 16 |
+| 2 | Skeletons + spiders | 32 + 32 |
+| 3 | Zombies met iron gear + creepers + skeletons | 32 + 16 + 16 |
+| 4 | Zombies met iron gear + witches + cave spiders + vindicators | 32 + 16 + 24 + 8 |
+| 5 | Ravagers + vindicators + evokers | 8 + 32 + 8 |
 
-- De aantallen staan in `waves.json` en zijn af te stemmen in de testrun.
+- De aantallen staan in `waves.json` en zijn af te stemmen in de testrun. Op de server staat dat
+  bestand in `config/bootcamp/`; de mod zet het er alleen neer als het ontbreekt, dus haal het weg
+  (of pas het aan) om nieuwe standaardaantallen te krijgen.
 - De beurt is klaar na wave 5, of als alle spelers in het veld af zijn.
 - **Na de beurt: 10 seconden om te vieren.** `BEURT 1 KLAAR` met de stand staat meteen in beeld,
   met een aftelling van 10 seconden. Pas daarna gaan de spelers uit het veld en de mensen in de
@@ -232,11 +254,12 @@ punten wint.
 **Het Warden-ei**
 - De winnaar van het Ei kan het ei **vanaf de tribune** inzetten, dus niet als hij zelf aan de
   beurt is en niet vanuit de kooi. Iedereen ziet dat hij het doet.
-- **De volgende wave is dan een warden** in plaats van de geplande wave: hij komt uit de grond in
-  het veld. Hij is zwakker dan een gewone warden (200 HP, klap 4 hartjes, sonic boom 2,5 hartje),
-  haalbaar maar zwaar, en blijft tot hij dood is. Het team dat hem doodt krijgt 50 punten.
-- Ingezet tijdens de laatste wave of tussen twee beurten? Dan is het wave 1 van de volgende beurt.
-  Komt er geen wave meer, dan houdt hij het ei.
+- **De warden komt dan meteen** uit de grond in het veld, bovenop de wave die loopt. Die wave is
+  pas klaar als de warden ook dood is. Hij heeft minder levens dan een gewone warden (200 HP), maar
+  slaat hard (klap 8 hartjes, sonic boom 5 hartjes): haalbaar maar zwaar. Hij blijft tot hij dood
+  is. Het team dat hem doodt krijgt 50 punten.
+- Inzetten kan alleen terwijl er gevochten wordt (na de countdown van een beurt). Tussen twee
+  beurten of tijdens de countdown houdt hij het ei; ook als er al een warden rondloopt.
 
 **Punten**
 - Kill je een mob, dan krijgt je team punten. Wie de laatste klap gaf telt, ook met een pijl.
@@ -259,8 +282,9 @@ punten wint.
 - Sidebar: de teamstand. Actionbar: wat je net kreeg en de stand van je team
   (`+3 · Rood 47`). Bossbar: `Mob Arena · beurt 1/2 · wave 2`.
 - Wie aan de beurt is, **gloeit in zijn teamkleur**: kijkers en streams zien meteen wie van welk
-  team is. Een kill op een evoker, ravager of de warden komt in de chat: "Speler7 killde de
-  ravager (+10)".
+  team is. Bij elke kill komt er een wolk en een ring van deeltjes in de **teamkleur van de
+  killer** om de mob heen; hoe groter de mob, hoe meer deeltjes. Een kill op een evoker, ravager
+  of de warden komt in de chat: "Speler7 killde de ravager (+10)".
 
 **Doodgaan**
 - Ga je dood, dan ga je **in de kooi** en kijk je de rest van die beurt vanaf daar. Doodtekst
@@ -276,7 +300,8 @@ punten wint.
   iedereen, vuurpijlen boven het team. Gelijk? Dan wint het team met de meeste kills; is dat ook
   gelijk, dan winnen ze samen.
 - Ook dan eerst 10 seconden om te vieren; daarna **levert iedereen alles in**: inventory en
-  armor leeg, ook een ongebruikt Warden-ei. Iedereen geheald en zonder spullen naar de quiz.
+  armor leeg, ook een ongebruikt Warden-ei. Iedereen geheald en zonder spullen, en iedereen
+  blijft op de tribune. Pas met `/mobarena naarquiz` gaat iedereen naar de quiz.
 
 **Voice:** proximity. In het veld hoor je de andere spelers, in de kooi en op de tribune hoor je
 wie in de buurt staat.
@@ -412,8 +437,8 @@ De volledige regels staan in [03-kroon-regels.md](03-kroon-regels.md). Hier het 
 - Wie af is, komt in de chat: "Speler3 is af door ClownPierce · 11 over". De kroonhouder ziet
   onderin "Jij hebt de kroon · 11 jagers"; tijdens het wachten op `/clown go` ziet iedereen
   "Wacht op het startsein" (aan te passen met `/clown wachttekst`).
-- Clown doet niet mee aan de FFA, ook niet na een overwinning. Iedereen anders wel, ook wie
-  af was. De winnaar van King of the Hill speelt daarna de finale tegen de winnaar van de FFA.
+- Daarna doet iedereen mee aan de FFA, ook Clown en ook wie af was. De winnaar van King of the
+  Hill speelt daarna de finale tegen de winnaar van de FFA.
 
 **Voice:** proximity. De tribune is publiek: de vloer hoort de doden.
 
@@ -427,9 +452,9 @@ De volledige regels staan in [03-kroon-regels.md](03-kroon-regels.md). Hier het 
 the Hill.
 
 **Setup**
-- Dezelfde Arena als Clown vs All. Iedereen behalve Clown, full hp, **willekeurig verdeeld over de
-  20 startplekken**, met de kijkrichting van de plek. Ook wie in Clown vs All af was, en de
-  winnaar ervan. Clown zit op de tribune.
+- Dezelfde Arena als Clown vs All. **Iedereen doet mee, ook Clown**, full hp, **willekeurig
+  verdeeld over de 20 startplekken**, met de kijkrichting van de plek. Ook wie in Clown vs All af
+  was, en de winnaar ervan.
 - Iedereen krijgt dezelfde **FFA-kit**: dezelfde als bij Clown vs All, maar met **32 golden
   apples**. Dus volledig diamond armor (Protection IV), diamond sword en axe (Sharpness V), bow
   (Power V) met 32 pijlen, schild, alles met Unbreaking III, en 32 gapples. Een gewone diamond
@@ -458,7 +483,7 @@ the Hill.
   King of the Hill won (zie de finale).
 - De kills rechts blijven staan tot de finale begint.
 
-**Voice:** proximity. Clown zit op de tribune en mag meejoelen.
+**Voice:** proximity. De tribune is publiek: de vloer hoort de doden.
 
 ---
 
@@ -470,8 +495,8 @@ tegen één. Wie wint is **King of the SMP Bootcamp**.
 **Wie speelt**
 - De winnaar van King of the Hill (meestal Clown) tegen de winnaar van de FFA. De mod onthoudt
   beide winnaars, ook na een herstart van de server.
-- Won dezelfde speler King of the Hill én de FFA (een jager die King of the Hill won), dan speelt
-  hij tegen de **nummer twee van de FFA**: wie daar als laatste afviel.
+- Won dezelfde speler King of the Hill én de FFA (bijvoorbeeld Clown, die ook FFA speelt), dan
+  speelt hij tegen de **nummer twee van de FFA**: wie daar als laatste afviel.
 - Klopt er iets niet, of wil je testen: `/finale spelers <speler1> <speler2>` zet de twee met de
   hand. `/finale spelers` laat zien wie het nu zijn.
 
@@ -504,7 +529,9 @@ tegen één. Wie wint is **King of the SMP Bootcamp**.
   van de Arena: iedereen op de tribune, de winnaar op het podium met de kroon, twintig seconden
   vuurpijlen, en voor iedereen in beeld **KING OF THE SMP BOOTCAMP** met de kop en de naam. Geen
   prijs, just for fun.
-- Daarna blijft de King zichtbaar: de bossbar "Pudding Bootcamp · King: Speler7" en de zwevende
-  kroon boven de winnaar, tot `/bc reset`.
+- Na de twintig seconden vuurwerk gaat **iedereen samen naar het basiskamp**, de King ook. Daar is
+  iedereen weer geheald en **zonder spullen of armor**; de King houdt alleen zijn kroon en blijft
+  zichtbaar: de kroon op zijn hoofd, de bossbar "Pudding's Bootcamp · King: Speler7" en de
+  zwevende kroon boven hem, tot `/bc reset`.
 
 **Voice:** proximity. De hele tribune kijkt mee.

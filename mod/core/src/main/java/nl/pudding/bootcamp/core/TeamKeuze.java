@@ -7,14 +7,14 @@ import java.util.random.RandomGenerator;
 
 /** De teamkeuze bij de uitgang van het doolhof: het maximum per team en wie waar heen gaat. */
 public final class TeamKeuze {
-	public static final int MINIMUM_MAX = 5;
+	public static final int MINIMUM_MAX = 4;
 
 	private TeamKeuze() {
 	}
 
 	/**
-	 * Het maximum per team: 5, of meer als er meer dan 20 spelers zijn. De mod rekent met het
-	 * aantal deelnemers op het moment dat de eerste kiest.
+	 * Het maximum per team: 4 (16 spelers in 4 teams), of meer als er meer dan 16 spelers zijn, zodat
+	 * iedereen past. De mod rekent met het aantal deelnemers op het moment dat de eerste kiest.
 	 */
 	public static int maximum(int spelers) {
 		return Math.max(MINIMUM_MAX, (Math.max(0, spelers) + 3) / 4);

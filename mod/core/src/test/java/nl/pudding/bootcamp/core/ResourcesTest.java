@@ -72,11 +72,11 @@ class ResourcesTest {
 		WavesDef def = WavesDef.uitJson(lees(waves));
 		// De tabel uit docs/02, voor 8 spelers in één veld.
 		assertEquals(5, def.waves().size());
-		assertEquals(14, def.waves().get(0).totaal());
-		assertEquals(16, def.waves().get(1).totaal());
-		assertEquals(16, def.waves().get(2).totaal());
-		assertEquals(20, def.waves().get(3).totaal());
-		assertEquals(12, def.waves().get(4).totaal());
+		assertEquals(56, def.waves().get(0).totaal());
+		assertEquals(64, def.waves().get(1).totaal());
+		assertEquals(64, def.waves().get(2).totaal());
+		assertEquals(80, def.waves().get(3).totaal());
+		assertEquals(48, def.waves().get(4).totaal());
 	}
 
 	@Test

@@ -391,6 +391,9 @@ public final class BootcampConfig {
 		JsonObject blokken = new JsonObject();
 		i.eiBlokken().forEach((b, n) -> blokken.addProperty(b.id(), n));
 		ei.add("blokken", blokken);
+		if (i.eiValgrens() != null) {
+			ei.addProperty("valgrens", i.eiValgrens());
+		}
 		o.add("ei", ei);
 
 		JsonObject mob = new JsonObject();
@@ -449,6 +452,9 @@ public final class BootcampConfig {
 			JsonObject e = o.getAsJsonObject("ei");
 			if (e.has("timer")) {
 				wrap("instellingen.ei.timer", () -> i.zetEiTimer(e.get("timer").getAsInt()));
+			}
+			if (e.has("valgrens") && !e.get("valgrens").isJsonNull()) {
+				wrap("instellingen.ei.valgrens", () -> i.zetEiValgrens(e.get("valgrens").getAsInt()));
 			}
 			if (e.has("blokken")) {
 				Map<EiBlok, Integer> nieuw = new EnumMap<>(EiBlok.class);

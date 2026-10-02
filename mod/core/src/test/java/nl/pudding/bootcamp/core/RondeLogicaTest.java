@@ -33,8 +33,10 @@ class RondeLogicaTest {
 	@Nested
 	class TeamKeuzeTest {
 		@Test
-		void maximumIsVijfOfMeer() {
-			assertEquals(5, TeamKeuze.maximum(0));
+		void maximumIsVierOfMeer() {
+			assertEquals(4, TeamKeuze.maximum(0));
+			assertEquals(4, TeamKeuze.maximum(16));
+			assertEquals(5, TeamKeuze.maximum(17));
 			assertEquals(5, TeamKeuze.maximum(20));
 			assertEquals(6, TeamKeuze.maximum(21));
 			assertEquals(6, TeamKeuze.maximum(24));
@@ -43,8 +45,8 @@ class RondeLogicaTest {
 
 		@Test
 		void volBijHetMaximum() {
-			assertFalse(TeamKeuze.vol(4, 5));
-			assertTrue(TeamKeuze.vol(5, 5));
+			assertFalse(TeamKeuze.vol(3, 4));
+			assertTrue(TeamKeuze.vol(4, 4));
 		}
 
 		@Test
@@ -121,7 +123,7 @@ class RondeLogicaTest {
 					assertTrue(alle.add(i), "plek " + i + " dubbel");
 				}
 			}
-			assertEquals(271, alle.size());
+			assertEquals(2540, alle.size());
 		}
 
 		@Test
@@ -146,6 +148,10 @@ class RondeLogicaTest {
 			assertEquals(50, EiBlok.NETHERITE.punten());
 			assertEquals(10, EiBlok.DIAMOND.punten());
 			assertEquals(5, EiBlok.GOLD.punten());
+			assertEquals(1, EiBlok.IRON.punten());
+			assertEquals(EiBlok.IRON, EiBlok.vanBlok("minecraft:iron_block"));
+			assertEquals(0, EiBlok.LAPIS.punten());
+			assertEquals(EiBlok.LAPIS, EiBlok.vanBlok("minecraft:lapis_block"));
 			assertEquals(EiBlok.EMERALD, EiBlok.vanBlok("minecraft:emerald_block"));
 			assertNull(EiBlok.vanBlok(EiBlok.DEEPSLATE));
 			assertEquals(EiBlok.REDSTONE, EiBlok.vanId("Redstone"));
@@ -623,20 +629,37 @@ class RondeLogicaTest {
 			assertEquals(4, i.doolhofPoort());
 			assertEquals(10, i.doolhofHint());
 			assertEquals(15, i.eiTimer());
-			assertEquals(6, i.eiBlokken(EiBlok.NETHERITE));
-			assertEquals(271, i.eiTotaal());
+			assertEquals(10, i.eiBlokken(EiBlok.NETHERITE));
+			assertEquals(2540, i.eiTotaal());
+			assertEquals(30, i.eiBlokken(EiBlok.LAPIS));
+			assertEquals(2000, i.eiBlokken(EiBlok.IRON));
 			assertEquals("Af · je speelt geen beurt meer", i.aftekst());
 			assertEquals("Wacht op het startsein", i.clownWachttekst());
 			assertEquals("Wacht op het startsein", i.ffaWachttekst());
 			assertEquals("Wacht op het startsein", i.doolhofWachttekst());
 			assertEquals(200, i.warden(Instellingen.WardenWaarde.LEVEN));
-			assertEquals(8, i.warden(Instellingen.WardenWaarde.KLAP));
-			assertEquals(5, i.warden(Instellingen.WardenWaarde.BOOM));
+			assertEquals(16, i.warden(Instellingen.WardenWaarde.KLAP));
+			assertEquals(10, i.warden(Instellingen.WardenWaarde.BOOM));
 			assertEquals(50, i.mobPunten("minecraft:warden"));
 			assertEquals(3, i.veldHoogte());
 			assertTrue(i.poortMelding());
 			assertEquals(3, i.valMobsMin());
 			assertEquals(10, i.valMobsMax());
+			assertNull(i.eiValgrens());
+		}
+
+		@Test
+		void valgrensVanHetEi() {
+			Instellingen i = new Instellingen();
+			i.zetEiValgrens(60);
+			assertEquals(60, i.eiValgrens());
+			assertNotNull(Instellingen.checkValgrens(-65));
+			assertNotNull(Instellingen.checkValgrens(320));
+			assertNull(Instellingen.checkValgrens(-64));
+			assertThrows(IllegalArgumentException.class, () -> i.zetEiValgrens(400));
+			assertEquals(60, i.eiValgrens());
+			i.zetEiValgrens(null);
+			assertNull(i.eiValgrens());
 		}
 
 		@Test
@@ -665,12 +688,12 @@ class RondeLogicaTest {
 		@Test
 		void eiBlokkenPassenOpDeDeepslate() {
 			Instellingen i = new Instellingen();
-			assertNull(i.checkEiBlokken(EiBlok.DIAMOND, 100, 1000));
-			// 271 - 90 + 900 = 1081 > 1000.
-			assertNotNull(i.checkEiBlokken(EiBlok.DIAMOND, 900, 1000));
+			assertNull(i.checkEiBlokken(EiBlok.DIAMOND, 100, 3000));
+			// 2540 - 150 + 900 = 3290 > 3000.
+			assertNotNull(i.checkEiBlokken(EiBlok.DIAMOND, 900, 3000));
 			// Niet vastgelegd: niet te controleren.
 			assertNull(i.checkEiBlokken(EiBlok.DIAMOND, 900, -1));
-			assertNotNull(i.checkEiBlokken(EiBlok.DIAMOND, -1, 1000));
+			assertNotNull(i.checkEiBlokken(EiBlok.DIAMOND, -1, 3000));
 		}
 
 		@Test

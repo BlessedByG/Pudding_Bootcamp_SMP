@@ -31,6 +31,9 @@ public final class Instellingen {
 	/** Tot hoeveel blokken boven de selectie een veld van de mob arena voor kijkers en wachtenden telt. */
 	public static final int VELD_HOOGTE = 3;
 	public static final int MAX_VELD_HOOGTE = 10;
+	/** De laagste en hoogste valgrens van het Ei: de bouwhoogte van de overworld. */
+	public static final int MIN_Y = -64;
+	public static final int MAX_Y = 319;
 	public static final String WACHTTEKST = "Wacht op het startsein";
 	/** Punten voor een mobtype dat niet in de tabel staat. */
 	public static final int MOB_PUNTEN_ANDER = 1;
@@ -64,6 +67,7 @@ public final class Instellingen {
 	private String doolhofWachttekst = WACHTTEKST;
 	private int eiTimer = EI_TIMER;
 	private final EnumMap<EiBlok, Integer> eiBlokken = new EnumMap<>(EiBlok.class);
+	private Integer eiValgrens;
 	private final Map<String, Integer> mobPunten = new LinkedHashMap<>(MOB_PUNTEN);
 	private String aftekst = AFTEKST;
 	private int veldHoogte = VELD_HOOGTE;
@@ -294,6 +298,23 @@ public final class Instellingen {
 		eiBlokken.put(blok, aantal);
 	}
 
+	/** R2.14: op of onder deze hoogte gaat wie van het Ei valt terug naar zijn startplek; {@code null}: uit. */
+	public Integer eiValgrens() {
+		return eiValgrens;
+	}
+
+	public static String checkValgrens(int y) {
+		return y < MIN_Y || y > MAX_Y ? "de valgrens moet y " + MIN_Y + " t/m " + MAX_Y + " zijn, niet " + y : null;
+	}
+
+	/** {@code null} zet de valgrens uit. */
+	public void zetEiValgrens(Integer y) {
+		if (y != null) {
+			vereis(checkValgrens(y));
+		}
+		eiValgrens = y;
+	}
+
 	// Mob arena
 
 	/** Punten voor een mobtype ({@code zombie} of {@code minecraft:zombie}). */
@@ -342,8 +363,8 @@ public final class Instellingen {
 	/** De warden uit het Warden-ei: zijn levens en zijn schade, in HP (2 HP is één hartje). */
 	public enum WardenWaarde {
 		LEVEN("leven", 200, 20, 1000),
-		KLAP("klap", 8, 0, 60),
-		BOOM("boom", 5, 0, 40);
+		KLAP("klap", 16, 0, 60),
+		BOOM("boom", 10, 0, 40);
 
 		private final String id;
 		private final int standaard;

@@ -10,6 +10,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -17,6 +18,28 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** De kleine onderdelen bij elkaar; de namen van de geneste klassen staan in REGELS.md. */
 class KleineTests {
+	@Nested
+	class DagtijdTest {
+		@Test
+		void altijdVooruitNaarDeVolgendeKeer() {
+			// Middag naar middernacht: een halve dag verder.
+			assertEquals(12000, Dagtijd.totDagtijd(6000, Dagtijd.MIDDERNACHT));
+			// Middernacht naar middag: door de ochtend heen, niet terug.
+			assertEquals(12000, Dagtijd.totDagtijd(3 * Dagtijd.DAG + 18000, Dagtijd.MIDDAG));
+			// Het is al middag: niks te doen.
+			assertEquals(0, Dagtijd.totDagtijd(5 * Dagtijd.DAG + 6000, Dagtijd.MIDDAG));
+			assertEquals(23000, Dagtijd.totDagtijd(7000, Dagtijd.MIDDAG));
+		}
+
+		@Test
+		void stapPerTick() {
+			// 12000 ticks dagtijd in 30 seconden (600 ticks): 20 per tick.
+			assertEquals(20, Dagtijd.stap(12000, 600));
+			assertEquals(1, Dagtijd.stap(5, 600));
+			assertEquals(7, Dagtijd.stap(13, 2));
+		}
+	}
+
 	@Nested
 	class LichtshowTest {
 		@Test
@@ -73,6 +96,24 @@ class KleineTests {
 			assertTrue(Doodteksten.STANDAARD.contains(Doodteksten.kies(null, random)));
 			assertEquals(6, Doodteksten.STANDAARD.size());
 			assertTrue(Doodteksten.STANDAARD.containsAll(List.of("Gelukkig is dit de CSMP niet..", "Dag 1...", "Op de lijst..", "Kleine L gepakt")));
+		}
+
+		@Test
+		void langeTekstOverTweeRegels() {
+			assertArrayEquals(new String[] {"Grote L gepakt!", null}, Doodteksten.verdeel("Grote L gepakt!"));
+			assertArrayEquals(new String[] {"Had je nou maar", "beter je best gedaan"},
+					Doodteksten.verdeel("Had je nou maar beter je best gedaan"));
+			assertArrayEquals(new String[] {"Gelukkig is dit", "de CSMP niet.."}, Doodteksten.verdeel("Gelukkig is dit de CSMP niet.."));
+			// Precies de grens past nog groot.
+			assertArrayEquals(new String[] {"a".repeat(22), null}, Doodteksten.verdeel("a".repeat(22)));
+			// De spatie bij het midden ligt na de grens: dan de laatste die nog past.
+			String[] scheef = Doodteksten.verdeel("a".repeat(20) + " " + "b".repeat(5) + " " + "c".repeat(30));
+			assertEquals("a".repeat(20), scheef[0]);
+			// Geen spatie die past: alles klein.
+			assertArrayEquals(new String[] {"", "x".repeat(30)}, Doodteksten.verdeel("x".repeat(30)));
+			for (String t : Doodteksten.STANDAARD) {
+				assertTrue(Doodteksten.verdeel(t)[0].length() <= Doodteksten.MAX_TITEL, t);
+			}
 		}
 	}
 
@@ -174,7 +215,7 @@ class KleineTests {
 	class BossbarTekstTest {
 		@Test
 		void formatenUitDeDocs() {
-			assertEquals("Pudding Bootcamp", BossbarTekst.BASISKAMP);
+			assertEquals("Pudding's Bootcamp", BossbarTekst.BASISKAMP);
 			assertEquals("Doolhof · 04:41", BossbarTekst.doolhof(281));
 			assertEquals("Doolhof · de tijd is om · gif", BossbarTekst.doolhofGif());
 			assertEquals("Doolhof · wacht op de start", BossbarTekst.DOOLHOF_WACHT);
@@ -188,7 +229,7 @@ class KleineTests {
 			assertEquals("De Finale · wacht op de start", BossbarTekst.FINALE_WACHT);
 			assertEquals("De Finale · ClownPierce tegen Speler7", BossbarTekst.finale("ClownPierce", "Speler7"));
 			assertEquals("De Finale · Speler7 is weg · Pudding beslist", BossbarTekst.finalePauze("Speler7"));
-			assertEquals("Pudding Bootcamp · King: Speler7", BossbarTekst.king("Speler7"));
+			assertEquals("Pudding's Bootcamp · King: Speler7", BossbarTekst.king("Speler7"));
 		}
 
 		@Test

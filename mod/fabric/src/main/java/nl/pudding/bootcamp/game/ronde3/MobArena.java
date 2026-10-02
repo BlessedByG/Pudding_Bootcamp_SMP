@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -86,7 +87,8 @@ import java.util.UUID;
  * een eigen startplek. Tot de countdown voorbij is staan ze stil. Vijf waves, punten per kill voor
  * het team. Wie sneuvelt gaat de kooi in, is af voor de rest van de ronde en is zijn spullen kwijt.
  * Het schema is geheim: je merkt pas dat je aan de beurt bent als je naar je plek wordt
- * geteleporteerd. Met het Warden-ei ({@link WardenEi}) wordt een volgende wave de warden.
+ * geteleporteerd. Met het Warden-ei ({@link WardenEi}) komt er meteen een warden bij in de lopende
+ * wave.
  */
 public final class MobArena extends RondeLogica {
 	public static final String TAG = "bootcamp_mob";
@@ -121,8 +123,8 @@ public final class MobArena extends RondeLogica {
 	private final List<Kleur> meedoend = new ArrayList<>();
 	/** Wie deze beurt in het veld staat, met zijn kleur en startplek. */
 	private final List<MobSchema.Plek> opstelling = new ArrayList<>();
-	/** Het Warden-ei is ingezet: de volgende wave die start, is de warden. */
-	private String wardenVan;
+	/** Na de mob arena blijft iedereen op de tribune; pas na {@code /mobarena naarquiz} is de quiz het verzamelpunt. */
+	private static boolean naarQuiz;
 
 	public static void init() {
 		Reset.REGISTER.registreer("mobs van de mob arena", MobArena::ruimMobsOp);
@@ -251,6 +253,7 @@ public final class MobArena extends RondeLogica {
 
 	@Override
 	public void start(MinecraftServer server) {
+		naarQuiz = false;
 		ruimMobsOp(server);
 		Spelregels.locatorBar(server, false);
 		// Geen kit: iedereen speelt met wat hij uit het doolhof heeft.
@@ -359,6 +362,10 @@ public final class MobArena extends RondeLogica {
 			return;
 		}
 		mobs.removeIf(m -> !m.isAlive());
+		// Zolang de warden leeft, is de wave pas klaar als hij dood is: geen limiet van twee minuten.
+		if (wardenLeeft()) {
+			verloop.zonderLimiet();
+		}
 		for (MobVerloop.Gebeurtenis g : verloop.seconde(mobs.size(), spelersInVeld(server))) {
 			switch (g.soort()) {
 				case START_WAVE -> startWave(server);
@@ -374,17 +381,17 @@ public final class MobArena extends RondeLogica {
 				totaal <= 0 ? 0f : Math.min(1f, (float) mobs.size() / totaal));
 	}
 
-	/** Hoeveel mobs de lopende wave had: de warden is er één. */
+	/** Hoeveel mobs de lopende wave had, met de warden erbij als die meedoet. */
 	private int totaalDezeWave() {
 		if (verloop.wave() <= 0) {
 			return 0;
 		}
-		for (Mob m : mobs) {
-			if (m instanceof Warden) {
-				return 1;
-			}
-		}
-		return waves.waves().get(verloop.wave() - 1).totaal();
+		return waves.waves().get(verloop.wave() - 1).totaal() + (wardenLeeft() ? 1 : 0);
+	}
+
+	/** Loopt de warden van het Warden-ei nog rond in het veld? */
+	private boolean wardenLeeft() {
+		return mobs.stream().anyMatch(m -> m instanceof Warden && m.isAlive());
 	}
 
 	private static int spelersInVeld(MinecraftServer server) {
@@ -400,16 +407,6 @@ public final class MobArena extends RondeLogica {
 
 	private void startWave(MinecraftServer server) {
 		ServerLevel wereld = Mc.wereld(server);
-		if (wardenVan != null) {
-			String van = wardenVan;
-			wardenVan = null;
-			spawnWarden(server, wereld);
-			verloop.zonderLimiet();
-			Mc.titleAllen(server, Mc.tekst("WAVE " + verloop.wave(), ChatFormatting.DARK_AQUA, ChatFormatting.BOLD),
-					Mc.tekst("De warden van " + van, ChatFormatting.GRAY), 5, 60, 10);
-			Mc.geluidAllen(server, SoundEvents.WARDEN_EMERGE, 1f, 1f);
-			return;
-		}
 		WavesDef.Wave wave = waves.waves().get(verloop.wave() - 1);
 		// Eerst een rookwolk op elk spawnpunt, dan de mobs.
 		for (String p : Spel.reeks("mob_")) {
@@ -487,12 +484,12 @@ public final class MobArena extends RondeLogica {
 	 * De warden uit het Warden-ei: op punt {@code warden}, uit de grond (spawnreden TRIGGERED geeft de
 	 * graaf-animatie), met de levens en klap uit {@code /mobarena warden}.
 	 */
-	private void spawnWarden(MinecraftServer server, ServerLevel wereld) {
+	private boolean spawnWarden(MinecraftServer server, ServerLevel wereld) {
 		Punt p = Spel.punt("warden");
 		if (p == null || !(type("minecraft:warden") instanceof EntityType<?> type)
 				|| !(type.create(wereld, EntitySpawnReason.TRIGGERED) instanceof Warden warden)) {
 			Bootcamp.LOG.warn("Mob arena: de warden kon niet spawnen (punt warden ontbreekt?)");
-			return;
+			return false;
 		}
 		double x = p.x() + (p.blok() ? 0.5 : 0);
 		double y = p.y() + (p.blok() ? 1 : 0);
@@ -518,6 +515,7 @@ public final class MobArena extends RondeLogica {
 		warden.addTag(WardenEi.TAG);
 		wereld.addFreshEntity(warden);
 		mobs.add(warden);
+		return true;
 	}
 
 	private static EntityType<?> type(String id) {
@@ -660,33 +658,33 @@ public final class MobArena extends RondeLogica {
 	// Het Warden-ei
 
 	/**
-	 * Het Warden-ei is ingezet: de volgende wave die start, is de warden in plaats van de geplande
-	 * wave. Tijdens een wave of de pauze erna de volgende wave van deze beurt; in de laatste wave of
-	 * tussen twee beurten de eerste wave van de volgende beurt.
+	 * Het Warden-ei is ingezet: de warden komt meteen uit de grond, bovenop de lopende wave. Die wave
+	 * (en dus de beurt) is pas klaar als de warden ook dood is. Kan alleen terwijl er gevochten wordt;
+	 * anders houdt hij het ei.
 	 *
 	 * @return {@code null} als het gelukt is, anders waarom niet (dan houdt hij het ei)
 	 */
 	public String wardenInzetten(MinecraftServer server, ServerPlayer speler) {
-		if (wardenVan != null) {
-			return "de warden komt al";
+		if (fase == Fase.COUNTDOWN) {
+			return "wacht tot de beurt begonnen is";
 		}
-		boolean nogEenBeurt = schema != null && beurt + 1 < schema.beurten();
-		boolean nogEenWave = switch (fase) {
-			case COUNTDOWN -> true;
-			case WAVES -> (verloop != null && !verloop.laatsteWave()) || nogEenBeurt;
-			case WACHT, VIEREN -> nogEenBeurt;
-			case EINDE -> false;
-		};
-		if (!nogEenWave) {
-			return "er komt geen wave meer";
+		if (fase != Fase.WAVES || verloop == null || verloop.beurtKlaar()) {
+			return "er loopt geen beurt";
 		}
-		wardenVan = Mc.naam(speler);
+		if (wardenLeeft()) {
+			return "er loopt al een warden rond";
+		}
+		if (!spawnWarden(server, Mc.wereld(server))) {
+			return "de warden kan niet spawnen (punt warden ontbreekt?)";
+		}
+		verloop.zonderLimiet();
+		String van = Mc.naam(speler);
 		Kleur k = Teams.keuze(speler);
 		Mc.titleAllen(server, Mc.tekst("WARDEN-EI", ChatFormatting.DARK_AQUA, ChatFormatting.BOLD),
-				Component.empty().append(Mc.tekst(wardenVan, Mc.kleur(k)))
-						.append(Mc.tekst(" zet hem in: de volgende wave is de warden", ChatFormatting.WHITE)), 5, 60, 10);
-		Mc.geluidAllen(server, SoundEvents.WARDEN_ROAR, 1f, 1f);
-		Mc.chatAllen(server, Component.empty().append(Mc.tekst(wardenVan, Mc.kleur(k)))
+				Component.empty().append(Mc.tekst(van, Mc.kleur(k)))
+						.append(Mc.tekst(" zet hem in: de warden komt eraan", ChatFormatting.WHITE)), 5, 60, 10);
+		Mc.geluidAllen(server, SoundEvents.WARDEN_EMERGE, 1f, 1f);
+		Mc.chatAllen(server, Component.empty().append(Mc.tekst(van, Mc.kleur(k)))
 				.append(Mc.tekst(" zette het Warden-ei in", ChatFormatting.DARK_AQUA)));
 		return null;
 	}
@@ -708,6 +706,7 @@ public final class MobArena extends RondeLogica {
 		}
 		String type = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType()).toString();
 		int erbij = punten.kill(team, type, Spel.instellingen());
+		killDeeltjes(mob, team);
 		Mc.geluid(killer, SoundEvents.EXPERIENCE_ORB_PICKUP, 1f, 1f);
 		Spel.melding(killer, Component.empty()
 				.append(Mc.tekst("+" + erbij, ChatFormatting.GREEN, ChatFormatting.BOLD))
@@ -719,6 +718,29 @@ public final class MobArena extends RondeLogica {
 					.append(Mc.tekst(" killde de " + kort + " (+" + erbij + ")", ChatFormatting.GOLD)));
 		}
 		toonSidebar(server);
+	}
+
+	/**
+	 * Deeltjes in de teamkleur van de killer rond de mob: een wolk zo groot als de mob en een ring om
+	 * zijn voeten. Grotere mobs krijgen er meer. Iedereen ziet ze, ook de tribune.
+	 */
+	private static void killDeeltjes(LivingEntity mob, Kleur team) {
+		if (!(mob.level() instanceof ServerLevel wereld)) {
+			return;
+		}
+		DustParticleOptions stof = new DustParticleOptions(team.rgb(), 1.5f);
+		double breed = mob.getBbWidth();
+		double hoog = mob.getBbHeight();
+		int wolk = (int) Math.min(80, 16 + breed * hoog * 12);
+		wereld.sendParticles(stof, true, true, mob.getX(), mob.getY() + hoog / 2, mob.getZ(), wolk,
+				breed / 2 + 0.2, hoog / 2, breed / 2 + 0.2, 0);
+		double straal = Math.max(0.8, breed / 2 + 0.5);
+		int ring = (int) Math.min(48, Math.round(straal * 16));
+		for (int i = 0; i < ring; i++) {
+			double hoek = Math.PI * 2 * i / ring;
+			wereld.sendParticles(stof, true, true, mob.getX() + Math.cos(hoek) * straal, mob.getY() + 0.1,
+					mob.getZ() + Math.sin(hoek) * straal, 1, 0, 0, 0, 0);
+		}
 	}
 
 	/** Gesneuveld: kijker in de kooi tot het einde van de beurt, af voor de rest. Het Warden-ei houdt hij. */
@@ -882,8 +904,8 @@ public final class MobArena extends RondeLogica {
 		Spel.einde(server);
 		Bossbar.basiskamp();
 		toonSidebar(server);
-		// Tien seconden vieren, dan levert iedereen alles in (ook een ongebruikt Warden-ei) en gaat
-		// geheald naar de quiz.
+		// Tien seconden vieren, dan levert iedereen alles in (ook een ongebruikt Warden-ei) en wordt
+		// geheald. Iedereen blijft op de tribune; naar de quiz pas met /mobarena naarquiz.
 		Planner.naSeconden(Regels.VIEREN, () -> {
 			for (ServerPlayer s : Mc.deelnemers(server)) {
 				s.getInventory().clearContent();
@@ -893,9 +915,35 @@ public final class MobArena extends RondeLogica {
 				Mc.heal(s);
 				Spel.status(s).tribunepunt = null;
 				Spel.status(s).kooi = 0;
-				Tribune.naarVerzamelpunt(s);
 			}
 		});
+	}
+
+	/** Of iedereen al naar de quiz is ({@code /mobarena naarquiz}); tot dan is de tribune het verzamelpunt. */
+	public static boolean naarQuiz() {
+		return naarQuiz;
+	}
+
+	/**
+	 * {@code /mobarena naarquiz}: na de mob arena iedereen die meedoet van de tribune naar de quiz,
+	 * bij de bank van zijn team; de presentator naar het podium.
+	 *
+	 * @return {@code null} als het gelukt is, anders waarom niet
+	 */
+	public static String naarDeQuiz(MinecraftServer server) {
+		if (Spel.actief() != null) {
+			return "er loopt nog een ronde (" + Spel.actief().ronde().naam() + ")";
+		}
+		if (Spel.ronde() != Ronde.MOBARENA) {
+			return "dit is voor na de mob arena";
+		}
+		naarQuiz = true;
+		for (ServerPlayer s : Mc.deelnemers(server)) {
+			Spel.status(s).tribunepunt = null;
+			Tribune.naarVerzamelpunt(s);
+		}
+		Mc.titleAllen(server, Mc.tekst("OP NAAR DE QUIZ", ChatFormatting.GOLD, ChatFormatting.BOLD), null, 10, 50, 15);
+		return null;
 	}
 
 	/** {@code /mobarena wave volgende}: de huidige wave telt als klaar, ook de warden. */
@@ -942,7 +990,7 @@ public final class MobArena extends RondeLogica {
 	@Override
 	public String statusRegel(MinecraftServer server) {
 		return "mob arena: beurt " + (beurt + 1) + "/" + (schema == null ? "?" : schema.beurten()) + ", fase " + fase.name().toLowerCase(Locale.ROOT)
-				+ (verloop != null ? ", wave " + verloop.wave() : "") + (wardenVan != null ? ", de warden komt" : "");
+				+ (verloop != null ? ", wave " + verloop.wave() : "") + (wardenLeeft() ? ", de warden loopt rond" : "");
 	}
 
 	@Override
