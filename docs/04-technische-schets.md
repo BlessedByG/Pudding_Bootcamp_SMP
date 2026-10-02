@@ -1075,8 +1075,10 @@ opnieuw. Logt hij in tijdens de pauze, dan wordt hij kijker en krijgen de ops ee
 
 **Kroning** (na de finale): iedereen naar de tribune, de winnaar naar `troon` (het podium) met de kroon en de
 zweefkroon, twintig seconden vuurpijlen, title `KING OF THE SMP BOOTCAMP` met de kop en de naam
-als subtitle. Daarna blijft de bossbar `Pudding's Bootcamp · King: Speler7` (goud) staan en blijft
-de zweefkroon boven de winnaar, tot `/bc reset`.
+als subtitle. Na het vuurwerk eindigt de ronde en gaat iedereen die meedoet naar `basiskamp`
+(`Finale.naarHetBasiskamp`): weer speler (niet meer dood of kijker), adventure; de King houdt rol
+`KROON`, zijn kroon en zijn spullen. Wie daarna inlogt, gaat ook naar het basiskamp. De bossbar
+`Pudding's Bootcamp · King: Speler7` (goud) en de zweefkroon boven de King blijven tot `/bc reset`.
 
 ## Kijkers: wie af of dood is
 
@@ -1202,7 +1204,7 @@ langzaam draaiend. Opgeruimd als de kroonhouder kijker wordt.
 | Finalist uitgelogd | Bossbar `De Finale · Speler7 is weg · Pudding beslist`, actionbar voor de ander `Speler7 is weg · even wachten`, chatregel met de keuzes alleen voor de ops. |
 | `/clown krimp`, `/ffa krimp` | Title `DE BORDER KRIMPT` in rood, subtitle `naar 20 in 60 seconden`, `event.raid.horn`. Kijkers zien de title ook, maar merken niets van de border. |
 | Laatste drie, laatste twee | Title `LAATSTE DRIE` of `LAATSTE TWEE` in paars met de namen, `entity.wither.spawn` zacht. |
-| Kroning (na de finale) | Twintig seconden vuurpijlen, title `KING OF THE SMP BOOTCAMP` met de kop en de naam van de winnaar als subtitle. Daarna blijven de bossbar `Pudding's Bootcamp · King: Speler7` en de zweefkroon tot `/bc reset`. |
+| Kroning (na de finale) | Twintig seconden vuurpijlen, title `KING OF THE SMP BOOTCAMP` met de kop en de naam van de winnaar als subtitle. Daarna gaat iedereen naar het basiskamp; daar blijven de bossbar `Pudding's Bootcamp · King: Speler7` en de zweefkroon tot `/bc reset`. |
 
 ## Zo is dit gevibecode
 

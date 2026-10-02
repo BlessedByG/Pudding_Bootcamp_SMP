@@ -60,7 +60,7 @@ Twee dingen houden het toch strak:
 | Quiz | De tribune van de Arena, voor het Rad; na het Rad de vloer op |
 | Clown vs All | Blijft in de Arena: wie af is zit al op de tribune |
 | FFA | Blijft in de Arena: de winnaar op de vloer, de rest op de tribune |
-| Finale | Kroning op het podium in het midden van de Arena, iedereen op de tribune |
+| Finale | Kroning op het podium in het midden van de Arena, iedereen op de tribune; na twintig seconden vuurwerk iedereen samen naar het basiskamp |
 
 Lopen is er niet bij: teleporteren, en elke ronde start op het sein van Pudding.
 

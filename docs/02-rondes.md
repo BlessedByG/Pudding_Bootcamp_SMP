@@ -529,7 +529,8 @@ tegen één. Wie wint is **King of the SMP Bootcamp**.
   van de Arena: iedereen op de tribune, de winnaar op het podium met de kroon, twintig seconden
   vuurpijlen, en voor iedereen in beeld **KING OF THE SMP BOOTCAMP** met de kop en de naam. Geen
   prijs, just for fun.
-- Daarna blijft de King zichtbaar: de bossbar "Pudding's Bootcamp · King: Speler7" en de zwevende
-  kroon boven de winnaar, tot `/bc reset`.
+- Na de twintig seconden vuurwerk gaat **iedereen samen naar het basiskamp**, de King ook. Hij
+  blijft zichtbaar: de kroon op zijn hoofd, de bossbar "Pudding's Bootcamp · King: Speler7" en de
+  zwevende kroon boven hem, tot `/bc reset`.
 
 **Voice:** proximity. De hele tribune kijkt mee.

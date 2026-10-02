@@ -24,7 +24,7 @@ Tijdschema, rollen en checklists voor de avond zelf. Tijden zijn een voorbeeld m
 | 21:47 | **Ronde 6: De FFA** (iedereen stil tot `/ffa go`, dan 10 sec countdown, geen timer, reken op 5 tot 10 min) | Admin 1 |
 | 21:58 | Winnaar FFA. `/finale spelers`: wie speelt de finale? Host kondigt aan: de winnaar van King of the Hill tegen de winnaar van de FFA. | Host, Admin 1 |
 | 22:00 | **Ronde 7: De Finale** (1 tegen 1, stil tot `/finale go`, dan 10 sec countdown, geen timer, reken op 2 tot 5 min) | Admin 1 |
-| 22:05 | **Kroning** op het podium in het midden van de Arena, tribunes vol. | Host |
+| 22:05 | **Kroning** op het podium in het midden van de Arena, tribunes vol. Na twintig seconden vuurwerk staat iedereen samen in het basiskamp. | Host |
 | 22:15 | Einde stream. | |
 
 Totaal ruim 1,5 uur speeltijd, plan 2 uur en een kwartier met buffer. De tijden van het doolhof
@@ -253,7 +253,8 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
       allebei: de nummer twee van de FFA). `/finale start`: die twee op `finale_1` en `finale_2`,
       FFA-kit, de rest op de tribune, DE FINALE met hun koppen, stil tot `/finale go`. Wie wint:
       kroning op het podium, iedereen op de tribune, vuurwerk, KING OF THE SMP BOOTCAMP met de kop
-      van de winnaar; de bossbar "King: <naam>" en de zwevende kroon blijven tot `/bc reset`. Log
+      van de winnaar. Na twintig seconden staat iedereen in het basiskamp, de King met zijn kroon;
+      de bossbar "King: <naam>" en de zwevende kroon blijven tot `/bc reset`. Log
       een finalist uit: de finale pauzeert, de ander staat stil, de ops krijgen een melding.
       `/finale combatlog`: de ander krijgt de kroning. Nog een keer met `/finale crash`: de
       finale stopt, daarna opnieuw `/finale start` en `/finale go`. `/finale spelers a b` zet ze met de hand.

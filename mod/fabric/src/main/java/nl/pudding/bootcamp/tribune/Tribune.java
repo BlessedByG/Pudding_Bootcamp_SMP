@@ -27,6 +27,7 @@ import nl.pudding.bootcamp.game.Spel;
 import nl.pudding.bootcamp.game.ronde1.Doolhof;
 import nl.pudding.bootcamp.game.ronde2.Ei;
 import nl.pudding.bootcamp.game.ronde3.MobArena;
+import nl.pudding.bootcamp.game.ronde7.Finale;
 import nl.pudding.bootcamp.game.SpelerStatus;
 import nl.pudding.bootcamp.rad.KroonRad;
 import nl.pudding.bootcamp.teams.Teams;
@@ -189,7 +190,9 @@ public final class Tribune {
 				Kleur k = Teams.keuze(speler);
 				yield k != null && Spel.punt("quiz_" + k.id()) != null ? "quiz_" + k.id() : "v3";
 			}
-			case QUIZ, CLOWN, FFA, FINALE -> volgendTribunepunt(Ronde.CLOWN);
+			case QUIZ, CLOWN, FFA -> volgendTribunepunt(Ronde.CLOWN);
+			// Na het vuurwerk van de kroning is iedereen samen in het basiskamp.
+			case FINALE -> Finale.naarBasiskamp() ? "basiskamp" : volgendTribunepunt(Ronde.CLOWN);
 		};
 	}
 

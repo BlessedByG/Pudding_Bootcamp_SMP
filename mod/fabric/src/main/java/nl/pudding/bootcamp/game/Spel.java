@@ -20,6 +20,7 @@ import nl.pudding.bootcamp.core.TeamKeuze;
 import nl.pudding.bootcamp.core.Tijd;
 import nl.pudding.bootcamp.crown.Kroon;
 import nl.pudding.bootcamp.crown.Opstelling;
+import nl.pudding.bootcamp.game.ronde7.Finale;
 import nl.pudding.bootcamp.kits.Items26;
 import nl.pudding.bootcamp.rad.KroonRad;
 import nl.pudding.bootcamp.teams.Teams;
@@ -526,6 +527,12 @@ public final class Spel {
 				}
 				st.dood = true;
 				Tribune.maakKijker(server, speler, Tribune.Spullen.LEGEN, false);
+			}
+			case FINALE -> {
+				// Na de kroning is iedereen samen in het basiskamp; de King houdt zijn kroon.
+				if (Finale.naarBasiskamp()) {
+					Finale.naarHetBasiskamp(server, speler);
+				}
 			}
 		}
 	}
