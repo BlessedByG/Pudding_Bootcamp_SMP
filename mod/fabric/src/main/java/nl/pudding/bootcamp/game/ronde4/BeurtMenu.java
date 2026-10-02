@@ -17,14 +17,18 @@ import nl.pudding.bootcamp.core.Kleur;
 import nl.pudding.bootcamp.game.Spel;
 import nl.pudding.bootcamp.teams.Teammenu;
 
+import java.util.List;
+
 /**
  * Het beurtmenu van de presentator (het kompas): één rij met de wol van elk team en zijn stand
- * ({@code Rood · 5}). Een klik geeft dat team meteen de beurt, zonder rad (R4.7), en sluit het menu.
- * Het team dat al aan de beurt is glinstert. Items verplaatsen kan niet.
+ * ({@code Rood · 5}), van links naar rechts groen, geel, rood, blauw. Een klik geeft dat team
+ * meteen de beurt, zonder rad (R4.7), en sluit het menu. Het team dat al aan de beurt is glinstert.
+ * Items verplaatsen kan niet.
  */
 public final class BeurtMenu extends ChestMenu {
 	private static final int RIJ = 9;
-	/** Op welke plek in de rij elk team staat, in de volgorde van {@link Kleur}. */
+	/** De teams van links naar rechts, op de plekken van {@link #PLEK}. */
+	private static final List<Kleur> VOLGORDE = List.of(Kleur.GROEN, Kleur.GEEL, Kleur.ROOD, Kleur.BLAUW);
 	private static final int[] PLEK = {1, 3, 5, 7};
 
 	private final Quiz quiz;
@@ -36,13 +40,14 @@ public final class BeurtMenu extends ChestMenu {
 
 	static void open(ServerPlayer speler, Quiz quiz) {
 		SimpleContainer inhoud = new SimpleContainer(RIJ);
-		for (Kleur k : Kleur.values()) {
+		for (int i = 0; i < VOLGORDE.size(); i++) {
+			Kleur k = VOLGORDE.get(i);
 			ItemStack wol = new ItemStack(Teammenu.wol(k));
 			wol.set(DataComponents.ITEM_NAME, Mc.tekst(k.naam() + " · " + quiz.punten(k), Mc.kleur(k), ChatFormatting.BOLD));
 			if (k == quiz.aanDeBeurt()) {
 				wol.set(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, true);
 			}
-			inhoud.setItem(PLEK[k.ordinal()], wol);
+			inhoud.setItem(PLEK[i], wol);
 		}
 		speler.openMenu(new SimpleMenuProvider((id, inv, p) -> new BeurtMenu(id, inv, inhoud, quiz),
 				Mc.tekst("Wie is er aan de beurt?", ChatFormatting.DARK_GRAY)));
@@ -68,9 +73,9 @@ public final class BeurtMenu extends ChestMenu {
 	}
 
 	private static Kleur teamBij(int slot) {
-		for (Kleur k : Kleur.values()) {
-			if (PLEK[k.ordinal()] == slot) {
-				return k;
+		for (int i = 0; i < PLEK.length; i++) {
+			if (PLEK[i] == slot) {
+				return VOLGORDE.get(i);
 			}
 		}
 		return null;

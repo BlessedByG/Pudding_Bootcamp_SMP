@@ -249,16 +249,16 @@ public final class Quiz extends RondeLogica {
 
 	/**
 	 * De items van de presentator met hun plek in de hotbar (0 t/m 8), in de volgorde van een vraag:
-	 * links het rad (toets 1) met ernaast het beurtmenu (2), dan goed en fout naast elkaar (3 en 4),
-	 * het puntenmenu (6), en de barrier apart helemaal rechts (9), zodat je hem niet per ongeluk pakt.
+	 * links het rad (toets 1) met ernaast het beurtmenu (2), dan goed en fout naast elkaar (4 en 5),
+	 * het puntenmenu (7), en de barrier apart helemaal rechts (9), zodat je hem niet per ongeluk pakt.
 	 */
 	private static Map<Integer, ItemStack> quizItems() {
 		return Map.of(
 				0, item(Items.NETHER_STAR, "Draai het rad", ChatFormatting.GOLD, "draai"),
 				1, item(Items.COMPASS, "Beurt geven", ChatFormatting.YELLOW, "beurt"),
-				2, item(Items.WOOL.lime(), "Goed", ChatFormatting.GREEN, "goed"),
-				3, item(Items.WOOL.red(), "Fout", ChatFormatting.RED, "fout"),
-				5, item(Items.EMERALD, "Punten geven of afpakken", ChatFormatting.AQUA, "punten"),
+				3, item(Items.WOOL.lime(), "Goed", ChatFormatting.GREEN, "goed"),
+				4, item(Items.WOOL.red(), "Fout", ChatFormatting.RED, "fout"),
+				6, item(Items.EMERALD, "Punten geven of afpakken", ChatFormatting.AQUA, "punten"),
 				8, item(Items.BARRIER, "Quiz beëindigen", ChatFormatting.DARK_RED, "einde"));
 	}
 

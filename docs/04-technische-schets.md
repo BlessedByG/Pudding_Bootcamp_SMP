@@ -864,9 +864,9 @@ items in de hotbar, in de volgorde van een vraag en met ruimte tussen de groepen
 |---|---|---|
 | 1 | Nether star, naam `Draai het rad` | hetzelfde als `/quiz draai` |
 | 2 | Kompas, naam `Beurt geven` | opent het beurtmenu |
-| 3 | Groene wol, naam `Goed` | hetzelfde als `/quiz goed` |
-| 4 | Rode wol, naam `Fout` | hetzelfde als `/quiz fout` |
-| 6 | Emerald, naam `Punten geven of afpakken` | opent het puntenmenu |
+| 4 | Groene wol, naam `Goed` | hetzelfde als `/quiz goed` |
+| 5 | Rode wol, naam `Fout` | hetzelfde als `/quiz fout` |
+| 7 | Emerald, naam `Punten geven of afpakken` | opent het puntenmenu |
 | 9 | Barrier, naam `Quiz beëindigen` | opent de bevestiging: `Ja, de quiz is klaar` (hetzelfde als `/quiz einde`) of `Nee, verder met de quiz`, met de stand ertussen |
 
 Na de winnaar heeft hij alleen nog de ender pearl `Iedereen naar de Arena` in slot 1 (zie *Einde*).
@@ -880,9 +880,9 @@ slijmt); onder 0 mag. Iedereen ziet een chatregel `Pudding: +2 voor Rood (7)` me
 (erbij) of een bas (eraf), en de sidebar wordt bijgewerkt. Alleen de presentator kan klikken;
 items verplaatsen kan niet.
 
-**Het beurtmenu** (`BeurtMenu`, R4.7) is een kistmenu van één rij met de wol van elk team en zijn
-stand (`Rood · 5`); het team dat al aan de beurt is glinstert. Een klik sluit het menu en geeft dat
-team meteen de beurt, zonder rad: alleen de lampen van dat team aan, title
+**Het beurtmenu** (`BeurtMenu`, R4.7) is een kistmenu van één rij met de wol van elk team, van links
+naar rechts groen, geel, rood, blauw, met zijn stand (`Rood · 5`); het team dat al aan de beurt is
+glinstert. Een klik sluit het menu en geeft dat team meteen de beurt, zonder rad: alleen de lampen van dat team aan, title
 `ROOD IS AAN DE BEURT`, `block.note_block.pling`, bossbar in de teamkleur. Het team dat al aan de
 beurt was houdt zijn reeks; een ander team begint op nul. Weigert terwijl het rad draait (`het rad
 draait nog` in de actionbar) en na de winnaar. Hetzelfde als `/quiz beurt <kleur>`.
