@@ -241,10 +241,11 @@ public final class Tribune {
 		}
 	}
 
-	/** Groot in beeld een willekeurige doodtekst, alleen voor de dode. */
+	/** Groot in beeld een willekeurige doodtekst, alleen voor de dode. Een lange over twee regels (R0.14). */
 	public static void doodtekst(ServerPlayer speler) {
-		String tekst = Doodteksten.kies(ConfigStore.get().doodteksten(), Spel.RANDOM);
-		Mc.title(speler, Mc.tekst(tekst, ChatFormatting.RED, ChatFormatting.BOLD), null, 5, 70, 20);
+		String[] regels = Doodteksten.verdeel(Doodteksten.kies(ConfigStore.get().doodteksten(), Spel.RANDOM));
+		Mc.title(speler, Mc.tekst(regels[0], ChatFormatting.RED, ChatFormatting.BOLD),
+				regels[1] == null ? null : Mc.tekst(regels[1], ChatFormatting.RED), 5, 70, 20);
 	}
 
 	/** Zet iemand op de tribune zonder er een kijker van te maken (voor het Rad, of in de mob arena). */

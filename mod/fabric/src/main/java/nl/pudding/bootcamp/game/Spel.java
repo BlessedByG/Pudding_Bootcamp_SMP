@@ -480,7 +480,7 @@ public final class Spel {
 
 	/** Wie joint terwijl er geen ronde loopt krijgt de welkomsttitle, alleen voor hem. */
 	private static void welkom(ServerPlayer speler) {
-		Mc.title(speler, Mc.tekst("PUDDING BOOTCAMP", ChatFormatting.GOLD, ChatFormatting.BOLD),
+		Mc.title(speler, Mc.tekst("PUDDING'S BOOTCAMP", ChatFormatting.GOLD, ChatFormatting.BOLD),
 				Mc.tekst("Welkom, " + Mc.naam(speler), ChatFormatting.YELLOW), 10, 70, 20);
 		Mc.geluid(speler, SoundEvents.NOTE_BLOCK_CHIME, 1f, 1f);
 	}

@@ -2,7 +2,7 @@ package nl.pudding.bootcamp.core;
 
 /** De teksten van de bossbar: kort, altijd hetzelfde formaat (tabel in docs/04). */
 public final class BossbarTekst {
-	public static final String BASISKAMP = "Pudding Bootcamp";
+	public static final String BASISKAMP = "Pudding's Bootcamp";
 	public static final String QUIZ_DRAAI = "Quiz · draai het rad";
 	public static final String DOOLHOF_WACHT = "Doolhof · wacht op de start";
 	public static final String CLOWN_WACHT = "King of the Hill · wacht op de start";
@@ -63,6 +63,6 @@ public final class BossbarTekst {
 	}
 
 	public static String king(String naam) {
-		return "Pudding Bootcamp · King: " + naam;
+		return "Pudding's Bootcamp · King: " + naam;
 	}
 }

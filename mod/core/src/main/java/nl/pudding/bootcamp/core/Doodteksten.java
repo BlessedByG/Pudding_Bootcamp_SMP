@@ -19,7 +19,34 @@ public final class Doodteksten {
 			"Had je nou maar beter je best gedaan",
 			"Gelukkig is dit niet de CSMP");
 
+	/** Zoveel tekens past er zeker in een grote title, ook met een grotere GUI-schaal. */
+	public static final int MAX_TITEL = 22;
+
 	private Doodteksten() {
+	}
+
+	/**
+	 * R0.14: een doodtekst als title en subtitle. Tot {@link #MAX_TITEL} tekens alles groot; langer
+	 * wordt gesplitst op de spatie die het dichtst bij het midden ligt, met het begin groot (hooguit
+	 * {@link #MAX_TITEL} tekens) en de rest kleiner eronder. Zonder zo'n spatie alles klein.
+	 *
+	 * @return title en subtitle; de subtitle is {@code null} als alles groot past
+	 */
+	public static String[] verdeel(String tekst) {
+		if (tekst.length() <= MAX_TITEL) {
+			return new String[] {tekst, null};
+		}
+		int midden = tekst.length() / 2;
+		int beste = -1;
+		for (int i = 1; i <= MAX_TITEL && i < tekst.length() - 1; i++) {
+			if (tekst.charAt(i) == ' ' && (beste < 0 || Math.abs(i - midden) < Math.abs(beste - midden))) {
+				beste = i;
+			}
+		}
+		if (beste < 0) {
+			return new String[] {"", tekst};
+		}
+		return new String[] {tekst.substring(0, beste).strip(), tekst.substring(beste + 1).strip()};
 	}
 
 	/** Kiest willekeurig uit de lijst; is die leeg, dan uit de standaardlijst. */

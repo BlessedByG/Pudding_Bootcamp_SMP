@@ -33,7 +33,7 @@ tribune: in adventure, zonder schade, met de andere doden. Niemand komt ooit in 
 
 ## Ronde 0: Basiskamp
 
-Iedereen spawnt in het basiskamp en ziet bij het joinen **PUDDING BOOTCAMP** met "Welkom, <naam>"
+Iedereen spawnt in het basiskamp en ziet bij het joinen **PUDDING'S BOOTCAMP** met "Welkom, <naam>"
 in beeld. Daarna de regels op de borden. De host legt uit wat er komen gaat, maar niet alles:
 Clown vs All en het Rad pas bij ronde 5. Nog geen teams; iedereen is wit.
 
@@ -529,7 +529,7 @@ tegen één. Wie wint is **King of the SMP Bootcamp**.
   van de Arena: iedereen op de tribune, de winnaar op het podium met de kroon, twintig seconden
   vuurpijlen, en voor iedereen in beeld **KING OF THE SMP BOOTCAMP** met de kop en de naam. Geen
   prijs, just for fun.
-- Daarna blijft de King zichtbaar: de bossbar "Pudding Bootcamp · King: Speler7" en de zwevende
+- Daarna blijft de King zichtbaar: de bossbar "Pudding's Bootcamp · King: Speler7" en de zwevende
   kroon boven de winnaar, tot `/bc reset`.
 
 **Voice:** proximity. De hele tribune kijkt mee.

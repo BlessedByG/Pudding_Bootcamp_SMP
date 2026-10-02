@@ -657,7 +657,7 @@ title `OP NAAR HET EI`. Tot dat command is de finishruimte ook het verzamelpunt 
 tussendoor inlogt of in de void valt; daarna `v2`. `/doolhof start` begint
 zonder teams: het doolhof is de teamkeuze, dus oude keuzes gaan weg.
 
-**Welkom.** Wie joint terwijl er geen ronde loopt, krijgt de title `PUDDING BOOTCAMP` met als
+**Welkom.** Wie joint terwijl er geen ronde loopt, krijgt de title `PUDDING'S BOOTCAMP` met als
 subtitle `Welkom, <naam>` en `block.note_block.chime`, alleen voor hem. Tijdens een ronde niet,
 dan komt hij gewoon terug waar hij hoort.
 
@@ -1075,7 +1075,7 @@ opnieuw. Logt hij in tijdens de pauze, dan wordt hij kijker en krijgen de ops ee
 
 **Kroning** (na de finale): iedereen naar de tribune, de winnaar naar `troon` (het podium) met de kroon en de
 zweefkroon, twintig seconden vuurpijlen, title `KING OF THE SMP BOOTCAMP` met de kop en de naam
-als subtitle. Daarna blijft de bossbar `Pudding Bootcamp · King: Speler7` (goud) staan en blijft
+als subtitle. Daarna blijft de bossbar `Pudding's Bootcamp · King: Speler7` (goud) staan en blijft
 de zweefkroon boven de winnaar, tot `/bc reset`.
 
 ## Kijkers: wie af of dood is
@@ -1098,7 +1098,10 @@ Geen spectator mode, geen tp-items, geen vliegen.
   in `bootcamp.json` en gaat in-game met `/bc doodtekst`. Standaard zes: `Grote L gepakt!`,
   `Kleine L gepakt`, `Had je nou maar beter je best gedaan`, `Gelukkig is dit de CSMP niet..`,
   `Dag 1...`, `Op de lijst..`. Staat in een oude `bootcamp.json` nog precies de oude standaard
-  (drie teksten), dan maakt de mod er bij het laden de nieuwe zes van.
+  (drie teksten), dan maakt de mod er bij het laden de nieuwe zes van. Een tekst tot 22 tekens
+  staat helemaal groot (rood, vet); een langere splitst de mod op de spatie het dichtst bij het
+  midden (`Doodteksten.verdeel`): het begin groot, de rest kleiner eronder (`Had je nou maar` /
+  `beter je best gedaan`), zodat niks buiten beeld valt.
 
 Waar kijkers heen gaan: ronde 3 bij een dood naar `kooi` tot het einde van die
 beurt, en anders naar `tribune_mob_n`; ronde 5 en 6 naar `tribune_n`.
@@ -1116,7 +1119,7 @@ Eén bossbar, kort, altijd hetzelfde formaat. Persoonlijke info via de actionbar
 
 | Ronde | Tekst | Kleur | Vulling |
 |---|---|---|---|
-| Basiskamp | `Pudding Bootcamp` | wit | vol |
+| Basiskamp | `Pudding's Bootcamp` | wit | vol |
 | 1, voor `/doolhof go` | `Doolhof · wacht op de start` | groen | vol |
 | 1 | `Doolhof · 04:41` | groen, de laatste minuut rood | tijd; de poort staat er niet in |
 | 1, na de timer | `Doolhof · de tijd is om · gif`, na elke minuut `gif x2`, `x4` ... | paars | vol |
@@ -1126,7 +1129,7 @@ Eén bossbar, kort, altijd hetzelfde formaat. Persoonlijke info via de actionbar
 | 5 | `King of the Hill · Kroon: Clown · 12 over` | geel | spelers over |
 | 6 | `FFA · 7 over` | paars | spelers over |
 | 7 | `De Finale · ClownPierce tegen Speler7` | rood | vol |
-| Na de kroning | `Pudding Bootcamp · King: Speler7` | goud | vol |
+| Na de kroning | `Pudding's Bootcamp · King: Speler7` | goud | vol |
 
 **Sidebar**: ronde 1 de teams met aantallen en namen (`Rood 3/4` met de spelers eronder), ronde 2 de top 10 op punten, ronde 3
 de teamstand in punten (`Rood 47`), ronde 4 de quizpunten, ronde 5 de regeerperiodes, ronde 6 de
@@ -1146,7 +1149,7 @@ langzaam draaiend. Opgeruimd als de kroonhouder kijker wordt.
 
 | Moment | Wat je ziet en hoort |
 |---|---|
-| Joinen in het basiskamp | Title `PUDDING BOOTCAMP`, subtitle `Welkom, <naam>`, `block.note_block.chime`. Alleen voor wie joint, en niet tijdens een ronde. |
+| Joinen in het basiskamp | Title `PUDDING'S BOOTCAMP`, subtitle `Welkom, <naam>`, `block.note_block.chime`. Alleen voor wie joint, en niet tijdens een ronde. |
 | Countdown | Titles 5 t/m 1 in goud met een stijgende `note_block.pling`, dan `GO` met `event.raid.horn`. |
 | Poort doolhof open | Cloud-particles in de poort; met `/doolhof poortmelding aan` ook `event.raid.horn` voor iedereen en de title `DE UITGANG IS OPEN` in groen. |
 | Valkist | 25% de jumpscare (willekeurige foto) voor wie hem opent, 25% de 8D-klop, 50% mobs met `poof`-particles en `entity.evoker.prepare_summon`. |
@@ -1199,7 +1202,7 @@ langzaam draaiend. Opgeruimd als de kroonhouder kijker wordt.
 | Finalist uitgelogd | Bossbar `De Finale · Speler7 is weg · Pudding beslist`, actionbar voor de ander `Speler7 is weg · even wachten`, chatregel met de keuzes alleen voor de ops. |
 | `/clown krimp`, `/ffa krimp` | Title `DE BORDER KRIMPT` in rood, subtitle `naar 20 in 60 seconden`, `event.raid.horn`. Kijkers zien de title ook, maar merken niets van de border. |
 | Laatste drie, laatste twee | Title `LAATSTE DRIE` of `LAATSTE TWEE` in paars met de namen, `entity.wither.spawn` zacht. |
-| Kroning (na de finale) | Twintig seconden vuurpijlen, title `KING OF THE SMP BOOTCAMP` met de kop en de naam van de winnaar als subtitle. Daarna blijven de bossbar `Pudding Bootcamp · King: Speler7` en de zweefkroon tot `/bc reset`. |
+| Kroning (na de finale) | Twintig seconden vuurpijlen, title `KING OF THE SMP BOOTCAMP` met de kop en de naam van de winnaar als subtitle. Daarna blijven de bossbar `Pudding's Bootcamp · King: Speler7` en de zweefkroon tot `/bc reset`. |
 
 ## Zo is dit gevibecode
 
