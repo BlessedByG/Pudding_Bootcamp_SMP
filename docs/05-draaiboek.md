@@ -64,6 +64,7 @@ Vooraf instellen, in minuten (blijft bewaard):
 | `/doolhof schrik` | elke schrikplek een willekeurige foto; `/doolhof schrik <nr> <1..5>` voor een vaste |
 | `/doolhof wachttekst` | "Wacht op het startsein" |
 | `/ei timer` | 15 |
+| `/ei valgrens` | uit; zet hem met `/ei valgrens hier` op de grond onder het Ei |
 | `/ei blokken` | netherite 10, diamond 150, gold 200, iron 2000, redstone 20, emerald 30, lapis 30, tnt 20, glowstone 20, slime 30, target 30 (samen 2540, dat moet op de deepslate passen) |
 | `/mobarena punten` | zombie 1; skeleton, spider, cave spider 2; creeper 3; witch 4; vindicator 5; evoker 8; ravager 10; warden 50 |
 | `/mobarena aftekst` | "Af · je speelt geen beurt meer" |
@@ -102,7 +103,8 @@ zit, maar de commander moet alleen commander zijn.
    geselecteerd als `poort_start` (elke opening een deel) (1 tot 2 avonden).
 4. Het zwevende Ei met de kettingen: schil van andere blokken, binnenkant gewone deepslate, geen
    gewone deepslate in schil of kettingen. Daarna regio `ei`, `eigebied`, de startplekken
-   `ei_spawn_n` en `/ei vastleggen` (gebouwd).
+   `ei_spawn_n`, `/ei valgrens hier` op de grond waar mensen landen als ze vallen, en
+   `/ei vastleggen` (gebouwd).
 5. Het plein bij de mob arena met een podium en een item frame: punt `ei_podium` op het podium,
    punt `ei_presentator` ernaast (voor Pudding), regio `ei_plein` (de vloer ervoor), `/ei prijskader` kijkend naar het frame, en `v3` op het
    plein.
@@ -176,6 +178,9 @@ te controleren valt staat in [mod/BOUWLOG.md](../mod/BOUWLOG.md).
       heen (open er een paar: ongeveer een kwart jumpscare, een kwart klop, de helft mobs); nog eens openen geeft een lege kist, een tweede speler krijgt hem wel. `/doolhof poortmelding uit`: de poort gaat stil
       open. Na `/doolhof stop` zijn de mobs weg.
 - [ ] `/ei vastleggen`, `/ei blokken`: het overzicht noemt het aantal deepslate-plekken.
+- [ ] `/ei valgrens hier` op de grond onder het Ei. Spring tijdens het Ei van een ketting: zodra je
+      de grond raakt sta je zonder valschade op je startplek, met `Gevallen · terug naar je
+      startplek` onderin; je punten en spullen heb je nog.
 - [ ] `/ei start`: spelers verdeeld over de startplekken, punten per block, alles wat je vindt in
       de chat, redstone (beide uitkomsten met aftellen onderin, een paar keer breken), emerald geeft
       een kistmenu (kies wie de jumpscare krijgt; dichtdoen en het komt terug) en iedereen ziet groot

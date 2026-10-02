@@ -297,6 +297,7 @@ hele avond geldt (setup, spelers, noodknoppen) staat onder `/bc`.
 | `/ei start\|stop\|resterend` | Ronde 2. |
 | `/ei timer [<minuten>]` | Hoe lang het Ei duurt, standaard 15. |
 | `/ei blokken [<soort> <aantal>]` | Hoeveel blokken van een soort (`netherite`, `diamond`, `gold`, `iron`, `redstone`, `emerald`, `lapis`, `tnt`, `glowstone`, `slime`, `target`) de mod in het Ei strooit. Zonder argumenten: het overzicht, met het aantal deepslate-plekken in het Ei. |
+| `/ei valgrens [hier\|<y>\|uit]` | Wie tijdens het Ei met zijn voeten op of onder deze hoogte komt, gaat meteen terug naar zijn eigen startplek, met zijn punten en spullen en zonder valschade. `hier`: de blokhoogte van je voeten (ga op de grond staan waar mensen landen). Zonder argument: de huidige. Standaard uit. Weigert als een `ei_spawn_n` op of onder de grens staat. Bewaard in `bootcamp.json`. |
 | `/ei prijskader` | Het item frame waar je naar kijkt (binnen 5 blokken) wordt het frame voor het Warden-ei: daar verschijnt het als het Ei voorbij is. Slaat punt `ei_prijskader` op. |
 | `/ei naarmobarena` | Na de huldiging: iedereen die meedoet van het plein naar de tribune van de mob arena (`tribune_mob_n`), title `OP NAAR DE MOB ARENA`. Ligt het Warden-ei nog in het frame en is de winnaar online, dan krijgt hij het nu. Weigert zolang er een ronde loopt, en als de laatste ronde niet het Ei was. |
 | `/ei vastleggen` | Legt het Ei vast zoals het nu gebouwd is: alle blokken in regio `ei`. Eén keer na het bouwen, en opnieuw na elke bouwwijziging. Niet tijdens ronde 2. Antwoord: `Ei vastgelegd: 54.000 blokken, waarvan 27.812 deepslate.` |
@@ -381,6 +382,7 @@ ronde. Een nieuw aantal puntenblokken geldt vanaf de volgende `/ei start`.
 | `/doolhof valmobs` | 3 t/m 10 | 0 tot 20, min niet boven max |
 | `/doolhof schrik` | per plek willekeurig | foto 1 t/m 5, of random |
 | `/ei timer` | 15 | 5 tot 60 |
+| `/ei valgrens` | uit | y -64 tot 319, boven alle `ei_spawn_n` |
 | `/ei blokken` | netherite 10, diamond 150, gold 200, iron 2000, redstone 20, emerald 30, lapis 30, tnt 20, glowstone 20, slime 30, target 30 (samen 2540) | 0 of meer; samen niet meer dan de deepslate-plekken in het Ei |
 | `/mobarena punten` | zombie 1; skeleton, spider, cave spider 2; creeper 3; witch 4; vindicator 5; evoker 8; ravager 10; elk ander type 1 | 0 tot 100 |
 | `/mobarena aftekst` | `Af · je speelt geen beurt meer` | tot 60 tekens |
@@ -576,7 +578,7 @@ dood geannuleerd, de speler geheald en afgehandeld volgens de ronde:
 | Ronde | Wat er gebeurt |
 |---|---|
 | 1 | Geheald terug naar `doolhof_start`. |
-| 2 | Geheald terug naar zijn eigen `ei_spawn_n`, punten en spullen blijven. |
+| 2 | Geheald terug naar zijn eigen `ei_spawn_n`, punten en spullen blijven. Wie niet doodgaat maar op of onder de valgrens komt, ook (zie ronde 2). |
 | 3 | Kijker in de kooi (`kooi`), na de beurt naar de tribune. Af voor de rest van de mob arena: een latere beurt op het schema blijft leeg. Punten blijven staan. Inventory leeg: wie af is speelt niet meer, en na ronde 3 levert iedereen toch alles in. Doodtekst. Het Warden-ei houdt hij. Zijn alle spelers in het veld af, dan is de beurt klaar. |
 | 4 | Kan niet: geen schade. |
 | 5, kroonhouder | Kroonwissel naar de killer, anders de laatste hit, anders een willekeurige levende jager. Ex-kroonhouder wordt kijker op de tribune. |
@@ -660,7 +662,8 @@ subtitle `Welkom, <naam>` en `block.note_block.chime`, alleen voor hem. Tijdens 
 dan komt hij gewoon terug waar hij hoort.
 
 **Ronde 2, het Ei.** Weigert zonder vastlegging (`ontbreekt: /ei vastleggen`) en als de aantallen
-van `/ei blokken` samen meer zijn dan de deepslate-plekken. Start:
+van `/ei blokken` samen meer zijn dan de deepslate-plekken. Ook als een `ei_spawn_n` op of onder de
+valgrens staat (`ei_spawn_3 staat op y=60, op of onder de valgrens y=64 (/ei valgrens)`). Start:
 
 1. **Het Ei terugzetten**: elk blok in regio `ei` zoals het is vastgelegd, verspreid over een paar
    ticks (een paar duizend blokken per tick) zodat de server niet hapert; klaar voordat de

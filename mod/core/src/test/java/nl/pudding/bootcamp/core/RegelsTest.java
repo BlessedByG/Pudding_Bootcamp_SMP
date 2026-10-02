@@ -190,6 +190,17 @@ class RegelsTest {
 	}
 
 	@Test
+	void vanHetEiGevallenOpOfOnderDeValgrens() {
+		assertTrue(Regels.vanHetEiGevallen(60.0, 60));
+		assertTrue(Regels.vanHetEiGevallen(60.9, 60));
+		assertTrue(Regels.vanHetEiGevallen(12.5, 60));
+		assertFalse(Regels.vanHetEiGevallen(61.0, 60));
+		// Onder nul rondt de blokhoogte naar beneden af: -0.5 is blok -1.
+		assertTrue(Regels.vanHetEiGevallen(-0.5, -1));
+		assertFalse(Regels.vanHetEiGevallen(-64.0, null));
+	}
+
+	@Test
 	void laatsteDrieEnTwee() {
 		assertEquals("LAATSTE DRIE", Regels.aftelTitle(3));
 		assertEquals("LAATSTE TWEE", Regels.aftelTitle(2));

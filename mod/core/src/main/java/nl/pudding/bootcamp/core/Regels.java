@@ -44,6 +44,13 @@ public final class Regels {
 	public static final int EI_GLOWSTONE = 10;
 	/** R2.12: zo lang Nausea voor de anderen na slime. */
 	public static final int EI_MISSELIJK = 15;
+	/**
+	 * R2.14: van het Ei gevallen is wie met zijn voeten op of onder de valgrens komt (de blokhoogte).
+	 * Zonder valgrens nooit.
+	 */
+	public static boolean vanHetEiGevallen(double y, Integer valgrens) {
+		return valgrens != null && Math.floor(y) <= valgrens;
+	}
 	/** R3.6: na elke beurt tien seconden vieren, dan pas naar de tribune. */
 	public static final int BEURT_VIEREN = 10;
 	/** R3.8, R4.5: na de winnaar van de mob arena en de quiz tien seconden vieren. */

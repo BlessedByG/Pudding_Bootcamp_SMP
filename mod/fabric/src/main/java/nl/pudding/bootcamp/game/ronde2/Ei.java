@@ -17,6 +17,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.InteractionResult;
@@ -171,7 +172,26 @@ public final class Ei extends RondeLogica {
 		if (fout != null) {
 			return fout;
 		}
+		fout = startplekOnderValgrens(Spel.instellingen().eiValgrens());
+		if (fout != null) {
+			return fout + " (/ei valgrens)";
+		}
 		return Spel.buitenRegio("eigebied", Spel.reeks("ei_spawn_"));
+	}
+
+	/**
+	 * R2.14: een startplek op of onder de valgrens zou wie daar staat steeds terugzetten.
+	 *
+	 * @return {@code null} als alle startplekken erboven liggen (of de valgrens uit staat), anders welke niet
+	 */
+	public static String startplekOnderValgrens(Integer grens) {
+		for (String naam : Spel.reeks("ei_spawn_")) {
+			Punt p = Spel.punt(naam);
+			if (p != null && Regels.vanHetEiGevallen(p.y(), grens)) {
+				return naam + " staat op y=" + (int) Math.floor(p.y()) + ", op of onder de valgrens y=" + grens;
+			}
+		}
+		return null;
 	}
 
 	@Override
@@ -697,6 +717,37 @@ public final class Ei extends RondeLogica {
 				knal(server, tnt.getX(), tnt.getY(), tnt.getZ());
 			}
 		}
+		valgrens(server);
+	}
+
+	/** R2.14: wie van het Ei valt, gaat op of onder de valgrens terug naar zijn startplek, met zijn punten en spullen. */
+	private void valgrens(MinecraftServer server) {
+		Integer grens = Spel.instellingen().eiValgrens();
+		if (grens == null) {
+			return;
+		}
+		for (ServerPlayer s : Mc.deelnemers(server)) {
+			if (!Regels.vanHetEiGevallen(s.getY(), grens)) {
+				continue;
+			}
+			String spawn = Spel.status(s).eiSpawn != null ? Spel.status(s).eiSpawn : "ei_spawn_1";
+			Punt p = Spel.punt(spawn);
+			// Een startplek onder de grens zou hem elke tick terugzetten; die weigert /ei start al.
+			if (p == null || Regels.vanHetEiGevallen(p.y(), grens)) {
+				continue;
+			}
+			Spel.naarPunt(s, spawn);
+			s.resetFallDistance();
+			Mc.geluid(s, SoundEvents.ENDERMAN_TELEPORT, 1f, 1f);
+			Spel.melding(s, Mc.tekst("Gevallen · terug naar je startplek", ChatFormatting.YELLOW), 2);
+			actionbar(server, s);
+		}
+	}
+
+	/** R2.14: wie op of onder de valgrens landt, krijgt geen valschade; hij gaat toch terug naar zijn startplek. */
+	@Override
+	public boolean magSchade(ServerPlayer slachtoffer, DamageSource bron) {
+		return !(bron.is(DamageTypeTags.IS_FALL) && Regels.vanHetEiGevallen(slachtoffer.getY(), Spel.instellingen().eiValgrens()));
 	}
 
 	@Override

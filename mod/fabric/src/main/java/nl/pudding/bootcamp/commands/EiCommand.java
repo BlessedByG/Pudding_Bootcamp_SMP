@@ -49,6 +49,12 @@ final class EiCommand {
 		cmd.then(Commands.literal("vastleggen").executes(EiCommand::vastleggen));
 		cmd.then(Commands.literal("prijskader").executes(EiCommand::prijskader));
 		cmd.then(Commands.literal("naarmobarena").executes(EiCommand::naarMobarena));
+		cmd.then(Commands.literal("valgrens")
+				.executes(EiCommand::toonValgrens)
+				.then(Commands.literal("hier").executes(ctx -> valgrens(ctx, ctx.getSource().getPlayerOrException().getBlockY())))
+				.then(Commands.literal("uit").executes(ctx -> valgrens(ctx, null)))
+				.then(Commands.argument("y", IntegerArgumentType.integer(Instellingen.MIN_Y, Instellingen.MAX_Y))
+						.executes(ctx -> valgrens(ctx, IntegerArgumentType.getInteger(ctx, "y")))));
 		return cmd;
 	}
 
@@ -87,6 +93,25 @@ final class EiCommand {
 			return BcCommand.fout(ctx, "Geen frame: " + fout + ".");
 		}
 		return BcCommand.ok(ctx, "Dit item frame krijgt het Warden-ei als het Ei voorbij is (punt " + Huldiging.KADER + ").");
+	}
+
+	private static int toonValgrens(CommandContext<CommandSourceStack> ctx) {
+		Integer grens = Spel.instellingen().eiValgrens();
+		return BcCommand.info(ctx, grens == null
+				? "Geen valgrens: wie van het Ei valt, blijft waar hij landt. Ga op de grond staan waar ze landen en doe /ei valgrens hier."
+				: "Valgrens y=" + grens + ": wie tijdens het Ei op of onder y=" + grens + " komt, gaat terug naar zijn startplek.");
+	}
+
+	/** {@code /ei valgrens hier|<y>|uit}; {@code null} zet hem uit. */
+	private static int valgrens(CommandContext<CommandSourceStack> ctx, Integer y) {
+		String fout = Ei.startplekOnderValgrens(y);
+		if (fout != null) {
+			return BcCommand.fout(ctx, "Te hoog: " + fout + ".");
+		}
+		Spel.instellingen().zetEiValgrens(y);
+		return BcCommand.bewaard(ctx, y == null
+				? "Valgrens uit: wie van het Ei valt, blijft waar hij landt."
+				: "Valgrens y=" + y + ": wie tijdens het Ei op of onder y=" + y + " komt, gaat terug naar zijn startplek, zonder valschade.");
 	}
 
 	/** Na de huldiging: iedereen van het plein naar de tribune van de mob arena. */

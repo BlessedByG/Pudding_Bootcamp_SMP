@@ -32,6 +32,7 @@ class ConfigTest {
 		c.instellingen().zetDoolhofHint(12);
 		c.instellingen().zetHinttekst("De echte gang begint bij de lantaarn");
 		c.instellingen().zetEiBlokken(EiBlok.NETHERITE, 9);
+		c.instellingen().zetEiValgrens(-12);
 		c.instellingen().zetMobPunten("minecraft:ravager", 12);
 		c.instellingen().zetAftekst("Weg!");
 		c.instellingen().zetVeldHoogte(1);
@@ -65,6 +66,7 @@ class ConfigTest {
 		assertEquals(4, t.instellingen().doolhofPoort());
 		assertEquals("De echte gang begint bij de lantaarn", t.instellingen().hinttekst());
 		assertEquals(9, t.instellingen().eiBlokken(EiBlok.NETHERITE));
+		assertEquals(-12, t.instellingen().eiValgrens());
 		assertEquals(150, t.instellingen().eiBlokken(EiBlok.DIAMOND));
 		assertEquals(12, t.instellingen().mobPunten("ravager"));
 		assertEquals("Weg!", t.instellingen().aftekst());
@@ -99,6 +101,7 @@ class ConfigTest {
 		assertNull(c.winnaarFfa());
 		assertFalse(c.isUitverkoren("iemand"));
 		assertEquals(15, c.instellingen().doolhofTimer());
+		assertNull(c.instellingen().eiValgrens());
 		assertNull(c.instellingen().hinttekst());
 	}
 

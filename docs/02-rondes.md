@@ -175,7 +175,9 @@ Clown vs All en het Rad pas bij ronde 5. Nog geen teams; iedereen is wit.
   speler als enige die los is.
 - Geen PvP.
 - Doodgaan (van een ketting of het Ei vallen): je staat geheald terug op je startplek, je punten
-  en spullen houd je. Wie valt en het overleeft, loopt zelf terug naar een ketting.
+  en spullen houd je. Val je naast het Ei of een ketting en kom je op of onder de **valgrens**
+  (`/ei valgrens`, meestal de grond waar je landt), dan sta je meteen weer op je startplek,
+  zonder valschade, met je punten en spullen. Staat er geen valgrens, dan loop je zelf terug.
 
 **Einde**
 - Timer 15 minuten, instelbaar met `/ei timer <minuten>`. Wie de meeste punten heeft, wint: title

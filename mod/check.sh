@@ -69,7 +69,7 @@ if [ -d "$CMD_DIR" ]; then
 		wand region save add show list del point set block tp label zet weg status kit team schrik kijker aan uit reset \
 		doodtekst lijst nieuw standaard \
 		start stop resterend timer poort open dicht hint hinttekst blokken vastleggen \
-		volgende schema wave startplek punten veldhoogte aftekst poortmelding valmobs startpoort naarei naarmobarena naarquiz prijskader warden vuurwerk \
+		volgende schema wave startplek punten veldhoogte aftekst poortmelding valmobs startpoort naarei naarmobarena naarquiz valgrens hier prijskader warden vuurwerk \
 		presentator bank podium lamp draai goed fout punt einde winnaar naararena \
 		rad go uitverkoren troon jagerplek vloer tribune wachttekst kroon krimp plek spelers combatlog crash klop; do
 		grep -rq "\"$c\"" "$CMD_DIR" || { fout "command-literal \"$c\" ontbreekt"; MIST=1; }

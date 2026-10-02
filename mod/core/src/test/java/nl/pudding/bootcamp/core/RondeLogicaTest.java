@@ -645,6 +645,21 @@ class RondeLogicaTest {
 			assertTrue(i.poortMelding());
 			assertEquals(3, i.valMobsMin());
 			assertEquals(10, i.valMobsMax());
+			assertNull(i.eiValgrens());
+		}
+
+		@Test
+		void valgrensVanHetEi() {
+			Instellingen i = new Instellingen();
+			i.zetEiValgrens(60);
+			assertEquals(60, i.eiValgrens());
+			assertNotNull(Instellingen.checkValgrens(-65));
+			assertNotNull(Instellingen.checkValgrens(320));
+			assertNull(Instellingen.checkValgrens(-64));
+			assertThrows(IllegalArgumentException.class, () -> i.zetEiValgrens(400));
+			assertEquals(60, i.eiValgrens());
+			i.zetEiValgrens(null);
+			assertNull(i.eiValgrens());
 		}
 
 		@Test
